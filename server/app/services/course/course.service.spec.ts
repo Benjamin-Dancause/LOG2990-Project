@@ -185,7 +185,7 @@ describe('CourseServiceEndToEnd', () => {
         const course = getFakeCourse();
         await courseModel.create(course);
         await service.deleteCourse(course.subjectCode);
-        expect(await courseModel.countDocuments()).toEqual(5);
+        expect(await courseModel.countDocuments()).toEqual(0);
     });
 
     it('deleteCourse() should fail if the course does not exist', async () => {
