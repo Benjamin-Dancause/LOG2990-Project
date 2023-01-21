@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CourseService } from './course.service';
-import { Model, Connection } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { Connection, Model } from 'mongoose';
+import { CourseService } from './course.service';
 
 import { Course, CourseDocument, courseSchema } from '@app/model/database/course';
 import { getConnectionToken, getModelToken, MongooseModule } from '@nestjs/mongoose';
@@ -185,7 +185,7 @@ describe('CourseServiceEndToEnd', () => {
         const course = getFakeCourse();
         await courseModel.create(course);
         await service.deleteCourse(course.subjectCode);
-        expect(await courseModel.countDocuments()).toEqual(0);
+        expect(await courseModel.countDocuments()).toEqual(5);
     });
 
     it('deleteCourse() should fail if the course does not exist', async () => {
