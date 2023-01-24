@@ -1,8 +1,4 @@
 .container {
-    background-image: url('https://cdnb.artstation.com/p/assets/images/images/015/369/747/original/bogdan-mb0sco-arcade-animate.gif?1548087117');
-    background-repeat: no;
-    background-size: cover;
-
     min-height: 100vh;
     height: auto;
 }
@@ -14,54 +10,35 @@
     align-items: center;
 }
 
-.mid-row {
-    display: flex;
-    flex-direction: row;
-    align-content: space-between;
-    align-items: center;
-    justify-content: space-around;
-}
-.btn-sidespacing {
-    margin-left: 200px;
-}
-.img-sidespacing {
-    width: 500px;
-    height: 225px;
-    margin-right: 12px;
-}
-
 .button {
     margin-top: 10px;
     text-align: center;
 }
 
 .team-name {
-    font-weight: bold;
-    font-size: 1.5em;
     margin-top: 0.25em;
     margin-bottom: 0.25em;
-    color: rgb(65, 204, 204);
+    color: green;
 }
 
 .header-item {
-    padding-top: 100px;
-    font-size: 69px;
-    color: aqua;
     justify-content: center;
     text-align: center;
 }
 
 .footer-item {
     text-align: center;
-    color: aqua;
-    justify-content: center;
+}
+
+.footer-item p :nth-child(even) {
+    color: orange;
+}
+.footer-item p :nth-child(odd) {
+    color: blue;
 }
 
 .server-message {
     justify-content: center;
     width: 20%;
     min-width: min-content;
-}
-.msg {
-    color: aqua;
 }
