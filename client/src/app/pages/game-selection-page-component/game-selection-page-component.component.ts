@@ -5,7 +5,10 @@ import { Component } from '@angular/core';
     templateUrl: './game-selection-page-component.component.html',
     styleUrls: ['./game-selection-page-component.component.scss'],
 })
-export class GameSelectionPageComponent {}
+export class GameSelectionPageComponent {
+    gameTitle = 'Angry Birds';
+}
+
 /* import { Component, OnInit } from '@angular/core';
 
 @Component({
