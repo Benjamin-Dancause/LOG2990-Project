@@ -33,8 +33,8 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it("should have as title 'LOG2990'", () => {
-        expect(component.title).toEqual('LOG2990');
+    it("should have as title 'Nom_Jeu'", () => {
+        expect(component.title).toEqual('Nom_Jeu');
     });
 
     it('should call basicGet when calling getMessagesFromServer', () => {
