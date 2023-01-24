@@ -11,7 +11,7 @@ import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
-import { GameSelectionPageComponentComponent } from './game-selection-page-component/game-selection-page-component.component';
+import { GameSelectionPageComponent } from './game-selection-page-component/game-selection-page-component.component';
 
 /**
  * Main module that is used in main.ts.
@@ -27,7 +27,7 @@ import { GameSelectionPageComponentComponent } from './game-selection-page-compo
         MaterialPageComponent,
         PlayAreaComponent,
         SidebarComponent,
-        GameSelectionPageComponentComponent,
+        GameSelectionPageComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
     providers: [],
