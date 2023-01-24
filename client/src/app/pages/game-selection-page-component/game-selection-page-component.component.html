@@ -1,6 +1,10 @@
-<p>Page de sélection de partie</p>
+<p class="indication">Choissisez un jeu!</p>
 <div class="container">
-    <app-game-card> game : </app-game-card>
+    <app-game-card [gameTitle]="'Angry Birds'" [imageUrl]="'https://upload.wikimedia.org/wikipedia/en/2/2d/Angry_Birds_promo_art.png'">
+    </app-game-card>
+    <app-game-card [gameTitle]="gameTitle2"></app-game-card>
+    <app-game-card [gameTitle]="gameTitle3"></app-game-card>
+    <app-game-card [gameTitle]="gameTitle4"></app-game-card>
 </div>
 
 <!-- 
