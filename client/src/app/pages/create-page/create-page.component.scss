@@ -1,4 +1,5 @@
 .container {
+    position: relative;
     min-height: 100vh;
     height: auto;
 }
@@ -14,31 +15,12 @@
     margin-top: 10px;
     text-align: center;
 }
-
-.team-name {
-    margin-top: 0.25em;
-    margin-bottom: 0.25em;
-    color: green;
+.image-container {
+    top: 50%;
+    left: 50%;
+    display: absolute;
+    vertical-align: middle;
 }
-
-.header-item {
-    justify-content: center;
-    text-align: center;
-}
-
-.footer-item {
-    text-align: center;
-}
-
-.footer-item p :nth-child(even) {
-    color: orange;
-}
-.footer-item p :nth-child(odd) {
-    color: blue;
-}
-
-.server-message {
-    justify-content: center;
-    width: 20%;
-    min-width: min-content;
+#image-section {
+    display: relative;
 }
