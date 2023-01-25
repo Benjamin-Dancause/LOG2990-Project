@@ -3,6 +3,26 @@
     font-weight: 600;
     color: #a414dc;
     text-align: center;
+    justify-content: center;
     margin-top: 1em;
     margin-bottom: 1em;
+}
+
+.container {
+    //background-image: url('https://cdnb.artstation.com/p/assets/images/images/015/369/747/original/bogdan-mb0sco-arcade-animate.gif?1548087117');
+    background-color: antiquewhite;
+    background-repeat: no;
+    background-size: cover;
+    display: flex;
+    min-height: 100vh;
+    height: auto;
+}
+
+.game-selection-container {
+    background-color: azure;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
