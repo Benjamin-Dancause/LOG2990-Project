@@ -1,13 +1,26 @@
-.container {
-    height: auto;
-    min-height: 98vh;
-    border: 1px solid black;
-    padding: 0 5px 0 5px;
-    margin-right: 5px;
+.bigContainer {
+    position: static;
+}
+.bigContainer .container {
+    position: relative;
+    height: 35vh;
+    width: 65vh;
+    border: 3px solid rgb(255, 255, 255);
+    margin-right: 10%;
+    margin-left: 10%;
+    margin-bottom: 10%;
+
+    background-color: rgb(202, 202, 202);
+    padding: 20px;
+    border-radius: 10px;
+    color: rgb(0, 0, 0);
+    font-family: sans-serif;
+    opacity: 0.8;
 }
 
-.img-container {
-    width: 500px;
-    height: 225px;
-    margin-right: 12px;
+.container img {
+    margin-bottom: 20px;
+    position: absolute;
+    width: 40%;
+    height: 65%;
 }
