@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { MainPageButtonComponent } from '@app/components/main-page-button/main-page-button.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppComponent } from '@app/pages/app/app.component';
 
@@ -6,7 +7,7 @@ describe('AppComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [AppRoutingModule],
-            declarations: [AppComponent],
+            declarations: [AppComponent, MainPageButtonComponent],
         }).compileComponents();
     });
 

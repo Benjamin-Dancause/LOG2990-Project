@@ -1,6 +1,7 @@
 import { HttpClientModule, HttpResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { MainPageButtonComponent } from '@app/components/main-page-button/main-page-button.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { of, throwError } from 'rxjs';
@@ -18,7 +19,7 @@ describe('MainPageComponent', () => {
 
         await TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule],
-            declarations: [MainPageComponent],
+            declarations: [MainPageComponent, MainPageButtonComponent],
             providers: [{ provide: CommunicationService, useValue: communicationServiceSpy }],
         }).compileComponents();
     });
