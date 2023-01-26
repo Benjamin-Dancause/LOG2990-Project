@@ -1,8 +1,19 @@
-#canvas {
+.canvas {
     border: 1px solid black;
-    
+}
+
+#canvas-1 {
+    margin-left: 70px;
+    margin-right: 40px;
+}
+
+#canvas-2 {
+    margin-right: 70px;
 }
 
 #grid-container{
-    margin: 110px 70px 0px 66px;
+    display: flex;
+    margin-top: 110px;
+    margin-bottom: 30px;
 }
+
