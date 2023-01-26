@@ -1,0 +1,52 @@
+.bigContainer {
+    position: static;
+}
+.bigContainer .container {
+    position: relative;
+    height: 35vh;
+    width: 65vh;
+    border: 3px solid rgb(255, 255, 255);
+    margin-right: 10%;
+    margin-left: 10%;
+    margin-top: 10%;
+    background-color: rgb(202, 202, 202);
+
+    border-radius: 10px;
+    color: rgb(0, 0, 0);
+    font-family: sans-serif;
+    opacity: 0.8;
+}
+
+.container img {
+    position: absolute;
+    width: 40%;
+    height: 65%;
+    left: 3%;
+    bottom: 5%;
+}
+
+.container h3 {
+    position: relative;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-top: 3%;
+}
+
+.container #difficulty {
+    position: absolute;
+    top: 5%;
+    left: 3%;
+    width: 30%;
+    height: 13%;
+    border-radius: 10px;
+    text-align: center;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    font-size: 1.5em;
+}

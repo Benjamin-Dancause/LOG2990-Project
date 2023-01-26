@@ -4,6 +4,15 @@
     <section id="server-message" class="justified">
         <p>Petit message du serveur : {{ message.getValue() }}</p>
         <div class="justified">
+<<<<<<< HEAD
+=======
+            <app-main-page-button class="button btn-sidespacing" text="Classique" routerLink="/game-selection"></app-main-page-button>
+            <span class="mid-row">
+                <img src="https://i.stack.imgur.com/6umGW.png" class="img-sidespacing" />
+                <app-main-page-button class="button" text="Temps Limité" class="btn-sidespacing"></app-main-page-button>
+            </span>
+            <app-main-page-button class="button btn-sidespacing" text="Configuration" link="https://www.wikihow.com/Main-Page"></app-main-page-button>
+>>>>>>> dev
             <button class="button" (click)="getMessagesFromServer()">Récupérer un message du serveur</button>
             <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
             <button class="button" routerLink="/material">Voir la page démo Angular Material</button>
