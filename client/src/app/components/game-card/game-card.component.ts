@@ -1,7 +1,5 @@
 import { Component, Input } from '@angular/core';
 
-// import game-difficulty-level component
-
 @Component({
     selector: 'app-game-card',
     templateUrl: './game-card.component.html',
