@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 })
 export class GameSelectionPageComponent {
     gameTitle1 = 'Angry Birds';
-    gameTitle2 = 'Dead by Daylight';
+    gameTitle2 = 'DbD';
     gameTitle3 = 'Pokemon';
     gameTitle4 = 'Fortnite';
     gameImage1 = 'https://upload.wikimedia.org/wikipedia/en/4/4e/Angry_Birds_logo.svg';
