@@ -14,6 +14,7 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
+import { TopBarComponent } from './components/top-bar/top-bar/top-bar.component';
 
 /**
  * Main module that is used in main.ts.
@@ -32,6 +33,7 @@ import { MainPageButtonComponent } from './components/main-page-button/main-page
         GameSelectionPageComponent,
         GameCardComponent,
         MainPageButtonComponent,
+        TopBarComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
     providers: [],
