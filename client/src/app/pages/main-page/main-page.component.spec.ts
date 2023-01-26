@@ -64,4 +64,12 @@ describe('MainPageComponent', () => {
             },
         });
     });
+    /** 
+     TODO: Verify that 3 buttons exist, 2 are able to redirect to correct page
+           Also verify that image for logo exists
+           Change that title for game matches correctly
+           check that team number matches correctly
+           
+    
+    **/
 });
