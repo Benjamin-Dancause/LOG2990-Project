@@ -69,7 +69,7 @@ describe('MainPageComponent', () => {
            Also verify that image for logo exists
            Change that title for game matches correctly
            check that team number matches correctly
-           
-    
-    **/
+     
+     
+     **/
 });
