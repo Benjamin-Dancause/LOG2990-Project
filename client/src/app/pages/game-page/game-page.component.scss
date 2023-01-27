@@ -1,12 +1,17 @@
 .container {
+    //height: 100%;
     display: flex;
 }
 
 .play-area-container {
     flex: 1 1 auto;
+    //overflow: auto;
 }
 
 .play-area {
+    display: flex;
     width: min-content;
     outline: none;
+    min-height: 57vh;
+    min-width: 73vw;
 }
