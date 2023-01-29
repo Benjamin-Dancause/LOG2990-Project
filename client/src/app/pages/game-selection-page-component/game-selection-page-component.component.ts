@@ -22,13 +22,6 @@ export class GameSelectionPageComponent {
 
     startIndex = 0;
     endIndex = 3;
-
-    gameTitle1 = 'Angry Birds';
-    gameTitle2 = 'DbD';
-    gameTitle3 = 'Pokemon';
-    gameTitle4 = 'Fortnite';
-    gameImage1 = 'https://upload.wikimedia.org/wikipedia/en/4/4e/Angry_Birds_logo.svg';
-
     currentPage = 0;
     pageSize = 4;
     lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
@@ -49,17 +42,3 @@ export class GameSelectionPageComponent {
         }
     }
 }
-
-/* import { Component, OnInit } from '@angular/core';
-
-@Component({
-    selector: 'app-game-selection-page-component',
-    templateUrl: './game-selection-page-component.component.html',
-    styleUrls: ['./game-selection-page-component.component.scss'],
-})
-export class GameSelectionPageComponentComponent implements OnInit {
-    constructor() {}
-
-    ngOnInit(): void {}
-}
-*/
