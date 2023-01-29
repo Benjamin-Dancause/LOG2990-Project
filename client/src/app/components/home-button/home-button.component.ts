@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-home-button',
-  templateUrl: './home-button.component.html',
-  styleUrls: ['./home-button.component.scss']
+    selector: 'app-home-button',
+    templateUrl: './home-button.component.html',
+    styleUrls: ['./home-button.component.scss'],
 })
 export class HomeButtonComponent implements OnInit {
+    constructor() {}
 
-  constructor() { }
+    @Input()
+    text: string;
 
-  ngOnInit(): void {
-  }
-
+    ngOnInit(): void {}
 }
