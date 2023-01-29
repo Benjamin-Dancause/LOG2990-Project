@@ -1,5 +1,7 @@
+import { Location } from '@angular/common';
 import { HttpClientModule, HttpResponse } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, inject, TestBed, waitForAsync } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MainPageButtonComponent } from '@app/components/main-page-button/main-page-button.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
@@ -12,7 +14,6 @@ describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
     let communicationServiceSpy: SpyObj<CommunicationService>;
-    const { location } = window;
 
     beforeEach(async () => {
         communicationServiceSpy = jasmine.createSpyObj('ExampleService', ['basicGet', 'basicPost']);
@@ -36,14 +37,16 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should navigate to /game-selection when Classique is clicked', () => {
-        const button = fixture.debugElement.nativeElement.querySelector('#btn-Classique');
-        button.click();
-        fixture.detectChanges();
-        fixture.whenStable().then(() => {
-            expect(location.pathname).toEqual('/game-selection');
-        });
-    });
+    it('should navigate to /game-selection when Classique is clicked', waitForAsync(
+        inject([Location, Router], (location: Location, router: Router) => {
+            const button = fixture.debugElement.nativeElement.querySelector('#btn-Classique');
+            button.click();
+            fixture.detectChanges();
+            fixture.whenStable().then(() => {
+                expect(location.path()).toEqual('/game-selection');
+            });
+        }),
+    ));
 
     it("should have as title 'Le Jeu Des Différences'", () => {
         expect(component.title).toEqual('Le Jeu Des Différences');
