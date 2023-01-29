@@ -4,6 +4,7 @@
 
     <div class="game-card-container">
         <app-game-card
+            class="componentLeft"
             *ngFor="let game of displayedGames; index as i"
             [gameTitle]="game.title"
             [imageUrl]="game.image"
@@ -11,7 +12,13 @@
             [configuration]="game.configuration"
         ></app-game-card>
     </div>
-    <app-previous-next-button [showBackButton]="currentPage > 0" [showNextButton]="currentPage < lastPage" (back)="onBack()" (next)="onNext()">
+    <app-previous-next-button
+        id="previousNext"
+        [showBackButton]="currentPage > 0"
+        [showNextButton]="currentPage < lastPage"
+        (back)="onBack()"
+        (next)="onNext()"
+    >
     </app-previous-next-button>
 
     <!-- 
