@@ -4,7 +4,7 @@
 
     <div class="game-card-container">
         <app-game-card
-            class="componentLeft"
+            class="component"
             *ngFor="let game of displayedGames; index as i"
             [gameTitle]="game.title"
             [imageUrl]="game.image"
@@ -20,29 +20,4 @@
         (next)="onNext()"
     >
     </app-previous-next-button>
-
-    <!-- 
-    <div class="game-card-container">
-        <app-game-card
-            [gameTitle]="'Angry Birds'"
-            [imageUrl]="'https://i.stack.imgur.com/6umGW.png'"
-            class="componentLeft"
-            level="easy"
-            [configuration]="true"
-        >
-        </app-game-card>
-        <app-game-card
-            [gameTitle]="gameTitle2"
-            [imageUrl]="'https://i.stack.imgur.com/6umGW.png'"
-            class="componentRight"
-            level="hard"
-        ></app-game-card>
-        <app-game-card [gameTitle]="gameTitle3" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="componentLeft" level="hard"></app-game-card>
-        <app-game-card
-            [gameTitle]="gameTitle4"
-            [imageUrl]="'https://i.stack.imgur.com/6umGW.png'"
-            class="componentRight"
-            level="easy"
-        ></app-game-card>
-    </div>
---></div>
+</div>
