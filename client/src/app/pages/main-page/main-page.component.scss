@@ -1,3 +1,11 @@
+//colour variables
+$background-color: rgba(0, 0, 0, 0.82);
+$cyan-text: rgb(136, 231, 243);
+$blue-border: rgb(131, 172, 247);
+$blue-glow: rgb(85, 131, 218);
+$orange-glow: rgb(255, 60, 60);
+$orange-border: #ff9900ff;
+
 .container {
     background-image: url('https://cdna.artstation.com/p/assets/images/images/015/369/742/large/bogdan-mb0sco-arcade-static.jpg?1548087194');
     background-repeat: no;
@@ -40,28 +48,27 @@
     font-size: 1.5em;
     margin-top: 0.25em;
     margin-bottom: 0.25em;
-    color: rgb(65, 204, 204);
+    color: $cyan-text;
 }
 
 .header-item {
-    padding-top: 100px;
+    margin-top: 100px;
     font-size: 69px;
-    color: aqua;
+    color: $cyan-text;
     justify-content: center;
     text-align: center;
 }
 
 .footer-item {
+    background-color: $background-color;
     text-align: center;
-    color: aqua;
+    color: $cyan-text;
+    border-top: 3px solid $blue-border;
+    border-left: 3px solid $blue-border;
+    border-right: 3px solid $blue-border;
+    box-shadow: 0 0 30px 4px $blue-glow;
     justify-content: center;
-}
-
-.server-message {
-    justify-content: center;
-    width: 20%;
-    min-width: min-content;
-}
-.msg {
-    color: aqua;
+    align-content: center;
+    width: 1000px;
+    border-radius: 15px 15px 0 0;
 }

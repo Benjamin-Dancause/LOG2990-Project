@@ -1,10 +1,21 @@
+//Colour variables
+$background-color: rgba(0, 0, 0, 0.644);
+$background-color-hover: #2e2e2e;
+$cyan-text: rgb(136, 231, 243);
+$cyan-glow: rgb(123, 226, 252);
+$cyan-border: rgb(126, 222, 235);
+$cyan-border-left: rgba(109, 188, 199, 0.774);
+$orange-glow: rgb(255, 60, 60);
+$orange-border: #ff9900ff;
+$orange-border-left: rgba(255, 153, 0, 0.774);
+
 .button {
-    background-color: rgba(0, 0, 0, 0.644);
+    background-color: $background-color;
     position: relative;
     display: inline-block;
     padding: 15px;
     border-radius: 2px;
-    color: rgb(136, 231, 243);
+    color: $cyan-text;
     font-size: 50px;
     font-weight: bold;
     text-decoration: none;
@@ -12,19 +23,19 @@
     overflow: hidden;
     margin: 10px;
     font-family: 'Cyber', sans-serif;
-    border: 3px solid #ff9900ff;
-    border-left: 10px solid rgba(255, 153, 0, 0.774);
-    box-shadow: 0 0 30px 4px rgb(255, 60, 60);
+    border: 3px solid $orange-border;
+    box-shadow: 0 0 30px 4px $orange-glow;
+    border-left: 10px solid $orange-border-left;
     transition: all 0.1s linear;
 
     &:hover {
-        background-color: #2e2e2e;
-        border: 3px solid rgb(126, 222, 235);
-        border-left: 10px solid rgba(109, 188, 199, 0.774);
-        box-shadow: 0 0 30px 4px rgb(123, 226, 252);
+        background-color: $background-color-hover;
+        border: 3px solid $cyan-border;
+        box-shadow: 0 0 30px 4px $cyan-glow;
+        border-left: 10px solid $cyan-border-left;
     }
     &:active {
-        box-shadow: 0 0 30px 8px rgb(123, 226, 252);
+        box-shadow: 0 0 30px 8px $cyan-glow;
     }
 }
 .btn-width {
