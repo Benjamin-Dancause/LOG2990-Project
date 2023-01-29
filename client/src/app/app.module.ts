@@ -15,6 +15,7 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { HomeButtonComponent } from './components/home-button/home-button.component';
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
+import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
 
 /**
@@ -36,6 +37,7 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
         MainPageButtonComponent,
         GameDifficultyLevelComponent,
         HomeButtonComponent,
+        PreviousNextButtonComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
     providers: [],
