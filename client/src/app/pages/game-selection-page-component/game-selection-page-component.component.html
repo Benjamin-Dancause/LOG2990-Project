@@ -4,7 +4,7 @@
 
     <div class="game-card-container">
         <app-game-card
-            *ngFor="let game of games; index as i"
+            *ngFor="let game of displayedGames; index as i"
             [gameTitle]="game.title"
             [imageUrl]="'https://i.stack.imgur.com/6umGW.png'"
             [level]="game.level"

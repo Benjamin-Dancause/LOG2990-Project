@@ -10,12 +10,16 @@ export class GameSelectionPageComponent {
         { title: 'Game 1', image: 'game1.jpg', level: 'easy', configuration: false },
         { title: 'Game 2', image: 'game2.jpg', level: 'medium', configuration: true },
         { title: 'Game 3', image: 'game3.jpg', level: 'hard', configuration: false },
-        { title: 'Game 1', image: 'game1.jpg', level: 'easy', configuration: false },
-        { title: 'Game 2', image: 'game2.jpg', level: 'medium', configuration: true },
-        { title: 'Game 3', image: 'game3.jpg', level: 'hard', configuration: false },
-        { title: 'Game 2', image: 'game2.jpg', level: 'medium', configuration: true },
-        { title: 'Game 3', image: 'game3.jpg', level: 'hard', configuration: false },
+        { title: 'Game 4', image: 'game1.jpg', level: 'easy', configuration: false },
+        { title: 'Game 5', image: 'game2.jpg', level: 'medium', configuration: true },
+        { title: 'Game 6', image: 'game3.jpg', level: 'hard', configuration: false },
+        { title: 'Game 7', image: 'game2.jpg', level: 'medium', configuration: true },
+        { title: 'Game 8', image: 'game3.jpg', level: 'hard', configuration: false },
     ];
+
+    startIndex = 0;
+    endIndex = 3;
+    displayedGames = this.games.slice(this.startIndex, this.endIndex + 1);
 
     gameTitle1 = 'Angry Birds';
     gameTitle2 = 'DbD';
