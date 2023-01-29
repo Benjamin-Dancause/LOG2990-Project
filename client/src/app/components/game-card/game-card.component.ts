@@ -13,6 +13,8 @@ export class GameCardComponent {
 
     @Input() level: string;
 
+    @Input() configuration: boolean;
+
     get color() {
         switch (this.level) {
             case 'easy':
@@ -33,5 +35,9 @@ export class GameCardComponent {
             default:
                 return 'Moyen';
         }
+    }
+
+    onClick(link: string): void {
+        // navigate or do something with the link
     }
 }

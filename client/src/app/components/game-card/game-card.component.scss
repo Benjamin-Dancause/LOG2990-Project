@@ -7,7 +7,7 @@
     width: 65vh;
     border: 3px solid rgb(255, 255, 255);
     margin-right: 10%;
-    margin-left: 15%;
+    margin-left: 13%;
     margin-top: 5%;
     background-color: rgb(202, 202, 202);
 
@@ -49,4 +49,23 @@
     justify-content: center;
     opacity: 0.7;
     font-size: 1.5em;
+}
+
+.container .button-container {
+    position: absolute;
+    bottom: 5%;
+    left: 45%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+}
+.container .button-container button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 2px;
+    border-radius: 5px;
+    min-height: 40px;
+    position: relative;
+    word-wrap: break-word;
+    text-align: center;
 }
