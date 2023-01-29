@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 })
 export class GameSelectionPageComponent {
     games = [
-        { title: 'Game 1', image: 'https://upload.wikimedia.org/wikipedia/en/4/4e/Angry_Birds_logo.svg', level: 'easy', configuration: false },
+        { title: 'Game 1', image: 'game1.jpg', level: 'easy', configuration: false },
         { title: 'Game 2', image: 'game2.jpg', level: 'medium', configuration: true },
         { title: 'Game 3', image: 'game3.jpg', level: 'hard', configuration: false },
         { title: 'Game 1', image: 'game1.jpg', level: 'easy', configuration: false },
