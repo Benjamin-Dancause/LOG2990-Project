@@ -2,9 +2,20 @@
     <p class="indication">Choissisez un jeu!</p>
     <app-home-button id="home"></app-home-button>
     <div class="game-card-container">
-        <app-game-card [gameTitle]="'Angry Birds'" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="component" level="easy"> </app-game-card>
-        <app-game-card [gameTitle]="gameTitle2" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="component" level="hard"></app-game-card>
-        <app-game-card [gameTitle]="gameTitle3" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="component" level="hard"></app-game-card>
-        <app-game-card [gameTitle]="gameTitle4" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="component" level="easy"></app-game-card>
+        <app-game-card [gameTitle]="'Angry Birds'" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="componentLeft" level="easy">
+        </app-game-card>
+        <app-game-card
+            [gameTitle]="gameTitle2"
+            [imageUrl]="'https://i.stack.imgur.com/6umGW.png'"
+            class="componentRight"
+            level="hard"
+        ></app-game-card>
+        <app-game-card [gameTitle]="gameTitle3" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="componentLeft" level="hard"></app-game-card>
+        <app-game-card
+            [gameTitle]="gameTitle4"
+            [imageUrl]="'https://i.stack.imgur.com/6umGW.png'"
+            class="componentRight"
+            level="easy"
+        ></app-game-card>
     </div>
 </div>

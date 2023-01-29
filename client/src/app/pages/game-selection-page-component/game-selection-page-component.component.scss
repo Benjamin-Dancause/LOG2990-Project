@@ -31,9 +31,17 @@
     grid-template-rows: repeat(2, 1fr);
 }
 
-.component {
+.container .componentLeft {
+    position: relative;
     width: 100%;
     height: 100%;
+    left: 12%;
+}
+.container .componentRight {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    right: 12%;
 }
 
 .container #home {
