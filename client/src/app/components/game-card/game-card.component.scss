@@ -5,7 +5,7 @@
     position: relative;
     height: 35vh;
     width: 65vh;
-    border: 3px solid rgb(255, 255, 255);
+    border: 4px solid rgb(126, 222, 235);
     margin-right: 10%;
     margin-left: 13%;
     margin-top: 5%;
@@ -13,8 +13,65 @@
 
     border-radius: 10px;
     color: rgb(0, 0, 0);
-    font-family: sans-serif;
     opacity: 0.8;
+
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+
+    &::after {
+        position: absolute;
+        top: 100%;
+        left: 100%;
+        transform: translate(-50%);
+        color: #bdffc5;
+        transition: all 20.8s linear;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        display: block;
+        height: 15px;
+        width: 15px;
+        background: #44c6f6;
+        box-shadow: 0px 0px 10px 4px rgb(230, 195, 23);
+        opacity: 0;
+        transition: all 0.1s linear;
+        border-radius: 100%;
+        animation: star 1.3s linear infinite;
+    }
+
+    @keyframes star {
+        0% {
+            margin-left: -0px;
+            margin-top: -8px;
+        }
+        25% {
+            margin-left: 98%;
+            margin-top: -8px;
+        }
+
+        50% {
+            margin-left: 100%;
+            margin-top: 53%;
+        }
+        75% {
+            margin-left: -8px;
+            margin-top: 53%;
+        }
+        100% {
+            margin-left: -8px;
+            margin-top: -8px;
+        }
+    }
+
+    &:hover {
+        &::before {
+            opacity: 1;
+            animation: star 9s linear infinite;
+        }
+        background-color: rgb(169, 169, 169);
+    }
 }
 
 .container img {
@@ -58,6 +115,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     align-items: center;
+    background: var(--color-black-1);
 }
 .container .button-container button {
     flex: 1;
