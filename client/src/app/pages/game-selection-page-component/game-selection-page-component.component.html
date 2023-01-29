@@ -6,13 +6,12 @@
         <app-game-card
             *ngFor="let game of displayedGames; index as i"
             [gameTitle]="game.title"
-            [imageUrl]="'https://i.stack.imgur.com/6umGW.png'"
+            [imageUrl]="game.image"
             [level]="game.level"
             [configuration]="game.configuration"
         ></app-game-card>
     </div>
-    <app-previous-next-button>
-        [showBackButton]="currentPage > 0" [showNextButton]="currentPage < lastPage" (back)="onBack()" (next)="onNext()"
+    <app-previous-next-button [showBackButton]="currentPage > 0" [showNextButton]="currentPage < lastPage" (back)="onBack()" (next)="onNext()">
     </app-previous-next-button>
 
     <!-- 

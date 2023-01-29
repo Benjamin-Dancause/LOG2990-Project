@@ -9,8 +9,8 @@ export class PreviousNextButtonComponent {
     @Input() showBackButton: boolean;
     @Input() showNextButton: boolean;
 
-    @Output() back = new EventEmitter<void>();
-    @Output() next = new EventEmitter<void>();
+    @Output() back = new EventEmitter();
+    @Output() next = new EventEmitter();
 
     onBack() {
         this.back.emit();
