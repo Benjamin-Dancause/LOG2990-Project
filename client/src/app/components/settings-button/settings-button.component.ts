@@ -9,19 +9,14 @@ import { MatDialog } from '@angular/material/dialog';
 export class SettingsButtonComponent {
     @ViewChild('settingsPopupTemplate', { static: true })
     settingsPopupTemplate: TemplateRef<unknown>;
-    countdownTime: 30;
-    penaltyTime: 5;
-    timeGained: 5;
+    countdownTime: number;
+    penaltyTime: number;
+    timeGained: number;
     constructor(public dialog: MatDialog) {}
 
     openSettings(): void {
         this.dialog.open(this.settingsPopupTemplate, {
             width: '500px',
-            data: {
-                countdownTime: this.countdownTime,
-                penaltyTime: this.penaltyTime,
-                timeGained: this.timeGained,
-            },
         });
     }
 }
