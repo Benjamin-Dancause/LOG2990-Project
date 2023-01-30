@@ -136,3 +136,69 @@
         color: white;
     }
 }
+
+.container .best-times-container {
+    position: absolute;
+
+    flex-direction: row;
+    align-items: center;
+
+    left: 47%;
+    bottom: 18%;
+}
+
+.best-times-container h4 {
+    margin-bottom: 0px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+.best-times-container .solo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.best-times-container .oneVsOne {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.best-times-container .solo * {
+    margin-left: 5px;
+}
+.best-times-container .oneVsOne * {
+    margin-left: 5px;
+}
+
+.gold,
+.silver,
+.bronze {
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    border: 3px;
+    border-color: #333;
+}
+
+.gold {
+    background-color: rgb(215, 183, 1);
+}
+
+.silver {
+    background-color: rgb(146, 146, 146);
+}
+
+.bronze {
+    background-color: rgba(72, 62, 23, 0.714);
+}
+
+.best-times-container span {
+    color: white;
+    text-align: center;
+    font-size: 65%;
+}
