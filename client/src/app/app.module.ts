@@ -17,6 +17,7 @@ import { CreateImageComponent } from './components/create-image/create-image.com
 import { HomeButtonComponent } from './components/home-button/home-button.component';
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
 import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
+import { SettingsButtonComponent } from './components/settings-button/settings-button.component';
 import { SliderComponent } from './components/slider/slider.component';
 import { ConfigPageComponent } from './pages/config-page-component/config-page-component.component';
 import { CreatePageComponent } from './pages/create-page/create-page.component';
@@ -48,6 +49,7 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
         GameSelectionPageComponent,
         GameCardComponent,
         MainPageButtonComponent,
+        SettingsButtonComponent,
         HomeButtonComponent,
         PreviousNextButtonComponent,
         ConfigPageComponent,
