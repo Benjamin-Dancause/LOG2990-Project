@@ -44,8 +44,8 @@ export class PlayAreaComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawService.drawGrid();
-        this.drawService.drawWord('Différence');
+        //this.drawService.drawGrid();
+        //this.drawService.drawWord('Différence');
         this.canvas.nativeElement.focus();
     }
 

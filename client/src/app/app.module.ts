@@ -17,6 +17,9 @@ import { HomeButtonComponent } from './components/home-button/home-button.compon
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
 import { TopBarComponent } from './components/top-bar/top-bar/top-bar.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
+import { TimerComponent } from './components/timer/timer.component';
+import { HintButtonComponent } from './components/hint-button/hint-button.component';
+import { GiveUpButtonComponent } from './components/give-up-button/give-up-button.component';
 
 /**
  * Main module that is used in main.ts.
@@ -38,6 +41,9 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
         GameDifficultyLevelComponent,
         HomeButtonComponent,
         TopBarComponent,
+        TimerComponent,
+        HintButtonComponent,
+        GiveUpButtonComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],
