@@ -1,14 +1,25 @@
+.container {
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+}
 .canvas-area {
-    display: block;
+    display: flex;
     position: relative;
 }
 .canvas-wrap {
+    display: flex;
+    flex-direction: column;
+    margin: 30px;
+    //width: 30%;
     position: relative;
 }
 .canvas-wrap .delete {
+    justify-self: flex-end;
+    align-self: flex-end;
     position: absolute;
-    top: 2px;
-    right: 2px;
+    top: 40px;
+    right: 10px;
     z-index: 100;
 }
 .btn {
@@ -21,4 +32,18 @@
     height: 480px;
     border: 1px solid black;
     margin-top: 30px;
+}
+.button-area {
+    display: flex;
+    flex-direction: row;
+    justify-self: center;
+    width: 100%;
+    height: 100%;
+}
+.button-area-wrao {
+    display: flex;
+    flex-direction: row;
+    justify-self: center;
+    width: 100%;
+    height: 100%;
 }
