@@ -1,19 +1,30 @@
 <div class="container justified">
-    <h1 class="header-item">Bienvenue au cours {{ title }}</h1>
-    <img src="https://bit.ly/3QofL1J" alt="Logo Projet" />
+    <h1 class="header-item">{{ title }}</h1>
     <section id="server-message" class="justified">
-        <p>Petit message du serveur : {{ message.getValue() }}</p>
         <div class="justified">
-            <button class="button" (click)="getMessagesFromServer()">Récupérer un message du serveur</button>
-            <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
-            <button class="button" routerLink="/material">Voir la page démo Angular Material</button>
+            <app-main-page-button
+                id="btn-Classique"
+                class="button btn-sidespacing"
+                text="Classique"
+                routerLink="/game-selection"
+            ></app-main-page-button>
+            <span class="mid-row">
+                <img src="https://i.stack.imgur.com/6umGW.png" class="img-sidespacing" />
+                <app-main-page-button id="btn-TempsLimite" class="button" text="Temps Limité" class="btn-sidespacing"></app-main-page-button>
+            </span>
+            <app-main-page-button
+                id="btn-Configuration"
+                class="button btn-sidespacing"
+                text="Configuration"
+                routerLink="/material"
+            ></app-main-page-button>
         </div>
     </section>
 
-    <button class="button" routerLink="/game">Jouer !</button>
+    <button id="test-btn" class="button" routerLink="/game">Jouer !</button>
 
     <footer class="footer-item">
-        <h4 class="team-name">Équipe Poly</h4>
+        <h4 class="team-name">Équipe 210</h4>
         <p>
             <span>Charles Arsenault</span>, <span>Yuliia Ozirska</span>, <span>Jean-Christophe Pelletier</span>, <span>Ioannis Nikoloudis</span>,
             <span>Jérémy Langevin</span>, <span>Benjamin Dancause</span>

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { GameCardComponent } from '@app/components/game-card/game-card.component';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
@@ -13,8 +14,12 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { ButtonComponent } from './components/button/button.component';
 import { CreateImageComponent } from './components/create-image/create-image.component';
-import { CreatePageComponent } from './pages/create-page/create-page.component';
+import { HomeButtonComponent } from './components/home-button/home-button.component';
+import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
+import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
 import { SliderComponent } from './components/slider/slider.component';
+import { CreatePageComponent } from './pages/create-page/create-page.component';
+import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
 
 /**
  * Main module that is used in main.ts.
@@ -25,15 +30,25 @@ import { SliderComponent } from './components/slider/slider.component';
 @NgModule({
     declarations: [
         AppComponent,
+
         GamePageComponent,
+
         MainPageComponent,
+
         MaterialPageComponent,
+
         PlayAreaComponent,
+
         SidebarComponent,
         ButtonComponent,
         CreatePageComponent,
         CreateImageComponent,
         SliderComponent,
+        GameSelectionPageComponent,
+        GameCardComponent,
+        MainPageButtonComponent,
+        HomeButtonComponent,
+        PreviousNextButtonComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
     providers: [],
