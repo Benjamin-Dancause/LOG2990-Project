@@ -1,9 +1,23 @@
 <div class="container justified">
     <p class="indication">Choissisez un jeu!</p>
+    <app-home-button id="home"></app-home-button>
+
     <div class="game-card-container">
-        <app-game-card [gameTitle]="'Angry Birds'" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="component" level="easy"> </app-game-card>
-        <app-game-card [gameTitle]="gameTitle2" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="component" level="hard"></app-game-card>
-        <app-game-card [gameTitle]="gameTitle3" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="component" level="hard"></app-game-card>
-        <app-game-card [gameTitle]="gameTitle4" [imageUrl]="'https://i.stack.imgur.com/6umGW.png'" class="component" level="easy"></app-game-card>
+        <app-game-card
+            class="component"
+            *ngFor="let game of displayedGames; index as i"
+            [gameTitle]="game.title"
+            [imageUrl]="game.image"
+            [level]="game.level"
+            [configuration]="game.configuration"
+        ></app-game-card>
     </div>
+    <app-previous-next-button
+        id="previousNext"
+        [showBackButton]="currentPage > 0"
+        [showNextButton]="currentPage < lastPage"
+        (back)="onBack()"
+        (next)="onNext()"
+    >
+    </app-previous-next-button>
 </div>

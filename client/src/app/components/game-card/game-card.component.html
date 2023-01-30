@@ -7,5 +7,11 @@
         <div [ngStyle]="{ 'background-color': color }" id="difficulty">
             <span>{{ levelText }}</span>
         </div>
+        <div class="button-container">
+            <button *ngIf="!configuration" [routerLink]="['/game']">Jouer en solo</button>
+            <button *ngIf="!configuration">Créer/joindre une partie 1vs1</button>
+            <button *ngIf="configuration">Supprimer partie</button>
+            <button *ngIf="configuration">Réinitialiser les meilleurs temps</button>
+        </div>
     </div>
 </div>
