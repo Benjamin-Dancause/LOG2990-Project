@@ -1,0 +1,24 @@
+.canvas-area {
+    display: block;
+    position: relative;
+}
+.canvas-wrap {
+    position: relative;
+}
+.canvas-wrap .delete {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    z-index: 100;
+}
+.btn {
+    display: inline-block;
+    margin: 20px;
+}
+.image-container {
+    display: block;
+    width: 640px;
+    height: 480px;
+    border: 1px solid black;
+    margin-top: 30px;
+}

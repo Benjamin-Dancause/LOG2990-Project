@@ -12,9 +12,13 @@ import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { ButtonComponent } from './components/button/button.component';
+import { CreateImageComponent } from './components/create-image/create-image.component';
 import { HomeButtonComponent } from './components/home-button/home-button.component';
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
 import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
+import { SliderComponent } from './components/slider/slider.component';
+import { CreatePageComponent } from './pages/create-page/create-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
 
 /**
@@ -26,11 +30,20 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
 @NgModule({
     declarations: [
         AppComponent,
+
         GamePageComponent,
+
         MainPageComponent,
+
         MaterialPageComponent,
+
         PlayAreaComponent,
+
         SidebarComponent,
+        ButtonComponent,
+        CreatePageComponent,
+        CreateImageComponent,
+        SliderComponent,
         GameSelectionPageComponent,
         GameCardComponent,
         MainPageButtonComponent,

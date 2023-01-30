@@ -1,22 +1,20 @@
-.middle-container {
-    display: inline-block;
-}
-
-.justified {
+.image-box {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
+    width: 95%;
+    height: 100%;
+    border: 1px solid black;
+    margin: auto;
 }
 
-.button {
-    margin-top: 10px;
-    text-align: center;
+.image-area {
+    display: flex;
 }
-.image-container {
-    top: 50%;
-    left: 50%;
+.image {
+    width: 50%;
+    margin: 20px;
 }
-.image-section div {
-    display: inline;
+#same-image {
+    display: block;
 }
