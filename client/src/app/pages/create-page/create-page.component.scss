@@ -1,3 +1,15 @@
+.return-btn {
+    //align-self: flex-start;
+    position: fixed;
+    left: 75px;
+    top: 75px;
+}
+.save-btn {
+    align-self: flex-end;
+    position: fixed;
+    right: 75px;
+    bottom: 75px;
+}
 .image-box {
     display: flex;
     align-items: center;
@@ -7,7 +19,6 @@
     border: 1px solid black;
     margin: auto;
 }
-
 .image-area {
     display: flex;
 }
