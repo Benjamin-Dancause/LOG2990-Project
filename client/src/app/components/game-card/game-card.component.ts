@@ -12,17 +12,17 @@ export class GameCardComponent {
     @Input() configuration: boolean;
 
     bestSoloTimes = [
-        { name: 'User 1', time: '00:30:00' },
-        { name: 'User 2', time: '00:45:00' },
-        { name: 'User 3', time: '00:20:00' },
-        { name: 'User 4', time: '00:35:00' },
+        { name: 'User 1', time: '00:30' },
+        { name: 'User 2', time: '00:45' },
+        { name: 'User 3', time: '00:20' },
+        { name: 'User 4', time: '00:35' },
     ];
 
     best1vs1Times = [
-        { name: 'User 5', time: '00:25:00' },
-        { name: 'User 6', time: '00:40:00' },
-        { name: 'User 7', time: '00:10:00' },
-        { name: 'User 8', time: '00:30:00' },
+        { name: 'User 5', time: '00:25' },
+        { name: 'User 6', time: '00:40' },
+        { name: 'User 7', time: '00:10' },
+        { name: 'User 8', time: '00:30' },
     ];
 
     get color() {

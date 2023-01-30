@@ -139,53 +139,66 @@
 
 .container .best-times-container {
     position: absolute;
-    left: 50%;
-}
 
-.best-times-container {
-    display: grid;
-    grid-template-rows: repeat(1, 2);
+    flex-direction: row;
     align-items: center;
-    padding: 20px;
+
+    left: 47%;
+    bottom: 18%;
 }
 
 .best-times-container h4 {
-    margin-bottom: 20px;
+    margin-bottom: 0px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+.best-times-container .solo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.best-times-container .oneVsOne {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.best-times-container .solo * {
+    margin-left: 5px;
+}
+.best-times-container .oneVsOne * {
+    margin-left: 5px;
+}
+
+.gold,
+.silver,
+.bronze {
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    border: 3px;
+    border-color: #333;
 }
 
 .gold {
-    background-color: gold;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
+    background-color: rgb(215, 183, 1);
 }
 
 .silver {
-    background-color: silver;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
+    background-color: rgb(146, 146, 146);
 }
 
 .bronze {
-    background-color: bronze;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
+    background-color: rgba(72, 62, 23, 0.714);
 }
 
 .best-times-container span {
     color: white;
+    text-align: center;
+    font-size: 65%;
 }

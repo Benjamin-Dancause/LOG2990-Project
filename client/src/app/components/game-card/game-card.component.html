@@ -8,20 +8,29 @@
             <span>{{ levelText }}</span>
         </div>
         <div class="best-times-container">
-            <h4>Meilleurs temps en solo</h4>
-            <div *ngFor="let time of bestSoloTimes.slice(0, 3); let i = index">
-                <div [ngClass]="{ gold: i === 0, silver: i === 1, bronze: i === 2 }">
-                    <span>{{ time.name }}: {{ time.time }}</span>
+            <h4>Meilleurs temps</h4>
+            <div class="solo">
+                <h4>Solo</h4>
+                <div
+                    *ngFor="let time of bestSoloTimes.slice(0, 3); let i = index"
+                    class="best-time"
+                    [ngClass]="{ gold: i === 0, silver: i === 1, bronze: i === 2 }"
+                >
+                    <span>{{ time.name }} {{ time.time }}</span>
                 </div>
             </div>
-
-            <h4>Meilleurs temps en 1vs1</h4>
-            <div *ngFor="let time of best1vs1Times.slice(0, 3); let i = index">
-                <div [ngClass]="{ gold: i === 0, silver: i === 1, bronze: i === 2 }">
-                    <span>{{ time.name }}: {{ time.time }}</span>
+            <div class="oneVsOne">
+                <h4>1vs1</h4>
+                <div
+                    *ngFor="let time of best1vs1Times.slice(0, 3); let i = index"
+                    class="best-time"
+                    [ngClass]="{ gold: i === 0, silver: i === 1, bronze: i === 2 }"
+                >
+                    <span>{{ time.name }} {{ time.time }}</span>
                 </div>
             </div>
         </div>
+
         <div class="button-container">
             <button *ngIf="!configuration" [routerLink]="['/game']">Jouer en solo</button>
             <button *ngIf="!configuration">Créer/joindre une partie 1vs1</button>
