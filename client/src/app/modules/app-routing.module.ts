@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ConfigPageComponent } from '@app/pages/config-page-component/config-page-component.component';
 import { CreatePageComponent } from '@app/pages/create-page/create-page.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { GameSelectionPageComponent } from '@app/pages/game-selection-page-component/game-selection-page-component.component';
@@ -13,6 +14,7 @@ const routes: Routes = [
     { path: 'create', component: CreatePageComponent },
     { path: 'material', component: MaterialPageComponent },
     { path: 'game-selection', component: GameSelectionPageComponent },
+    { path: 'config', component: ConfigPageComponent },
     { path: '**', redirectTo: '/home' },
 ];
 

@@ -18,6 +18,7 @@ import { HomeButtonComponent } from './components/home-button/home-button.compon
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
 import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
 import { SliderComponent } from './components/slider/slider.component';
+import { ConfigPageComponent } from './pages/config-page-component/config-page-component.component';
 import { CreatePageComponent } from './pages/create-page/create-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
 
@@ -49,6 +50,7 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
         MainPageButtonComponent,
         HomeButtonComponent,
         PreviousNextButtonComponent,
+        ConfigPageComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
     providers: [],
