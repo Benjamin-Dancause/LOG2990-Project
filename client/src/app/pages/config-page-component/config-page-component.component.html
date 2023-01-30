@@ -1,5 +1,5 @@
 <div class="container justified">
-    <p class="indication">Choissisez un jeu!</p>
+    <p class="indication">Configuration</p>
     <app-home-button id="home"></app-home-button>
 
     <div class="game-card-container">
@@ -20,4 +20,5 @@
         (next)="onNext()"
     >
     </app-previous-next-button>
+    <button class="create" [routerLink]="['/create']">Création de jeu</button>
 </div>
