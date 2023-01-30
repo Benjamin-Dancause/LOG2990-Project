@@ -1,5 +1,9 @@
-<div class="container">
-    <h1 class="title">Hello!</h1>
-    <app-create-image id="origin-image"></app-create-image>
-    <app-create-image id="modifiable-image"></app-create-image>
-</div>
+<main>
+    <h1 class="title">Créez votre propre partie !</h1>
+    <div class="image-box">
+        <button routerLink="/main-page">Retour</button>
+        <div class="image-area">
+            <app-create-image class="image" id="origin-image"></app-create-image>
+        </div>
+    </div>
+</main>

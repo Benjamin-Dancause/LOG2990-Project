@@ -1,4 +1,18 @@
-<div>
-    <canvas class="image-container"></canvas>
-    <app-button nomButton="Ajouter"></app-button>
+<div class="container">
+    <div class="canvas-area">
+        <div class="canvas-wrap">
+            <app-button class="delete" buttonName="Effacer"></app-button>
+            <canvas class="image-container"></canvas>
+        </div>
+        <div class="canvas-wrap">
+            <app-button class="delete" buttonName="Effacer"></app-button>
+            <canvas class="image-container"></canvas>
+        </div>
+    </div>
+    <div class="button-area">
+        <app-button class="btn" buttonName="Ajouter des images différentes"></app-button>
+        <app-button class="btn" buttonName="Ajouter la même image"></app-button>
+        <app-slider></app-slider>
+        <app-button class="btn" buttonName="Détecter les différences"></app-button>
+    </div>
 </div>
