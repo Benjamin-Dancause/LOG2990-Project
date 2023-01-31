@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-give-up-button',
@@ -6,10 +7,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./give-up-button.component.scss']
 })
 export class GiveUpButtonComponent implements OnInit {
+  @Input() text: string;
+  @Input() color: string;
+  
+  constructor(private router: Router) { }
 
-  constructor() { }
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
+  onClick() {
+    this.router.navigate(['/home']);
   }
-
 }
