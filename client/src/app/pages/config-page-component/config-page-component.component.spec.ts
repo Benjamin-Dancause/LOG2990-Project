@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MainPageButtonComponent } from './main-page-button.component';
+import { ConfigPageComponent } from './config-page-component.component';
 
-describe('MainPageButtonComponent', () => {
-    let component: MainPageButtonComponent;
-    let fixture: ComponentFixture<MainPageButtonComponent>;
+describe('ConfigPageComponent', () => {
+    let component: ConfigPageComponent;
+    let fixture: ComponentFixture<ConfigPageComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [MainPageButtonComponent],
+            declarations: [ConfigPageComponent],
         }).compileComponents();
 
-        fixture = TestBed.createComponent(MainPageButtonComponent);
+        fixture = TestBed.createComponent(ConfigPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
