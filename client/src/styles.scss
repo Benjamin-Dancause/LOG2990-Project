@@ -1,3 +1,6 @@
+//Color variables
+$background-color: rgb(25, 25, 27);
+
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
@@ -77,4 +80,5 @@ body {
 body {
     margin: 0;
     font-family: Roboto, 'Helvetica Neue', sans-serif;
+    background-color: $background-color;
 }

@@ -1,20 +1,44 @@
 <div class="container">
     <div class="canvas-area">
         <div class="canvas-wrap">
-            <app-button class="delete" buttonName="Effacer"></app-button>
+            <button class="btn delete-btn">
+                <img class="del-icon" src="../../assets/delete-icon.png" />
+            </button>
             <canvas class="image-container"></canvas>
         </div>
         <div class="canvas-wrap">
-            <app-button class="delete" buttonName="Effacer"></app-button>
+            <button class="btn delete-btn">
+                <img class="del-icon" src="../../assets/delete-icon.png" />
+            </button>
             <canvas class="image-container"></canvas>
         </div>
     </div>
-    <div class="button-area-wrap">
-        <div class="button-area">
-            <app-button class="btn" buttonName="Ajouter des images différentes"></app-button>
-            <app-button class="btn" buttonName="Ajouter la même image"></app-button>
+    <div class="button-area">
+        <div class="add-btn">
+            <button class="btn" (click)="showInputDifferent()">Ajouter des images différentes</button>
+            <button class="btn" (click)="showInputSame()">Ajouter la même image</button>
+        </div>
+        <div class="settings-btn">
             <app-slider></app-slider>
-            <app-button class="btn" buttonName="Détecter les différences"></app-button>
+            <button class="btn">Détecter les différences</button>
         </div>
     </div>
+    <ng-template #inputDifferentTemplate>
+        <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
+        <div class="input-container-original">
+            <p>Ajouter l'image originale</p>
+            <input type="file" (change)="validateImage($event)" />
+        </div>
+        <div class="input-container-modifiable">
+            <p>Ajouter l'image modifié</p>
+            <input type="file" (change)="validateImage($event)" />
+        </div>
+    </ng-template>
+    <ng-template #inputSameTemplate>
+        <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
+        <div class="input-container">
+            <p>Ajouter les images</p>
+            <input type="file" (change)="validateImage($event)" />
+        </div>
+    </ng-template>
 </div>
