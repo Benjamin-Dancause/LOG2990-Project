@@ -1,1 +1,7 @@
-<button class="button">Abandonner</button>
+<button 
+    [ngStyle]="{'background-color': color}" 
+    class="button"
+    (click)="onClick()"
+>
+{{ text }}
+</button>
