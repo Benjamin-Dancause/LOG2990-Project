@@ -75,16 +75,12 @@ export class CreateImageComponent implements OnInit {
     }
 
     async createDiffCanvas(): Promise<void> {
-        console.log('test');
         if (await this.uploadService.validate(this.canvasImages)) {
             this.dialog.closeAll();
             console.log(this.imageOriginal.src.toString());
             this.imageOriginal.onload = () => {
-                console.log('test');
                 if (this.ctxOriginal) {
-                    console.log('test');
                     this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
-                    console.log('test');
                 }
             };
         } else {
