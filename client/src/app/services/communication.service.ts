@@ -21,6 +21,9 @@ export class CommunicationService {
         return this.http.post(`${this.baseUrl}/example/send`, message, { observe: 'response', responseType: 'text' });
     }
 
+    imagePost(image: File): Observable<HttpResponse<string>> {
+        return this.http.post(`${this.baseUrl}/images`, image, { observe: 'response', responseType: 'text' });
+    }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);
     }
