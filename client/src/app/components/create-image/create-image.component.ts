@@ -15,12 +15,26 @@ export class CreateImageComponent implements OnInit {
     inputSameTemplate: TemplateRef<unknown>;
     @ViewChild('errorTemplate', { static: true })
     errorTemplate: TemplateRef<unknown>;
+    @ViewChild('originalCanvas', { static: true })
+    originalCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('modifiableCanvas', { static: true })
+    modifiableCanvas: ElementRef<HTMLCanvasElement>;
 
+    reader = new FileReader();
+    ctxOriginal: CanvasRenderingContext2D | null;
+    ctxModifiable: CanvasRenderingContext2D | null;
     canvasImages: File[] = [];
+    imageOriginal = new Image();
+    imageModifiable = new Image();
+    width: number = 640;
+    height: number = 480;
 
     constructor(public dialog: MatDialog, private uploadService: UploadService) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.ctxOriginal = this.originalCanvas.nativeElement.getContext('2d');
+        this.ctxModifiable = this.modifiableCanvas.nativeElement.getContext('2d');
+    }
 
     showInputDifferent(): void {
         this.dialog.open(this.inputDifferentTemplate, {
@@ -44,18 +58,35 @@ export class CreateImageComponent implements OnInit {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
             return;
         }
+        this.reader.readAsDataURL(fileEvent.target.files[0]);
+        if (this.reader.result) {
+            this.imageOriginal.src = this.reader.result.toString();
+        }
         this.canvasImages.push(fileEvent.target.files[0]);
     }
     storeDiff(fileEvent: Event): void {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
             return;
         }
+        if (this.reader.result) {
+            this.imageModifiable.src = this.reader.result.toString();
+        }
         this.canvasImages.push(fileEvent.target.files[0]);
     }
 
     async createDiffCanvas(): Promise<void> {
+        console.log('test');
         if (await this.uploadService.validate(this.canvasImages)) {
             this.dialog.closeAll();
+            console.log(this.imageOriginal.src.toString());
+            this.imageOriginal.onload = () => {
+                console.log('test');
+                if (this.ctxOriginal) {
+                    console.log('test');
+                    this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
+                    console.log('test');
+                }
+            };
         } else {
             this.dialog.closeAll();
             this.showError();
@@ -64,6 +95,9 @@ export class CreateImageComponent implements OnInit {
     async createSameCanvas(): Promise<void> {
         if (await this.uploadService.validate(this.canvasImages)) {
             this.dialog.closeAll();
+            if (this.ctxModifiable) {
+                this.ctxModifiable.drawImage(this.imageModifiable, 0, 0, this.width, this.height);
+            }
         } else {
             this.dialog.closeAll();
             this.showError();
