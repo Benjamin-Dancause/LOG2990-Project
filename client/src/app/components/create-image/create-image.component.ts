@@ -1,5 +1,6 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { UploadService } from '@app/services/upload.service';
 
 @Component({
     selector: 'app-create-image',
@@ -7,11 +8,17 @@ import { MatDialog } from '@angular/material/dialog';
     styleUrls: ['./create-image.component.scss'],
 })
 export class CreateImageComponent implements OnInit {
+    @ViewChild('myCanvas') canvasRef: ElementRef;
     @ViewChild('inputDifferentTemplate', { static: true })
     inputDifferentTemplate: TemplateRef<unknown>;
     @ViewChild('inputSameTemplate', { static: true })
     inputSameTemplate: TemplateRef<unknown>;
-    constructor(public dialog: MatDialog) {}
+    @ViewChild('errorTemplate', { static: true })
+    errorTemplate: TemplateRef<unknown>;
+
+    canvasImages: File[] = [];
+
+    constructor(public dialog: MatDialog, private uploadService: UploadService) {}
 
     ngOnInit(): void {}
 
@@ -27,17 +34,51 @@ export class CreateImageComponent implements OnInit {
             height: '200px',
         });
     }
-
-    validateImage(fileEvent: Event): void {
+    showError(): void {
+        this.dialog.open(this.errorTemplate, {
+            width: '200px',
+            height: '200px',
+        });
+    }
+    storeOriginal(fileEvent: Event): void {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
-            console.error('No files detected');
             return;
         }
-
-        const file = fileEvent.target.files[0];
-        if (!file.name.endsWith('.bmp')) {
-            console.error('File must be in BMP format');
+        this.canvasImages.push(fileEvent.target.files[0]);
+    }
+    storeDiff(fileEvent: Event): void {
+        if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
+            return;
         }
+        this.canvasImages.push(fileEvent.target.files[0]);
+    }
+
+    async createDiffCanvas(): Promise<void> {
+        if (await this.uploadService.validate(this.canvasImages)) {
+            this.dialog.closeAll();
+        } else {
+            this.dialog.closeAll();
+            this.showError();
+        }
+    }
+    async createSameCanvas(): Promise<void> {
+        if (await this.uploadService.validate(this.canvasImages)) {
+            this.dialog.closeAll();
+        } else {
+            this.dialog.closeAll();
+            this.showError();
+        }
+    }
+
+    drawImage(file: File): void {
+        const canvas = this.canvasRef.nativeElement;
+        const ctx = canvas.getContext('2d');
+        const image = new Image();
+
+        image.src = file.name;
+        image.onload = () => {
+            ctx.drawImage(image, 0, 0);
+        };
     }
 }
 export interface HTMLInputEvent extends Event {

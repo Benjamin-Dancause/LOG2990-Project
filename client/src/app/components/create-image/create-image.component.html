@@ -4,13 +4,13 @@
             <button class="btn delete-btn">
                 <img class="del-icon" src="../../assets/delete-icon.png" />
             </button>
-            <canvas class="image-container"></canvas>
+            <canvas class="image-container" width="640" height="480"></canvas>
         </div>
         <div class="canvas-wrap">
             <button class="btn delete-btn">
                 <img class="del-icon" src="../../assets/delete-icon.png" />
             </button>
-            <canvas class="image-container"></canvas>
+            <canvas class="image-container" width="640" height="480"></canvas>
         </div>
     </div>
     <div class="button-area">
@@ -27,18 +27,26 @@
         <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
         <div class="input-container-original">
             <p>Ajouter l'image originale</p>
-            <input type="file" (change)="validateImage($event)" />
+            <input type="file" (change)="storeOriginal($event)" />
         </div>
         <div class="input-container-modifiable">
             <p>Ajouter l'image modifié</p>
-            <input type="file" (change)="validateImage($event)" />
+            <input type="file" (change)="storeDiff($event)" />
         </div>
+        <button type="button" (click)="createDiffCanvas()">Sauvegarder</button>
     </ng-template>
     <ng-template #inputSameTemplate>
         <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
         <div class="input-container">
             <p>Ajouter les images</p>
-            <input type="file" (change)="validateImage($event)" />
+            <input type="file" (change)="storeOriginal($event)" />
+        </div>
+        <button type="button" (click)="createSameCanvas()">Sauvegarder</button>
+    </ng-template>
+    <ng-template #errorTemplate>
+        <div>
+            <h3>Vous avez entrée des images icompatibles</h3>
+            <img src="../../assets/error_icon.png" class="error-icon" />
         </div>
     </ng-template>
 </div>
