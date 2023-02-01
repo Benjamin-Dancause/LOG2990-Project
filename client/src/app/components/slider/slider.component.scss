@@ -1,27 +1,16 @@
-//Colour variables
 $background-color: rgba(0, 0, 0, 0.644);
 $background-color-hover: #2e2e2e;
 $cyan-text: rgb(136, 231, 243);
 $cyan-glow: rgb(123, 226, 252);
+$blue-border: rgb(131, 172, 247);
+$blue-glow: rgb(85, 131, 218);
 $cyan-border: rgb(126, 222, 235);
 $cyan-border-left: rgba(109, 188, 199, 0.774);
 $orange-glow: rgb(255, 60, 60);
 $orange-border: #ff9900ff;
 $orange-border-left: rgba(255, 153, 0, 0.774);
-
-.button {
-    background-color: $background-color;
-    position: relative;
-    display: inline-block;
-    padding: 15px;
-    border-radius: 2px;
-    color: $cyan-text;
-    font-size: 50px;
-    font-weight: bold;
-    text-decoration: none;
-    text-transform: uppercase;
-    overflow: hidden;
-    margin: 10px;
+.mat-slider {
+    width: 300px;
     font-family: 'Cyber', sans-serif;
     border: 3px solid $orange-border;
     box-shadow: 0 0 30px 4px $orange-glow;
@@ -38,7 +27,6 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
         box-shadow: 0 0 30px 8px $cyan-glow;
     }
 }
-.btn-width {
-    text-align: center;
-    width: 720px;
+.mat-slider-thumb-label {
+    background-color: aqua;
 }

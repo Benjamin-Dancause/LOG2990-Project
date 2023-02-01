@@ -1,0 +1,29 @@
+<button id="settings" (click)="openSettings()">
+    <img src="https://www.freeiconspng.com/uploads/settings-icon-4.png" />
+</button>
+<ng-template #settingsPopupTemplate>
+    <h2 mat-dialog-title>Paramètres</h2>
+    <mat-dialog-content>
+        <div class="container">
+            <mat-form-field>
+                <mat-label>Temps initial du compte à rebours</mat-label>
+                <input matInput type="number" [(ngModel)]="countdownTime" readonly />
+                <mat-hint>30 secondes</mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Temps de pénalité pour l’utilisation d’un indice</mat-label>
+                <input matInput type="number" [(ngModel)]="penaltyTime" readonly />
+                <mat-hint>5 secondes</mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Temps gagné avec la découverte d’une différence</mat-label>
+                <input matInput type="number" [(ngModel)]="timeGained" readonly />
+                <mat-hint>5 secondes</mat-hint>
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Annuler</button>
+        <button mat-button [mat-dialog-close]="true">Sauvegarder</button>
+    </mat-dialog-actions>
+</ng-template>

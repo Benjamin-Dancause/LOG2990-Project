@@ -7,5 +7,35 @@
         <div [ngStyle]="{ 'background-color': color }" id="difficulty">
             <span>{{ levelText }}</span>
         </div>
+        <div class="best-times-container">
+            <h4>Meilleurs temps</h4>
+            <div class="solo">
+                <h4>Solo</h4>
+                <div
+                    *ngFor="let time of bestSoloTimes.slice(0, 3); let i = index"
+                    class="best-time"
+                    [ngClass]="{ gold: i === 0, silver: i === 1, bronze: i === 2 }"
+                >
+                    <span>{{ time.name }} {{ time.time }}</span>
+                </div>
+            </div>
+            <div class="oneVsOne">
+                <h4>1vs1</h4>
+                <div
+                    *ngFor="let time of best1vs1Times.slice(0, 3); let i = index"
+                    class="best-time"
+                    [ngClass]="{ gold: i === 0, silver: i === 1, bronze: i === 2 }"
+                >
+                    <span>{{ time.name }} {{ time.time }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button *ngIf="!configuration" [routerLink]="['/game']">Jouer en solo</button>
+            <button *ngIf="!configuration">Créer/joindre une partie 1vs1</button>
+            <button *ngIf="configuration">Supprimer partie</button>
+            <button *ngIf="configuration">Réinitialiser les meilleurs temps</button>
+        </div>
     </div>
 </div>

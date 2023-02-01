@@ -1,5 +1,5 @@
-//Colour variables
-$background-color: rgba(0, 0, 0, 0.644);
+//colour variables
+$background-color: rgb(25, 25, 27);
 $background-color-hover: #2e2e2e;
 $cyan-text: rgb(136, 231, 243);
 $cyan-glow: rgb(123, 226, 252);
@@ -8,15 +8,54 @@ $cyan-border-left: rgba(109, 188, 199, 0.774);
 $orange-glow: rgb(255, 60, 60);
 $orange-border: #ff9900ff;
 $orange-border-left: rgba(255, 153, 0, 0.774);
+.container {
+    background-color: $background-color;
+}
 
-.button {
+.return-btn {
+    position: fixed;
+    left: 75px;
+    top: 75px;
+}
+.save-btn {
+    align-self: flex-end;
+    position: fixed;
+    right: 75px;
+    bottom: 75px;
+}
+.image-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 95%;
+    height: 100%;
+    border: 1px solid transparent;
+    margin: auto;
+}
+.image-area {
+}
+.image {
+    width: 50%;
+    margin: 20px;
+}
+#same-image {
+    display: block;
+}
+h1 {
+    padding-top: 30px;
+    font-size: 30px;
+    color: $cyan-text;
+    justify-content: center;
+    text-align: center;
+}
+button {
     background-color: $background-color;
     position: relative;
     display: inline-block;
     padding: 15px;
     border-radius: 2px;
     color: $cyan-text;
-    font-size: 50px;
+    font-size: 12px;
     font-weight: bold;
     text-decoration: none;
     text-transform: uppercase;
@@ -37,8 +76,4 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
     &:active {
         box-shadow: 0 0 30px 8px $cyan-glow;
     }
-}
-.btn-width {
-    text-align: center;
-    width: 720px;
 }

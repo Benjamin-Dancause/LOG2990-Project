@@ -1,18 +1,15 @@
-import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
     selector: 'app-home-button',
     templateUrl: './home-button.component.html',
     styleUrls: ['./home-button.component.scss'],
 })
-export class HomeButtonComponent {
+export class HomeButtonComponent implements OnInit {
+    constructor() {}
+
     @Input()
     text: string;
 
-    constructor(private router: Router) {}
-
-    goToHome() {
-        this.router.navigate(['/home']);
-    }
+    ngOnInit(): void {}
 }

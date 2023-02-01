@@ -1,0 +1,113 @@
+//color variables
+$background-color: rgba(0, 0, 0, 0.644);
+$background-color-hover: #2e2e2e;
+$cyan-text: rgb(136, 231, 243);
+$cyan-glow: rgb(123, 226, 252);
+$blue-border: rgb(131, 172, 247);
+$blue-glow: rgb(85, 131, 218);
+$cyan-border: rgb(126, 222, 235);
+$cyan-border-left: rgba(109, 188, 199, 0.774);
+$orange-glow: rgb(255, 60, 60);
+$orange-border: #ff9900ff;
+$orange-border-left: rgba(255, 153, 0, 0.774);
+.container {
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+}
+.canvas-area {
+    display: flex;
+    position: relative;
+}
+.canvas-wrap {
+    display: flex;
+    flex-direction: column;
+    margin: 30px;
+    //width: 30%;
+    position: relative;
+}
+.canvas-wrap .delete {
+    justify-self: flex-end;
+    align-self: flex-end;
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    z-index: 100;
+}
+.btn {
+    background-color: $background-color;
+    position: relative;
+    display: inline-block;
+    padding: 15px;
+    border-radius: 2px;
+    color: $cyan-text;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    margin: 20px;
+    font-family: 'Cyber', sans-serif;
+    border: 3px solid $orange-border;
+    box-shadow: 0 0 30px 4px $orange-glow;
+    border-left: 10px solid $orange-border-left;
+    transition: all 0.1s linear;
+
+    &:hover {
+        background-color: $background-color-hover;
+        border: 3px solid $cyan-border;
+        box-shadow: 0 0 30px 4px $cyan-glow;
+        border-left: 10px solid $cyan-border-left;
+    }
+    &:active {
+        box-shadow: 0 0 30px 8px $cyan-glow;
+    }
+}
+.image-container {
+    display: block;
+    width: 640px;
+    height: 480px;
+    border-top: 1px solid $cyan-border;
+    box-shadow: 0 0 30px 1px $cyan-glow;
+    margin-top: 1px;
+}
+.button-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 30%;
+}
+
+.canvas-wrap {
+    border: 3px solid $cyan-border;
+    box-shadow: 0 0 30px 4px $cyan-glow;
+    border-left: 10px solid $cyan-border-left;
+}
+.settings-btn {
+    padding: 30px;
+}
+.add-btn {
+    padding: 65px;
+}
+.delete-btn {
+    border-left: 5px solid $orange-border-left;
+    vertical-align: middle;
+    width: 10%;
+    align-self: flex-end;
+    &:hover {
+        background-color: $background-color-hover;
+        border: 3px solid $cyan-border;
+        box-shadow: 0 0 30px 4px $cyan-glow;
+    }
+}
+.del-icon {
+    width: 100%;
+    height: 100%;
+}
+.error-icon {
+    width: 64px;
+    height: 64px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
