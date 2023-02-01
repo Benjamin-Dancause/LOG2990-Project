@@ -1,13 +1,13 @@
 <div class="container">
     <div class="canvas-area">
         <div class="canvas-wrap">
-            <button class="btn delete-btn">
+            <button class="btn delete-btn" (click)="deleteOriginal()">
                 <img class="del-icon" src="../../assets/delete-icon.png" />
             </button>
             <canvas #originalCanvas class="image-container" width="640" height="480"></canvas>
         </div>
         <div class="canvas-wrap">
-            <button class="btn delete-btn">
+            <button class="btn delete-btn" (click)="deleteModifiable()">
                 <img class="del-icon" src="../../assets/delete-icon.png" />
             </button>
             <canvas #modifiableCanvas class="image-container" width="640" height="480"></canvas>

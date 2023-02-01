@@ -60,31 +60,63 @@ export class CreateImageComponent implements OnInit {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
             return;
         }
-        this.reader.readAsDataURL(fileEvent.target.files[0]);
-        if (this.reader.result) {
-            this.imageOriginal.src = this.reader.result.toString();
+        const selectedFile = fileEvent.target.files[0];
+        if (!selectedFile) {
+            return;
         }
-        this.canvasImages.push(fileEvent.target.files[0]);
+        this.reader.onload = () => {
+            if (this.reader.result) {
+                this.imageOriginal.src = this.reader.result.toString();
+                this.canvasImages.push(selectedFile);
+            }
+        };
+        this.reader.readAsDataURL(selectedFile);
     }
     storeDiff(fileEvent: Event): void {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
             return;
         }
-        if (this.reader.result) {
-            this.imageModifiable.src = this.reader.result.toString();
+        const selectedFile = fileEvent.target.files[0];
+        if (!selectedFile) {
+            return;
         }
-        this.canvasImages.push(fileEvent.target.files[0]);
+        this.reader.onload = () => {
+            if (this.reader.result) {
+                this.imageModifiable.src = this.reader.result.toString();
+                this.canvasImages.push(selectedFile);
+            }
+        };
+        this.reader.readAsDataURL(selectedFile);
     }
 
     async createDiffCanvas(): Promise<void> {
         if (await this.uploadService.validate(this.canvasImages)) {
             this.dialog.closeAll();
-            console.log(this.imageOriginal.src.toString());
-            this.imageOriginal.onload = () => {
+            if (this.imageOriginal.complete) {
                 if (this.ctxOriginal) {
                     this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
+                    console.log('test');
                 }
-            };
+            } else {
+                this.imageOriginal.onload = () => {
+                    console.log(this.ctxOriginal + 'here');
+                    if (this.ctxOriginal) {
+                        this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
+                    }
+                };
+            }
+            if (this.imageModifiable.complete) {
+                if (this.ctxModifiable) {
+                    this.ctxModifiable.drawImage(this.imageModifiable, 0, 0, this.width, this.height);
+                    console.log('test');
+                }
+            } else {
+                this.imageModifiable.onload = () => {
+                    if (this.ctxModifiable) {
+                        this.ctxModifiable.drawImage(this.imageModifiable, 0, 0, this.width, this.height);
+                    }
+                };
+            }
         } else {
             this.dialog.closeAll();
             this.showError();
@@ -93,24 +125,26 @@ export class CreateImageComponent implements OnInit {
     async createSameCanvas(): Promise<void> {
         if (await this.uploadService.validate(this.canvasImages)) {
             this.dialog.closeAll();
+            if (this.ctxOriginal) {
+                this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
+            }
             if (this.ctxModifiable) {
-                this.ctxModifiable.drawImage(this.imageModifiable, 0, 0, this.width, this.height);
+                this.ctxModifiable.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
             }
         } else {
             this.dialog.closeAll();
             this.showError();
         }
     }
-
-    drawImage(file: File): void {
-        const canvas = this.canvasRef.nativeElement;
-        const ctx = canvas.getContext('2d');
-        const image = new Image();
-
-        image.src = file.name;
-        image.onload = () => {
-            ctx.drawImage(image, 0, 0);
-        };
+    deleteOriginal(): void {
+        if (this.ctxOriginal) {
+            this.ctxOriginal.clearRect(0, 0, this.width, this.height);
+        }
+    }
+    deleteModifiable(): void {
+        if (this.ctxModifiable) {
+            this.ctxModifiable.clearRect(0, 0, this.width, this.height);
+        }
     }
 }
 export interface HTMLInputEvent extends Event {
