@@ -1,15 +1,28 @@
+//colour variables
+$background-color: rgb(25, 25, 27);
+$background-color-hover: #2e2e2e;
+$cyan-text: rgb(136, 231, 243);
+$cyan-glow: rgb(123, 226, 252);
+$cyan-border: rgb(126, 222, 235);
+$cyan-border-left: rgba(109, 188, 199, 0.774);
+$orange-glow: rgb(255, 60, 60);
+$orange-border: #ff9900ff;
+$orange-border-left: rgba(255, 153, 0, 0.774);
+
 .container {
     height: 100%;
     display: flex;
+    background-color: $background-color;
 }
 
 .play-area-container {
-    overflow: auto;
     flex: 1 1 auto;
 }
 
 .play-area {
-    display: grid;
+    display: flex;
     width: min-content;
     outline: none;
+    min-height: 57vh;
+    min-width: 73vw;
 }

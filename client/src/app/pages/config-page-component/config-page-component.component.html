@@ -1,0 +1,24 @@
+<div class="container justified">
+    <p class="indication">Configuration</p>
+    <app-home-button id="home"></app-home-button>
+    <app-settings-button id="settings"></app-settings-button>
+    <div class="game-card-container">
+        <app-game-card
+            class="component"
+            *ngFor="let game of displayedGames; index as i"
+            [gameTitle]="game.title"
+            [imageUrl]="game.image"
+            [level]="game.level"
+            [configuration]="game.configuration"
+        ></app-game-card>
+    </div>
+    <app-previous-next-button
+        id="previousNext"
+        [showBackButton]="currentPage > 0"
+        [showNextButton]="currentPage < lastPage"
+        (back)="onBack()"
+        (next)="onNext()"
+    >
+    </app-previous-next-button>
+    <button class="create" [routerLink]="['/create']">Création de jeu</button>
+</div>
