@@ -37,12 +37,14 @@ export class CreateImageComponent implements OnInit {
     }
 
     showInputDifferent(): void {
+        this.canvasImages.length = 0;
         this.dialog.open(this.inputDifferentTemplate, {
             width: '500px',
             height: '250px',
         });
     }
     showInputSame(): void {
+        this.canvasImages.length = 0;
         this.dialog.open(this.inputSameTemplate, {
             width: '450px',
             height: '200px',
