@@ -1,16 +1,30 @@
+//Color variables
+$background-color: #2e2e2e;
+$background-color-hover: rgb(169, 169, 169);
+$cyan-text: rgb(136, 231, 243);
+$cyan-glow: rgb(123, 226, 252);
+$cyan-border: rgb(126, 222, 235);
+$cyan-border-left: rgba(109, 188, 199, 0.774);
+$orange-glow: rgb(255, 60, 60);
+$orange-border: #ff9900ff;
+$orange-border-left: rgba(255, 153, 0, 0.774);
+$blue-border: rgb(131, 172, 247);
+$blue-glow: rgb(85, 131, 218);
+
 .bigContainer .container {
     position: relative;
     height: 35vh;
     width: 65vh;
-    border: 4px solid rgb(126, 222, 235);
+    border: 4px solid $cyan-border;
+    box-shadow: 0 0 30px 4px $cyan-glow;
     margin-right: 10%;
     margin-left: 13%;
     margin-top: 5%;
-    background-color: rgb(202, 202, 202);
-    color: rgb(0, 0, 0);
+    background-color: $background-color;
+    color: $cyan-text;
     opacity: 0.9;
     border-radius: 4px;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Cyber', sans-serif;
 
     &::after {
         position: absolute;
@@ -28,7 +42,7 @@
         height: 15px;
         width: 15px;
         background: #44c6f6;
-        box-shadow: 0px 0px 10px 4px rgb(230, 195, 23);
+        box-shadow: 0px 0px 10px 4px $blue-glow;
         opacity: 0;
         transition: all 0.1s linear;
         border-radius: 100%;
@@ -64,7 +78,7 @@
             opacity: 1;
             animation: star 9s linear infinite;
         }
-        background-color: rgb(169, 169, 169);
+        background-color: $background-color-hover;
     }
 }
 
@@ -91,10 +105,10 @@
     width: 30%;
     height: 13%;
     border-radius: 10px;
+    color: $cyan-text;
     text-align: center;
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgb(0, 0, 0);
+    border: 3px solid $blue-border;
+    box-shadow: 0px 0px 10px 4px $blue-glow;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -114,17 +128,16 @@
     flex: 1;
     margin: 0 5px;
     padding: 2px;
-    border-radius: 10%;
     min-height: 40px;
     position: relative;
     word-wrap: break-word;
     text-align: center;
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
-    border-color: rgb(136, 231, 243);
+    background-color: $background-color;
+    color: $cyan-text;
     cursor: pointer;
-    border: 2px solid #333;
-    border-radius: 25px;
+    border: 3px solid $orange-border;
+    box-shadow: 0px 0px 10px 4px $orange-glow;
+    border-radius: 2px;
     font-size: 0.8em;
     font-weight: bold;
     transition: all 0.2s ease-in-out;
@@ -149,6 +162,7 @@
 
 .best-times-container h4 {
     margin-bottom: 0px;
+    color: $cyan-text;
     text-align: center;
     font-weight: bold;
     font-size: 0.8em;
