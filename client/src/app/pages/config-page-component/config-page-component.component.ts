@@ -8,15 +8,15 @@ import { Component } from '@angular/core';
 export class ConfigPageComponent {
     games = [
         { title: 'Game 1', image: 'https://i.stack.imgur.com/6umGW.png', level: 'easy', configuration: true },
-        { title: 'Game 2', image: 'https://i.stack.imgur.com/6umGW.png', level: 'medium', configuration: true },
+        { title: 'Game 2', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: true },
         { title: 'Game 3', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: true },
         { title: 'Game 4', image: 'https://i.stack.imgur.com/6umGW.png', level: 'easy', configuration: true },
-        { title: 'Game 5', image: 'https://i.stack.imgur.com/6umGW.png', level: 'medium', configuration: true },
-        { title: 'Game 6', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: true },
-        { title: 'Game 7', image: 'https://i.stack.imgur.com/6umGW.png', level: 'medium', configuration: true },
+        { title: 'Game 5', image: 'https://i.stack.imgur.com/6umGW.png', level: 'easy', configuration: true },
+        { title: 'Game 6', image: 'https://i.stack.imgur.com/6umGW.png', level: 'easy', configuration: true },
+        { title: 'Game 7', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: true },
         { title: 'Game 8', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: true },
         { title: 'Game 9', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: true },
-        { title: 'Game 10', image: 'https://i.stack.imgur.com/6umGW.png', level: 'medium', configuration: true },
+        { title: 'Game 10', image: 'https://i.stack.imgur.com/6umGW.png', level: 'easy', configuration: true },
         { title: 'Game 11', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: true },
     ];
 
