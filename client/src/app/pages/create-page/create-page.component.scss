@@ -13,13 +13,13 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
 }
 
 .return-btn {
-    position: fixed;
+    position: absolute;
     left: 75px;
     top: 75px;
 }
 .save-btn {
     align-self: flex-end;
-    position: fixed;
+    position: absolute;
     right: 75px;
     bottom: 75px;
 }
