@@ -1,3 +1,13 @@
+//Color Variables
+$background-color: rgba(0, 0, 0, 0.644);
+$background-color-hover: #2e2e2e;
+$cyan-text: rgb(136, 231, 243);
+$cyan-glow: rgb(123, 226, 252);
+$cyan-border: rgb(126, 222, 235);
+$cyan-border-left: rgba(109, 188, 199, 0.774);
+$orange-glow: rgb(255, 60, 60);
+$orange-border: #ff9900ff;
+$orange-border-left: rgba(255, 153, 0, 0.774);
 .previous-button {
     position: absolute;
     left: 4%;
@@ -10,18 +20,16 @@
 
 button {
     position: absolute;
-    background: white;
-    border: 5%;
-    border-color: white;
+    background: $background-color-hover;
+    border: 3px solid $orange-border;
+    box-shadow: 0 0 10px 3px $orange-glow;
     border-radius: 50%;
-    color: white;
     bottom: 47%;
     width: 5%;
     &:hover {
         background-color: #2e2e2e;
-        border: 3px solid rgb(126, 222, 235);
-        border-left: 3px solid rgba(109, 188, 199, 0.774);
-        box-shadow: 0 0 0 4px rgb(123, 226, 252);
+        border: 3px solid $cyan-border;
+        box-shadow: 0 0 30px 4px $cyan-glow;
     }
     &:active {
         box-shadow: 0 0 30px 8px rgb(123, 226, 252);
