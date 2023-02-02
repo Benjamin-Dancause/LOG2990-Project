@@ -217,3 +217,15 @@ $blue-glow: rgb(85, 131, 218);
     text-align: center;
     font-size: 65%;
 }
+
+mat-form-field {
+    width: 100%;
+}
+
+.container #namePopupTemplate {
+    position: absolute;
+    top: 2%;
+    right: 5%;
+    width: 5%;
+    height: 5%;
+}
