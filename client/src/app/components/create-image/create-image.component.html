@@ -1,0 +1,57 @@
+<div class="container">
+    <div class="canvas-area">
+        <div class="canvas-wrap">
+            <button class="btn delete-btn" (click)="deleteOriginal()">
+                <img class="del-icon" src="../../assets/delete-icon.png" />
+            </button>
+            <canvas #originalCanvas class="image-container" width="640" height="480"></canvas>
+        </div>
+        <div class="canvas-wrap">
+            <button class="btn delete-btn" (click)="deleteModifiable()">
+                <img class="del-icon" src="../../assets/delete-icon.png" />
+            </button>
+            <canvas #modifiableCanvas class="image-container" width="640" height="480"></canvas>
+        </div>
+    </div>
+    <div class="button-area">
+        <div class="add-btn">
+            <button class="btn" (click)="showInputDifferent()">Ajouter des images différentes</button>
+            <button class="btn" (click)="showInputSame()">Ajouter la même image</button>
+        </div>
+        <div class="settings-btn">
+            <app-slider></app-slider>
+            <button class="btn" (click)="showDifference()" >Détecter les différences</button>
+        </div>
+    </div>
+    <ng-template #inputDifferentTemplate>
+        <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
+        <div class="input-container-original">
+            <p>Ajouter l'image originale</p>
+            <input type="file" (change)="storeOriginal($event)" />
+        </div>
+        <div class="input-container-modifiable">
+            <p>Ajouter l'image modifié</p>
+            <input type="file" (change)="storeDiff($event)" />
+        </div>
+        <button type="button" (click)="createDiffCanvas()">Sauvegarder</button>
+    </ng-template>
+    <ng-template #inputSameTemplate>
+        <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
+        <div class="input-container">
+            <p>Ajouter les images</p>
+            <input type="file" (change)="storeOriginal($event)" />
+        </div>
+        <button type="button" (click)="createSameCanvas()">Sauvegarder</button>
+    </ng-template>
+    <ng-template #errorTemplate>
+        <div>
+            <h3>Vous avez entrée des images incompatibles</h3>
+            <img src="../../assets/error_icon.png" class="error-icon" />
+        </div>
+    </ng-template>
+    <ng-template #negativeTemplate>
+        <div id="neg">
+            <h3>Voici les différences</h3>
+        </div>
+    </ng-template>
+</div>

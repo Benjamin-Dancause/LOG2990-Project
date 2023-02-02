@@ -1,22 +1,25 @@
 <div class="container justified">
     <h1 class="header-item">{{ title }}</h1>
     <section id="server-message" class="justified">
-        <p class="msg">Petit message du serveur : {{ message.getValue() }}</p>
         <div class="justified">
-            <app-main-page-button class="button btn-sidespacing" text="Classique" routerLink="/game-selection"></app-main-page-button>
+            <app-main-page-button
+                id="btn-Classique"
+                class="button btn-sidespacing"
+                text="Classique"
+                routerLink="/game-selection"
+            ></app-main-page-button>
             <span class="mid-row">
-                <img src="https://i.stack.imgur.com/6umGW.png" class="img-sidespacing" />
-                <app-main-page-button class="button" text="Temps Limité" class="btn-sidespacing"></app-main-page-button>
+                <img src="..\..\..\assets\projet2 logo.png" class="img-sidespacing" />
+                <app-main-page-button id="btn-TempsLimite" class="button" text="Temps Limité" class="btn-sidespacing"></app-main-page-button>
             </span>
-            <app-main-page-button class="button btn-sidespacing" text="Configuration" link="https://www.wikihow.com/Main-Page"></app-main-page-button>
-            <button class="button" (click)="getMessagesFromServer()">Récupérer un message du serveur</button>
-            <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
-            <button class="button" routerLink="/material">Voir la page démo Angular Material</button>
+            <app-main-page-button
+                id="btn-Configuration"
+                class="button btn-sidespacing"
+                text="Configuration"
+                routerLink="/config"
+            ></app-main-page-button>
         </div>
     </section>
-
-    <button class="button" routerLink="/game">Jouer !</button>
-
     <footer class="footer-item">
         <h4 class="team-name">Équipe 210</h4>
         <p>

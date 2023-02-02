@@ -1,0 +1,108 @@
+//Color Variables
+$background-color: rgba(0, 0, 0, 0.644);
+$background-color-hover: #2e2e2e;
+$cyan-text: rgb(136, 231, 243);
+$cyan-glow: rgb(123, 226, 252);
+$cyan-border: rgb(126, 222, 235);
+$cyan-border-left: rgba(109, 188, 199, 0.774);
+$orange-glow: rgb(255, 60, 60);
+$orange-border: #ff9900ff;
+$orange-border-left: rgba(255, 153, 0, 0.774);
+
+.indication {
+    font-size: 2em;
+    font-weight: 600;
+    color: $cyan-text;
+    text-align: center;
+    justify-content: center;
+    padding-top: 1em;
+    margin-bottom: 1em;
+}
+
+.container {
+    //background-color: rgb(16, 14, 13);
+    //background-image: url('https://wallpapercave.com/wp/wp2757874.gif');
+    //background-image: url('https://i.makeagif.com/media/9-18-2018/r21do1.gif');
+    //background-image: url('https://thumbs.gfycat.com/JointNippyCrayfish-size_restricted.gif');
+    //background-image: url('https://wallpaperaccess.com/full/5545145.jpg');
+    //background-image: url('https://cdn.wallpapersafari.com/27/86/vTnMBJ.jpg');
+    //background-image: url('https://getwallpapers.com/wallpaper/full/2/d/9/940328-dark-blue-abstract-wallpaper-3456x1944-images.jpg');
+    //background-image: url('https://www.pixelstalk.net/wp-content/uploads/images6/Abstract-Wallpaper-4K-Wallpaper-Blue-1.jpg');
+    background-color: $background-color;
+    background-repeat: no;
+    background-size: cover;
+    min-height: 100vh;
+    height: auto;
+}
+
+.game-card-container {
+    position: absolute; // mettre relative si comme avant
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    align-items: center;
+    justify-content: center;
+
+    left: 4%;
+}
+
+.container .component {
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin-right: 2em;
+    margin-left: 2em;
+}
+
+.container #home {
+    position: absolute;
+    top: 2%;
+    left: 5%;
+    width: 5%;
+    height: 5%;
+}
+
+.container #settings {
+    position: absolute;
+    top: 2%;
+    right: 5%;
+    width: 5%;
+    height: 5%;
+}
+
+.container #previousNext {
+    bottom: 50%;
+    width: 5%;
+    height: 5%;
+}
+
+.create {
+    background-color: $background-color;
+    position: absolute;
+    padding: 15px;
+    border-radius: 2px;
+    color: $cyan-text;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    font-family: 'Cyber', sans-serif;
+    border: 3px solid $orange-border;
+    box-shadow: 0 0 30px 4px $orange-glow;
+    border-left: 10px solid $orange-border-left;
+    bottom: 3%;
+    left: 41%;
+
+    &:hover {
+        background-color: $background-color-hover;
+        border: 3px solid $cyan-border;
+        box-shadow: 0 0 30px 4px $cyan-glow;
+        border-left: 10px solid $cyan-border-left;
+    }
+    &:active {
+        box-shadow: 0 0 30px 8px $cyan-glow;
+    }
+}
