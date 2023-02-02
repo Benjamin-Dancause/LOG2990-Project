@@ -11,8 +11,11 @@ export class DifferenceService {
     }
 
     drawCircle(xy: number[], r: number, ctx: CanvasRenderingContext2D): void {
+        if (r === 0) {
+            return;
+        }
         ctx.beginPath();
-        ctx.arc(xy[0], xy[1], r + 1, 0, 2 * Math.PI);
+        ctx.arc(xy[0], xy[1], r, 0, 2 * Math.PI);
         ctx.fillStyle = 'black';
         ctx.fill();
         ctx.stroke();
