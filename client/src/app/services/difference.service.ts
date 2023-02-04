@@ -48,10 +48,7 @@ export class DifferenceService {
             for (let i = 0; i < diff?.data.length; i += 4) {
                 if (diff.data[i + 3] === 255) {
                     this.drawCircle(this.findXY(i), radius, ctx3 as CanvasRenderingContext2D);
-                    i += 4 * radius; // Pour éviter de dessiner plusieurs fois le même cercle
-                    if (i >= diff?.data.length) {
-                        break;
-                    }
+                    i += 4 * radius;
                 }
             }
             return canvas3;
