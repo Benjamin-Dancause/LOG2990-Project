@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { DifferenceService } from '@app/services/difference.service';
 import { UploadService } from '@app/services/upload.service';
 
 @Component({
@@ -19,7 +20,8 @@ export class CreateImageComponent implements OnInit {
     originalCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('modifiableCanvas', { static: true })
     modifiableCanvas: ElementRef<HTMLCanvasElement>;
-
+    @ViewChild('negativeTemplate', { static: true })
+    negativeTemplate: TemplateRef<unknown>;
     reader = new FileReader();
     ctxOriginal: CanvasRenderingContext2D | null;
     ctxModifiable: CanvasRenderingContext2D | null;
@@ -29,7 +31,7 @@ export class CreateImageComponent implements OnInit {
     width: number = 640;
     height: number = 480;
 
-    constructor(public dialog: MatDialog, private uploadService: UploadService) {}
+    constructor(public dialog: MatDialog, private uploadService: UploadService, protected difference: DifferenceService) {}
 
     ngOnInit(): void {
         this.ctxOriginal = this.originalCanvas.nativeElement.getContext('2d');
@@ -145,6 +147,28 @@ export class CreateImageComponent implements OnInit {
         if (this.ctxModifiable) {
             this.ctxModifiable.clearRect(0, 0, this.width, this.height);
         }
+    }
+    async createDifference(): Promise<HTMLCanvasElement> {
+        if (this.ctxOriginal && this.ctxModifiable) {
+            const diff = this.difference.findDifference(this.ctxOriginal, this.ctxModifiable, 3);
+            return diff;
+        }
+        return new HTMLCanvasElement();
+    }
+
+    showDifference(): void {
+        this.createDifference().then((diff) => {
+            if (diff) {
+                this.dialog.open(this.negativeTemplate, {
+                    width: '700px',
+                    height: '620px',
+                });
+                document.getElementById('neg')?.appendChild(diff);
+                const nbdiff = document.createElement('p');
+                nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.countDifference(diff).toString());
+                document.getElementById('neg')?.appendChild(nbdiff);
+            }
+        });
     }
 }
 export interface HTMLInputEvent extends Event {

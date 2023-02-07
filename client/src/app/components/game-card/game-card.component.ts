@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-game-card',
@@ -10,6 +11,9 @@ export class GameCardComponent {
     @Input() imageUrl: string;
     @Input() level: string;
     @Input() configuration: boolean;
+    @ViewChild('namePopupTemplate', { static: true })
+    namePopupTemplate: TemplateRef<unknown>;
+    userName: string;
 
     bestSoloTimes = [
         { name: 'User 1', time: '00:30' },
@@ -24,6 +28,8 @@ export class GameCardComponent {
         { name: 'User 7', time: '00:10' },
         { name: 'User 8', time: '00:30' },
     ];
+
+    constructor(public dialog: MatDialog) {}
 
     get color() {
         switch (this.level) {
@@ -52,5 +58,11 @@ export class GameCardComponent {
 
     get topThreeBestTimesOneVsOne() {
         return this.best1vs1Times.slice(0, 3);
+    }
+
+    openSettings(): void {
+        this.dialog.open(this.namePopupTemplate, {
+            width: '400px',
+        });
     }
 }

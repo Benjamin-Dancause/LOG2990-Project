@@ -1,16 +1,20 @@
 //colour variables
-$background-color: rgba(0, 0, 0, 0.82);
+$background-color: rgb(25, 25, 27);
+$background-color-hover: #2e2e2e;
 $cyan-text: rgb(136, 231, 243);
-$blue-border: rgb(131, 172, 247);
-$blue-glow: rgb(85, 131, 218);
+$cyan-glow: rgb(123, 226, 252);
+$cyan-border: rgb(126, 222, 235);
+$cyan-border-left: rgba(109, 188, 199, 0.774);
 $orange-glow: rgb(255, 60, 60);
 $orange-border: #ff9900ff;
+$orange-border-left: rgba(255, 153, 0, 0.774);
+$blue-border: rgb(131, 172, 247);
+$blue-glow: rgb(85, 131, 218);
 
 .container {
-    background-image: url('https://cdna.artstation.com/p/assets/images/images/015/369/742/large/bogdan-mb0sco-arcade-static.jpg?1548087194');
+    background-color: $background-color;
     background-repeat: no;
     background-size: cover;
-
     min-height: 100vh;
     height: auto;
 }

@@ -20,7 +20,7 @@
         </div>
         <div class="settings-btn">
             <app-slider></app-slider>
-            <button class="btn">Détecter les différences</button>
+            <button class="btn" (click)="showDifference()" >Détecter les différences</button>
         </div>
     </div>
     <ng-template #inputDifferentTemplate>
@@ -45,8 +45,13 @@
     </ng-template>
     <ng-template #errorTemplate>
         <div>
-            <h3>Vous avez entrée des images icompatibles</h3>
+            <h3>Vous avez entrée des images incompatibles</h3>
             <img src="../../assets/error_icon.png" class="error-icon" />
+        </div>
+    </ng-template>
+    <ng-template #negativeTemplate>
+        <div id="neg">
+            <h3>Voici les différences</h3>
         </div>
     </ng-template>
 </div>
