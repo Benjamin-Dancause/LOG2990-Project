@@ -5,9 +5,11 @@ import { Component, Input, OnInit } from '@angular/core';
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.scss']
 })
+
 export class TopBarComponent implements OnInit {
   
   @Input() name: string;
+  @Input() userName: string;
 
   ngOnInit(): void {
     

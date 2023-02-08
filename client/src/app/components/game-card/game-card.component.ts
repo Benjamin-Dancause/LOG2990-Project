@@ -13,7 +13,7 @@ export class GameCardComponent {
     @Input() configuration: boolean;
     @ViewChild('namePopupTemplate', { static: true })
     namePopupTemplate: TemplateRef<unknown>;
-    userName: string;
+    public userName: string;
 
     bestSoloTimes = [
         { name: 'User 1', time: '00:30' },
