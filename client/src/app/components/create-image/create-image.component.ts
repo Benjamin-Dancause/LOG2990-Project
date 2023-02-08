@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
 import { UploadService } from '@app/services/upload.service';
 
@@ -31,7 +32,12 @@ export class CreateImageComponent implements OnInit {
     width: number = 640;
     height: number = 480;
 
-    constructor(public dialog: MatDialog, private uploadService: UploadService, protected difference: DifferenceService) {}
+    constructor(
+        public dialog: MatDialog,
+        private uploadService: UploadService,
+        protected difference: DifferenceService,
+        private communication: CommunicationService,
+    ) {}
 
     ngOnInit(): void {
         this.ctxOriginal = this.originalCanvas.nativeElement.getContext('2d');
@@ -97,11 +103,9 @@ export class CreateImageComponent implements OnInit {
             if (this.imageOriginal.complete) {
                 if (this.ctxOriginal) {
                     this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
-                    console.log('test');
                 }
             } else {
                 this.imageOriginal.onload = () => {
-                    console.log(this.ctxOriginal + 'here');
                     if (this.ctxOriginal) {
                         this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
                     }
@@ -110,7 +114,6 @@ export class CreateImageComponent implements OnInit {
             if (this.imageModifiable.complete) {
                 if (this.ctxModifiable) {
                     this.ctxModifiable.drawImage(this.imageModifiable, 0, 0, this.width, this.height);
-                    console.log('test');
                 }
             } else {
                 this.imageModifiable.onload = () => {
@@ -169,6 +172,11 @@ export class CreateImageComponent implements OnInit {
                 document.getElementById('neg')?.appendChild(nbdiff);
             }
         });
+    }
+
+    test(): void {
+        this.communication.imagePost(this.imageOriginal);
+        console.log('test');
     }
 }
 export interface HTMLInputEvent extends Event {

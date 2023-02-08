@@ -1,6 +1,7 @@
 <div class="container">
     <div class="canvas-area">
         <div class="canvas-wrap">
+            <button (click)="test()"></button>"
             <button class="btn delete-btn" (click)="deleteOriginal()">
                 <img class="del-icon" src="../../assets/delete-icon.png" />
             </button>
@@ -20,7 +21,7 @@
         </div>
         <div class="settings-btn">
             <app-slider></app-slider>
-            <button class="btn" (click)="showDifference()" >Détecter les différences</button>
+            <button class="btn" (click)="showDifference()">Détecter les différences</button>
         </div>
     </div>
     <ng-template #inputDifferentTemplate>
