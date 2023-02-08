@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
 
 @Component({
@@ -15,12 +16,16 @@ export class CreateImageComponent implements OnInit {
     inputSameTemplate: TemplateRef<unknown>;
     @ViewChild('errorTemplate', { static: true })
     errorTemplate: TemplateRef<unknown>;
+    @ViewChild('errorTemplateDiff', { static: true })
+    errorTemplateDiff: TemplateRef<unknown>;
     @ViewChild('originalCanvas', { static: true })
     originalCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('modifiableCanvas', { static: true })
     modifiableCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('negativeTemplate', { static: true })
     negativeTemplate: TemplateRef<unknown>;
+    @ViewChild('saveTemplate', { static: true })
+    saveTemplate: TemplateRef<unknown>;
     reader = new FileReader();
     ctxOriginal: CanvasRenderingContext2D | null;
     ctxModifiable: CanvasRenderingContext2D | null;
@@ -28,11 +33,15 @@ export class CreateImageComponent implements OnInit {
     width: number = 640;
     height: number = 480;
     valid: boolean = true;
+    originalImage: ImageBitmap;
+    modifiableImage: ImageBitmap;
+    gameName: string = '';
 
     constructor(
         public dialog: MatDialog,
         //private uploadService: UploadService,
-        protected difference: DifferenceService, //private communication: CommunicationService,
+        protected difference: DifferenceService,
+        private communication: CommunicationService,
     ) {}
 
     ngOnInit(): void {
@@ -56,7 +65,19 @@ export class CreateImageComponent implements OnInit {
     }
     showError(): void {
         this.dialog.open(this.errorTemplate, {
-            width: '200px',
+            width: '250px',
+            height: '250px',
+        });
+    }
+    showErrorDiff(): void {
+        this.dialog.open(this.errorTemplateDiff, {
+            width: '250px',
+            height: '200px',
+        });
+    }
+    showSave(): void {
+        this.dialog.open(this.saveTemplate, {
+            width: '250px',
             height: '200px',
         });
     }
@@ -71,7 +92,7 @@ export class CreateImageComponent implements OnInit {
         if (await this.verifyBMP(selectedFile)) {
             const image = await this.convertImage(selectedFile);
             if (image.width == this.width || image.height == this.height) {
-                console.log('heheXD');
+                this.originalImage = image;
             } else {
                 this.dialog.closeAll();
                 this.showError();
@@ -92,59 +113,33 @@ export class CreateImageComponent implements OnInit {
         if (await this.verifyBMP(selectedFile)) {
             const image = await this.convertImage(selectedFile);
             if (image.width == this.width || image.height == this.height) {
-                console.log('heheXD');
+                this.modifiableImage = image;
             } else {
                 this.dialog.closeAll();
                 this.showError();
             }
+        } else {
+            this.dialog.closeAll();
+            this.showError();
         }
     }
-
-    async createDiffCanvas(): Promise<void> {
-        /*
-        if (await this.uploadService.validate(this.canvasImages)) {
-            this.dialog.closeAll();
-            if (this.imageOriginal.complete) {
-                if (this.ctxOriginal) {
-                    this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
-                }
-            } else {
-                this.imageOriginal.onload = () => {
-                    if (this.ctxOriginal) {
-                        this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
-                    }
-                };
+    createDiffCanvas(): void {
+        if (this.originalImage && this.modifiableImage) {
+            if (this.ctxOriginal && this.ctxModifiable) {
+                this.ctxOriginal.drawImage(this.originalImage, 0, 0, this.width, this.height);
+                this.ctxModifiable.drawImage(this.modifiableImage, 0, 0, this.width, this.height);
             }
-            if (this.imageModifiable.complete) {
-                if (this.ctxModifiable) {
-                    this.ctxModifiable.drawImage(this.imageModifiable, 0, 0, this.width, this.height);
-                }
-            } else {
-                this.imageModifiable.onload = () => {
-                    if (this.ctxModifiable) {
-                        this.ctxModifiable.drawImage(this.imageModifiable, 0, 0, this.width, this.height);
-                    }
-                };
-            }
-        } else {
-            this.dialog.closeAll();
-            this.showError();
-        }*/
+        }
+        this.dialog.closeAll();
     }
     async createSameCanvas(): Promise<void> {
-        /*
-        if (await this.uploadService.validate(this.canvasImages)) {
-            this.dialog.closeAll();
-            if (this.ctxOriginal) {
-                this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
+        if (this.originalImage) {
+            if (this.ctxOriginal && this.ctxModifiable) {
+                this.ctxOriginal.drawImage(this.originalImage, 0, 0, this.width, this.height);
+                this.ctxModifiable.drawImage(this.originalImage, 0, 0, this.width, this.height);
             }
-            if (this.ctxModifiable) {
-                this.ctxModifiable.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
-            }
-        } else {
-            this.dialog.closeAll();
-            this.showError();
-        }*/
+        }
+        this.dialog.closeAll();
     }
     deleteOriginal(): void {
         if (this.ctxOriginal) {
@@ -155,6 +150,10 @@ export class CreateImageComponent implements OnInit {
         if (this.ctxModifiable) {
             this.ctxModifiable.clearRect(0, 0, this.width, this.height);
         }
+    }
+    deleteBoth(): void {
+        this.deleteOriginal();
+        this.deleteModifiable();
     }
     async createDifference(): Promise<HTMLCanvasElement> {
         if (this.ctxOriginal && this.ctxModifiable) {
@@ -178,36 +177,8 @@ export class CreateImageComponent implements OnInit {
             }
         });
     }
-    async validateDim(files: File[]): Promise<boolean> {
-        this.valid = true;
-        const promises: Array<Promise<void>> = [];
-        for (const file of files) {
-            const reader = new FileReader();
-            const promise = new Promise<void>((resolve) => {
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                    const img = new Image();
-                    img.src = reader.result as string;
-                    let width: number = 0;
-                    let height: number = 0;
-                    img.onload = () => {
-                        height = img.naturalHeight;
-                        width = img.naturalWidth;
-                        if (height != this.height || width != this.width) {
-                            this.valid = false;
-                        }
-                        resolve();
-                    };
-                };
-            });
-            promises.push(promise);
-        }
-        return Promise.all(promises).then(() => {
-            return this.valid;
-        });
-    }
     async verifyBMP(file: File): Promise<boolean> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = function () {
                 const imageData = new Uint8Array(reader.result as ArrayBuffer);
@@ -218,6 +189,47 @@ export class CreateImageComponent implements OnInit {
     }
     async convertImage(file: File): Promise<ImageBitmap> {
         return await createImageBitmap(file);
+    }
+
+    inputName(): void {
+        this.createDifference().then((diff) => {
+            if (diff) {
+                const diffCount = this.difference.countDifference(diff);
+                if (diffCount >= 3 && diffCount <= 9) {
+                    this.showSave();
+                } else {
+                    this.showErrorDiff();
+                }
+            } else {
+                this.showErrorDiff();
+            }
+        });
+    }
+    async saveGameCard(): Promise<void> {
+        this.gameName = `${this.gameName}`;
+
+        const originalImageBlob = await this.convertImageToBlob(this.originalCanvas);
+        const modifiableImageBlob = await this.convertImageToBlob(this.modifiableCanvas);
+
+        const formData = new FormData();
+        formData.append('name', this.gameName);
+        formData.append('originalImage', originalImageBlob, `${this.gameName}_originalImage.bmp`);
+        formData.append('modifiableImage', modifiableImageBlob, `${this.gameName}_modifiableImage.bmp`);
+
+        this.communication.postGameCard(formData);
+    }
+
+    async convertImageToBlob(canvas: ElementRef<HTMLCanvasElement>): Promise<Blob> {
+        return new Promise((resolve, reject) => {
+            canvas.nativeElement.toBlob((blob) => {
+                if (!blob) {
+                    reject(new Error('Failed to convert canvas to Blob'));
+                    return;
+                }
+
+                resolve(new Blob([blob], { type: 'image/bmp' }));
+            });
+        });
     }
 }
 export interface HTMLInputEvent extends Event {

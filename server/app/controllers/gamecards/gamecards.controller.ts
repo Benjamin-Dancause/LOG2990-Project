@@ -1,15 +1,11 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Post } from '@nestjs/common';
+import { ApiOkResponse } from '@nestjs/swagger';
 
-@ApiTags('Images')
-@Controller('images')
+@Controller('games')
 export class GamecardsController {
     constructor() {}
 
-    @ApiCreatedResponse({
-        description: 'Image created successfully',
-    })
-    @Get('/')
+    @Post('/')
     @ApiOkResponse({
         description: 'Get all images',
     })

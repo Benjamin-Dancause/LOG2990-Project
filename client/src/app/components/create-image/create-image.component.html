@@ -1,7 +1,6 @@
 <div class="container">
     <div class="canvas-area">
         <div class="canvas-wrap">
-            <button></button>"
             <button class="btn delete-btn" (click)="deleteOriginal()">
                 <img class="del-icon" src="../../assets/delete-icon.png" />
             </button>
@@ -22,7 +21,11 @@
         <div class="settings-btn">
             <app-slider></app-slider>
             <button class="btn" (click)="showDifference()">Détecter les différences</button>
+            <button class="btn delete-btn" (click)="deleteBoth()">
+                <img class="del-icon" src="../../assets/delete-icon.png" />
+            </button>
         </div>
+        <button class="btn" (click)="inputName()">Sauvegarder</button>
     </div>
     <ng-template #inputDifferentTemplate>
         <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
@@ -53,6 +56,19 @@
     <ng-template #negativeTemplate>
         <div id="neg">
             <h3>Voici les différences</h3>
+        </div>
+    </ng-template>
+    <ng-template #saveTemplate>
+        <div id="neg">
+            <h3>Nommez votre nouvelle partie !</h3>
+            <input type="text" [(ngModel)]="gameName" />
+        </div>
+        <button type="button" (click)="saveGameCard()">Sauvegarder</button>
+    </ng-template>
+    <ng-template #errorTemplateDiff>
+        <div>
+            <h3>Vous devez avoir entre 3 et 9 erreurs</h3>
+            <img src="../../assets/error_icon.png" class="error-icon" />
         </div>
     </ng-template>
 </div>
