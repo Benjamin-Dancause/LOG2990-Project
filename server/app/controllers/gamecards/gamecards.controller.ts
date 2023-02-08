@@ -1,14 +1,19 @@
-import { GamecardsService } from '@app/services/gamecards/gamecards.service';
-import { Body, Controller, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Get } from '@nestjs/common';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Gamecards')
-@Controller('gamecards')
+@ApiTags('Images')
+@Controller('images')
 export class GamecardsController {
-    constructor(private gamecardsService: GamecardsService) {}
+    constructor() {}
 
-    @Post('/images')
-    send(@Body() image: HTMLImageElement) {
-        this.gamecardsService.storeImage(image);
+    @ApiCreatedResponse({
+        description: 'Image created successfully',
+    })
+    @Get('/')
+    @ApiOkResponse({
+        description: 'Get all images',
+    })
+    test() {
+        return { name: 'hello' };
     }
 }

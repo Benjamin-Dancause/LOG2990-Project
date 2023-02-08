@@ -22,7 +22,8 @@ export class CommunicationService {
     }
 
     imagePost(image: HTMLImageElement): Observable<HttpResponse<string>> {
-        return this.http.post(`${this.baseUrl}/gamecards`, image, { observe: 'response', responseType: 'text' });
+        console.log(this.baseUrl);
+        return this.http.post(`${this.baseUrl}/images/send`, image, { observe: 'response', responseType: 'text' });
     }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);

@@ -1,8 +1,6 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
-import { UploadService } from '@app/services/upload.service';
 
 @Component({
     selector: 'app-create-image',
@@ -27,16 +25,14 @@ export class CreateImageComponent implements OnInit {
     ctxOriginal: CanvasRenderingContext2D | null;
     ctxModifiable: CanvasRenderingContext2D | null;
     canvasImages: File[] = [];
-    imageOriginal = new Image();
-    imageModifiable = new Image();
     width: number = 640;
     height: number = 480;
+    valid: boolean = true;
 
     constructor(
         public dialog: MatDialog,
-        private uploadService: UploadService,
-        protected difference: DifferenceService,
-        private communication: CommunicationService,
+        //private uploadService: UploadService,
+        protected difference: DifferenceService, //private communication: CommunicationService,
     ) {}
 
     ngOnInit(): void {
@@ -64,7 +60,7 @@ export class CreateImageComponent implements OnInit {
             height: '200px',
         });
     }
-    storeOriginal(fileEvent: Event): void {
+    async storeOriginal(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
             return;
         }
@@ -72,15 +68,20 @@ export class CreateImageComponent implements OnInit {
         if (!selectedFile) {
             return;
         }
-        this.reader.onload = () => {
-            if (this.reader.result) {
-                this.imageOriginal.src = this.reader.result.toString();
-                this.canvasImages.push(selectedFile);
+        if (await this.verifyBMP(selectedFile)) {
+            const image = await this.convertImage(selectedFile);
+            if (image.width == this.width || image.height == this.height) {
+                console.log('heheXD');
+            } else {
+                this.dialog.closeAll();
+                this.showError();
             }
-        };
-        this.reader.readAsDataURL(selectedFile);
+        } else {
+            this.dialog.closeAll();
+            this.showError();
+        }
     }
-    storeDiff(fileEvent: Event): void {
+    async storeDiff(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
             return;
         }
@@ -88,16 +89,19 @@ export class CreateImageComponent implements OnInit {
         if (!selectedFile) {
             return;
         }
-        this.reader.onload = () => {
-            if (this.reader.result) {
-                this.imageModifiable.src = this.reader.result.toString();
-                this.canvasImages.push(selectedFile);
+        if (await this.verifyBMP(selectedFile)) {
+            const image = await this.convertImage(selectedFile);
+            if (image.width == this.width || image.height == this.height) {
+                console.log('heheXD');
+            } else {
+                this.dialog.closeAll();
+                this.showError();
             }
-        };
-        this.reader.readAsDataURL(selectedFile);
+        }
     }
 
     async createDiffCanvas(): Promise<void> {
+        /*
         if (await this.uploadService.validate(this.canvasImages)) {
             this.dialog.closeAll();
             if (this.imageOriginal.complete) {
@@ -125,9 +129,10 @@ export class CreateImageComponent implements OnInit {
         } else {
             this.dialog.closeAll();
             this.showError();
-        }
+        }*/
     }
     async createSameCanvas(): Promise<void> {
+        /*
         if (await this.uploadService.validate(this.canvasImages)) {
             this.dialog.closeAll();
             if (this.ctxOriginal) {
@@ -139,7 +144,7 @@ export class CreateImageComponent implements OnInit {
         } else {
             this.dialog.closeAll();
             this.showError();
-        }
+        }*/
     }
     deleteOriginal(): void {
         if (this.ctxOriginal) {
@@ -173,10 +178,46 @@ export class CreateImageComponent implements OnInit {
             }
         });
     }
-
-    test(): void {
-        this.communication.imagePost(this.imageOriginal);
-        console.log('test');
+    async validateDim(files: File[]): Promise<boolean> {
+        this.valid = true;
+        const promises: Array<Promise<void>> = [];
+        for (const file of files) {
+            const reader = new FileReader();
+            const promise = new Promise<void>((resolve) => {
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const img = new Image();
+                    img.src = reader.result as string;
+                    let width: number = 0;
+                    let height: number = 0;
+                    img.onload = () => {
+                        height = img.naturalHeight;
+                        width = img.naturalWidth;
+                        if (height != this.height || width != this.width) {
+                            this.valid = false;
+                        }
+                        resolve();
+                    };
+                };
+            });
+            promises.push(promise);
+        }
+        return Promise.all(promises).then(() => {
+            return this.valid;
+        });
+    }
+    async verifyBMP(file: File): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const imageData = new Uint8Array(reader.result as ArrayBuffer);
+                resolve(imageData[0] === 66 && imageData[1] === 77);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    }
+    async convertImage(file: File): Promise<ImageBitmap> {
+        return await createImageBitmap(file);
     }
 }
 export interface HTMLInputEvent extends Event {
