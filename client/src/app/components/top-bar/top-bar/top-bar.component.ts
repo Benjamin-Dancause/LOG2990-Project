@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { CounterService } from '@app/services/counter.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-top-bar',
@@ -6,12 +8,26 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./top-bar.component.scss']
 })
 
-export class TopBarComponent implements OnInit {
-  
+export class TopBarComponent implements OnInit, OnDestroy{
+
   @Input() name: string;
   @Input() userName: string;
+  @Input() counter: number = 0;
+  counterSubcription: Subscription;
 
-  ngOnInit(): void {
-    
+  constructor(private counterService: CounterService) {}
+  
+
+  ngOnInit() {
+    this.counterSubcription =  this.counterService.getCounterObservable().subscribe((counter: number) => {
+      this.counter = counter;
+    });
   }
+  
+
+  ngOnDestroy(){
+    this.counterSubcription.unsubscribe();
+  }
+
+
 }

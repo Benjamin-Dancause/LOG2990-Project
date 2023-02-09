@@ -1,16 +1,16 @@
-import { Logger, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Course, courseSchema } from '@app/model/database/course';
 import { CourseController } from '@app/controllers/course/course.controller';
-import { CourseService } from '@app/services/course/course.service';
 import { DateController } from '@app/controllers/date/date.controller';
-import { DateService } from '@app/services/date/date.service';
-import { ChatGateway } from '@app/gateways/chat/chat.gateway';
-import { ExampleService } from '@app/services/example/example.service';
 import { ExampleController } from '@app/controllers/example/example.controller';
-import { TimerControllerController } from './controllers/timer-controller/timer-controller.controller';
+import { ChatGateway } from '@app/gateways/chat/chat.gateway';
+import { Course, courseSchema } from '@app/model/database/course';
+import { CourseService } from '@app/services/course/course.service';
+import { DateService } from '@app/services/date/date.service';
+import { ExampleService } from '@app/services/example/example.service';
+import { Logger, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { TimerController } from './controllers/timer/timer.controller';
+import { CounterController } from './controllers/counter/counter.controller';
 
 @Module({
     imports: [
@@ -24,7 +24,7 @@ import { TimerController } from './controllers/timer/timer.controller';
         }),
         MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
     ],
-    controllers: [CourseController, DateController, ExampleController, TimerControllerController, TimerController],
+    controllers: [CourseController, DateController, ExampleController, TimerController, CounterController],
     providers: [ChatGateway, CourseService, DateService, ExampleService, Logger],
 })
 export class AppModule {}

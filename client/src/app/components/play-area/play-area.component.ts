@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/interfaces/vec2';
+import { CounterService } from '@app/services/counter.service';
 import { DrawService } from '@app/services/draw.service';
 
 // TODO : Avoir un fichier séparé pour les constantes!
@@ -27,7 +28,7 @@ export class PlayAreaComponent implements AfterViewInit {
     buttonPressed = '';
 
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    constructor(private readonly drawService: DrawService) {}
+    constructor(private readonly drawService: DrawService, private counterService: CounterService) {}
 
     get width(): number {
         return this.canvasSize.x;
@@ -44,8 +45,7 @@ export class PlayAreaComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        //this.drawService.drawGrid();
-        //this.drawService.drawWord('Différence');
+        this.drawService.drawGrid();
         this.canvas.nativeElement.focus();
     }
 
@@ -53,6 +53,9 @@ export class PlayAreaComponent implements AfterViewInit {
     mouseHitDetect(event: MouseEvent) {
         if (event.button === MouseButton.Left) {
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
+            this.counterService.incrementCounter();
+    
         }
     }
+
 }
