@@ -27,6 +27,10 @@ export class PlayAreaComponent implements AfterViewInit {
     buttonPressed = '';
 
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+    private rectangleX = 100;
+    private rectangleY = 100;
+    private rectangleWidth = 100;
+    private rectangleHeight = 100;
     constructor(private readonly drawService: DrawService) {}
 
     get width(): number {
@@ -44,15 +48,34 @@ export class PlayAreaComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        //this.drawService.drawGrid();
-        //this.drawService.drawWord('Différence');
+        // this.drawService.drawGrid();
+        // this.drawService.drawWord('Différence');
+        this.drawDarkRectangle();
         this.canvas.nativeElement.focus();
+    }
+
+    drawDarkRectangle() {
+        this.drawService.context.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        this.drawService.context.fillRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
     }
 
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
         if (event.button === MouseButton.Left) {
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
+
+            if (
+                this.mousePosition.x >= this.rectangleX &&
+                this.mousePosition.x <= this.rectangleX + this.rectangleWidth &&
+                this.mousePosition.y >= this.rectangleY &&
+                this.mousePosition.y <= this.rectangleY + this.rectangleHeight
+            ) {
+                this.drawService.context.fillStyle = 'green';
+                this.drawService.context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
+            } else {
+                this.drawService.context.fillStyle = 'red';
+                this.drawService.context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
+            }
         }
     }
 }
