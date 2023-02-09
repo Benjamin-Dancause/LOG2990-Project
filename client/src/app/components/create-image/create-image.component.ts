@@ -30,8 +30,8 @@ export class CreateImageComponent implements OnInit {
     ctxOriginal: CanvasRenderingContext2D | null;
     ctxModifiable: CanvasRenderingContext2D | null;
     canvasImages: File[] = [];
-    width: number = 640;
-    height: number = 480;
+    private width: number = 640;
+    private height: number = 480;
     valid: boolean = true;
     originalImage: ImageBitmap;
     modifiableImage: ImageBitmap;
@@ -39,7 +39,7 @@ export class CreateImageComponent implements OnInit {
 
     constructor(
         public dialog: MatDialog,
-        //private uploadService: UploadService,
+        // private uploadService: UploadService,
         protected difference: DifferenceService,
         private communication: CommunicationService,
     ) {}
@@ -91,7 +91,7 @@ export class CreateImageComponent implements OnInit {
         }
         if (await this.verifyBMP(selectedFile)) {
             const image = await this.convertImage(selectedFile);
-            if (image.width == this.width || image.height == this.height) {
+            if (image.width === this.width || image.height === this.height) {
                 this.originalImage = image;
             } else {
                 this.dialog.closeAll();
@@ -112,7 +112,7 @@ export class CreateImageComponent implements OnInit {
         }
         if (await this.verifyBMP(selectedFile)) {
             const image = await this.convertImage(selectedFile);
-            if (image.width == this.width || image.height == this.height) {
+            if (image.width === this.width || image.height === this.height) {
                 this.modifiableImage = image;
             } else {
                 this.dialog.closeAll();
@@ -178,11 +178,12 @@ export class CreateImageComponent implements OnInit {
         });
     }
     async verifyBMP(file: File): Promise<boolean> {
+        const bmp: number[] = [66, 77];
         return new Promise((resolve) => {
             const reader = new FileReader();
-            reader.onload = function () {
+            reader.onload = () => {
                 const imageData = new Uint8Array(reader.result as ArrayBuffer);
-                resolve(imageData[0] === 66 && imageData[1] === 77);
+                resolve(imageData[0] === bmp[0] && imageData[1] === bmp[1]);
             };
             reader.readAsArrayBuffer(file);
         });
