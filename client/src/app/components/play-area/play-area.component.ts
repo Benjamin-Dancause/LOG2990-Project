@@ -71,10 +71,18 @@ export class PlayAreaComponent implements AfterViewInit {
                 this.mousePosition.y <= this.rectangleY + this.rectangleHeight
             ) {
                 this.drawService.context.fillStyle = 'green';
+                this.drawService.context.font = '20px Arial';
                 this.drawService.context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
+                setTimeout(() => {
+                    this.drawService.context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
+                }, 3000);
             } else {
                 this.drawService.context.fillStyle = 'red';
+                this.drawService.context.font = '20px Arial';
                 this.drawService.context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
+                setTimeout(() => {
+                    this.drawService.context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
+                }, 3000);
             }
         }
     }
