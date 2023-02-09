@@ -3,15 +3,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
 
+const SCREEN_WIDTH = 640;
+const SCREEN_HEIGHT = 480;
+const BMP_MIN = 66;
+const BMP_MAX = 77;
+const DIFFCOUNT_MAX = 9;
+
 @Component({
     selector: 'app-create-image',
     templateUrl: './create-image.component.html',
     styleUrls: ['./create-image.component.scss'],
 })
 export class CreateImageComponent implements OnInit {
-    onFileSelected() {
-        throw new Error('Method not implemented.');
-    }
     @ViewChild('myCanvas') canvasRef: ElementRef;
     @ViewChild('inputDifferentTemplate', { static: true })
     inputDifferentTemplate: TemplateRef<unknown>;
@@ -33,8 +36,8 @@ export class CreateImageComponent implements OnInit {
     ctxOriginal: CanvasRenderingContext2D | null;
     ctxModifiable: CanvasRenderingContext2D | null;
     canvasImages: File[] = [];
-    width: number = 640;
-    height: number = 480;
+    width: number = SCREEN_WIDTH;
+    height: number = SCREEN_HEIGHT;
     valid: boolean = true;
     originalImage: ImageBitmap;
     modifiableImage: ImageBitmap;
@@ -46,6 +49,10 @@ export class CreateImageComponent implements OnInit {
         protected difference: DifferenceService,
         private communication: CommunicationService,
     ) {}
+
+    onFileSelected() {
+        throw new Error('Method not implemented.');
+    }
 
     ngOnInit(): void {
         this.ctxOriginal = this.originalCanvas.nativeElement.getContext('2d');
@@ -86,16 +93,13 @@ export class CreateImageComponent implements OnInit {
     }
     async storeOriginal(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
-            console.log('test1');
             return;
         }
         const selectedFile = fileEvent.target.files[0];
         if (!selectedFile) {
-            console.log('test2');
             return;
         }
         if (await this.verifyBMP(selectedFile)) {
-            console.log('test3');
             const image = await this.convertImage(selectedFile);
             if (image.width === this.width || image.height === this.height) {
                 this.originalImage = image;
@@ -184,7 +188,7 @@ export class CreateImageComponent implements OnInit {
         });
     }
     async verifyBMP(file: File): Promise<boolean> {
-        const bmp: number[] = [66, 77];
+        const bmp: number[] = [BMP_MIN, BMP_MAX];
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = () => {
@@ -202,7 +206,7 @@ export class CreateImageComponent implements OnInit {
         this.createDifference().then((diff) => {
             if (diff) {
                 const diffCount = this.difference.countDifference(diff);
-                if (diffCount >= 3 && diffCount <= 9) {
+                if (diffCount >= 3 && diffCount <= DIFFCOUNT_MAX) {
                     this.showSave();
                 } else {
                     this.showErrorDifference();

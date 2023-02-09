@@ -1,6 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MatSliderModule } from '@angular/material/slider';
 import { SliderComponent } from './slider.component';
+
+const DEFAULT_1 = 0;
+const DEFAULT_2 = 3;
+const DEFAULT_3 = 9;
+const DEFAULT_4 = 15;
 
 describe('SliderComponent', () => {
     let component: SliderComponent;
@@ -9,6 +14,7 @@ describe('SliderComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [SliderComponent],
+            imports: [MatSliderModule],
         }).compileComponents();
         fixture = TestBed.createComponent(SliderComponent);
         component = fixture.componentInstance;
@@ -21,7 +27,7 @@ describe('SliderComponent', () => {
 
     // nombres magiques... à changer
     it('should have steps array with default values', () => {
-        expect(component.steps).toEqual([0, 3, 9, 15]);
+        expect(component.steps).toEqual([DEFAULT_1, DEFAULT_2, DEFAULT_3, DEFAULT_4]);
     });
 
     it('should have a stepIndex with default value of 1', () => {

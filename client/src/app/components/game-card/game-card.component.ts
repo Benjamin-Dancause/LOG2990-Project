@@ -11,6 +11,7 @@ export class GameCardComponent {
     @Input() imageUrl: string;
     @Input() level: string;
     @Input() configuration: boolean;
+
     @ViewChild('namePopupTemplate', { static: true })
     namePopupTemplate: TemplateRef<unknown>;
     userName: string;

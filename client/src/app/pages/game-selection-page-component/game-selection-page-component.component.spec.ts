@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GameSelectionPageComponent } from './game-selection-page-component.component';
 
+const PAGE_SIZE = 4;
+
 describe('GameSelectionPageComponent', () => {
     let component: GameSelectionPageComponent;
     let fixture: ComponentFixture<GameSelectionPageComponent>;
@@ -22,12 +24,12 @@ describe('GameSelectionPageComponent', () => {
 
     it('should display correct games', () => {
         component.currentPage = 0;
-        expect(component.displayedGames.length).toEqual(4);
+        expect(component.displayedGames.length).toEqual(PAGE_SIZE);
         expect(component.displayedGames[0].title).toEqual('Game 1');
         expect(component.displayedGames[3].title).toEqual('Game 4');
 
         component.currentPage = 1;
-        expect(component.displayedGames.length).toEqual(4);
+        expect(component.displayedGames.length).toEqual(PAGE_SIZE);
         expect(component.displayedGames[0].title).toEqual('Game 5');
         expect(component.displayedGames[3].title).toEqual('Game 8');
     });

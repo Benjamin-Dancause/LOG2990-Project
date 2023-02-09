@@ -1,6 +1,9 @@
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SettingsButtonComponent } from './settings-button.component';
@@ -13,7 +16,7 @@ describe('SettingsButtonComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [BrowserAnimationsModule, MatDialogModule],
+            imports: [BrowserAnimationsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule],
             declarations: [SettingsButtonComponent],
         }).compileComponents();
     });

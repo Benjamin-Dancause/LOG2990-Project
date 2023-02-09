@@ -2,6 +2,11 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { Vec2 } from '@app/interfaces/vec2';
 import { DrawService } from '@app/services/draw.service';
 
+const RECTANGLE_X = 100;
+const RECTANGLE_Y = 100;
+const RECTANGLE_WIDTH = 100;
+const RECTANGLE_HEIGHT = 100;
+
 // TODO : Avoir un fichier séparé pour les constantes!
 export const DEFAULT_WIDTH = 640;
 export const DEFAULT_HEIGHT = 480;
@@ -27,10 +32,10 @@ export class PlayAreaComponent implements AfterViewInit {
     buttonPressed = '';
 
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    private rectangleX = 100;
-    private rectangleY = 100;
-    private rectangleWidth = 100;
-    private rectangleHeight = 100;
+    private rectangleX = RECTANGLE_X;
+    private rectangleY = RECTANGLE_Y;
+    private rectangleWidth = RECTANGLE_WIDTH;
+    private rectangleHeight = RECTANGLE_HEIGHT;
     constructor(private readonly drawService: DrawService) {}
 
     get width(): number {

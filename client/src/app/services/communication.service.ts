@@ -22,7 +22,6 @@ export class CommunicationService {
     }
 
     postGameCard(formData: FormData): Observable<HttpResponse<string>> {
-        console.log(this.baseUrl);
         return this.http.post(`${this.baseUrl}/games`, formData, { observe: 'response', responseType: 'text' });
     }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {

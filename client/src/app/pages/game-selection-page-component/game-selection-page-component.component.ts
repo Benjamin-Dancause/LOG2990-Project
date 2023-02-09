@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 
+const PAGE_SIZE = 4;
+
 @Component({
     selector: 'app-game-selection-page-component',
     templateUrl: './game-selection-page-component.component.html',
@@ -23,7 +25,7 @@ export class GameSelectionPageComponent {
     startIndex = 0;
     endIndex = 3;
     currentPage = 0;
-    pageSize = 4;
+    pageSize = PAGE_SIZE;
 
     lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
 
