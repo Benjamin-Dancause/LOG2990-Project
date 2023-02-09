@@ -9,6 +9,9 @@ import { UploadService } from '@app/services/upload.service';
     styleUrls: ['./create-image.component.scss'],
 })
 export class CreateImageComponent implements OnInit {
+    onFileSelected() {
+        throw new Error('Method not implemented.');
+    }
     @ViewChild('myCanvas') canvasRef: ElementRef;
     @ViewChild('inputDifferentTemplate', { static: true })
     inputDifferentTemplate: TemplateRef<unknown>;
