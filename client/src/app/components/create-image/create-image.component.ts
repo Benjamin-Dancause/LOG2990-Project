@@ -17,7 +17,7 @@ export class CreateImageComponent implements OnInit {
     @ViewChild('errorTemplate', { static: true })
     errorTemplate: TemplateRef<unknown>;
     @ViewChild('errorTemplateDiff', { static: true })
-    errorTemplateDiff: TemplateRef<unknown>;
+    errorTemplateDifference: TemplateRef<unknown>;
     @ViewChild('originalCanvas', { static: true })
     originalCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('modifiableCanvas', { static: true })
@@ -30,8 +30,8 @@ export class CreateImageComponent implements OnInit {
     ctxOriginal: CanvasRenderingContext2D | null;
     ctxModifiable: CanvasRenderingContext2D | null;
     canvasImages: File[] = [];
-    private width: number = 640;
-    private height: number = 480;
+    width: number = 640;
+    height: number = 480;
     valid: boolean = true;
     originalImage: ImageBitmap;
     modifiableImage: ImageBitmap;
@@ -69,8 +69,8 @@ export class CreateImageComponent implements OnInit {
             height: '250px',
         });
     }
-    showErrorDiff(): void {
-        this.dialog.open(this.errorTemplateDiff, {
+    showErrorDifference(): void {
+        this.dialog.open(this.errorTemplateDifference, {
             width: '250px',
             height: '200px',
         });
@@ -83,13 +83,16 @@ export class CreateImageComponent implements OnInit {
     }
     async storeOriginal(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
+            console.log('test1');
             return;
         }
         const selectedFile = fileEvent.target.files[0];
         if (!selectedFile) {
+            console.log('test2');
             return;
         }
         if (await this.verifyBMP(selectedFile)) {
+            console.log('test3');
             const image = await this.convertImage(selectedFile);
             if (image.width === this.width || image.height === this.height) {
                 this.originalImage = image;
@@ -199,10 +202,10 @@ export class CreateImageComponent implements OnInit {
                 if (diffCount >= 3 && diffCount <= 9) {
                     this.showSave();
                 } else {
-                    this.showErrorDiff();
+                    this.showErrorDifference();
                 }
             } else {
-                this.showErrorDiff();
+                this.showErrorDifference();
             }
         });
     }
