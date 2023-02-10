@@ -175,16 +175,18 @@ export class CreateImageComponent implements OnInit {
 
     showDifference(): void {
         this.createDifference().then((diff) => {
-            if (diff) {
-                this.dialog.open(this.negativeTemplate, {
-                    width: '700px',
-                    height: '620px',
-                });
-                document.getElementById('neg')?.appendChild(diff);
-                const nbdiff = document.createElement('p');
-                nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.countDifference(diff).toString());
-                document.getElementById('neg')?.appendChild(nbdiff);
-            }
+            this.dialog.open(this.negativeTemplate, {
+                width: '700px',
+                height: '620px',
+            });
+            const negDiv = document.getElementById('neg') as HTMLDivElement;
+            negDiv.appendChild(diff);
+            const nbdiff = document.createElement('p');
+            nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.countDifference(diff).toString());
+            negDiv.appendChild(nbdiff);
+            const dificulty = document.createElement('p');
+            dificulty.innerHTML = 'Difficulté : '.concat(this.difference.isDifficult(diff) ? 'Difficile' : 'Facile');
+            negDiv.appendChild(dificulty);
         });
     }
     async verifyBMP(file: File): Promise<boolean> {
