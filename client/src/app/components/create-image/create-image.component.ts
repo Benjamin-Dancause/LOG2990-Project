@@ -91,6 +91,22 @@ export class CreateImageComponent implements OnInit {
             height: '200px',
         });
     }
+    showDifference(): void {
+        this.createDifference().then((diff) => {
+            this.dialog.open(this.negativeTemplate, {
+                width: '700px',
+                height: '650px',
+            });
+            const negDiv = document.getElementById('neg') as HTMLDivElement;
+            negDiv.appendChild(diff);
+            const nbdiff = document.createElement('p');
+            nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.countDifference(diff).toString());
+            negDiv.appendChild(nbdiff);
+            const dificulty = document.createElement('p');
+            dificulty.innerHTML = 'Difficulté : '.concat(this.difference.isDifficult(diff) ? 'Difficile' : 'Facile');
+            negDiv.appendChild(dificulty);
+        });
+    }
     async storeOriginal(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
             return;
@@ -171,23 +187,6 @@ export class CreateImageComponent implements OnInit {
             return diff;
         }
         return new HTMLCanvasElement();
-    }
-
-    showDifference(): void {
-        this.createDifference().then((diff) => {
-            this.dialog.open(this.negativeTemplate, {
-                width: '700px',
-                height: '650px',
-            });
-            const negDiv = document.getElementById('neg') as HTMLDivElement;
-            negDiv.appendChild(diff);
-            const nbdiff = document.createElement('p');
-            nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.countDifference(diff).toString());
-            negDiv.appendChild(nbdiff);
-            const dificulty = document.createElement('p');
-            dificulty.innerHTML = 'Difficulté : '.concat(this.difference.isDifficult(diff) ? 'Difficile' : 'Facile');
-            negDiv.appendChild(dificulty);
-        });
     }
     async verifyBMP(file: File): Promise<boolean> {
         const bmp: number[] = [BMP_MIN, BMP_MAX];
