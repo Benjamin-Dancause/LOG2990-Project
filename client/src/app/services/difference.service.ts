@@ -4,6 +4,8 @@ export const CANVAS_WIDTH = 640;
 export const CANVAS_HEIGHT = 480;
 export const ARRAY_OFFSET = 4;
 export const BLACK = 255;
+export const DIFFICULTY_PIXEL_THRESHOLD = 0.15;
+export const DIFFICULTY_DIFFRENCE_THRESHOLD = 7;
 
 @Injectable({
     providedIn: 'root',
