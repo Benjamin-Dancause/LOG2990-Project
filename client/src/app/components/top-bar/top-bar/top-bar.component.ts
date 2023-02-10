@@ -5,7 +5,8 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-top-bar',
   templateUrl: './top-bar.component.html',
-  styleUrls: ['./top-bar.component.scss']
+  styleUrls: ['./top-bar.component.scss'],
+  providers: [CounterService]
 })
 
 export class TopBarComponent implements OnInit, OnDestroy{

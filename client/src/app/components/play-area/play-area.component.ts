@@ -20,6 +20,7 @@ export enum MouseButton {
     selector: 'app-play-area',
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
+    providers: [CounterService, DrawService]
 })
 export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private canvas!: ElementRef<HTMLCanvasElement>;
@@ -54,7 +55,6 @@ export class PlayAreaComponent implements AfterViewInit {
         if (event.button === MouseButton.Left) {
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
             this.counterService.incrementCounter();
-    
         }
     }
 

@@ -11,7 +11,7 @@ export class CounterService {
   constructor(private http: HttpClient){}
 
   incrementCounter() {
-    this.http.post('', {}).subscribe((counter: number) => {
+    this.http.post('/api/counter', {}).subscribe((counter: number) => {
       this.counterSubject.next(counter);
     })
   }
