@@ -177,7 +177,7 @@ export class CreateImageComponent implements OnInit {
         this.createDifference().then((diff) => {
             this.dialog.open(this.negativeTemplate, {
                 width: '700px',
-                height: '620px',
+                height: '650px',
             });
             const negDiv = document.getElementById('neg') as HTMLDivElement;
             negDiv.appendChild(diff);
