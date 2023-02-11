@@ -4,6 +4,8 @@ export const CANVAS_WIDTH = 640;
 export const CANVAS_HEIGHT = 480;
 export const ARRAY_OFFSET = 4;
 export const BLACK = 255;
+export const DIFFICULTY_PIXEL_THRESHOLD = 0.15;
+export const DIFFICULTY_DIFFRENCE_THRESHOLD = 7;
 
 @Injectable({
     providedIn: 'root',
@@ -94,5 +96,17 @@ export class DifferenceService {
         }
 
         return count;
+    }
+
+    isDifficult(canvas: HTMLCanvasElement): boolean {
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        const pixels3 = ctx.getImageData(0, 0, canvas.width, canvas.height) as ImageData;
+        let count = 0;
+        for (let i = 0; i < (pixels3.data.length as number); i += ARRAY_OFFSET) {
+            if (pixels3.data[i + 3] === BLACK) {
+                count++;
+            }
+        }
+        return count / (CANVAS_WIDTH * CANVAS_HEIGHT) <= DIFFICULTY_PIXEL_THRESHOLD && this.countDifference(canvas) >= DIFFICULTY_DIFFRENCE_THRESHOLD;
     }
 }

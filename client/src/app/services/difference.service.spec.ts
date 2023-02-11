@@ -63,4 +63,28 @@ describe('DifferenceService', () => {
         const diff = service.findDifference(ctxStub1, ctxStub2, TEST_VALUE1);
         expect(service.countDifference(diff)).toEqual(1);
     });
+
+    it('should return false when every pixel is different', () => {
+        ctxStub1?.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        const diff = service.findDifference(ctxStub1, ctxStub2, 0);
+        expect(service.isDifficult(diff)).toEqual(false);
+    });
+
+    it('should return false when there is only one small difference', () => {
+        ctxStub1?.fillRect(0, 0, TEST_VALUE2, TEST_VALUE2);
+        const diff = service.findDifference(ctxStub1, ctxStub2, 0);
+        expect(service.isDifficult(diff)).toEqual(false);
+    });
+
+    it('should return true when there are seven small differences', () => {
+        ctxStub1?.fillRect(0, 0, 1, 1);
+        ctxStub1?.fillRect(TEST_VALUE2, 0, 1, 1);
+        ctxStub1?.fillRect(TEST_VALUE2 * 2, 0, 1, 1);
+        ctxStub1?.fillRect(TEST_VALUE2 * 3, 0, 1, 1);
+        ctxStub1?.fillRect(0, TEST_VALUE2, 1, 1);
+        ctxStub1?.fillRect(0, TEST_VALUE2, 1, 1);
+        ctxStub1?.fillRect(0, TEST_VALUE2, 1, 1);
+        const diff = service.findDifference(ctxStub1, ctxStub2, 0);
+        expect(service.isDifficult(diff)).toEqual(false);
+    });
 });
