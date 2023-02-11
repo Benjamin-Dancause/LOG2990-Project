@@ -63,7 +63,7 @@
             <h3>Nommez votre nouvelle partie !</h3>
             <input type="text" [(ngModel)]="gameName" />
         </div>
-        <button type="button" (click)="saveGameCard()">Sauvegarder</button>
+        <button type="button" (click)="saveGameCard()" mat-dialog-close>Sauvegarder</button>
     </ng-template>
     <ng-template #errorTemplateDiff>
         <div>

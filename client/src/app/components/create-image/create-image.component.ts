@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
 
 const SCREEN_WIDTH = 640;
@@ -46,7 +47,8 @@ export class CreateImageComponent implements OnInit {
     constructor(
         public dialog: MatDialog,
         // private uploadService: UploadService,
-        protected difference: DifferenceService, //private communication: CommunicationService,
+        protected difference: DifferenceService,
+        private communication: CommunicationService,
     ) {}
 
     ngOnInit(): void {
@@ -205,19 +207,18 @@ export class CreateImageComponent implements OnInit {
         });
     }
     async saveGameCard(): Promise<void> {
-        /* this.gameName = `${this.gameName}`;
+        this.gameName = `${this.gameName}`;
 
-        const originalImageBlob = await this.convertImageToBlob(this.originalCanvas);
-        const modifiableImageBlob = await this.convertImageToBlob(this.modifiableCanvas);
+        const originalCanvasString = await this.convertToBase64(this.originalCanvas);
+        const modifiableCanvasString = await this.convertToBase64(this.modifiableCanvas);
 
-        const formData = new FormData();
-        formData.append('name', this.gameName);
-        formData.append('originalImage', originalImageBlob, `${this.gameName}_originalImage.bmp`);
-        formData.append('modifiableImage', modifiableImageBlob, `${this.gameName}_modifiableImage.bmp`);
-
-        this.communication.postGameCard(formData);
-        this.communication.basicGet();
-        console.log('test');*/
+        const request = {
+            name: this.gameName,
+            originalImage: originalCanvasString,
+            modifiableImage: modifiableCanvasString,
+        };
+        this.communication.imagesPost(request);
+        console.log(request);
     }
     /*
     async convertImageToBlob(canvas: ElementRef<HTMLCanvasElement>): Promise<Blob> {
