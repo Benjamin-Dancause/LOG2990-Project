@@ -183,7 +183,9 @@ export class CreateImageComponent implements OnInit {
     }
     async createDifference(): Promise<HTMLCanvasElement> {
         if (this.ctxOriginal && this.ctxModifiable) {
-            const diff = this.difference.findDifference(this.ctxOriginal, this.ctxModifiable, 3);
+            const slider = document.getElementById('slider') as HTMLInputElement;
+            const radius = slider.innerHTML as unknown as number;
+            const diff = this.difference.findDifference(this.ctxOriginal, this.ctxModifiable, radius);
             return diff;
         }
         return new HTMLCanvasElement();
