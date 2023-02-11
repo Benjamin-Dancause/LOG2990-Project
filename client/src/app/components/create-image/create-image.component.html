@@ -37,7 +37,7 @@
             <p>Ajouter l'image modifié</p>
             <input type="file" (change)="storeDiff($event)" />
         </div>
-        <button type="button" (click)="createDiffCanvas()">Sauvegarder</button>
+        <button type="button" (click)="createDiffCanvas()" mat-dialog-close>Sauvegarder</button>
     </ng-template>
     <ng-template #inputSameTemplate>
         <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
@@ -45,7 +45,7 @@
             <p>Ajouter les images</p>
             <input type="file" (change)="storeOriginal($event)" />
         </div>
-        <button type="button" (click)="createSameCanvas()">Sauvegarder</button>
+        <button type="button" (click)="createSameCanvas()" mat-dialog-close>Sauvegarder</button>
     </ng-template>
     <ng-template #errorTemplate>
         <div>
@@ -63,7 +63,7 @@
             <h3>Nommez votre nouvelle partie !</h3>
             <input type="text" [(ngModel)]="gameName" />
         </div>
-        <button type="button" (click)="saveGameCard()">Sauvegarder</button>
+        <button type="button" (click)="saveGameCard()" mat-dialog-close>Sauvegarder</button>
     </ng-template>
     <ng-template #errorTemplateDiff>
         <div>

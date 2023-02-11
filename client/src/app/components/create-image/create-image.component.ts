@@ -42,6 +42,7 @@ export class CreateImageComponent implements OnInit {
     originalImage: ImageBitmap;
     modifiableImage: ImageBitmap;
     gameName: string = '';
+    HTMLInputElement = window.HTMLInputElement;
 
     constructor(
         public dialog: MatDialog,
@@ -49,10 +50,6 @@ export class CreateImageComponent implements OnInit {
         protected difference: DifferenceService,
         private communication: CommunicationService,
     ) {}
-
-    onFileSelected() {
-        throw new Error('Method not implemented.');
-    }
 
     ngOnInit(): void {
         this.ctxOriginal = this.originalCanvas.nativeElement.getContext('2d');
@@ -109,45 +106,43 @@ export class CreateImageComponent implements OnInit {
     }
     async storeOriginal(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
+            this.showError();
             return;
         }
         const selectedFile = fileEvent.target.files[0];
         if (!selectedFile) {
+            this.showError();
             return;
         }
         if (await this.verifyBMP(selectedFile)) {
             const image = await this.convertImage(selectedFile);
+            console.log('test3');
             if (image.width === this.width || image.height === this.height) {
+                console.log('test4');
                 this.originalImage = image;
-            } else {
-                this.dialog.closeAll();
-                this.showError();
+                return;
             }
-        } else {
-            this.dialog.closeAll();
-            this.showError();
         }
+        this.showError();
     }
     async storeDiff(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
+            this.showError();
             return;
         }
         const selectedFile = fileEvent.target.files[0];
         if (!selectedFile) {
+            this.showError();
             return;
         }
         if (await this.verifyBMP(selectedFile)) {
             const image = await this.convertImage(selectedFile);
             if (image.width === this.width || image.height === this.height) {
                 this.modifiableImage = image;
-            } else {
-                this.dialog.closeAll();
-                this.showError();
+                return;
             }
-        } else {
-            this.dialog.closeAll();
-            this.showError();
         }
+        this.showError();
     }
     createDiffCanvas(): void {
         if (this.originalImage && this.modifiableImage) {
@@ -156,16 +151,14 @@ export class CreateImageComponent implements OnInit {
                 this.ctxModifiable.drawImage(this.modifiableImage, 0, 0, this.width, this.height);
             }
         }
-        this.dialog.closeAll();
     }
     async createSameCanvas(): Promise<void> {
-        if (this.originalImage) {
+        if (this.originalImage && this.modifiableImage) {
             if (this.ctxOriginal && this.ctxModifiable) {
                 this.ctxOriginal.drawImage(this.originalImage, 0, 0, this.width, this.height);
                 this.ctxModifiable.drawImage(this.originalImage, 0, 0, this.width, this.height);
             }
         }
-        this.dialog.closeAll();
     }
     deleteOriginal(): void {
         if (this.ctxOriginal) {
@@ -211,28 +204,26 @@ export class CreateImageComponent implements OnInit {
                 const diffCount = this.difference.countDifference(diff);
                 if (diffCount >= 3 && diffCount <= DIFFCOUNT_MAX) {
                     this.showSave();
-                } else {
-                    this.showErrorDifference();
+                    return;
                 }
-            } else {
-                this.showErrorDifference();
             }
         });
     }
     async saveGameCard(): Promise<void> {
         this.gameName = `${this.gameName}`;
 
-        const originalImageBlob = await this.convertImageToBlob(this.originalCanvas);
-        const modifiableImageBlob = await this.convertImageToBlob(this.modifiableCanvas);
+        const originalCanvasString = await this.convertToBase64(this.originalCanvas);
+        const modifiableCanvasString = await this.convertToBase64(this.modifiableCanvas);
 
-        const formData = new FormData();
-        formData.append('name', this.gameName);
-        formData.append('originalImage', originalImageBlob, `${this.gameName}_originalImage.bmp`);
-        formData.append('modifiableImage', modifiableImageBlob, `${this.gameName}_modifiableImage.bmp`);
-
-        this.communication.postGameCard(formData);
+        const request = {
+            name: this.gameName,
+            originalImage: originalCanvasString,
+            modifiableImage: modifiableCanvasString,
+        };
+        this.communication.imagesPost(request);
+        console.log(request);
     }
-
+    /*
     async convertImageToBlob(canvas: ElementRef<HTMLCanvasElement>): Promise<Blob> {
         return new Promise((resolve, reject) => {
             canvas.nativeElement.toBlob((blob) => {
@@ -244,8 +235,21 @@ export class CreateImageComponent implements OnInit {
                 resolve(new Blob([blob], { type: 'image/bmp' }));
             });
         });
+    }*/
+    async convertToBase64(canvasRef: ElementRef<HTMLCanvasElement>): Promise<string> {
+        return new Promise((resolve, reject) => {
+            canvasRef.nativeElement.toBlob((blob) => {
+                const reader = new FileReader();
+                if (blob) {
+                    reader.readAsDataURL(blob);
+                    reader.onload = () => {
+                        resolve(reader.result as string);
+                    };
+                    reader.onerror = (error) => {
+                        reject(error);
+                    };
+                }
+            });
+        });
     }
-}
-export interface HTMLInputEvent extends Event {
-    target: (HTMLInputElement & EventTarget) | null;
 }
