@@ -26,6 +26,7 @@ import { TopBarComponent } from './components/top-bar/top-bar/top-bar.component'
 import { ConfigPageComponent } from './pages/config-page-component/config-page-component.component';
 import { CreatePageComponent } from './pages/create-page/create-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
+import { CounterComponent } from './components/counter/counter.component';
 
 /**
  * Main module that is used in main.ts.
@@ -62,6 +63,7 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
         TimerComponent,
         HintButtonComponent,
         GiveUpButtonComponent,
+        CounterComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],

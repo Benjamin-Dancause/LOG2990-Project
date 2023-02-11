@@ -54,7 +54,7 @@ export class PlayAreaComponent implements AfterViewInit {
     mouseHitDetect(event: MouseEvent) {
         if (event.button === MouseButton.Left) {
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
-            this.counterService.incrementCounter();
+            this.counterService.incrementCounter().subscribe();
         }
     }
 
