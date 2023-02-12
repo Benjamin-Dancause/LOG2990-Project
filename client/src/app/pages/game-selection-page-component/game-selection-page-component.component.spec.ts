@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Gamecard } from '@app/classes/gamecard';
 import { GameSelectionPageComponent } from './game-selection-page-component.component';
 
 const PAGE_SIZE = 4;
@@ -7,14 +9,29 @@ const PAGE_SIZE = 4;
 describe('GameSelectionPageComponent', () => {
     let component: GameSelectionPageComponent;
     let fixture: ComponentFixture<GameSelectionPageComponent>;
+    const gamecards: Gamecard[] = [
+        { title: 'Game 1', image: 'image1', level: 'easy', configuration: true },
+        { title: 'Game 2', image: 'image2', level: 'medium', configuration: true },
+        { title: 'Game 3', image: 'image3', level: 'hard', configuration: true },
+        { title: 'Game 4', image: 'image4', level: 'easy', configuration: true },
+        { title: 'Game 5', image: 'image5', level: 'medium', configuration: true },
+        { title: 'Game 6', image: 'image6', level: 'hard', configuration: true },
+        { title: 'Game 7', image: 'image7', level: 'easy', configuration: true },
+        { title: 'Game 8', image: 'image8', level: 'medium', configuration: true },
+        { title: 'Game 9', image: 'image9', level: 'hard', configuration: true },
+        { title: 'Game 10', image: 'image10', level: 'easy', configuration: true },
+        { title: 'Game 11', image: 'image11', level: 'medium', configuration: true },
+    ];
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
             declarations: [GameSelectionPageComponent],
         }).compileComponents();
 
         fixture = TestBed.createComponent(GameSelectionPageComponent);
         component = fixture.componentInstance;
+        component.games = gamecards;
         fixture.detectChanges();
     });
 
@@ -44,8 +61,7 @@ describe('GameSelectionPageComponent', () => {
     });
 
     it('should change currentPage on next', () => {
-        component.currentPage = 1;
         component.onNext();
-        expect(component.currentPage).toEqual(2);
+        expect(component.currentPage).toEqual(1);
     });
 });
