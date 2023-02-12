@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Gamecard } from '@app/classes/gamecard';
 import { CommunicationService } from '@app/services/communication.service';
 
@@ -9,11 +9,9 @@ const PAGE_SIZE = 4;
     templateUrl: './game-selection-page-component.component.html',
     styleUrls: ['./game-selection-page-component.component.scss'],
 })
-export class GameSelectionPageComponent {
+export class GameSelectionPageComponent implements OnInit {
     games: Gamecard[] = [];
 
-    startIndex = 0;
-    endIndex = 3;
     currentPage = 0;
     pageSize = PAGE_SIZE;
     lastPage = 0;
@@ -30,6 +28,10 @@ export class GameSelectionPageComponent {
 
     get displayedGames() {
         return this.games.slice(this.currentPage * this.pageSize, (this.currentPage + 1) * this.pageSize);
+    }
+
+    ngOnInit(): void {
+        this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
     }
 
     onBack() {
