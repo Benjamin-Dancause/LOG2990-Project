@@ -15,4 +15,12 @@ describe('TimerController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+  it('getTime() should increment the counter', () => {
+    expect(controller.getTime().time).toEqual(1);
+  });
+
+  it('resetTimer() should properly set the counter to 0', () => {
+    expect(controller.resetTimer().message).toEqual('Timer reset ok');
+  });
 });

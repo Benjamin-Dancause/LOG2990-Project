@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CounterService } from '@app/services/counter.service';
 import { interval, Subscription } from 'rxjs';
 
@@ -11,7 +11,6 @@ import { interval, Subscription } from 'rxjs';
 export class CounterComponent implements OnInit, OnDestroy {
   
   counter: number = 0;
-  @Output() counterEmitter = new EventEmitter<number>();
   private intervalSubscription: Subscription;
 
   constructor(private counterService: CounterService) { }
