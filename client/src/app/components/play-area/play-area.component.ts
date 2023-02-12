@@ -56,7 +56,7 @@ export class PlayAreaComponent implements AfterViewInit {
         // this.drawService.drawGrid();
         // this.drawService.drawWord('Différence');
         this.drawDarkRectangle();
-        this.canvas.nativeElement.focus();
+        // this.canvas.nativeElement.focus();
     }
 
     drawDarkRectangle() {
@@ -65,28 +65,31 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     // TODO : déplacer ceci dans un service de gestion de la souris!
+
     mouseHitDetect(event: MouseEvent) {
         if (event.button === MouseButton.Left) {
-            this.mousePosition = { x: event.offsetX, y: event.offsetY };
+            const clickedCanvas = event.target as HTMLCanvasElement;
+            const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
 
+            this.mousePosition = { x: event.offsetX, y: event.offsetY };
             if (
                 this.mousePosition.x >= this.rectangleX &&
                 this.mousePosition.x <= this.rectangleX + this.rectangleWidth &&
                 this.mousePosition.y >= this.rectangleY &&
                 this.mousePosition.y <= this.rectangleY + this.rectangleHeight
             ) {
-                this.drawService.context.fillStyle = 'green';
-                this.drawService.context.font = '20px Arial';
-                this.drawService.context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
+                context.fillStyle = 'green';
+                context.font = '20px Arial';
+                context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
                 setTimeout(() => {
-                    this.drawService.context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
+                    context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
                 }, 3000);
             } else {
-                this.drawService.context.fillStyle = 'red';
-                this.drawService.context.font = '20px Arial';
-                this.drawService.context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
+                context.fillStyle = 'red';
+                context.font = '20px Arial';
+                context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
                 setTimeout(() => {
-                    this.drawService.context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
+                    context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
                 }, 3000);
             }
         }
