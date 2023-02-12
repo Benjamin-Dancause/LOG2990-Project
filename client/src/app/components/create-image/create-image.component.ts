@@ -211,7 +211,6 @@ export class CreateImageComponent implements OnInit {
     }
     async saveGameCard(): Promise<void> {
         this.gameName = `${this.gameName}`;
-
         const originalCanvasString = await this.convertToBase64(this.originalCanvas);
         const modifiableCanvasString = await this.convertToBase64(this.modifiableCanvas);
 
@@ -220,7 +219,8 @@ export class CreateImageComponent implements OnInit {
             originalImage: originalCanvasString,
             modifiableImage: modifiableCanvasString,
         };
-        this.communication.imagesPost(request);
+        this.communication.imagesPost(request).subscribe();
+        //this.communication.testGet().subscribe();
         console.log(request);
     }
     /*
