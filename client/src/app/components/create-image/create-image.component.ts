@@ -1,5 +1,6 @@
 import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
 
@@ -51,6 +52,7 @@ export class CreateImageComponent implements OnInit {
         // private uploadService: UploadService,
         protected difference: DifferenceService,
         private communication: CommunicationService,
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
@@ -209,32 +211,33 @@ export class CreateImageComponent implements OnInit {
         });
     }
     async saveGameCard(): Promise<void> {
-        if (this.verifyName(`${this.gameName}`)) {
-            const originalCanvasString = await this.convertToBase64(this.originalCanvas);
-            const modifiableCanvasString = await this.convertToBase64(this.modifiableCanvas);
+        this.verifyName(`${this.gameName}`, async (isVerified) => {
+            if (isVerified) {
+                const originalCanvasString = await this.convertToBase64(this.originalCanvas);
+                const modifiableCanvasString = await this.convertToBase64(this.modifiableCanvas);
 
-            const request = {
-                name: this.gameName,
-                originalImage: originalCanvasString,
-                modifiableImage: modifiableCanvasString,
-            };
-            this.communication.imagesPost(request).subscribe();
-        } else {
-            this.showError(NAMEERROR_MSG);
-        }
-    }
-    verifyName(gameName: string): boolean {
-        console.log(gameName);
-        const names = ['test1', 'test2', 'test3', 'test4', 'test5'];
-        for (let name of names) {
-            console.log(gameName, ' ', name);
-            if (gameName === name) {
-                this.gameName = '';
-                return false;
+                const request = {
+                    name: this.gameName,
+                    originalImage: originalCanvasString,
+                    modifiableImage: modifiableCanvasString,
+                };
+                this.communication.imagesPost(request).subscribe();
+                this.router.navigate(['config']);
+            } else {
+                this.showError(NAMEERROR_MSG);
             }
-        }
-        this.gameName = gameName;
-        return true;
+        });
+    }
+    verifyName(gameName: string, callback: (isVerified: boolean) => void): void {
+        this.communication.getGameNames().subscribe((names: String[]) => {
+            let isGameNameVerified = true;
+            for (const name of names) {
+                if (gameName === name) {
+                    isGameNameVerified = false;
+                }
+            }
+            callback(isGameNameVerified);
+        });
     }
     async convertToBase64(canvasRef: ElementRef<HTMLCanvasElement>): Promise<string> {
         return new Promise((resolve, reject) => {

@@ -24,8 +24,8 @@ export class CommunicationService {
     imagesPost(request: Object): Observable<HttpResponse<string>> {
         return this.http.post(`${this.baseUrl}/games/images`, request, { observe: 'response', responseType: 'text' });
     }
-    postGameCard(formData: FormData): Observable<HttpResponse<string>> {
-        return this.http.post(`${this.baseUrl}/games`, formData, { observe: 'response', responseType: 'text' });
+    getGameNames(): Observable<String[]> {
+        return this.http.get<String[]>(`${this.baseUrl}/games/names`).pipe(catchError(this.handleError<String[]>('getGameNames')));
     }
     getAvailableGames(): Observable<Gamecard[]> {
         return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
