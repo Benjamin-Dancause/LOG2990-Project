@@ -1,5 +1,6 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Gamecard } from '@app/classes/gamecard';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -23,6 +24,9 @@ export class CommunicationService {
 
     postGameCard(formData: FormData): Observable<HttpResponse<string>> {
         return this.http.post(`${this.baseUrl}/games`, formData, { observe: 'response', responseType: 'text' });
+    }
+    getAvailableGames(): Observable<Gamecard[]> {
+        return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
     }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);

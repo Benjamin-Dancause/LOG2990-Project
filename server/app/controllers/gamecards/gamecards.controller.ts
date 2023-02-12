@@ -1,15 +1,18 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
+import { readFileSync } from 'fs';
 
 @Controller('games')
 export class GamecardsController {
     constructor() {}
 
-    @Post('/')
+    @Get('/all')
     @ApiOkResponse({
-        description: 'Get all images',
+        description: 'Get all gamecards',
     })
-    test() {
-        return { name: 'hello' };
+    sendAllGamecards() {
+        const file = readFileSync('./games/games.json');
+        const data = JSON.parse(file.toString());
+        return data;
     }
 }
