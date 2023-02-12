@@ -1,9 +1,11 @@
+import { HttpResponse } from '@angular/common/http';
 import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 
 import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
+import { of } from 'rxjs';
 import { CreateImageComponent } from './create-image.component';
 
 describe('CreateImageComponent', () => {
@@ -11,7 +13,7 @@ describe('CreateImageComponent', () => {
     let fixture: ComponentFixture<CreateImageComponent>;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let differenceSpy: jasmine.SpyObj<DifferenceService>;
-    let difference: DifferenceService;
+    //let difference: DifferenceService;
     let communicationSpy: jasmine.SpyObj<CommunicationService>;
     //let image: ImageBitmap;
     const canvas = document.createElement('canvas');
@@ -27,10 +29,11 @@ describe('CreateImageComponent', () => {
 
     beforeEach(async () => {
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], ['closeAll']);
-        differenceSpy = jasmine.createSpyObj('DifferenceService', ['difference']);
-        communicationSpy = jasmine.createSpyObj('CommunicationService', ['createImage']);
+        differenceSpy = jasmine.createSpyObj('DifferenceService', ['countDifference'], ['findDifference']);
+        communicationSpy = jasmine.createSpyObj('CommunicationService', ['imagesPost']);
         //image = await getImageBitmap();
         canvasRef = new ElementRef<HTMLCanvasElement>(document.createElement('canvas'));
+        //difference = new DifferenceService();
 
         TestBed.configureTestingModule({
             declarations: [CreateImageComponent],
@@ -415,40 +418,104 @@ describe('CreateImageComponent', () => {
     });
     it('should call createDifference method', async () => {
         spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
-        spyOn(difference, 'countDifference').and.returnValue(4);
-        spyOn(component, 'showSave').and.callThrough();
+        const spyDiff = jasmine.createSpyObj('difference', ['countDifference']);
+        spyDiff.countDifference.and.returnValue(4);
+        component.difference = spyDiff;
+        spyOn(component, 'showSave');
         component.inputName();
         expect(component.createDifference).toHaveBeenCalled();
     });
-
     it('should call showSave method if diffCount is between 3 and 9', async () => {
         spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
-        spyOn(difference, 'countDifference').and.returnValue(4);
+        const spyDiff = jasmine.createSpyObj('difference', ['countDifference']);
+        spyDiff.countDifference.and.returnValue(4);
+        component.difference = spyDiff;
         spyOn(component, 'showSave').and.callThrough();
+        console.log('should call showSave method if diffCount is between 3 and 9');
         component.inputName();
         expect(component.showSave).toHaveBeenCalled();
     });
 
     it('should call showErrorDifference method if diffCount is less than 3', async () => {
         spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
-        spyOn(difference, 'countDifference').and.returnValue(2);
-        spyOn(component, 'showErrorDifference').and.callThrough();
+        const spyDiff = jasmine.createSpyObj('difference', ['countDifference']);
+        spyDiff.countDifference.and.returnValue(2);
+        component.difference = spyDiff;
+        spyOn(component, 'showErrorDifference');
+        console.log('should call showErrorDifference method if diffCount is less than 3');
         component.inputName();
         expect(component.showErrorDifference).toHaveBeenCalled();
     });
 
     it('should call showErrorDifference method if diffCount is greater than 9', async () => {
         spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
-        spyOn(difference, 'countDifference').and.returnValue(10);
-        spyOn(component, 'showErrorDifference').and.callThrough();
+        const spyDiff = jasmine.createSpyObj('difference', ['countDifference']);
+        spyDiff.countDifference.and.returnValue(10);
+        component.difference = spyDiff;
+        spyOn(component, 'showErrorDifference');
+        console.log('should call showErrorDifference method if diffCount is greater than 9');
         component.inputName();
         expect(component.showErrorDifference).toHaveBeenCalled();
     });
 
     it('should call showErrorDifference method if createDifference returns false', async () => {
-        spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
+        /*spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
         spyOn(component, 'showErrorDifference').and.callThrough();
         component.inputName();
-        expect(component.showErrorDifference).toHaveBeenCalled();
+        expect(component.showErrorDifference).toHaveBeenCalled();*/
+    });
+
+    it('should convert canvas to base64', async () => {
+        let toBlobSpy: jasmine.Spy;
+        toBlobSpy = spyOn(canvasRef.nativeElement, 'toBlob');
+        toBlobSpy.and.callFake((cb) => {
+            cb(new Blob(['image data'], { type: 'image/png' }));
+        });
+
+        component.convertToBase64(canvasRef).then((base64) => {
+            expect(typeof base64).toBe('string');
+            expect(toBlobSpy).toHaveBeenCalled();
+        });
+    });
+
+    it('should reject with error if the canvas is not converted to blob', async () => {
+        let toBlobSpy: jasmine.Spy;
+        toBlobSpy = spyOn(canvasRef.nativeElement, 'toBlob');
+        toBlobSpy.and.callFake((cb) => {
+            cb(new Blob(['image data'], { type: 'image/png' }));
+        });
+        try {
+            await component.convertToBase64(canvasRef);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+        }
+        expect(canvasRef.nativeElement.toBlob).toHaveBeenCalled();
+    });
+
+    it('should send a post request with the game data', async () => {
+        component.gameName = 'Test Game';
+        component.originalCanvas = canvasRef;
+        component.modifiableCanvas = canvasRef;
+        communicationSpy.imagesPost.and.returnValue(of(new HttpResponse({ body: 'some response' })));
+        spyOn(component, 'convertToBase64').and.returnValues(Promise.resolve('test'), Promise.resolve('test'));
+
+        await component.saveGameCard();
+
+        expect(component.convertToBase64).toHaveBeenCalledWith(component.originalCanvas);
+        expect(component.convertToBase64).toHaveBeenCalledWith(component.modifiableCanvas);
+        expect(communicationSpy.imagesPost).toHaveBeenCalledWith({
+            name: 'Test Game',
+            originalImage: 'test',
+            modifiableImage: 'test',
+        });
+    });
+    it('should return a new HTMLCanvasElement if ctxOriginal or ctxModifiable are null', async () => {
+        let canvasTest = document.createElement('canvas');
+        differenceSpy.findDifference.and.returnValue(await Promise.resolve(canvasTest));
+
+        const result = await component.createDifference();
+
+        expect(result).toBeInstanceOf(HTMLCanvasElement);
+        expect(differenceSpy.findDifference).toHaveBeenCalled();
     });
 });

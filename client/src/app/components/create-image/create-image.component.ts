@@ -7,6 +7,7 @@ const SCREEN_WIDTH = 640;
 const SCREEN_HEIGHT = 480;
 const BMP_MIN = 66;
 const BMP_MAX = 77;
+const DIFFCOUNT_MIN = 3;
 const DIFFCOUNT_MAX = 9;
 
 @Component({
@@ -42,12 +43,11 @@ export class CreateImageComponent implements OnInit {
     originalImage: ImageBitmap;
     modifiableImage: ImageBitmap;
     gameName: string = '';
-    HTMLInputElement = window.HTMLInputElement;
 
     constructor(
         public dialog: MatDialog,
         // private uploadService: UploadService,
-        protected difference: DifferenceService,
+        public difference: DifferenceService,
         private communication: CommunicationService,
     ) {}
 
@@ -100,7 +100,6 @@ export class CreateImageComponent implements OnInit {
         }
         if (await this.verifyBMP(selectedFile)) {
             const image = await this.convertImage(selectedFile);
-            console.log('test3');
             if (image.width === this.width || image.height === this.height) {
                 console.log('test4');
                 this.originalImage = image;
@@ -136,8 +135,8 @@ export class CreateImageComponent implements OnInit {
             }
         }
     }
-    async createSameCanvas(): Promise<void> {
-        if (this.originalImage && this.modifiableImage) {
+    createSameCanvas(): void {
+        if (this.originalImage) {
             if (this.ctxOriginal && this.ctxModifiable) {
                 this.ctxOriginal.drawImage(this.originalImage, 0, 0, this.width, this.height);
                 this.ctxModifiable.drawImage(this.originalImage, 0, 0, this.width, this.height);
@@ -199,11 +198,16 @@ export class CreateImageComponent implements OnInit {
         this.createDifference().then((diff) => {
             if (diff) {
                 const diffCount = this.difference.countDifference(diff);
-                if (diffCount >= 3 && diffCount <= DIFFCOUNT_MAX) {
+                if (diffCount >= DIFFCOUNT_MIN && diffCount <= DIFFCOUNT_MAX) {
+                    console.log(diffCount);
+                    console.log('showsave');
                     this.showSave();
+                    console.log('should have been saved');
                     return;
                 }
             }
+            console.log('showerror');
+            this.showErrorDifference();
         });
     }
     async saveGameCard(): Promise<void> {
@@ -217,22 +221,8 @@ export class CreateImageComponent implements OnInit {
             originalImage: originalCanvasString,
             modifiableImage: modifiableCanvasString,
         };
-        this.communication.imagesPost(request);
-        console.log(request);
+        this.communication.imagesPost(request).subscribe();
     }
-    /*
-    async convertImageToBlob(canvas: ElementRef<HTMLCanvasElement>): Promise<Blob> {
-        return new Promise((resolve, reject) => {
-            canvas.nativeElement.toBlob((blob) => {
-                if (!blob) {
-                    reject(new Error('Failed to convert canvas to Blob'));
-                    return;
-                }
-
-                resolve(new Blob([blob], { type: 'image/bmp' }));
-            });
-        });
-    }*/
     async convertToBase64(canvasRef: ElementRef<HTMLCanvasElement>): Promise<string> {
         return new Promise((resolve, reject) => {
             canvasRef.nativeElement.toBlob((blob) => {
@@ -249,4 +239,7 @@ export class CreateImageComponent implements OnInit {
             });
         });
     }
+}
+export interface HTMLInputEvent extends Event {
+    target: (HTMLInputElement & EventTarget) | null;
 }
