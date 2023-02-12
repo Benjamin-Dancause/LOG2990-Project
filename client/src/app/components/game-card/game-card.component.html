@@ -57,7 +57,7 @@
             </mat-dialog-content>
             <mat-dialog-actions>
                 <button mat-button mat-dialog-close>Annuler</button>
-                <button mat-button [disabled]="!inputRef.valid" [mat-dialog-close]="true" [routerLink]="inputRef.valid ? ['/game'] : []">
+                <button mat-button (click)="saveUserName()" [disabled]="!inputRef.valid" [mat-dialog-close]="true" [routerLink]="inputRef.valid ? ['/game'] : []">
                     Sauvegarder
                 </button>
             </mat-dialog-actions>

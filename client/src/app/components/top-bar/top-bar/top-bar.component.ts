@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CounterService } from '@app/services/counter.service';
 
 @Component({
@@ -8,12 +8,15 @@ import { CounterService } from '@app/services/counter.service';
   providers: [CounterService]
 })
 
-export class TopBarComponent{
+export class TopBarComponent implements OnInit{
 
   @Input() name: string;
-  @Input() userName: string;
-  
-  
+  userName: string;
+
+  ngOnInit() {
+        const storedUserName = localStorage.getItem('userName');
+        this.userName = storedUserName ? storedUserName : '';
+  }
 
   constructor() {}
 
