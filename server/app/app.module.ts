@@ -10,6 +10,8 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GamecardsController } from './controllers/gamecards/gamecards.controller';
+import { StoreController } from './controllers/store/store.controller';
+import { StoreService } from './services/store/store.service';
 
 @Module({
     imports: [
@@ -23,7 +25,7 @@ import { GamecardsController } from './controllers/gamecards/gamecards.controlle
         }),
         MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
     ],
-    controllers: [CourseController, DateController, ExampleController, GamecardsController],
-    providers: [ChatGateway, CourseService, DateService, ExampleService, Logger],
+    controllers: [CourseController, DateController, ExampleController, GamecardsController, StoreController],
+    providers: [ChatGateway, CourseService, DateService, ExampleService, Logger, StoreService],
 })
 export class AppModule {}
