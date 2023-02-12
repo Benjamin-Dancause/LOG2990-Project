@@ -28,11 +28,11 @@ export class StoreController {
         await this.storeService.storeInfo(name, relativePaths);
     }
 
-    @Get('/images')
+    @Get('/names')
     @ApiOkResponse({
-        description: 'test',
+        description: 'Gets all the game names',
     })
-    async test() {
-        console.log('test');
+    async getNames() {
+        return this.storeService.getAllNames();
     }
 }
