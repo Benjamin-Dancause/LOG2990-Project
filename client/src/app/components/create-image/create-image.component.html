@@ -49,7 +49,7 @@
     </ng-template>
     <ng-template #errorTemplate>
         <div>
-            <h3>Vous avez entrée des images incompatibles</h3>
+            <h3>{{ errorMessage }}</h3>
             <img src="../../assets/error_icon.png" class="error-icon" />
         </div>
     </ng-template>
@@ -64,11 +64,5 @@
             <input type="text" [(ngModel)]="gameName" />
         </div>
         <button type="button" (click)="saveGameCard()" mat-dialog-close>Sauvegarder</button>
-    </ng-template>
-    <ng-template #errorTemplateDiff>
-        <div>
-            <h3>Vous devez avoir entre 3 et 9 erreurs</h3>
-            <img src="../../assets/error_icon.png" class="error-icon" />
-        </div>
     </ng-template>
 </div>
