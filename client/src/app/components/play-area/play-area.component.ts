@@ -28,6 +28,9 @@ export enum MouseButton {
 export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private canvas!: ElementRef<HTMLCanvasElement>;
 
+    canvas2: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
 
@@ -56,7 +59,7 @@ export class PlayAreaComponent implements AfterViewInit {
         // this.drawService.drawGrid();
         // this.drawService.drawWord('Différence');
         this.drawDarkRectangle();
-        // this.canvas.nativeElement.focus();
+        this.canvas.nativeElement.focus();
     }
 
     drawDarkRectangle() {
@@ -83,14 +86,18 @@ export class PlayAreaComponent implements AfterViewInit {
                 context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
                 setTimeout(() => {
                     context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
-                }, 3000);
+                    this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
+                    this.drawDarkRectangle();
+                }, 1500);
             } else {
                 context.fillStyle = 'red';
                 context.font = '20px Arial';
                 context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
                 setTimeout(() => {
                     context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
-                }, 3000);
+                    this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
+                    this.drawDarkRectangle();
+                }, 1500);
             }
         }
     }
