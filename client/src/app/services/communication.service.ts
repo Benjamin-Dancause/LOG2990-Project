@@ -24,6 +24,9 @@ export class CommunicationService {
     imagesPost(request: Object): Observable<HttpResponse<string>> {
         return this.http.post(`${this.baseUrl}/games/images`, request, { observe: 'response', responseType: 'text' });
     }
+    testGet(): Observable<Message> {
+        return this.http.get<Message>(`${this.baseUrl}/games/images`);
+    }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);
     }

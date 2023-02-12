@@ -88,6 +88,22 @@ export class CreateImageComponent implements OnInit {
             height: '200px',
         });
     }
+    showDifference(): void {
+        this.createDifference().then((diff) => {
+            this.dialog.open(this.negativeTemplate, {
+                width: '700px',
+                height: '650px',
+            });
+            const negDiv = document.getElementById('neg') as HTMLDivElement;
+            negDiv.appendChild(diff);
+            const nbdiff = document.createElement('p');
+            nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.countDifference(diff).toString());
+            negDiv.appendChild(nbdiff);
+            const dificulty = document.createElement('p');
+            dificulty.innerHTML = 'Difficulté : '.concat(this.difference.isDifficult(diff) ? 'Difficile' : 'Facile');
+            negDiv.appendChild(dificulty);
+        });
+    }
     async storeOriginal(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
             this.showError();
@@ -159,25 +175,12 @@ export class CreateImageComponent implements OnInit {
     }
     async createDifference(): Promise<HTMLCanvasElement> {
         if (this.ctxOriginal && this.ctxModifiable) {
-            const diff = this.difference.findDifference(this.ctxOriginal, this.ctxModifiable, 3);
+            const slider = document.getElementById('slider') as HTMLInputElement;
+            const radius = slider.innerHTML as unknown as number;
+            const diff = this.difference.findDifference(this.ctxOriginal, this.ctxModifiable, radius);
             return diff;
         }
         return new HTMLCanvasElement();
-    }
-
-    showDifference(): void {
-        this.createDifference().then((diff) => {
-            if (diff) {
-                this.dialog.open(this.negativeTemplate, {
-                    width: '700px',
-                    height: '620px',
-                });
-                document.getElementById('neg')?.appendChild(diff);
-                const nbdiff = document.createElement('p');
-                nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.countDifference(diff).toString());
-                document.getElementById('neg')?.appendChild(nbdiff);
-            }
-        });
     }
     async verifyBMP(file: File): Promise<boolean> {
         const bmp: number[] = [BMP_MIN, BMP_MAX];
@@ -212,7 +215,6 @@ export class CreateImageComponent implements OnInit {
     }
     async saveGameCard(): Promise<void> {
         this.gameName = `${this.gameName}`;
-
         const originalCanvasString = await this.convertToBase64(this.originalCanvas);
         const modifiableCanvasString = await this.convertToBase64(this.modifiableCanvas);
 
