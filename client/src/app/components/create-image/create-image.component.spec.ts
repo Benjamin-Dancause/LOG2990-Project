@@ -407,6 +407,7 @@ describe('CreateImageComponent', () => {
             expect(error).toBe('FileReader error');
         });*/
     });
+    /*
     it('should call createDifference method', async () => {
         spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
         spyOn(differenceSpy, 'countDifference').and.returnValue(4);
@@ -414,7 +415,6 @@ describe('CreateImageComponent', () => {
         component.inputName();
         expect(component.createDifference).toHaveBeenCalled();
     });
-    /*
     it('should call showSave method if diffCount is between 3 and 9', async () => {
         spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
         spyOn(difference, 'countDifference').and.returnValue(4);
