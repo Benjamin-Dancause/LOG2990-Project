@@ -14,11 +14,8 @@ export class StoreController {
         description: 'Store name and images on the server',
     })
     async storeData(@Body() data: { name: string; originalImage: string; modifiableImage: string }) {
-        // modifImg: string
         const { name, originalImage, modifiableImage } = data;
         const relativePaths = [];
-
-        //console.log(originalImage);
 
         const origPath = await this.storeService.storeImage(name + '_orig', originalImage);
         relativePaths.push(origPath);
