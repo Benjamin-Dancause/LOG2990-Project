@@ -13,6 +13,6 @@ export class TimerController {
     @Post('reset')
     resetTimer() {
         this.time = 0;
-        return {message: 'Timer reset ok'};
+        return {time: this.time};
     }
 }

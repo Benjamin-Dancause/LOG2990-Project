@@ -21,6 +21,6 @@ describe('TimerController', () => {
   });
 
   it('resetTimer() should properly set the counter to 0', () => {
-    expect(controller.resetTimer().message).toEqual('Timer reset ok');
+    expect(controller.resetTimer().time).toEqual(0);
   });
 });
