@@ -21,11 +21,11 @@ export class CommunicationService {
     basicPost(message: Message): Observable<HttpResponse<string>> {
         return this.http.post(`${this.baseUrl}/example/send`, message, { observe: 'response', responseType: 'text' });
     }
-    imagesPost(request: Object): Observable<HttpResponse<string>> {
+    imagesPost(request: object): Observable<HttpResponse<string>> {
         return this.http.post(`${this.baseUrl}/games/images`, request, { observe: 'response', responseType: 'text' });
     }
-    getGameNames(): Observable<String[]> {
-        return this.http.get<String[]>(`${this.baseUrl}/games/names`).pipe(catchError(this.handleError<String[]>('getGameNames')));
+    getGameNames(): Observable<string[]> {
+        return this.http.get<string[]>(`${this.baseUrl}/games/names`).pipe(catchError(this.handleError<string[]>('getGameNames')));
     }
     getAvailableGames(): Observable<Gamecard[]> {
         return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
