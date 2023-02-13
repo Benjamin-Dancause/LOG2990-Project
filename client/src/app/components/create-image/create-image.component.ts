@@ -211,7 +211,7 @@ export class CreateImageComponent implements OnInit {
                         name: this.gameName,
                         originalImage: originalCanvasString,
                         modifiableImage: modifiableCanvasString,
-                        difficulty: difficulty,
+                        difficulty,
                         count: difference.count,
                         differences: difference.differences,
                     };

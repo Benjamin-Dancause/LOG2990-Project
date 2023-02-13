@@ -28,15 +28,39 @@ describe('StoreController', () => {
 
     it('storeData() should call storeImage() twice', async () => {
         const storeImageSpy = jest.spyOn(storeService, 'storeImage');
-        const gameData = { name: 'game1', originalImage: 'image1', modifiableImage: 'image2' };
+        const gameData = {
+            name: 'game1',
+            originalImage: 'image1',
+            modifiableImage: 'image2',
+            difficulty: true,
+            count: 6,
+            differences: [
+                [
+                    { x: 1, y: 1 },
+                    { x: 2, y: 2 },
+                ],
+            ],
+        };
+
         await controller.storeData(gameData);
         expect(storeImageSpy).toHaveBeenCalledTimes(2);
     });
 
     it('storeData() should call storeInfo()', async () => {
         const storeImageSpy = jest.spyOn(storeService, 'storeInfo').mockImplementation();
-        const gameData = { name: 'game1', originalImage: 'image1', modifiableImage: 'image2' };
-
+        const gameData = {
+            name: 'game1',
+            originalImage: 'image1',
+            modifiableImage: 'image2',
+            difficulty: true,
+            count: 6,
+            differences: [
+                [
+                    { x: 1, y: 1 },
+                    { x: 2, y: 2 },
+                ],
+            ],
+        };
         await controller.storeData(gameData);
 
         expect(storeImageSpy).toHaveBeenCalled();

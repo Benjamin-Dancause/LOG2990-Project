@@ -5,20 +5,16 @@ import { CounterService } from '@app/services/counter.service';
     selector: 'app-top-bar',
     templateUrl: './top-bar.component.html',
     styleUrls: ['./top-bar.component.scss'],
-  providers: [CounterService],
+    providers: [CounterService],
 })
+export class TopBarComponent implements OnInit {
+    @Input() name: string;
+    userName: string;
 
-export class TopBarComponent implements OnInit{
-
-  @Input() name: string;
-  userName: string;
-
-  ngOnInit() {
+    ngOnInit() {
         const storedUserName = localStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
-  }
+    }
 
-  constructor() {}
-
-
+    constructor() {}
 }

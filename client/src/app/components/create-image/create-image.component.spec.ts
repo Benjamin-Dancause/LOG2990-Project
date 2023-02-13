@@ -15,9 +15,9 @@ describe('CreateImageComponent', () => {
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let differenceSpy: jasmine.SpyObj<DifferenceService>;
     let routerSpy: jasmine.SpyObj<Router>;
-    //let difference: DifferenceService;
+    // let difference: DifferenceService;
     let communicationSpy: jasmine.SpyObj<CommunicationService>;
-    //let image: ImageBitmap;
+    // let image: ImageBitmap;
     const canvas = document.createElement('canvas');
     let canvasRef: ElementRef<HTMLCanvasElement>;
     canvas.width = 640;
@@ -34,7 +34,7 @@ describe('CreateImageComponent', () => {
         differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
         communicationSpy = jasmine.createSpyObj('CommunicationService', ['createImage']);
         component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy);
-        //image = await getImageBitmap();
+        // image = await getImageBitmap();
         canvasRef = new ElementRef<HTMLCanvasElement>(document.createElement('canvas'));
 
         await TestBed.configureTestingModule({
@@ -110,6 +110,7 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'verifyBMP').and.returnValue(Promise.resolve(true));
         spyOn(component, 'showError');
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeOriginal(fileEvent as any);
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.verifyBMP).not.toHaveBeenCalled();
@@ -130,6 +131,7 @@ describe('CreateImageComponent', () => {
         };
         spyOn(component, 'verifyBMP').and.returnValue(Promise.resolve(true));
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeOriginal(fileEvent as any);
         expect(component.originalImage).toBeDefined();
     });
@@ -149,6 +151,7 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
         spyOn(component, 'showError');
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeOriginal(fileEvent as any);
         expect(component.verifyBMP).toHaveBeenCalled();
         expect(component.convertImage).not.toHaveBeenCalled();
@@ -170,6 +173,7 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
         spyOn(component, 'showError');
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeOriginal(fileEvent as any);
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.verifyBMP).not.toHaveBeenCalled();
@@ -201,6 +205,7 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'verifyBMP').and.returnValue(Promise.resolve(true));
         spyOn(component, 'showError');
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeDiff(fileEvent as any);
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.verifyBMP).not.toHaveBeenCalled();
@@ -223,6 +228,7 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
 
         console.log('testing');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeDiff(fileEvent as any);
         expect(component.modifiableImage).toBeDefined();
     });
@@ -242,6 +248,7 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
         spyOn(component, 'showError');
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeDiff(fileEvent as any);
         expect(component.verifyBMP).toHaveBeenCalled();
         expect(component.convertImage).not.toHaveBeenCalled();
@@ -263,6 +270,7 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
         spyOn(component, 'showError');
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeDiff(fileEvent as any);
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.verifyBMP).not.toHaveBeenCalled();
@@ -273,8 +281,8 @@ describe('CreateImageComponent', () => {
         component.originalImage = await createImageBitmap(canvas);
         component.modifiableImage = await createImageBitmap(canvas);
 
-        let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
-        let ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
+        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
         component.ctxOriginal = ctxOriginalStub;
         component.ctxModifiable = ctxModifiableStub;
         component.createDiffCanvas();
@@ -282,8 +290,8 @@ describe('CreateImageComponent', () => {
         expect(component.ctxModifiable?.drawImage).toHaveBeenCalled();
     });
     it('should not draw different canvases if images are missing', async () => {
-        let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
-        let ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
+        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
         component.ctxOriginal = ctxOriginalStub;
         component.ctxModifiable = ctxModifiableStub;
         component.createDiffCanvas();
@@ -294,8 +302,8 @@ describe('CreateImageComponent', () => {
         component.originalImage = await createImageBitmap(canvas);
         component.modifiableImage = await createImageBitmap(canvas);
 
-        let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
-        let ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
+        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
         component.ctxOriginal = ctxOriginalStub;
         component.ctxModifiable = ctxModifiableStub;
         component.createDiffCanvas();
@@ -303,8 +311,8 @@ describe('CreateImageComponent', () => {
         expect(component.ctxModifiable?.drawImage).toHaveBeenCalled();
     });
     it('should not draw same canvases if images are missing', async () => {
-        let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
-        let ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
+        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
         component.ctxOriginal = ctxOriginalStub;
         component.ctxModifiable = ctxModifiableStub;
         component.createSameCanvas();
@@ -315,8 +323,8 @@ describe('CreateImageComponent', () => {
         component.originalImage = await createImageBitmap(canvas);
         component.modifiableImage = await createImageBitmap(canvas);
 
-        let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
-        let ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
+        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
         component.ctxOriginal = ctxOriginalStub;
         component.ctxModifiable = ctxModifiableStub;
         component.createSameCanvas();
@@ -327,8 +335,8 @@ describe('CreateImageComponent', () => {
         component.originalImage = await createImageBitmap(canvas);
         component.modifiableImage = await createImageBitmap(canvas);
 
-        let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
-        let ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
+        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
         component.ctxOriginal = ctxOriginalStub;
         component.ctxModifiable = ctxModifiableStub;
         component.createSameCanvas();
@@ -343,14 +351,14 @@ describe('CreateImageComponent', () => {
         expect(component.ctxOriginal?.clearRect).not.toHaveBeenCalled();*/
     });
     it('should delete original canvas', async () => {
-        let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['clearRect']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['clearRect']);
         component.ctxOriginal = ctxOriginalStub;
         component.deleteOriginal();
         expect(component.ctxOriginal?.clearRect).toHaveBeenCalled();
     });
     it('should delete both canvases', async () => {
-        let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['clearRect']);
-        let ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['clearRect']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['clearRect']);
+        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['clearRect']);
         component.ctxOriginal = ctxOriginalStub;
         component.ctxModifiable = ctxModifiableStub;
         component.deleteBoth();
@@ -461,8 +469,8 @@ describe('CreateImageComponent', () => {
         negDiv.id = 'neg';
     });*/
     it('should create difference', async () => {
-        let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
-        let ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
+        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
         const slider = document.createElement('input');
         slider.id = 'slider';
         slider.innerHTML = '5';
@@ -474,7 +482,7 @@ describe('CreateImageComponent', () => {
         expect(component.diffCanvas).toBeTruthy();
     });
     it('should convert to bitmap', async () => {
-        /*const imageData = await fs.readFile(`../../../assets/testimages/image_2_diff.bmp`);
+        /* const imageData = await fs.readFile(`../../../assets/testimages/image_2_diff.bmp`);
         const imageBlob = new Blob([imageData], { type: 'image/bmp' });
         const file = new File([imageBlob], 'image_2_diff.bmp', { type: 'image/bmp' });
 

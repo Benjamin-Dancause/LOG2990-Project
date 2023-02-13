@@ -4,21 +4,21 @@ import { map, shareReplay } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class TimerService {
-  private readonly baseUrl: string = environment.serverUrl;
+    private readonly baseUrl: string = environment.serverUrl;
 
-  constructor(private httpClient: HttpClient) { }
+    constructor(private httpClient: HttpClient) {}
 
-  getTime() {
-    return this.httpClient.get(`${this.baseUrl}/timer`).pipe(
-      map((response: any) => response.time),
-      shareReplay(1)
-    );
-  }
+    getTime() {
+        return this.httpClient.get(`${this.baseUrl}/timer`).pipe(
+            map((response: any) => response.time),
+            shareReplay(1),
+        );
+    }
 
-  resetTimer() {
-    return this.httpClient.post(`${this.baseUrl}/timer/reset`, {});
-  }
+    resetTimer() {
+        return this.httpClient.post(`${this.baseUrl}/timer/reset`, {});
+    }
 }
