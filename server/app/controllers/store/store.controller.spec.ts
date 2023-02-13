@@ -33,6 +33,15 @@ describe('StoreController', () => {
         expect(storeImageSpy).toHaveBeenCalledTimes(2);
     });
 
+    it('storeData() should call storeInfo()', async () => {
+        const storeImageSpy = jest.spyOn(storeService, 'storeInfo').mockImplementation();
+        const gameData = { name: 'game1', originalImage: 'image1', modifiableImage: 'image2' };
+
+        await controller.storeData(gameData);
+
+        expect(storeImageSpy).toHaveBeenCalled();
+    });
+
     it('getNames() should call getAllNames()', async () => {
         const getAllNamesSpy = jest.spyOn(storeService, 'getAllNames');
 
