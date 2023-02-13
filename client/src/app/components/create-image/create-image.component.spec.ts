@@ -404,7 +404,7 @@ describe('CreateImageComponent', () => {
         });
     });
 
-    it('should call showSave if diffCount is between 3 and 9', () => {
+    it('should call showSave if diffCount is between 3 and 9', async () => {
         const coord: Coords[][] = [];
         component.diffCanvas = canvas;
         //const differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
