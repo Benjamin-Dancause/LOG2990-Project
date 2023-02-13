@@ -85,7 +85,7 @@ export class PlayAreaComponent implements AfterViewInit {
                 context.font = '20px Arial';
                 context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
                 setTimeout(() => {
-                    context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
+                    context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
                     this.drawDarkRectangle();
                 }, 1500);
@@ -94,7 +94,7 @@ export class PlayAreaComponent implements AfterViewInit {
                 context.font = '20px Arial';
                 context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
                 setTimeout(() => {
-                    context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
+                    context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
                     this.drawDarkRectangle();
                 }, 1500);
