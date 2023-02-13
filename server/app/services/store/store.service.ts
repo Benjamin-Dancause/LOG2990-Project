@@ -12,14 +12,10 @@ export class StoreService {
         const infoPath = `assets/data/gamesData.json`;
         const gameData: Data = { name, images: relativePaths };
         let gamesData: Data[] = [];
-        try {
-            const gamesContent = await fs.readFile(infoPath, `utf-8`);
-            gamesData = JSON.parse(gamesContent);
-            gamesData.push(gameData);
-            await fs.writeFile(infoPath, JSON.stringify(gamesData, null, 4));
-        } catch (e) {
-            console.log('No game data found. ' + e);
-        }
+        const gamesContent = await fs.readFile(infoPath, `utf-8`);
+        gamesData = JSON.parse(gamesContent);
+        gamesData.push(gameData);
+        await fs.writeFile(infoPath, JSON.stringify(gamesData, null, 4));
     }
 
     async storeImage(name: string, image: string): Promise<string> {

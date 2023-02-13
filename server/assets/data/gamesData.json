@@ -187,5 +187,26 @@
             "assets/images/bigDataTest_orig.bmp",
             "assets/images/bigDataTest_modif.bmp"
         ]
+    },
+    {
+        "name": "testGame",
+        "images": [
+            "assetsimages\test1_orig.bmp",
+            "/assets/images/test1_modif.bmp"
+        ]
+    },
+    {
+        "name": "testGame",
+        "images": [
+            "assetsimages\test1_orig.bmp",
+            "/assets/images/test1_modif.bmp"
+        ]
+    },
+    {
+        "name": "testGame",
+        "images": [
+            "assetsimages\test1_orig.bmp",
+            "/assets/images/test1_modif.bmp"
+        ]
     }
 ]
