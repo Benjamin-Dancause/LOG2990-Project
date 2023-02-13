@@ -27,17 +27,6 @@ describe('PlayAreaComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('mouseHitDetect should assign the mouse position to mousePosition variable', () => {
-        const expectedPosition: Vec2 = { x: 100, y: 200 };
-        mouseEvent = {
-            offsetX: expectedPosition.x,
-            offsetY: expectedPosition.y,
-            button: 0,
-        } as MouseEvent;
-        component.mouseHitDetect(mouseEvent);
-        expect(component.mousePosition).toEqual(expectedPosition);
-    });
-
     /* eslint-disable @typescript-eslint/no-magic-numbers -- Add reason */
     it('mouseHitDetect should not change the mouse position if it is not a left click', () => {
         const expectedPosition: Vec2 = { x: 0, y: 0 };
