@@ -109,7 +109,8 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'verifyBMP').and.returnValue(Promise.resolve(true));
         spyOn(component, 'showError');
 
-        await component.storeOriginal(fileEvent as unknown);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await component.storeOriginal(fileEvent as any);
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.verifyBMP).not.toHaveBeenCalled();
         expect(component.showError).toHaveBeenCalled();
@@ -129,7 +130,8 @@ describe('CreateImageComponent', () => {
         };
         spyOn(component, 'verifyBMP').and.returnValue(Promise.resolve(true));
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
-        await component.storeOriginal(fileEvent as unknown);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await component.storeOriginal(fileEvent as any);
         expect(component.originalImage).toBeDefined();
     });
     it('should not store original image if not bmp', async () => {
@@ -148,7 +150,8 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
         spyOn(component, 'showError');
 
-        await component.storeOriginal(fileEvent as unknown);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await component.storeOriginal(fileEvent as any);
         expect(component.verifyBMP).toHaveBeenCalled();
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.showError).toHaveBeenCalled();
@@ -169,7 +172,8 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
         spyOn(component, 'showError');
 
-        await component.storeOriginal(fileEvent as unknown);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await component.storeOriginal(fileEvent as any);
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.verifyBMP).not.toHaveBeenCalled();
         expect(component.showError).toHaveBeenCalled();
@@ -200,7 +204,8 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'verifyBMP').and.returnValue(Promise.resolve(true));
         spyOn(component, 'showError');
 
-        await component.storeDiff(fileEvent as unknown);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await component.storeDiff(fileEvent as any);
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.verifyBMP).not.toHaveBeenCalled();
         expect(component.showError).toHaveBeenCalled();
@@ -222,7 +227,8 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
 
         console.log('testing');
-        await component.storeDiff(fileEvent as unknown);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await component.storeDiff(fileEvent as any);
         expect(component.modifiableImage).toBeDefined();
     });
     it('should not store original image if not bmp', async () => {
@@ -241,7 +247,8 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
         spyOn(component, 'showError');
 
-        await component.storeDiff(fileEvent as unknown);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await component.storeDiff(fileEvent as any);
         expect(component.verifyBMP).toHaveBeenCalled();
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.showError).toHaveBeenCalled();
@@ -262,7 +269,8 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
         spyOn(component, 'showError');
 
-        await component.storeDiff(fileEvent as unknown);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await component.storeDiff(fileEvent as any);
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.verifyBMP).not.toHaveBeenCalled();
         expect(component.showError).toHaveBeenCalled();
