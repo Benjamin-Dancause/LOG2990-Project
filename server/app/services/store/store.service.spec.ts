@@ -22,22 +22,63 @@ describe('StoreService', () => {
     it('storeInfo() should store game information', async () => {
         const name = 'testGame';
         const relPaths = ['assets/images/test1_orig.bmp', '/assets/images/test1_modif.bmp'];
+        const difficulty = true;
+        const count = 5;
+        const differences = [
+            [
+                { x: 1, y: 1 },
+                { x: 2, y: 2 },
+            ],
+        ];
         const infoPath = `assets/data/gamesData.json`;
-        const gameInfo = { name: name, images: relPaths };
+        const gameInfo = { name: name, images: relPaths, difficulty: difficulty, count: count, differences: differences };
 
         jest.spyOn(fs, 'readFile').mockImplementationOnce(() => Promise.resolve(`[]`));
         jest.spyOn(fs, 'writeFile').mockImplementation(() => Promise.resolve());
 
-        await service.storeInfo(name, relPaths);
+        await service.storeInfo(name, relPaths, difficulty, count, differences);
 
         expect(fs.writeFile).toHaveBeenCalledWith(infoPath, JSON.stringify([gameInfo], null, 4));
     });
 
     it('getAllNames() should return all game names', async () => {
         const gameData = [
-            { name: 'game1', images: ['image1', 'image2'] },
-            { name: 'game2', images: ['image1', 'image2'] },
-            { name: 'game3', images: ['image1', 'image2'] },
+            {
+                name: 'game1',
+                images: ['image1', 'image2'],
+                difficulty: true,
+                count: 6,
+                differences: [
+                    [
+                        { x: 1, y: 1 },
+                        { x: 2, y: 2 },
+                    ],
+                ],
+            },
+            {
+                name: 'game2',
+                images: ['image1', 'image2'],
+                difficulty: true,
+                count: 6,
+                differences: [
+                    [
+                        { x: 1, y: 1 },
+                        { x: 2, y: 2 },
+                    ],
+                ],
+            },
+            {
+                name: 'game3',
+                images: ['image1', 'image2'],
+                difficulty: true,
+                count: 6,
+                differences: [
+                    [
+                        { x: 1, y: 1 },
+                        { x: 2, y: 2 },
+                    ],
+                ],
+            },
         ];
 
         jest.spyOn(fs, 'readFile').mockImplementationOnce(() => Promise.resolve(JSON.stringify(gameData)));
