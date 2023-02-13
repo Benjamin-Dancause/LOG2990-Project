@@ -96,7 +96,7 @@ export class CreateImageComponent implements OnInit {
             const negDiv = document.getElementById('neg') as HTMLDivElement;
             negDiv.appendChild(diff);
             const nbdiff = document.createElement('p');
-            nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.countDifference(diff).toString());
+            nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.getDifference(diff).count.toString());
             negDiv.appendChild(nbdiff);
             const dificulty = document.createElement('p');
             dificulty.innerHTML = 'Difficulté : '.concat(this.difference.isDifficult(diff) ? 'Difficile' : 'Facile');
@@ -201,7 +201,7 @@ export class CreateImageComponent implements OnInit {
     inputName(): void {
         this.createDifference().then((diff) => {
             if (diff) {
-                const diffCount = this.difference.countDifference(diff);
+                const diffCount = this.difference.getDifference(diff).count;
                 if (diffCount >= 3 && diffCount <= DIFFCOUNT_MAX) {
                     this.showSave();
                     return;
