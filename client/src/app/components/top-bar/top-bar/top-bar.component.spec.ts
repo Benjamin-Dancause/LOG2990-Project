@@ -19,4 +19,25 @@ describe('TopBarComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should have userName', () => {
+        let stubUserName = 'stubUserName';
+        spyOn(localStorage, 'setItem');
+
+        localStorage.setItem('userName', stubUserName);
+        component.ngOnInit();
+        expect(localStorage.getItem).toHaveBeenCalled();
+        expect(component.userName).toEqual(stubUserName);
+    });
+
+    it('should be empty if no userName has been saved', () => {
+        let stubUserName = undefined;
+        spyOn(localStorage, 'setItem');
+
+        localStorage.storeItem('userName', stubUserName);
+        component.ngOnInit();
+        expect(localStorage.getItem).toHaveBeenCalled();
+        expect(component.userName).toEqual('');
+    });
+    
 });

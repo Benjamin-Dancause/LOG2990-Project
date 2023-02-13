@@ -44,9 +44,16 @@ describe('StoreService', () => {
     it('storeImage() should store image and return the correct path', async () => {
         const name = 'testGame';
         const image = 'data:image/png;base64,Qk02CAAAAAAAADYAAAAoAAAAEAAAABAAAAABAAAAAAAAAAAAAAAAAAAAA';
-        const filePath = await service.storeImage(name, image);
+        jest.spyOn(fs, 'writeFile').mockImplementationOnce(() => Promise.resolve());
+        jest.spyOn(Buffer, 'from').mockImplementation();
 
+        const filePath = await service.storeImage(name, image);
+        const fileIsStored = await fs
+            .stat(filePath)
+            .then(() => true)
+            .catch(() => false);
         expect(filePath).toBe(`assets/images/${name}.bmp`);
+        // expect(fileIsStored).toBe(true);
     });
 
     it('getAllNames() should return all game names', async () => {
