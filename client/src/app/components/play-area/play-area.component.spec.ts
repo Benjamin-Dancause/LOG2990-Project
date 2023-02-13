@@ -1,11 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { Vec2 } from '@app/interfaces/vec2';
+import { DrawService } from '@app/services/draw.service';
 
 describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
     let mouseEvent: MouseEvent;
+    let drawService: DrawService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -17,6 +19,8 @@ describe('PlayAreaComponent', () => {
         fixture = TestBed.createComponent(PlayAreaComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        drawService = new DrawService();
+        component = new PlayAreaComponent(drawService);
     });
 
     it('should create', () => {

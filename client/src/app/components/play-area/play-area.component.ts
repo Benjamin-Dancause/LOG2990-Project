@@ -28,11 +28,10 @@ export enum MouseButton {
 export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private canvas!: ElementRef<HTMLCanvasElement>;
 
-    canvas2: HTMLCanvasElement;
-    ctx: CanvasRenderingContext2D;
-
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
+    errorSound = new Audio('../../assets/erreur.mp3');
+    successSound = new Audio('../../assets/success.mp3');
 
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     private rectangleX = RECTANGLE_X;
@@ -55,11 +54,16 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        // this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         // this.drawService.drawGrid();
         // this.drawService.drawWord('Différence');
-        this.drawDarkRectangle();
-        this.canvas.nativeElement.focus();
+        // this.drawDarkRectangle();
+        // this.canvas.nativeElement.focus();
+        if (this.canvas && this.canvas.nativeElement) {
+            this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+            this.drawDarkRectangle();
+            this.canvas.nativeElement.focus();
+        }
     }
 
     drawDarkRectangle() {
@@ -84,6 +88,8 @@ export class PlayAreaComponent implements AfterViewInit {
                 context.fillStyle = 'green';
                 context.font = '20px Arial';
                 context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
+                this.successSound.currentTime = 0;
+                this.successSound.play();
                 setTimeout(() => {
                     context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
@@ -93,6 +99,8 @@ export class PlayAreaComponent implements AfterViewInit {
                 context.fillStyle = 'red';
                 context.font = '20px Arial';
                 context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
+                this.errorSound.currentTime = 0;
+                this.errorSound.play();
                 setTimeout(() => {
                     context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);

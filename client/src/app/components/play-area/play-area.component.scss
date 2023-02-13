@@ -4,7 +4,6 @@
 
 #canvas-1 {
     margin-left: 70px;
-    margin-right: 40px;
 
     border: 1px solid rgb(126, 222, 235);
     border-left: 3px solid rgba(109, 188, 199, 0.774);
@@ -26,5 +25,22 @@
 }
 
 #mouse-position-display {
-    background-color: rgb(131, 177, 237);
+    background-color: rgb(126, 222, 235);
+    box-shadow: 0 0 30px 1px rgb(123, 226, 252);
+    height: 65px;
+    width: 80px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#canvas-1,
+#canvas-2 {
+    height: 500px;
+}
+
+#mouse-position-display p {
+    margin: 0;
 }
