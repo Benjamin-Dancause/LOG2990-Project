@@ -9,6 +9,7 @@ const SCREEN_HEIGHT = 480;
 const BMP_MIN = 66;
 const BMP_MAX = 77;
 const DIFFCOUNT_MAX = 9;
+const DIFFCOUNT_MIN = 3;
 const DIFFERROR_MSG = 'Vous devez avoir entre 3 et 9 différences';
 const FORMATERROR_MSG = 'Le format des images est invalide';
 const NAMEERROR_MSG = 'Ce nom est déjà pris ou est vide';
@@ -35,13 +36,11 @@ export class CreateImageComponent implements OnInit {
     @ViewChild('saveTemplate', { static: true })
     saveTemplate: TemplateRef<unknown>;
     @Input() errorMessage: string;
-    reader = new FileReader();
     ctxOriginal: CanvasRenderingContext2D | null;
     ctxModifiable: CanvasRenderingContext2D | null;
     canvasImages: File[] = [];
     width: number = SCREEN_WIDTH;
     height: number = SCREEN_HEIGHT;
-    valid: boolean = true;
     originalImage: ImageBitmap;
     modifiableImage: ImageBitmap;
     gameName: string = '';
@@ -131,44 +130,35 @@ export class CreateImageComponent implements OnInit {
             return;
         }
         const selectedFile = fileEvent.target.files[0];
-        if (!selectedFile) {
-            this.showError(FORMATERROR_MSG);
-            return;
-        }
-        if (await this.verifyBMP(selectedFile)) {
-            const image = await this.convertImage(selectedFile);
-            if (image.width === this.width || image.height === this.height) {
-                this.modifiableImage = image;
-                return;
+        if (selectedFile) {
+            if (await this.verifyBMP(selectedFile)) {
+                const image = await this.convertImage(selectedFile);
+                if (image.width === this.width || image.height === this.height) {
+                    this.modifiableImage = image;
+                    return;
+                }
             }
         }
+
         this.showError(FORMATERROR_MSG);
     }
     createDiffCanvas(): void {
         if (this.originalImage && this.modifiableImage) {
-            if (this.ctxOriginal && this.ctxModifiable) {
-                this.ctxOriginal.drawImage(this.originalImage, 0, 0, this.width, this.height);
-                this.ctxModifiable.drawImage(this.modifiableImage, 0, 0, this.width, this.height);
-            }
+            this.ctxOriginal?.drawImage(this.originalImage, 0, 0, this.width, this.height);
+            this.ctxModifiable?.drawImage(this.modifiableImage, 0, 0, this.width, this.height);
         }
     }
     async createSameCanvas(): Promise<void> {
         if (this.originalImage) {
-            if (this.ctxOriginal && this.ctxModifiable) {
-                this.ctxOriginal.drawImage(this.originalImage, 0, 0, this.width, this.height);
-                this.ctxModifiable.drawImage(this.originalImage, 0, 0, this.width, this.height);
-            }
+            this.ctxOriginal?.drawImage(this.originalImage, 0, 0, this.width, this.height);
+            this.ctxModifiable?.drawImage(this.originalImage, 0, 0, this.width, this.height);
         }
     }
     deleteOriginal(): void {
-        if (this.ctxOriginal) {
-            this.ctxOriginal.clearRect(0, 0, this.width, this.height);
-        }
+        this.ctxOriginal?.clearRect(0, 0, this.width, this.height);
     }
     deleteModifiable(): void {
-        if (this.ctxModifiable) {
-            this.ctxModifiable.clearRect(0, 0, this.width, this.height);
-        }
+        this.ctxModifiable?.clearRect(0, 0, this.width, this.height);
     }
     deleteBoth(): void {
         this.deleteOriginal();
@@ -200,7 +190,7 @@ export class CreateImageComponent implements OnInit {
     inputName(): void {
         this.createDifference();
         const diffCount = this.difference.getDifference(this.diffCanvas).count;
-        if (diffCount >= 3 && diffCount <= DIFFCOUNT_MAX) {
+        if (diffCount >= DIFFCOUNT_MIN && diffCount <= DIFFCOUNT_MAX) {
             this.showSave();
             return;
         }

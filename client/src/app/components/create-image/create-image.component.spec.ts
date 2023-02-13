@@ -29,13 +29,13 @@ describe('CreateImageComponent', () => {
 
     beforeEach(async () => {
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], ['closeAll']);
-        differenceSpy = jasmine.createSpyObj('DifferenceService', ['difference']);
+        differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
         communicationSpy = jasmine.createSpyObj('CommunicationService', ['createImage']);
         component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy);
         //image = await getImageBitmap();
         canvasRef = new ElementRef<HTMLCanvasElement>(document.createElement('canvas'));
 
-        TestBed.configureTestingModule({
+        await TestBed.configureTestingModule({
             declarations: [CreateImageComponent],
             providers: [
                 { provide: MatDialog, useValue: dialogSpy },
@@ -356,8 +356,6 @@ describe('CreateImageComponent', () => {
         expect(component.ctxOriginal?.clearRect).toHaveBeenCalled();
         expect(component.ctxModifiable?.clearRect).toHaveBeenCalled();
     });
-    it('should not delete both canvases if ctx is missing', async () => {});
-    it('should not delete both canvases if ctx is missing', async () => {});
     it('should be a BMP', async () => {
         const header = new Uint8Array([66, 77]);
         const blob = new Blob([header]);
@@ -396,7 +394,7 @@ describe('CreateImageComponent', () => {
             expect(error).toMatch('toBlob error');
         });
     });
-
+    /*
     it('should reject the promise if the FileReader onerror event is triggered', async () => {
         /*spyOn(canvasRef.nativeElement, 'toBlob').and.callFake((callback) => {
             callback(new Blob());
@@ -408,9 +406,9 @@ describe('CreateImageComponent', () => {
         });
         component.convertToBase64(canvasRef).catch((error) => {
             expect(error).toBe('FileReader error');
-        });*/
+        });
     });
-    /*
+    
     it('should call createDifference method', async () => {
         spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
         spyOn(differenceSpy, 'countDifference').and.returnValue(4);
@@ -419,19 +417,23 @@ describe('CreateImageComponent', () => {
         expect(component.createDifference).toHaveBeenCalled();
     });
     it('should call showSave method if diffCount is between 3 and 9', async () => {
-        spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
-        spyOn(difference, 'countDifference').and.returnValue(4);
-        spyOn(component, 'showSave').and.callThrough();
+        const coord: Coords[][] = [];
+        component.diffCanvas = canvas;
+        spyOn(component, 'createDifference');
+        spyOn(component, 'showSave');
+        differenceSpy.getDifference.and.returnValue({ count: 4, differences: coord });
         component.inputName();
         expect(component.showSave).toHaveBeenCalled();
     });
-
+    /*
     it('should call showErrorDifference method if diffCount is less than 3', async () => {
-        spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
-        spyOn(difference, 'countDifference').and.returnValue(2);
-        spyOn(component, 'showError').and.callThrough();
+        const coord : Coords[][] = [];
+        component.diffCanvas = canvas;
+        spyOn(component, 'createDifference');
+        spyOn(component, 'showSave');
+        differenceSpy.getDifference.and.returnValue({count: 4, differences: coord});
         component.inputName();
-        expect(component.showError).toHaveBeenCalled();
+        expect(component.showSave).toHaveBeenCalled();
     });
 
     it('should call showErrorDifference method if diffCount is greater than 9', async () => {
@@ -455,5 +457,30 @@ describe('CreateImageComponent', () => {
     it('should return true if name does not exist', async () => {
         const result = component.verifyName('notexist');
         expect(result).toBe(true);
+    });
+    it('should append the difference canvas and the difference count and difficulty to the neg div', async () => {
+        const negDiv = document.createElement('div');
+        negDiv.id = 'neg';
     });*/
+    it('should create difference', async () => {
+        let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
+        let ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
+        const slider = document.createElement('input');
+        slider.id = 'slider';
+        slider.innerHTML = '5';
+        document.body.appendChild(slider);
+        component.ctxOriginal = ctxOriginalStub;
+        component.ctxModifiable = ctxModifiableStub;
+        differenceSpy.findDifference.and.returnValues(canvas);
+        component.createDifference();
+        expect(component.diffCanvas).toBeTruthy();
+    });
+    it('should convert to bitmap', async () => {
+        /*const imageData = await fs.readFile(`../../../assets/testimages/image_2_diff.bmp`);
+        const imageBlob = new Blob([imageData], { type: 'image/bmp' });
+        const file = new File([imageBlob], 'image_2_diff.bmp', { type: 'image/bmp' });
+
+        const result = await component.convertImage(file);
+        expect(result).toBeInstanceOf(ImageBitmap);*/
+    });
 });
