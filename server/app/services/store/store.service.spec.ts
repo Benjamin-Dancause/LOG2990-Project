@@ -30,11 +30,11 @@ describe('StoreService', () => {
                 { x: 2, y: 2 },
             ],
         ];
-        const infoPath = `assets/data/gamesData.json`;
-        const gameInfo = { name: name, images: relPaths, difficulty: difficulty, count: count, differences: differences };
+        const infoPath = 'assets/data/gamesData.json';
+        const gameInfo = { name, images: relPaths, difficulty, count, differences };
 
-        jest.spyOn(fs, 'readFile').mockImplementationOnce(() => Promise.resolve(`[]`));
-        jest.spyOn(fs, 'writeFile').mockImplementation(() => Promise.resolve());
+        jest.spyOn(fs, 'readFile').mockImplementationOnce(async () => Promise.resolve('[]'));
+        jest.spyOn(fs, 'writeFile').mockImplementation(async () => Promise.resolve());
 
         await service.storeInfo(name, relPaths, difficulty, count, differences);
 
@@ -89,7 +89,7 @@ describe('StoreService', () => {
             },
         ];
 
-        jest.spyOn(fs, 'readFile').mockImplementationOnce(() => Promise.resolve(JSON.stringify(gameData)));
+        jest.spyOn(fs, 'readFile').mockImplementationOnce(async () => Promise.resolve(JSON.stringify(gameData)));
         const nameArray = await service.getAllNames();
         expect(nameArray).toEqual(['game1', 'game2', 'game3']);
     });
