@@ -41,6 +41,14 @@ describe('StoreService', () => {
         expect(fs.writeFile).toHaveBeenCalledWith(infoPath, JSON.stringify([gameInfo], null, 4));
     });
 
+    it('storeImage() should store image and return the correct path', async () => {
+        const name = 'testGame';
+        const image = 'data:image/png;base64,Qk02CAAAAAAAADYAAAAoAAAAEAAAABAAAAABAAAAAAAAAAAAAAAAAAAAA';
+        const filePath = await service.storeImage(name, image);
+
+        expect(filePath).toBe(`assets/images/${name}.bmp`);
+    });
+
     it('getAllNames() should return all game names', async () => {
         const gameData = [
             {
