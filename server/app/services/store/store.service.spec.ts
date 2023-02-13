@@ -21,19 +21,16 @@ describe('StoreService', () => {
 
     it('storeInfo() should store game information', async () => {
         const name = 'testGame';
-        const relPaths = ['assetsimages\test1_orig.bmp', '/assets/images/test1_modif.bmp'];
+        const relPaths = ['assets/images/test1_orig.bmp', '/assets/images/test1_modif.bmp'];
         const infoPath = `assets/data/gamesData.json`;
-        const initialContent = await fs.readFile(infoPath, 'utf-8');
-        const initialData = JSON.parse(initialContent);
         const gameInfo = { name: name, images: relPaths };
+
+        jest.spyOn(fs, 'readFile').mockImplementationOnce(() => Promise.resolve(`[]`));
+        jest.spyOn(fs, 'writeFile').mockImplementation(() => Promise.resolve());
+
         await service.storeInfo(name, relPaths);
 
-        const gamesContent = await fs.readFile(infoPath, 'utf8');
-        const gamesData = JSON.parse(gamesContent);
-        expect(gamesData).toContainEqual(gameInfo);
-
-        //restore GameData.json to initial data
-        await fs.writeFile(infoPath, JSON.stringify(initialData, null, 4));
+        expect(fs.writeFile).toHaveBeenCalledWith(infoPath, JSON.stringify([gameInfo], null, 4));
     });
 
     it('getAllNames() should return all game names', async () => {
