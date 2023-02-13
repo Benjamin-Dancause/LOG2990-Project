@@ -50,7 +50,7 @@ export class CreateImageComponent implements OnInit {
     constructor(
         public dialog: MatDialog,
         // private uploadService: UploadService,
-        protected difference: DifferenceService,
+        public difference: DifferenceService,
         private communication: CommunicationService,
         private router: Router,
     ) {}
