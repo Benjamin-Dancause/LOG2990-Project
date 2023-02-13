@@ -61,12 +61,12 @@ export class DifferenceService {
         return canvas3;
     }
 
-    getDifference(canvas: HTMLCanvasElement): { count: number; differences: Coords[][]} {
+    getDifference(canvas: HTMLCanvasElement): { count: number; differences: Coords[][] } {
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         const pixels3 = ctx.getImageData(0, 0, canvas.width, canvas.height) as ImageData;
         let count = 0;
         const diff = Array.from(Array(CANVAS_WIDTH), () => new Array(CANVAS_HEIGHT).fill(0));
-        const differences : Coords[][] = [];
+        const differences: Coords[][] = [];
 
         for (let i = 0; i < (pixels3.data.length as number); i += ARRAY_OFFSET) {
             const xy = this.findXY(i);
@@ -110,6 +110,8 @@ export class DifferenceService {
                 count++;
             }
         }
-        return count / (CANVAS_WIDTH * CANVAS_HEIGHT) <= DIFFICULTY_PIXEL_THRESHOLD && this.getDifference(canvas).count >= DIFFICULTY_DIFFRENCE_THRESHOLD;
+        return (
+            count / (CANVAS_WIDTH * CANVAS_HEIGHT) <= DIFFICULTY_PIXEL_THRESHOLD && this.getDifference(canvas).count >= DIFFICULTY_DIFFRENCE_THRESHOLD
+        );
     }
 }
