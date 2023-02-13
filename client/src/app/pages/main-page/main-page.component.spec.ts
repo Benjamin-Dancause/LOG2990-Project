@@ -37,7 +37,7 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should navigate to /game-selection when Classique is clicked', waitForAsync(
+    it('should navigate correctly when button is clicked', waitForAsync(
         inject([Location, Router], (location: Location) => {
             const button = fixture.debugElement.nativeElement.querySelector('#btn-Classique');
             button.click();

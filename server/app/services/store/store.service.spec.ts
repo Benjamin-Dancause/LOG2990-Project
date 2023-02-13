@@ -32,6 +32,9 @@ describe('StoreService', () => {
         const gamesData = JSON.parse(gamesContent);
         expect(gamesData).toContainEqual(gameInfo);
 
+        //restore GameData.json to initial data
         await fs.writeFile(infoPath, JSON.stringify(initialData, null, 4));
     });
+
+    it('getAllNames() should return all game names', async () => {});
 });
