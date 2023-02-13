@@ -3,6 +3,11 @@ import { Body, Controller, Get, Header, HttpCode, Post } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 
+interface Coords {
+    x: number;
+    y: number;
+}
+
 @Controller('games')
 export class StoreController {
     constructor(private readonly storeService: StoreService) {}
@@ -13,8 +18,10 @@ export class StoreController {
     @ApiCreatedResponse({
         description: 'Store name and images on the server',
     })
-    async storeData(@Body() data: { name: string; originalImage: string; modifiableImage: string }) {
-        const { name, originalImage, modifiableImage } = data;
+    async storeData(
+        @Body() data: { name: string; originalImage: string; modifiableImage: string; difficulty: boolean; count: number; differences: Coords[][] },
+    ) {
+        const { name, originalImage, modifiableImage, difficulty, count, differences } = data;
         const relativePaths = [];
 
         const origPath = await this.storeService.storeImage(name + '_orig', originalImage);
@@ -22,7 +29,7 @@ export class StoreController {
         const modifPath = await this.storeService.storeImage(name + '_modif', modifiableImage);
         relativePaths.push(modifPath);
 
-        await this.storeService.storeInfo(name, relativePaths);
+        await this.storeService.storeInfo(name, relativePaths, difficulty, count, differences);
     }
 
     @Get('/names')

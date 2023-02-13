@@ -1,16 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { promises as fs } from 'fs';
 
+interface Coords {
+    x: number;
+    y: number;
+}
+
 interface Data {
     name: string;
     images: string[];
+    difficulty: boolean;
+    count: number;
+    differences: Coords[][];
 }
 
 @Injectable()
 export class StoreService {
-    async storeInfo(name: string, relativePaths: string[]): Promise<void> {
+    async storeInfo(name: string, relativePaths: string[], difficulty: boolean, count: number, differences: Coords[][]): Promise<void> {
         const infoPath = `assets/data/gamesData.json`;
-        const gameData: Data = { name, images: relativePaths };
+        const gameData: Data = { name: name, images: relativePaths, difficulty: difficulty, count: count, differences: differences };
         let gamesData: Data[] = [];
         const gamesContent = await fs.readFile(infoPath, `utf-8`);
         gamesData = JSON.parse(gamesContent);
