@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Coords } from '@app/classes/coords';
 
 export const CANVAS_WIDTH = 640;
 export const CANVAS_HEIGHT = 480;
@@ -60,19 +61,22 @@ export class DifferenceService {
         return canvas3;
     }
 
-    countDifference(canvas: HTMLCanvasElement): number {
+    getDifference(canvas: HTMLCanvasElement): { count: number; differences: Coords[][]} {
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         const pixels3 = ctx.getImageData(0, 0, canvas.width, canvas.height) as ImageData;
         let count = 0;
         const diff = Array.from(Array(CANVAS_WIDTH), () => new Array(CANVAS_HEIGHT).fill(0));
+        const differences : Coords[][] = [];
 
         for (let i = 0; i < (pixels3.data.length as number); i += ARRAY_OFFSET) {
             const xy = this.findXY(i);
             if (pixels3.data[i + 3] === BLACK && diff[xy[0]][xy[1]] === 0) {
                 count++;
                 const queue = [xy];
+                differences.push([]);
                 while (queue.length > 0) {
                     const [x, y] = queue.shift() as number[];
+                    differences[count - 1].push(new Coords(x, y));
                     if (diff[x][y] === 0) {
                         if (x < CANVAS_WIDTH - 1 && pixels3.data[(x + 1 + y * CANVAS_WIDTH) * ARRAY_OFFSET + 3] === BLACK) {
                             queue.push([x + 1, y]);
@@ -94,8 +98,7 @@ export class DifferenceService {
                 }
             }
         }
-
-        return count;
+        return { count, differences };
     }
 
     isDifficult(canvas: HTMLCanvasElement): boolean {
@@ -107,6 +110,6 @@ export class DifferenceService {
                 count++;
             }
         }
-        return count / (CANVAS_WIDTH * CANVAS_HEIGHT) <= DIFFICULTY_PIXEL_THRESHOLD && this.countDifference(canvas) >= DIFFICULTY_DIFFRENCE_THRESHOLD;
+        return count / (CANVAS_WIDTH * CANVAS_HEIGHT) <= DIFFICULTY_PIXEL_THRESHOLD && this.getDifference(canvas).count >= DIFFICULTY_DIFFRENCE_THRESHOLD;
     }
 }
