@@ -30,6 +30,8 @@ export class PlayAreaComponent implements AfterViewInit {
 
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
+    errorSound = new Audio('../../assets/erreur.mp3');
+    successSound = new Audio('../../assets/success.mp3');
 
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     private rectangleX = RECTANGLE_X;
@@ -52,11 +54,16 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        // this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         // this.drawService.drawGrid();
         // this.drawService.drawWord('Différence');
-        this.drawDarkRectangle();
-        this.canvas.nativeElement.focus();
+        // this.drawDarkRectangle();
+        // this.canvas.nativeElement.focus();
+        if (this.canvas && this.canvas.nativeElement) {
+            this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+            this.drawDarkRectangle();
+            this.canvas.nativeElement.focus();
+        }
     }
 
     drawDarkRectangle() {
@@ -65,29 +72,40 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     // TODO : déplacer ceci dans un service de gestion de la souris!
+
     mouseHitDetect(event: MouseEvent) {
         if (event.button === MouseButton.Left) {
-            this.mousePosition = { x: event.offsetX, y: event.offsetY };
+            const clickedCanvas = event.target as HTMLCanvasElement;
+            const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
 
+            this.mousePosition = { x: event.offsetX, y: event.offsetY };
             if (
                 this.mousePosition.x >= this.rectangleX &&
                 this.mousePosition.x <= this.rectangleX + this.rectangleWidth &&
                 this.mousePosition.y >= this.rectangleY &&
                 this.mousePosition.y <= this.rectangleY + this.rectangleHeight
             ) {
-                this.drawService.context.fillStyle = 'green';
-                this.drawService.context.font = '20px Arial';
-                this.drawService.context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
+                context.fillStyle = 'green';
+                context.font = '20px Arial';
+                context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
+                this.successSound.currentTime = 0;
+                this.successSound.play();
                 setTimeout(() => {
-                    this.drawService.context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
-                }, 3000);
+                    context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+                    this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
+                    this.drawDarkRectangle();
+                }, 1500);
             } else {
-                this.drawService.context.fillStyle = 'red';
-                this.drawService.context.font = '20px Arial';
-                this.drawService.context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
+                context.fillStyle = 'red';
+                context.font = '20px Arial';
+                context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
+                this.errorSound.currentTime = 0;
+                this.errorSound.play();
                 setTimeout(() => {
-                    this.drawService.context.clearRect(this.mousePosition.x, this.mousePosition.y - 20, 100, 20);
-                }, 3000);
+                    context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+                    this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
+                    this.drawDarkRectangle();
+                }, 1500);
             }
         }
     }
