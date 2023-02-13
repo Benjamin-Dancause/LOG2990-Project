@@ -9,8 +9,11 @@ import { ExampleService } from '@app/services/example/example.service';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { TimerController } from './controllers/timer/timer.controller';
 import { CounterController } from './controllers/counter/counter.controller';
+import { GamecardsController } from './controllers/gamecards/gamecards.controller';
+import { StoreController } from './controllers/store/store.controller';
+import { TimerController } from './controllers/timer/timer.controller';
+import { StoreService } from './services/store/store.service';
 
 @Module({
     imports: [
@@ -24,7 +27,7 @@ import { CounterController } from './controllers/counter/counter.controller';
         }),
         MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
     ],
-    controllers: [CourseController, DateController, ExampleController, TimerController, CounterController],
-    providers: [ChatGateway, CourseService, DateService, ExampleService, Logger],
+    controllers: [CourseController, DateController, ExampleController, GamecardsController, StoreController, TimerController, CounterController],
+    providers: [ChatGateway, CourseService, DateService, ExampleService, Logger, StoreService],
 })
 export class AppModule {}

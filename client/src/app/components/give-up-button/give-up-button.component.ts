@@ -2,9 +2,9 @@ import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-give-up-button',
-  templateUrl: './give-up-button.component.html',
-  styleUrls: ['./give-up-button.component.scss']
+    selector: 'app-give-up-button',
+    templateUrl: './give-up-button.component.html',
+    styleUrls: ['./give-up-button.component.scss'],
 })
 export class GiveUpButtonComponent implements OnInit {
   

@@ -1,5 +1,6 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Gamecard } from '@app/classes/gamecard';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -20,9 +21,14 @@ export class CommunicationService {
     basicPost(message: Message): Observable<HttpResponse<string>> {
         return this.http.post(`${this.baseUrl}/example/send`, message, { observe: 'response', responseType: 'text' });
     }
-
-    imagePost(image: File): Observable<HttpResponse<string>> {
-        return this.http.post(`${this.baseUrl}/images`, image, { observe: 'response', responseType: 'text' });
+    imagesPost(request: Object): Observable<HttpResponse<string>> {
+        return this.http.post(`${this.baseUrl}/games/images`, request, { observe: 'response', responseType: 'text' });
+    }
+    getGameNames(): Observable<String[]> {
+        return this.http.get<String[]>(`${this.baseUrl}/games/names`).pipe(catchError(this.handleError<String[]>('getGameNames')));
+    }
+    getAvailableGames(): Observable<Gamecard[]> {
+        return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
     }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);

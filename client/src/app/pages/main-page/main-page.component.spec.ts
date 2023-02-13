@@ -38,7 +38,7 @@ describe('MainPageComponent', () => {
     });
 
     it('should navigate to /game-selection when Classique is clicked', waitForAsync(
-        inject([Location, Router], (location: Location, router: Router) => {
+        inject([Location, Router], (location: Location) => {
             const button = fixture.debugElement.nativeElement.querySelector('#btn-Classique');
             button.click();
             fixture.detectChanges();
