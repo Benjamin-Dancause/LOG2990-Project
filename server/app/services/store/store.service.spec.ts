@@ -23,11 +23,15 @@ describe('StoreService', () => {
         const name = 'testGame';
         const relPaths = ['assetsimages\test1_orig.bmp', '/assets/images/test1_modif.bmp'];
         const infoPath = `assets/data/gamesData.json`;
+        const initialContent = await fs.readFile(infoPath, 'utf-8');
+        const initialData = JSON.parse(initialContent);
         const gameInfo = { name: name, images: relPaths };
         await service.storeInfo(name, relPaths);
 
         const gamesContent = await fs.readFile(infoPath, 'utf8');
         const gamesData = JSON.parse(gamesContent);
         expect(gamesData).toContainEqual(gameInfo);
+
+        await fs.writeFile(infoPath, JSON.stringify(initialData, null, 4));
     });
 });
