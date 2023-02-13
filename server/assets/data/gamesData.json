@@ -187,5 +187,12 @@
             "assets/images/bigDataTest_orig.bmp",
             "assets/images/bigDataTest_modif.bmp"
         ]
+    },
+    {
+        "name": "tsetestet",
+        "images": [
+            "assets/images/tsetestet_orig.bmp",
+            "assets/images/tsetestet_modif.bmp"
+        ]
     }
 ]
