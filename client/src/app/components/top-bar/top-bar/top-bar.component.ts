@@ -1,6 +1,5 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CounterService } from '@app/services/counter.service';
-import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-top-bar',
@@ -9,26 +8,17 @@ import { Subscription } from 'rxjs';
   providers: [CounterService],
 })
 
-export class TopBarComponent implements OnInit, OnDestroy{
+export class TopBarComponent implements OnInit{
 
   @Input() name: string;
-  @Input() userName: string;
-  @Input() counter: number = 0;
-  counterSubcription: Subscription;
-
-  constructor(private counterService: CounterService) {}
-  
+  userName: string;
 
   ngOnInit() {
-    this.counterSubcription =  this.counterService.getCounterObservable().subscribe((counter: number) => {
-      this.counter = counter;
-    });
+        const storedUserName = localStorage.getItem('userName');
+        this.userName = storedUserName ? storedUserName : '';
   }
-  
 
-  ngOnDestroy(){
-    this.counterSubcription.unsubscribe();
-  }
+  constructor() {}
 
 
 }

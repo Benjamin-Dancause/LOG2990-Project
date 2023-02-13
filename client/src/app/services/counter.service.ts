@@ -1,22 +1,27 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CounterService {
-  private counterSubject = new Subject<number>();
+  private readonly baseUrl: string = environment.serverUrl;
+  _counter = 0;
   
   constructor(private http: HttpClient){}
 
+  getCounter() {
+    return this.http.get<number>(`${this.baseUrl}/counter`);
+  }
+
   incrementCounter() {
-    this.http.post('/api/counter', {}).subscribe((counter: number) => {
-      this.counterSubject.next(counter);
-    })
+    return this.http.post<number>(`${this.baseUrl}/counter/increment`, {});
+  }
+
+  resetCounter() {
+    return this.http.post<number>(`${this.baseUrl}/counter/reset`, {});
+    
   }
   
-  getCounterObservable() {
-    return this.counterSubject.asObservable();
-  }
 }

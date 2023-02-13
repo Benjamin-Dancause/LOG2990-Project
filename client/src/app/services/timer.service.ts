@@ -1,14 +1,24 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { interval, map } from 'rxjs';
+import { map, shareReplay } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TimerService {
+  private readonly baseUrl: string = environment.serverUrl;
 
-  time = interval(1000).pipe(
-    map(val => val + 1)
-  );
+  constructor(private httpClient: HttpClient) { }
 
-  constructor() { }
+  getTime() {
+    return this.httpClient.get(`${this.baseUrl}/timer`).pipe(
+      map((response: any) => response.time),
+      shareReplay(1)
+    );
+  }
+
+  resetTimer() {
+    return this.httpClient.post(`${this.baseUrl}/timer/reset`, {});
+  }
 }

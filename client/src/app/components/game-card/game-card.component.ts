@@ -14,7 +14,7 @@ export class GameCardComponent {
 
     @ViewChild('namePopupTemplate', { static: true })
     namePopupTemplate: TemplateRef<unknown>;
-    public userName: string;
+    userName: string;
 
     bestSoloTimes = [
         { name: 'User 1', time: '00:30' },
@@ -65,5 +65,9 @@ export class GameCardComponent {
         this.dialog.open(this.namePopupTemplate, {
             width: '400px',
         });
+    }
+
+    saveUserName() {
+        localStorage.setItem('userName', this.userName);
     }
 }

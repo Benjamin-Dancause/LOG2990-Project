@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 
 @Controller('timer')
 export class TimerController {
@@ -8,5 +8,11 @@ export class TimerController {
     getTime() {
         this.time++;
         return{ time: this.time};
+    }
+
+    @Post('reset')
+    resetTimer() {
+        this.time = 0;
+        return {time: this.time};
     }
 }

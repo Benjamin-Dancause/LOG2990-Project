@@ -81,17 +81,17 @@ export class PlayAreaComponent implements AfterViewInit {
             const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
 
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
-            this.counterService.incrementCounter();
             if (
                 this.mousePosition.x >= this.rectangleX &&
                 this.mousePosition.x <= this.rectangleX + this.rectangleWidth &&
                 this.mousePosition.y >= this.rectangleY &&
                 this.mousePosition.y <= this.rectangleY + this.rectangleHeight
-            ) {
+                ) {
                 context.fillStyle = 'green';
                 context.font = '20px Arial';
                 context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
                 this.successSound.currentTime = 0;
+                this.counterService.incrementCounter().subscribe();
                 this.successSound.play();
                 setTimeout(() => {
                     context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
