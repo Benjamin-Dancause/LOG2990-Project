@@ -36,5 +36,15 @@ describe('StoreService', () => {
         await fs.writeFile(infoPath, JSON.stringify(initialData, null, 4));
     });
 
-    it('getAllNames() should return all game names', async () => {});
+    it('getAllNames() should return all game names', async () => {
+        const gameData = [
+            { name: 'game1', images: ['image1', 'image2'] },
+            { name: 'game2', images: ['image1', 'image2'] },
+            { name: 'game3', images: ['image1', 'image2'] },
+        ];
+
+        jest.spyOn(fs, 'readFile').mockImplementationOnce(() => Promise.resolve(JSON.stringify(gameData)));
+        const nameArray = await service.getAllNames();
+        expect(nameArray).toEqual(['game1', 'game2', 'game3']);
+    });
 });

@@ -30,13 +30,8 @@ export class StoreService {
         const infoPath = `assets/data/gamesData.json`;
         let gamesData: Data[] = [];
 
-        try {
-            const gamesContent = await fs.readFile(infoPath, 'utf-8');
-            gamesData = JSON.parse(gamesContent);
-        } catch (e) {
-            console.error(e);
-            return [];
-        }
+        const gamesContent = await fs.readFile(infoPath, 'utf-8');
+        gamesData = JSON.parse(gamesContent);
 
         return gamesData.map((game) => game.name);
     }
