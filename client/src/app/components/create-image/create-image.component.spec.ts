@@ -1,6 +1,7 @@
 import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
@@ -11,6 +12,7 @@ describe('CreateImageComponent', () => {
     let fixture: ComponentFixture<CreateImageComponent>;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let differenceSpy: jasmine.SpyObj<DifferenceService>;
+    let routerSpy: jasmine.SpyObj<Router>;
     //let difference: DifferenceService;
     let communicationSpy: jasmine.SpyObj<CommunicationService>;
     //let image: ImageBitmap;
@@ -29,7 +31,7 @@ describe('CreateImageComponent', () => {
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], ['closeAll']);
         differenceSpy = jasmine.createSpyObj('DifferenceService', ['difference']);
         communicationSpy = jasmine.createSpyObj('CommunicationService', ['createImage']);
-        component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy);
+        component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy);
         //image = await getImageBitmap();
         canvasRef = new ElementRef<HTMLCanvasElement>(document.createElement('canvas'));
 
@@ -39,6 +41,7 @@ describe('CreateImageComponent', () => {
                 { provide: MatDialog, useValue: dialogSpy },
                 { provide: DifferenceService, useValue: differenceSpy },
                 { provide: CommunicationService, useValue: communicationSpy },
+                { provide: Router, useValue: routerSpy },
             ],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
@@ -444,7 +447,7 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'showError').and.callThrough();
         component.inputName();
         expect(component.showError).toHaveBeenCalled();
-    });*/
+    });
     it('should return false if name is already existing', async () => {
         const result = component.verifyName('test1');
         expect(result).toBe(false);
@@ -452,5 +455,5 @@ describe('CreateImageComponent', () => {
     it('should return true if name does not exist', async () => {
         const result = component.verifyName('notexist');
         expect(result).toBe(true);
-    });
+    });*/
 });

@@ -46,6 +46,7 @@ export class CreateImageComponent implements OnInit {
     modifiableImage: ImageBitmap;
     gameName: string = '';
     HTMLInputElement = window.HTMLInputElement;
+    diffCanvas: HTMLCanvasElement;
 
     constructor(
         public dialog: MatDialog,
@@ -88,20 +89,19 @@ export class CreateImageComponent implements OnInit {
         });
     }
     showDifference(): void {
-        this.createDifference().then((diff) => {
-            this.dialog.open(this.negativeTemplate, {
-                width: '700px',
-                height: '650px',
-            });
-            const negDiv = document.getElementById('neg') as HTMLDivElement;
-            negDiv.appendChild(diff);
-            const nbdiff = document.createElement('p');
-            nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.getDifference(diff).count.toString());
-            negDiv.appendChild(nbdiff);
-            const dificulty = document.createElement('p');
-            dificulty.innerHTML = 'Difficulté : '.concat(this.difference.isDifficult(diff) ? 'Difficile' : 'Facile');
-            negDiv.appendChild(dificulty);
+        this.createDifference();
+        this.dialog.open(this.negativeTemplate, {
+            width: '700px',
+            height: '650px',
         });
+        const negDiv = document.getElementById('neg') as HTMLDivElement;
+        negDiv.appendChild(this.diffCanvas);
+        const nbdiff = document.createElement('p');
+        nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.getDifference(this.diffCanvas).count.toString());
+        negDiv.appendChild(nbdiff);
+        const dificulty = document.createElement('p');
+        dificulty.innerHTML = 'Difficulté : '.concat(this.difference.isDifficult(this.diffCanvas) ? 'Difficile' : 'Facile');
+        negDiv.appendChild(dificulty);
     }
     async storeOriginal(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
@@ -174,14 +174,13 @@ export class CreateImageComponent implements OnInit {
         this.deleteOriginal();
         this.deleteModifiable();
     }
-    async createDifference(): Promise<HTMLCanvasElement> {
+    createDifference(): void {
         if (this.ctxOriginal && this.ctxModifiable) {
             const slider = document.getElementById('slider') as HTMLInputElement;
             const radius = slider.innerHTML as unknown as number;
             const diff = this.difference.findDifference(this.ctxOriginal, this.ctxModifiable, radius);
-            return diff;
+            this.diffCanvas = diff;
         }
-        return new HTMLCanvasElement();
     }
     async verifyBMP(file: File): Promise<boolean> {
         const bmp: number[] = [BMP_MIN, BMP_MAX];
@@ -199,34 +198,41 @@ export class CreateImageComponent implements OnInit {
     }
 
     inputName(): void {
-        this.createDifference().then((diff) => {
-            if (diff) {
-                const diffCount = this.difference.getDifference(diff).count;
-                if (diffCount >= 3 && diffCount <= DIFFCOUNT_MAX) {
-                    this.showSave();
-                    return;
-                }
-                this.showError(DIFFERROR_MSG);
-            }
-        });
+        this.createDifference();
+        const diffCount = this.difference.getDifference(this.diffCanvas).count;
+        if (diffCount >= 3 && diffCount <= DIFFCOUNT_MAX) {
+            this.showSave();
+            return;
+        }
+        this.showError(DIFFERROR_MSG);
     }
-    async saveGameCard(): Promise<void> {
-        this.verifyName(`${this.gameName}`, async (isVerified) => {
-            if (isVerified) {
-                const originalCanvasString = await this.convertToBase64(this.originalCanvas);
-                const modifiableCanvasString = await this.convertToBase64(this.modifiableCanvas);
 
-                const request = {
-                    name: this.gameName,
-                    originalImage: originalCanvasString,
-                    modifiableImage: modifiableCanvasString,
-                };
-                this.communication.imagesPost(request).subscribe();
-                this.router.navigate(['config']);
-            } else {
-                this.showError(NAMEERROR_MSG);
-            }
-        });
+    async saveGameCard(): Promise<void> {
+        if (this.ctxOriginal && this.ctxModifiable) {
+            this.createDifference();
+            const difference = this.difference.getDifference(this.diffCanvas);
+            const difficulty = this.difference.isDifficult(this.diffCanvas);
+            this.verifyName(`${this.gameName}`, async (isVerified) => {
+                if (isVerified) {
+                    const originalCanvasString = await this.convertToBase64(this.originalCanvas);
+                    const modifiableCanvasString = await this.convertToBase64(this.modifiableCanvas);
+
+                    const request = {
+                        name: this.gameName,
+                        originalImage: originalCanvasString,
+                        modifiableImage: modifiableCanvasString,
+                        difficulty: difficulty,
+                        count: difference.count,
+                        differences: difference.differences,
+                    };
+                    console.log(request);
+                    this.communication.imagesPost(request).subscribe();
+                    this.router.navigate(['config']);
+                } else {
+                    this.showError(NAMEERROR_MSG);
+                }
+            });
+        }
     }
     verifyName(gameName: string, callback: (isVerified: boolean) => void): void {
         this.communication.getGameNames().subscribe((names: String[]) => {

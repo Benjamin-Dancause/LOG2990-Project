@@ -180,5 +180,12 @@
             "assets/images/finaltest_orig.bmp",
             "assets/images/finaltest_modif.bmp"
         ]
+    },
+    {
+        "name": "bigDataTest",
+        "images": [
+            "assets/images/bigDataTest_orig.bmp",
+            "assets/images/bigDataTest_modif.bmp"
+        ]
     }
 ]
