@@ -25,7 +25,7 @@ export enum MouseButton {
     selector: 'app-play-area',
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
-    providers: [CounterService, DrawService]
+    providers: [CounterService, DrawService],
 })
 export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private canvas!: ElementRef<HTMLCanvasElement>;
@@ -86,7 +86,7 @@ export class PlayAreaComponent implements AfterViewInit {
                 this.mousePosition.x <= this.rectangleX + this.rectangleWidth &&
                 this.mousePosition.y >= this.rectangleY &&
                 this.mousePosition.y <= this.rectangleY + this.rectangleHeight
-                ) {
+            ) {
                 context.fillStyle = 'green';
                 context.font = '20px Arial';
                 context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
@@ -112,5 +112,4 @@ export class PlayAreaComponent implements AfterViewInit {
             }
         }
     }
-
 }
