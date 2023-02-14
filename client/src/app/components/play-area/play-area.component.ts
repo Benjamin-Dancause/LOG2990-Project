@@ -79,7 +79,7 @@ export class PlayAreaComponent implements AfterViewInit {
 
     // TODO : déplacer ceci dans un service de gestion de la souris!
 
-    mouseHitDetect(event: MouseEvent) {
+    async mouseHitDetect(event: MouseEvent) {
         if (!this.isClickDisabled && event.button === MouseButton.Left) {
             const clickedCanvas = event.target as HTMLCanvasElement;
             const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -87,6 +87,7 @@ export class PlayAreaComponent implements AfterViewInit {
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
             
             this.communicationService.sendPosition(0, this.mousePosition).subscribe((response : ClickResponse) => {
+                
                 if (response.success && !this.differenceFound.includes(response.differenceNumber)) {
                     this.differenceFound.push(response.differenceNumber);
                     context.fillStyle = 'green';
