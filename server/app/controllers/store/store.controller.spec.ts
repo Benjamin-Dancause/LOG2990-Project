@@ -26,7 +26,7 @@ describe('StoreController', () => {
         expect(controller).toBeDefined();
     });
 
-    it('storeData() should call storeImage() twice', async () => {
+    it('storeData() should call storeService.storeImage() twice', async () => {
         const storeImageSpy = jest.spyOn(storeService, 'storeImage');
         const gameData = {
             name: 'game1',
@@ -46,7 +46,7 @@ describe('StoreController', () => {
         expect(storeImageSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('storeData() should call storeInfo()', async () => {
+    it('storeData() should call storeService.storeInfo()', async () => {
         const storeImageSpy = jest.spyOn(storeService, 'storeInfo').mockImplementation();
         const gameData = {
             name: 'game1',
@@ -66,11 +66,27 @@ describe('StoreController', () => {
         expect(storeImageSpy).toHaveBeenCalled();
     });
 
-    it('getNames() should call getAllNames()', async () => {
+    it('getNames() should call storeService.getAllNames()', async () => {
         const getAllNamesSpy = jest.spyOn(storeService, 'getAllNames');
 
         await controller.getNames();
 
         expect(getAllNamesSpy).toHaveBeenCalled();
+    });
+
+    it('getGameList() should call storeService.getAllGames()', async () => {
+        const getAllNamesSpy = jest.spyOn(storeService, 'getAllGames');
+
+        await controller.getGameList();
+
+        expect(getAllNamesSpy).toHaveBeenCalled();
+    });
+
+    it('getGameByName should call storeService.getGameByName()', async () => {
+        const body = { name: 'testGame' };
+        jest.spyOn(storeService, 'getGameByName').mockImplementation();
+
+        await controller.getGameByName(body);
+        expect(storeService.getGameByName).toHaveBeenCalledWith(body);
     });
 });
