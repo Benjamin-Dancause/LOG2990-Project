@@ -22,6 +22,7 @@ describe('TopBarComponent', () => {
 
     it('should have userName', () => {
         const stubUserName = 'stubUserName';
+        spyOn(localStorage, 'getItem').and.returnValue(stubUserName);
         spyOn(localStorage, 'setItem');
 
         localStorage.setItem('userName', stubUserName);
@@ -31,10 +32,10 @@ describe('TopBarComponent', () => {
     });
 
     it('should be empty if no userName has been saved', () => {
-        const stubUserName = undefined;
+        const stubUserName = null;
+        spyOn(localStorage, 'getItem').and.returnValue(stubUserName);
         spyOn(localStorage, 'setItem');
 
-        localStorage.storeItem('userName', stubUserName);
         component.ngOnInit();
         expect(localStorage.getItem).toHaveBeenCalled();
         expect(component.userName).toEqual('');

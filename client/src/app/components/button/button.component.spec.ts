@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ButtonComponent } from './button.component';
 
@@ -14,9 +14,8 @@ describe('ButtonComponent', () => {
 
         fixture = TestBed.createComponent(ButtonComponent);
         component = fixture.componentInstance;
-
-        fixture.detectChanges();
         buttonElement = fixture.debugElement.query(By.css('button')).nativeElement;
+        fixture.detectChanges();
     });
 
     it('should create', () => {
@@ -29,13 +28,11 @@ describe('ButtonComponent', () => {
         expect(buttonElement.textContent).toContain('My button');
     });
 
-    // ce code passe pas en vrai ... vérifier pourquoi... Moi je comprend pas 😭
-    it('should emit `btnClick` event when a click occur', () => {
-        // let btnClickEmitted = false;
-        let btnClickEmitted = true;
+    it('should emit `btnClick` event when a click occur', fakeAsync(() => {
+        let btnClickEmitted = false;
         component.btnClick.subscribe(() => (btnClickEmitted = true));
         buttonElement.click();
-        fixture.detectChanges();
+        tick();
         expect(btnClickEmitted).toBeTruthy();
-    });
+    }));
 });
