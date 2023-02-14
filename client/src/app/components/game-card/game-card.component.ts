@@ -55,5 +55,6 @@ export class GameCardComponent {
 
     saveUserName() {
         localStorage.setItem('userName', this.userName);
+        localStorage.setItem('gameTitle', this.gameTitle);
     }
 }

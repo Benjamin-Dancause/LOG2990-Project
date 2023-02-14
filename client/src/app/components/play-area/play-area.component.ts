@@ -44,6 +44,7 @@ export class PlayAreaComponent implements AfterViewInit {
     private rectangleWidth = RECTANGLE_WIDTH;
     private rectangleHeight = RECTANGLE_HEIGHT;
     private differenceFound : number[] = [];
+    private gameName : string = '';
     constructor(private readonly drawService: DrawService, private counterService: CounterService, private communicationService : CommunicationService) {}
 
     get width(): number {
@@ -70,6 +71,9 @@ export class PlayAreaComponent implements AfterViewInit {
             this.drawDarkRectangle();
             this.canvas.nativeElement.focus();
         }
+
+        this.gameName = localStorage.getItem("gameTitle") as string || '';
+
     }
 
     drawDarkRectangle() {
@@ -86,7 +90,7 @@ export class PlayAreaComponent implements AfterViewInit {
 
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
             
-            this.communicationService.sendPosition("Langevin", this.mousePosition).subscribe((response : ClickResponse) => { //hardcode name
+            this.communicationService.sendPosition(this.gameName, this.mousePosition).subscribe((response : ClickResponse) => {
                 console.log(response)
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.differenceFound.push(response.differenceNumber);
