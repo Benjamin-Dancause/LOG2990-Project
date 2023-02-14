@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 
@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
     templateUrl: './game-card.component.html',
     styleUrls: ['./game-card.component.scss'],
 })
-export class GameCardComponent implements AfterViewInit {
+export class GameCardComponent implements OnInit {
     private readonly serverUrl: string = environment.serverUrl;
     @Input() gameTitle: string;
     @Input() imageUrl: string;
@@ -35,8 +35,8 @@ export class GameCardComponent implements AfterViewInit {
 
     constructor(public dialog: MatDialog) {}
 
-    ngAfterViewInit(): void {
-        this.imageLink = this.serverUrl + `/assets/images/eggman.jpg`;
+    ngOnInit(): void {
+        this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
         console.log(this.imageLink);
     }
 
