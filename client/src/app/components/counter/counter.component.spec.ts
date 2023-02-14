@@ -12,7 +12,6 @@ describe('CounterComponent', () => {
 
     beforeEach(() => {
         counterServiceSpy = jasmine.createSpyObj('CounterService', ['getCounter', 'resetCounter']);
-        counterServiceSpy.resetCounter.and.returnValue(of({}));
     });
 
     beforeEach(async () => {
