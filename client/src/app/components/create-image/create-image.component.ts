@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -44,13 +45,12 @@ export class CreateImageComponent implements OnInit {
     originalImage: ImageBitmap;
     modifiableImage: ImageBitmap;
     gameName: string = '';
-    HTMLInputElement = window.HTMLInputElement;
+    htmlInputElement = window.HTMLInputElement;
     diffCanvas: HTMLCanvasElement;
 
     constructor(
         public dialog: MatDialog,
-        // private uploadService: UploadService,
-        protected difference: DifferenceService,
+        public difference: DifferenceService,
         private communication: CommunicationService,
         private router: Router,
     ) {}
@@ -114,9 +114,7 @@ export class CreateImageComponent implements OnInit {
         }
         if (await this.verifyBMP(selectedFile)) {
             const image = await this.convertImage(selectedFile);
-            console.log('test3');
             if (image.width === this.width || image.height === this.height) {
-                console.log('test4');
                 this.originalImage = image;
                 return;
             }
@@ -215,17 +213,17 @@ export class CreateImageComponent implements OnInit {
                         count: difference.count,
                         differences: difference.differences,
                     };
-                    console.log(request);
                     this.communication.imagesPost(request).subscribe();
                     this.router.navigate(['config']);
                 } else {
                     this.showError(NAMEERROR_MSG);
+                    this.gameName = '';
                 }
             });
         }
     }
     verifyName(gameName: string, callback: (isVerified: boolean) => void): void {
-        this.communication.getGameNames().subscribe((names: String[]) => {
+        this.communication.getGameNames().subscribe((names: string[]) => {
             let isGameNameVerified = true;
             for (const name of names) {
                 if (gameName === name) {

@@ -12,14 +12,14 @@ export class CounterController {
 
     @Post('increment')
     @HttpCode(HttpStatus.OK)
-    incrementCounter(@Body() body: any) {
+    incrementCounter(@Body() body: unknown) {
         this.counter++;
         return this.counter;
     }
 
     @Post('reset')
     @HttpCode(HttpStatus.RESET_CONTENT)
-    resetCounter(@Body() body: any) {
+    resetCounter(@Body() body: unknown) {
         this.counter = 0;
         return this.counter;
     }

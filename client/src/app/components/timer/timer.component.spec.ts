@@ -1,5 +1,5 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { TimerComponent } from './timer.component';
 
 describe('TimerComponent', () => {
@@ -9,6 +9,7 @@ describe('TimerComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [TimerComponent],
+            imports: [HttpClientModule],
         }).compileComponents();
 
         fixture = TestBed.createComponent(TimerComponent);

@@ -17,10 +17,10 @@ interface Data {
 @Injectable()
 export class StoreService {
     async storeInfo(name: string, relativePaths: string[], difficulty: boolean, count: number, differences: Coords[][]): Promise<void> {
-        const infoPath = `assets/data/gamesData.json`;
-        const gameData: Data = { name: name, images: relativePaths, difficulty: difficulty, count: count, differences: differences };
+        const infoPath = 'assets/data/gamesData.json';
+        const gameData: Data = { name, images: relativePaths, difficulty, count, differences };
         let gamesData: Data[] = [];
-        const gamesContent = await fs.readFile(infoPath, `utf-8`);
+        const gamesContent = await fs.readFile(infoPath, 'utf-8');
         gamesData = JSON.parse(gamesContent);
         gamesData.push(gameData);
         await fs.writeFile(infoPath, JSON.stringify(gamesData, null, 4));
@@ -35,7 +35,7 @@ export class StoreService {
     }
 
     async getAllNames(): Promise<string[]> {
-        const infoPath = `assets/data/gamesData.json`;
+        const infoPath = 'assets/data/gamesData.json';
         let gamesData: Data[] = [];
 
         const gamesContent = await fs.readFile(infoPath, 'utf-8');
