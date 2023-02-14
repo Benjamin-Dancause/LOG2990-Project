@@ -4,6 +4,19 @@ import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
 
+export interface GameSelectionPageData {
+    name: string;
+    image: string;
+    difficulty: boolean;
+}
+
+export interface GameplayData {
+    name: string;
+    images: string[];
+    count: number;
+    difficulty: boolean;
+}
+
 const SCREEN_WIDTH = 640;
 const SCREEN_HEIGHT = 480;
 const BMP_MIN = 66;
@@ -161,8 +174,14 @@ export class CreateImageComponent implements OnInit {
         this.ctxModifiable?.clearRect(0, 0, this.width, this.height);
     }
     deleteBoth(): void {
-        this.deleteOriginal();
-        this.deleteModifiable();
+        const id: number = 1;
+        console.log(id);
+        this.communication.getGameById(id).subscribe((games: GameplayData) => {
+            console.log(games);
+            console.log(id);
+        });
+        //this.deleteOriginal();
+        //this.deleteModifiable();
     }
     createDifference(): void {
         if (this.ctxOriginal && this.ctxModifiable) {

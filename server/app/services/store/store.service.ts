@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Param } from '@nestjs/common';
 import { promises as fs } from 'fs';
 
 interface Coords {
@@ -7,9 +7,29 @@ interface Coords {
 }
 
 interface Data {
+    id: number;
     name: string;
     images: string[];
     difficulty: boolean;
+    count: number;
+    differences: Coords[][];
+}
+
+export interface GameSelectionPageData {
+    name: string;
+    image: string;
+    difficulty: boolean;
+}
+
+export interface GameplayData {
+    name: string;
+    images: string[];
+    count: number;
+    difficulty: boolean;
+}
+
+export interface GameDiffData {
+    id: number;
     count: number;
     differences: Coords[][];
 }
@@ -18,10 +38,16 @@ interface Data {
 export class StoreService {
     async storeInfo(name: string, relativePaths: string[], difficulty: boolean, count: number, differences: Coords[][]): Promise<void> {
         const infoPath = `assets/data/gamesData.json`;
-        const gameData: Data = { name: name, images: relativePaths, difficulty: difficulty, count: count, differences: differences };
-        let gamesData: Data[] = [];
-        const gamesContent = await fs.readFile(infoPath, `utf-8`);
-        gamesData = JSON.parse(gamesContent);
+        let gamesData: Data[] = await this.extractData();
+        const gamesNumber = gamesData.length + 1;
+        const gameData: Data = {
+            id: gamesNumber,
+            name: name,
+            images: relativePaths,
+            difficulty: difficulty,
+            count: count,
+            differences: differences,
+        };
         gamesData.push(gameData);
         await fs.writeFile(infoPath, JSON.stringify(gamesData, null, 4));
     }
@@ -35,12 +61,44 @@ export class StoreService {
     }
 
     async getAllNames(): Promise<string[]> {
-        const infoPath = `assets/data/gamesData.json`;
-        let gamesData: Data[] = [];
-
-        const gamesContent = await fs.readFile(infoPath, 'utf-8');
-        gamesData = JSON.parse(gamesContent);
-
+        let gamesData: Data[] = await this.extractData();
         return gamesData.map((game) => game.name);
+    }
+
+    async getAllGames(): Promise<GameSelectionPageData[]> {
+        let gamesData: Data[] = await this.extractData();
+        return gamesData.map((game) => ({
+            name: game.name,
+            image: game.images[0],
+            difficulty: game.difficulty,
+        }));
+    }
+
+    async getGameById(@Param('id') id: number): Promise<GameplayData> {
+        let gamesData: Data[] = await this.extractData();
+        console.log(id);
+        const game = gamesData.find((game) => game.id === id);
+
+        if (game) {
+            return { name: game.name, images: game.images, difficulty: game.difficulty, count: game.count };
+        }
+        return undefined;
+    }
+
+    async getGameDifferenceByName(name: string): Promise<GameDiffData> {
+        let gamesData: Data[] = await this.extractData();
+        const game = gamesData.find((game) => game.name === name);
+
+        if (!game) {
+            return undefined;
+        }
+
+        return { id: 0, count: game.count, differences: game.differences };
+    }
+
+    async extractData(): Promise<Data[]> {
+        const infoPath = `assets/data/gamesData.json`;
+        const gamesContent = await fs.readFile(infoPath, 'utf-8');
+        return JSON.parse(gamesContent);
     }
 }

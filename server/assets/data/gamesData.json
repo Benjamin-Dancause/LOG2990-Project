@@ -1,9 +1,10 @@
 [
     {
-        "name": "testingTime",
+        "id": 1,
+        "name": "test",
         "images": [
-            "assets/images/testingTime_orig.bmp",
-            "assets/images/testingTime_modif.bmp"
+            "assets/images/test_orig.bmp",
+            "assets/images/test_modif.bmp"
         ],
         "difficulty": true,
         "count": 7,
@@ -152770,13 +152771,6 @@
                     "y": 359
                 }
             ]
-        ]
-    },
-    {
-        "name": "tsetestet",
-        "images": [
-            "assets/images/tsetestet_orig.bmp",
-            "assets/images/tsetestet_modif.bmp"
         ]
     }
 ]

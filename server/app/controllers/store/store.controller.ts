@@ -39,4 +39,29 @@ export class StoreController {
     async getNames() {
         return this.storeService.getAllNames();
     }
+
+    @Get('/allGames')
+    @ApiOkResponse({
+        description: 'gets all the game information for the game cards',
+    })
+    async getGameList() {
+        return this.storeService.getAllGames();
+    }
+
+    @Get(':id')
+    @ApiOkResponse({
+        description: 'gets game information for a single game',
+    })
+    async getGameById(id: number) {
+        console.log(id);
+        return this.storeService.getGameById(id);
+    }
+
+    @Get('/gameDiffs')
+    @ApiOkResponse({
+        description: 'gets game information for a single game',
+    })
+    async getGameDiffByName(name) {
+        return this.storeService.getGameDifferenceByName(name);
+    }
 }

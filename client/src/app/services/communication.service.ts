@@ -1,6 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Gamecard } from '@app/classes/gamecard';
+import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -27,6 +28,18 @@ export class CommunicationService {
     getGameNames(): Observable<string[]> {
         return this.http.get<string[]>(`${this.baseUrl}/games/names`).pipe(catchError(this.handleError<string[]>('getGameNames')));
     }
+
+    getAllGames(): Observable<GameSelectionPageData[]> {
+        return this.http
+            .get<GameSelectionPageData[]>(`${this.baseUrl}/games/allGames`)
+            .pipe(catchError(this.handleError<GameSelectionPageData[]>('getAll')));
+    }
+
+    getGameById(id: number): Observable<GameplayData> {
+        console.log(id);
+        return this.http.get<GameplayData>(`${this.baseUrl}/games/${id}`);
+    }
+
     getAvailableGames(): Observable<Gamecard[]> {
         return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
     }
