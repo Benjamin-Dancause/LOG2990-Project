@@ -7,12 +7,12 @@ export class TimerController {
     @Get()
     getTime() {
         this.time++;
-        return{ time: this.time};
+        return { time: this.time };
     }
 
     @Post('reset')
     resetTimer() {
         this.time = 0;
-        return {time: this.time};
+        return { time: this.time };
     }
 }

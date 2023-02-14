@@ -35,6 +35,7 @@ export class PlayAreaComponent implements AfterViewInit {
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
 
+    private isClickDisabled = false;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     private rectangleX = RECTANGLE_X;
     private rectangleY = RECTANGLE_Y;
@@ -76,7 +77,7 @@ export class PlayAreaComponent implements AfterViewInit {
     // TODO : déplacer ceci dans un service de gestion de la souris!
 
     mouseHitDetect(event: MouseEvent) {
-        if (event.button === MouseButton.Left) {
+        if (!this.isClickDisabled && event.button === MouseButton.Left) {
             const clickedCanvas = event.target as HTMLCanvasElement;
             const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
 
@@ -97,18 +98,20 @@ export class PlayAreaComponent implements AfterViewInit {
                     context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
                     this.drawDarkRectangle();
-                }, 1500);
+                }, 1000);
             } else {
                 context.fillStyle = 'red';
                 context.font = '20px Arial';
                 context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
                 this.errorSound.currentTime = 0;
                 this.errorSound.play();
+                this.isClickDisabled = true;
                 setTimeout(() => {
                     context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
                     this.drawDarkRectangle();
-                }, 1500);
+                    this.isClickDisabled = false;
+                }, 1000);
             }
         }
     }
