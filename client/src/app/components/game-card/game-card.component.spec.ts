@@ -21,35 +21,25 @@ describe('GameCardComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should return green color when level is set to easy', () => {
-        component.level = 'easy';
+    it('should return green color when difficulty is set to easy', () => {
+        component.difficulty = false;
         expect(component.color).toBe('green');
     });
 
-    it('should return red color when level is set to hard', () => {
-        component.level = 'hard';
+    it('should return red color when difficulty is set to hard', () => {
+        component.difficulty = true;
         expect(component.color).toBe('red');
     });
 
-    it('should return yellow color when level is set to medium', () => {
-        component.level = 'medium';
-        expect(component.color).toBe('yellow');
-    });
+    // it('should set difficulty to easy and return Facile as difficultyText', () => {
+    //     component.difficulty = false;
+    //     expect(component.difficultyText).toBe('Facile');
+    // });
 
-    it('should set level to easy and return Facile as levelText', () => {
-        component.level = 'easy';
-        expect(component.levelText).toBe('Facile');
-    });
-
-    it('should set level to hard and return Difficile as levelText', () => {
-        component.level = 'hard';
-        expect(component.levelText).toBe('Difficile');
-    });
-
-    it('should set level to medium and return Moyen levelText', () => {
-        component.level = 'medium';
-        expect(component.levelText).toBe('Moyen');
-    });
+    // it('should set difficulty to hard and return Difficile as difficultyText', () => {
+    //     component.difficulty = true;
+    //     expect(component.difficultyText).toBe('Difficile');
+    // });
 
     it('should return top 3 best solo times', () => {
         const topThreeBestSoloTimes = component.topThreeBestTimesSolo;

@@ -11,17 +11,17 @@ describe('GameSelectionPageComponent', () => {
     let component: GameSelectionPageComponent;
     let fixture: ComponentFixture<GameSelectionPageComponent>;
     const gamecards: Gamecard[] = [
-        { title: 'Game 1', image: 'image1', level: 'easy', configuration: true },
-        { title: 'Game 2', image: 'image2', level: 'medium', configuration: true },
-        { title: 'Game 3', image: 'image3', level: 'hard', configuration: true },
-        { title: 'Game 4', image: 'image4', level: 'easy', configuration: true },
-        { title: 'Game 5', image: 'image5', level: 'medium', configuration: true },
-        { title: 'Game 6', image: 'image6', level: 'hard', configuration: true },
-        { title: 'Game 7', image: 'image7', level: 'easy', configuration: true },
-        { title: 'Game 8', image: 'image8', level: 'medium', configuration: true },
-        { title: 'Game 9', image: 'image9', level: 'hard', configuration: true },
-        { title: 'Game 10', image: 'image10', level: 'easy', configuration: true },
-        { title: 'Game 11', image: 'image11', level: 'medium', configuration: true },
+        { name: 'Game 1', image: 'image1', difficulty: false, configuration: true },
+        { name: 'Game 2', image: 'image2', difficulty: false, configuration: true },
+        { name: 'Game 3', image: 'image3', difficulty: true, configuration: true },
+        { name: 'Game 4', image: 'image4', difficulty: false, configuration: true },
+        { name: 'Game 5', image: 'image5', difficulty: false, configuration: true },
+        { name: 'Game 6', image: 'image6', difficulty: true, configuration: true },
+        { name: 'Game 7', image: 'image7', difficulty: false, configuration: true },
+        { name: 'Game 8', image: 'image8', difficulty: false, configuration: true },
+        { name: 'Game 9', image: 'image9', difficulty: true, configuration: true },
+        { name: 'Game 10', image: 'image10', difficulty: false, configuration: true },
+        { name: 'Game 11', image: 'image11', difficulty: false, configuration: true },
     ];
 
     const communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAvailableGames']);
@@ -47,13 +47,13 @@ describe('GameSelectionPageComponent', () => {
     it('should display correct games', () => {
         component.currentPage = 0;
         expect(component.displayedGames.length).toEqual(PAGE_SIZE);
-        expect(component.displayedGames[0].title).toEqual('Game 1');
-        expect(component.displayedGames[3].title).toEqual('Game 4');
+        expect(component.displayedGames[0].name).toEqual('Game 1');
+        expect(component.displayedGames[3].name).toEqual('Game 4');
 
         component.currentPage = 1;
         expect(component.displayedGames.length).toEqual(PAGE_SIZE);
-        expect(component.displayedGames[0].title).toEqual('Game 5');
-        expect(component.displayedGames[3].title).toEqual('Game 8');
+        expect(component.displayedGames[0].name).toEqual('Game 5');
+        expect(component.displayedGames[3].name).toEqual('Game 8');
     });
 
     it('should find the last page correctly', () => {

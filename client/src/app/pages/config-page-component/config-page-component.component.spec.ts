@@ -11,17 +11,17 @@ describe('ConfigPageComponent', () => {
     let component: ConfigPageComponent;
     let fixture: ComponentFixture<ConfigPageComponent>;
     const gamecards: Gamecard[] = [
-        { title: 'Game 1', image: 'image1', level: 'easy', configuration: true },
-        { title: 'Game 2', image: 'image2', level: 'medium', configuration: true },
-        { title: 'Game 3', image: 'image3', level: 'hard', configuration: true },
-        { title: 'Game 4', image: 'image4', level: 'easy', configuration: true },
-        { title: 'Game 5', image: 'image5', level: 'medium', configuration: true },
-        { title: 'Game 6', image: 'image6', level: 'hard', configuration: true },
-        { title: 'Game 7', image: 'image7', level: 'easy', configuration: true },
-        { title: 'Game 8', image: 'image8', level: 'medium', configuration: true },
-        { title: 'Game 9', image: 'image9', level: 'hard', configuration: true },
-        { title: 'Game 10', image: 'image10', level: 'easy', configuration: true },
-        { title: 'Game 11', image: 'image11', level: 'medium', configuration: true },
+        { name: 'Game 1', image: 'image1', difficulty: false, configuration: true },
+        { name: 'Game 2', image: 'image2', difficulty: false, configuration: true },
+        { name: 'Game 3', image: 'image3', difficulty: true, configuration: true },
+        { name: 'Game 4', image: 'image4', difficulty: false, configuration: true },
+        { name: 'Game 5', image: 'image5', difficulty: false, configuration: true },
+        { name: 'Game 6', image: 'image6', difficulty: true, configuration: true },
+        { name: 'Game 7', image: 'image7', difficulty: false, configuration: true },
+        { name: 'Game 8', image: 'image8', difficulty: false, configuration: true },
+        { name: 'Game 9', image: 'image9', difficulty: true, configuration: true },
+        { name: 'Game 10', image: 'image10', difficulty: false, configuration: true },
+        { name: 'Game 11', image: 'image11', difficulty: false, configuration: true },
     ];
 
     const communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAvailableGames']);
@@ -49,30 +49,30 @@ describe('ConfigPageComponent', () => {
 
     it('should display first 4 games on first page', () => {
         expect(component.displayedGames.length).toBe(PAGE_SIZE);
-        expect(component.displayedGames[0].title).toBe('Game 1');
-        expect(component.displayedGames[3].title).toBe('Game 4');
+        expect(component.displayedGames[0].name).toBe('Game 1');
+        expect(component.displayedGames[3].name).toBe('Game 4');
     });
 
     it('should change to next page on clicking next', () => {
         component.onNext();
         expect(component.displayedGames.length).toBe(PAGE_SIZE);
-        expect(component.displayedGames[0].title).toBe('Game 5');
-        expect(component.displayedGames[3].title).toBe('Game 8');
+        expect(component.displayedGames[0].name).toBe('Game 5');
+        expect(component.displayedGames[3].name).toBe('Game 8');
     });
 
     it('should change to previous page on clicking back', () => {
         component.onNext();
         component.onBack();
         expect(component.displayedGames.length).toBe(PAGE_SIZE);
-        expect(component.displayedGames[0].title).toBe('Game 1');
-        expect(component.displayedGames[3].title).toBe('Game 4');
+        expect(component.displayedGames[0].name).toBe('Game 1');
+        expect(component.displayedGames[3].name).toBe('Game 4');
     });
 
     it('should not change to previous page if already on first page', () => {
         component.onBack();
         expect(component.displayedGames.length).toBe(PAGE_SIZE);
-        expect(component.displayedGames[0].title).toBe('Game 1');
-        expect(component.displayedGames[3].title).toBe('Game 4');
+        expect(component.displayedGames[0].name).toBe('Game 1');
+        expect(component.displayedGames[3].name).toBe('Game 4');
     });
 
     it('should not change to next page if already on last page', () => {
@@ -81,7 +81,7 @@ describe('ConfigPageComponent', () => {
         component.onNext();
         component.onNext();
         expect(component.displayedGames.length).toBe(3);
-        expect(component.displayedGames[0].title).toBe('Game 9');
-        expect(component.displayedGames[2].title).toBe('Game 11');
+        expect(component.displayedGames[0].name).toBe('Game 9');
+        expect(component.displayedGames[2].name).toBe('Game 11');
     });
 });
