@@ -176,9 +176,9 @@ export class CreateImageComponent implements OnInit {
     deleteBoth(): void {
         // this.deleteOriginal();
         // this.deleteModifiable();
-        this.communication.createGameByName('Langevin').subscribe((id) => {
-            console.log(id);
-        });
+        // this.communication.createGameByName('Langevin').subscribe((id) => {
+        //     console.log(id);
+        // });
     }
     createDifference(): void {
         if (this.ctxOriginal && this.ctxModifiable) {

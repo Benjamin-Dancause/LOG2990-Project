@@ -1,4 +1,5 @@
-import { DifferenceInterface, GameService } from '../game/game.service';
+import { promises as fs } from 'fs';
+import { StoreService } from '../store/store.service';
 
 export interface Coords {
     x: number;
@@ -9,34 +10,35 @@ interface GameDiffData {
     count: number;
     differences: Coords[][];
 }
+export interface DifferenceInterface {
+    isDifference: boolean;
+    differenceNumber: number;
+    coords: Coords[];
+}
 export class GameManager {
-    games: GameService[];
-    gamesId: number;
-    constructor() {
-        this.games = [];
-        this.gamesId = 0;
-    }
+    constructor(private storeService : StoreService) {}
 
     createGame(gameData: GameDiffData): number {
-        gameData.id = ++this.gamesId;
-        const game = new GameService(gameData);
-        this.games.push(game);
-        console.log(gameData);
-        return gameData.id;
+        return gameData.count;
     }
-    deleteGame(gameId: number): void {
-        for (let i = 0; i < this.games.length; i++) {
-            if (this.games[i].id === gameId) {
-                this.games[i] = null;
-                this.games.splice(i, 1);
+
+
+    async verifyPos(name : string, clickCoord: Coords): Promise<DifferenceInterface> {
+        const infoPath = `assets/data/gamesData.json`;
+        const gamesContent = await fs.readFile(infoPath, 'utf-8').then((data) => JSON.parse(data));
+        
+        const differences = await gamesContent.find((game) => game.name === name).differences;
+        
+        for (const difference of differences) {
+            for (const coord of difference) {
+                if (coord.x === clickCoord.x && coord.y === clickCoord.y) {
+                    const differenceNumber = differences.indexOf(difference) + 1;
+                    const coords = differences[differenceNumber - 1];
+                    differences.splice(differenceNumber - 1, 1);
+                    return { isDifference: true, differenceNumber: differenceNumber, coords: coords };
+                }
             }
         }
-    }
-    async verifyPos(id: number, coords: Coords): Promise<DifferenceInterface> {
-        for (let i = 0; i < this.games.length; i++) {
-            if (this.games[i].id === id) {
-                return this.games[i].checkDifference(coords);
-            }
-        }
+        return { isDifference: false, differenceNumber: 0, coords: [] };
     }
 }

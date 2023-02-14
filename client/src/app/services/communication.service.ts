@@ -1,17 +1,14 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
+import { Gamecard } from '@app/classes/gamecard';
 import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
-export interface DifferenceInterface {
-    isDifference: boolean;
-    differenceNumber: number;
-    coords: Coords[];
-}
 @Injectable({
     providedIn: 'root',
 })
@@ -44,14 +41,14 @@ export class CommunicationService {
         return this.http.post<GameplayData>(`${this.baseUrl}/games/gameByName`, { name }, { responseType: 'json' });
     }
 
-    /* getAvailableGames(): Observable<Gamecard[]> {
-        return this.http.get<Gamecard[]>(`${this.baseUrl}/games/allGames`);
-    }*/
-    sendPosition(id: number, coords: Coords): Observable<DifferenceInterface> {
-        return this.http.post<DifferenceInterface>(`${this.baseUrl}/gaming/find`, { id, coords }, { responseType: 'json' });
+    getAvailableGames(): Observable<Gamecard[]> {
+        return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
     }
-    createGameByName(name: string): Observable<number> {
-        return this.http.post<number>(`${this.baseUrl}/gaming/new`, { name }, { responseType: 'json' });
+    sendPosition(name: string, coords: Coords): Observable<ClickResponse> {
+        return this.http.post<ClickResponse>(`${this.baseUrl}/gaming/find`, { name, coords }, { responseType: 'json' });
+    }
+    getDiffAmount(name: string): Observable<number> {
+        return this.http.post<number>(`${this.baseUrl}/gaming/diffAmount`, { name }, { responseType: 'json' });
     }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);

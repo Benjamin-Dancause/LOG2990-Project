@@ -15,7 +15,6 @@ import { GamecardsController } from './controllers/gamecards/gamecards.controlle
 import { StoreController } from './controllers/store/store.controller';
 import { TimerController } from './controllers/timer/timer.controller';
 import { GameManager } from './services/game-manager/game-manager.service';
-import { GameService } from './services/game/game.service';
 import { StoreService } from './services/store/store.service';
 
 @Module({
@@ -30,16 +29,7 @@ import { StoreService } from './services/store/store.service';
         }),
         MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
     ],
-    controllers: [
-        CourseController,
-        DateController,
-        ExampleController,
-        GamecardsController,
-        StoreController,
-        TimerController,
-        CounterController,
-        GameManagerController,
-    ],
-    providers: [Object, ChatGateway, CourseService, DateService, ExampleService, Logger, StoreService, GameManager, GameService],
+    controllers: [CourseController, DateController, ExampleController, GamecardsController, GameManagerController, StoreController, TimerController, CounterController],
+    providers: [ChatGateway, CourseService, DateService, ExampleService, Logger, StoreService, GameManager],
 })
 export class AppModule {}
