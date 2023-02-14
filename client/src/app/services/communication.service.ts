@@ -42,17 +42,17 @@ export class CommunicationService {
     }
 
     getGameByName(name: string): Observable<GameplayData> {
-        return this.http.post<GameplayData>(`${this.baseUrl}/games/gameByName`, { name: name }, { responseType: 'json' });
+        return this.http.post<GameplayData>(`${this.baseUrl}/games/gameByName`, { name }, { responseType: 'json' });
     }
 
     getAvailableGames(): Observable<Gamecard[]> {
         return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
     }
     sendPosition(id: number, coords: Coords): Observable<DifferenceInterface> {
-        return this.http.post<DifferenceInterface>(`${this.baseUrl}/gaming/find`, { id: id, coords: coords }, { responseType: 'json' });
+        return this.http.post<DifferenceInterface>(`${this.baseUrl}/gaming/find`, { id, coords }, { responseType: 'json' });
     }
-    createGameByName(name: string): Observable<Number> {
-        return this.http.post<Number>(`${this.baseUrl}/gaming/new`, { name: name }, { responseType: 'json' });
+    createGameByName(name: string): Observable<number> {
+        return this.http.post<number>(`${this.baseUrl}/gaming/new`, { name }, { responseType: 'json' });
     }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);

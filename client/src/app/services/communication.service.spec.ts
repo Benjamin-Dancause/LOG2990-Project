@@ -1,6 +1,9 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { CommunicationService } from '@app/services/communication.service';
+import { Coords } from '@app/classes/coords';
+import { Gamecard } from '@app/classes/gamecard';
+import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
+import { CommunicationService, DifferenceInterface } from '@app/services/communication.service';
 import { Message } from '@common/message';
 
 describe('CommunicationService', () => {
@@ -79,7 +82,7 @@ describe('CommunicationService', () => {
             },
             error: fail,
         });
-        const req = httpMock.expectOne(`${baseUrl}/example/get`);
+        const req = httpMock.expectOne(`${baseUrl}/example`);
         expect(req.request.method).toBe('GET');
         // actually send the request
         req.flush(returnedMessage);
@@ -94,5 +97,112 @@ describe('CommunicationService', () => {
         const req = httpMock.expectOne(`${baseUrl}/games/names`);
         expect(req.request.method).toBe('GET');
         req.flush(expectedGameNames);
+    });
+    it('should send a POST request to /games/images and return an HttpResponse<string>', () => {
+        const request = { data: 'image data' };
+        const mockResponse = 'OK';
+        const url = `${service['baseUrl']}/games/images`;
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        service.imagesPost(request).subscribe((response: any) => {
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+            expect(response.status).toBe(200);
+            expect(response.body).toBe(mockResponse);
+        });
+
+        const req = httpMock.expectOne(url);
+        expect(req.request.method).toBe('POST');
+
+        req.flush(mockResponse, { status: 200, statusText: 'OK' });
+    });
+
+    it('should return an observable of GameSelectionPageData[]', () => {
+        const mockResponse: GameSelectionPageData[] = [
+            { image: 'image 1', name: 'Game 1', difficulty: false },
+            { image: 'image 2', name: 'Game 2', difficulty: false },
+        ];
+
+        service.getAllGames().subscribe((response) => {
+            expect(response).toEqual(mockResponse);
+        });
+
+        const req = httpMock.expectOne(`${baseUrl}/games/allGames`);
+        expect(req.request.method).toBe('GET');
+        req.flush(mockResponse);
+    });
+
+    it('should retrieve gameplay data by game name', () => {
+        const name = 'test-game';
+        const expectedData: GameplayData = {
+            name: 'test',
+            images: ['image 1', 'image 2'],
+            count: 4,
+            difficulty: false,
+        };
+
+        service.getGameByName(name).subscribe((data) => {
+            expect(data).toEqual(expectedData);
+        });
+
+        const req = httpMock.expectOne(`${baseUrl}/games/gameByName`);
+        expect(req.request.method).toBe('POST');
+        expect(req.request.body).toEqual({ name });
+        req.flush(expectedData);
+    });
+
+    it('should return an array of Gamecard objects', () => {
+        const expectedGames: Gamecard[] = [
+            { name: 'Game 1', image: 'image 1', difficulty: false, configuration: false },
+            { name: 'Game 2', image: 'image 2', difficulty: true, configuration: false },
+            { name: 'Game 3', image: 'image 3', difficulty: false, configuration: false },
+        ];
+
+        service.getAvailableGames().subscribe((games: Gamecard[]) => {
+            expect(games.length).toBe(3);
+            expect(games).toEqual(expectedGames);
+        });
+
+        const req = httpMock.expectOne(`${service['baseUrl']}/games/all`);
+        expect(req.request.method).toEqual('GET');
+
+        req.flush(expectedGames);
+    });
+
+    it('should send position and return difference', () => {
+        const id = 123;
+        const coords: Coords = { x: 10, y: 20 };
+        const difference: DifferenceInterface = {
+            isDifference: false,
+            differenceNumber: 5,
+            coords: [
+                { x: 200, y: 471 },
+                { x: 199, y: 472 },
+            ],
+        };
+
+        service.sendPosition(id, coords).subscribe((data) => {
+            expect(data).toEqual(difference);
+        });
+
+        const req = httpMock.expectOne(`${service['baseUrl']}/gaming/find`);
+        expect(req.request.method).toBe('POST');
+        expect(req.request.body).toEqual({ id, coords });
+
+        req.flush(difference);
+    });
+
+    it('should create a game by name and return its id', () => {
+        const expectedId = 123;
+        const name = 'test-game';
+
+        service.createGameByName(name).subscribe((id: number) => {
+            expect(id).toBe(expectedId);
+        });
+
+        const req = httpMock.expectOne(`${baseUrl}/gaming/new`);
+        expect(req.request.method).toBe('POST');
+        expect(req.request.body).toEqual({ name });
+
+        req.flush(expectedId);
     });
 });
