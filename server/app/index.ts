@@ -8,6 +8,14 @@ import { join } from 'path';
 
 const bootstrap = async () => {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    app.use((_req, res, next) => {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+        next();
+    });
+    app.useStaticAssets(join(__dirname, '..', '..', '..', 'assets', 'images'), {
+        prefix: '/api/assets/images/',
+    });
     app.setGlobalPrefix('api');
     app.useGlobalPipes(new ValidationPipe());
     app.use(bodyParser.json({ limit: '5Mb' }));
@@ -21,14 +29,6 @@ const bootstrap = async () => {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
     SwaggerModule.setup('', app, document);
-    app.use((_req, res, next) => {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-        next();
-    });
-    app.useStaticAssets(join(__dirname, '..', 'assets', 'images'), {
-        prefix: '/api/assets/images/',
-    });
 
     await app.listen(process.env.PORT);
 };
