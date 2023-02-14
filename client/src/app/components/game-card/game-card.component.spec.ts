@@ -66,4 +66,11 @@ describe('GameCardComponent', () => {
         component.openSettings();
         expect(component.dialog.open).toHaveBeenCalled();
     });
+
+    it('should save the user name', () => {
+        spyOn(localStorage, 'setItem').and.callThrough();
+        component.userName = 'test name';
+        component.saveUserName();
+        expect(localStorage.setItem).toHaveBeenCalledWith('userName', 'test name');
+    });
 });
