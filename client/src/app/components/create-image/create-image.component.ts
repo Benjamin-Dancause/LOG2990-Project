@@ -50,8 +50,7 @@ export class CreateImageComponent implements OnInit {
 
     constructor(
         public dialog: MatDialog,
-        // private uploadService: UploadService,
-        protected difference: DifferenceService,
+        public difference: DifferenceService,
         private communication: CommunicationService,
         private router: Router,
     ) {}
@@ -115,9 +114,7 @@ export class CreateImageComponent implements OnInit {
         }
         if (await this.verifyBMP(selectedFile)) {
             const image = await this.convertImage(selectedFile);
-            console.log('test3');
             if (image.width === this.width || image.height === this.height) {
-                console.log('test4');
                 this.originalImage = image;
                 return;
             }
@@ -216,11 +213,11 @@ export class CreateImageComponent implements OnInit {
                         count: difference.count,
                         differences: difference.differences,
                     };
-                    console.log(request);
                     this.communication.imagesPost(request).subscribe();
                     this.router.navigate(['config']);
                 } else {
                     this.showError(NAMEERROR_MSG);
+                    this.gameName = '';
                 }
             });
         }

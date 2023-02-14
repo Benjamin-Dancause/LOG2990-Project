@@ -1,10 +1,12 @@
-import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core';
+import { ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Coords } from '@app/classes/coords';
 
 import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
+import { of } from 'rxjs';
 import { CreateImageComponent } from './create-image.component';
 
 describe('CreateImageComponent', () => {
@@ -28,7 +30,7 @@ describe('CreateImageComponent', () => {
     }
 
     beforeEach(async () => {
-        dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], ['closeAll']);
+        dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], ['closeAll']); 
         differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
         communicationSpy = jasmine.createSpyObj('CommunicationService', ['createImage']);
         component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy);
@@ -43,7 +45,6 @@ describe('CreateImageComponent', () => {
                 { provide: CommunicationService, useValue: communicationSpy },
                 { provide: Router, useValue: routerSpy },
             ],
-            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
 
         fixture = TestBed.createComponent(CreateImageComponent);
@@ -403,6 +404,19 @@ describe('CreateImageComponent', () => {
             expect(error).toMatch('toBlob error');
         });
     });
+
+    it('should call showSave if diffCount is between 3 and 9', async () => {
+        const coord: Coords[][] = [];
+        component.diffCanvas = canvas;
+        //const differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
+        differenceSpy.getDifference.and.returnValue({count: 3, differences: coord});
+        spyOn(component, 'createDifference');
+        spyOn(component, 'showSave');
+      
+        component.inputName();
+      
+        expect(component.showSave).toHaveBeenCalled();
+    });
     /*
     it('should reject the promise if the FileReader onerror event is triggered', async () => {
         /*spyOn(canvasRef.nativeElement, 'toBlob').and.callFake((callback) => {
@@ -418,22 +432,6 @@ describe('CreateImageComponent', () => {
         });
     });
     
-    it('should call createDifference method', async () => {
-        spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
-        spyOn(differenceSpy, 'countDifference').and.returnValue(4);
-        spyOn(component, 'showSave').and.callThrough();
-        component.inputName();
-        expect(component.createDifference).toHaveBeenCalled();
-    });
-    it('should call showSave method if diffCount is between 3 and 9', async () => {
-        const coord: Coords[][] = [];
-        component.diffCanvas = canvas;
-        spyOn(component, 'createDifference');
-        spyOn(component, 'showSave');
-        differenceSpy.getDifference.and.returnValue({ count: 4, differences: coord });
-        component.inputName();
-        expect(component.showSave).toHaveBeenCalled();
-    });
     /*
     it('should call showErrorDifference method if diffCount is less than 3', async () => {
         const coord : Coords[][] = [];
@@ -491,5 +489,14 @@ describe('CreateImageComponent', () => {
 
         const result = await component.convertImage(file);
         expect(result).toBeInstanceOf(ImageBitmap);*/
+    });
+    it('should call the callback with true if the game name does not exist in the names list', () => {
+        const gameName = 'new game';
+        const callbackSpy = jasmine.createSpy('callback');
+        communicationSpy.getGameNames.and.returnValue(of(['existing game 1', 'existing game 2']));
+    
+        component.verifyName(gameName, callbackSpy);
+    
+        expect(callbackSpy).toHaveBeenCalledWith(true);
     });
 });
