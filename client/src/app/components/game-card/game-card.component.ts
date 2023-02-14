@@ -36,7 +36,7 @@ export class GameCardComponent implements AfterViewInit {
     constructor(public dialog: MatDialog) {}
 
     ngAfterViewInit(): void {
-        this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
+        this.imageLink = this.serverUrl + `/assets/images/eggman.jpg`;
         console.log(this.imageLink);
     }
 
