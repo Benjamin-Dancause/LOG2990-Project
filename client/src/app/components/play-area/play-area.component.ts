@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { ClickResponse } from '@app/classes/click-response';
 import { Vec2 } from '@app/interfaces/vec2';
+import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
 import { DrawService } from '@app/services/draw.service';
 
@@ -41,7 +43,8 @@ export class PlayAreaComponent implements AfterViewInit {
     private rectangleY = RECTANGLE_Y;
     private rectangleWidth = RECTANGLE_WIDTH;
     private rectangleHeight = RECTANGLE_HEIGHT;
-    constructor(private readonly drawService: DrawService, private counterService: CounterService) {}
+    private differenceFound : number[] = [];
+    constructor(private readonly drawService: DrawService, private counterService: CounterService, private communicationService : CommunicationService) {}
 
     get width(): number {
         return this.canvasSize.x;
@@ -82,37 +85,36 @@ export class PlayAreaComponent implements AfterViewInit {
             const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
 
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
-            if (
-                this.mousePosition.x >= this.rectangleX &&
-                this.mousePosition.x <= this.rectangleX + this.rectangleWidth &&
-                this.mousePosition.y >= this.rectangleY &&
-                this.mousePosition.y <= this.rectangleY + this.rectangleHeight
-            ) {
-                context.fillStyle = 'green';
-                context.font = '20px Arial';
-                context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
-                this.successSound.currentTime = 0;
-                this.counterService.incrementCounter().subscribe();
-                this.successSound.play();
-                setTimeout(() => {
-                    context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
-                    this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
-                    this.drawDarkRectangle();
-                }, 1000);
-            } else {
-                context.fillStyle = 'red';
-                context.font = '20px Arial';
-                context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
-                this.errorSound.currentTime = 0;
-                this.errorSound.play();
-                this.isClickDisabled = true;
-                setTimeout(() => {
-                    context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
-                    this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
-                    this.drawDarkRectangle();
-                    this.isClickDisabled = false;
-                }, 1000);
-            }
+            
+            this.communicationService.sendPosition(0, this.mousePosition).subscribe((response : ClickResponse) => {
+                if (response.success && !this.differenceFound.includes(response.differenceNumber)) {
+                    this.differenceFound.push(response.differenceNumber);
+                    context.fillStyle = 'green';
+                    context.font = '20px Arial';
+                    context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
+                    this.successSound.currentTime = 0;
+                    this.counterService.incrementCounter().subscribe();
+                    this.successSound.play();
+                    setTimeout(() => {
+                        context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+                        this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
+                        this.drawDarkRectangle();
+                    }, 1000);
+                } else {
+                    context.fillStyle = 'red';
+                    context.font = '20px Arial';
+                    context.fillText('Erreur', this.mousePosition.x, this.mousePosition.y);
+                    this.errorSound.currentTime = 0;
+                    this.errorSound.play();
+                    this.isClickDisabled = true;
+                    setTimeout(() => {
+                        context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+                        this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
+                        this.drawDarkRectangle();
+                        this.isClickDisabled = false;
+                    }, 1000);
+                }
+            });
         }
     }
 }

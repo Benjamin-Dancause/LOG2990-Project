@@ -1,18 +1,14 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
+import { GameSelectionPageData, GameplayData } from '@app/components/create-image/create-image.component';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
-export interface DifferenceInterface {
-    isDifference: boolean;
-    differenceNumber: number;
-    coords: Coords[];
-}
 @Injectable({
     providedIn: 'root',
 })
@@ -48,8 +44,8 @@ export class CommunicationService {
     getAvailableGames(): Observable<Gamecard[]> {
         return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
     }
-    sendPosition(id: number, coords: Coords): Observable<DifferenceInterface> {
-        return this.http.post<DifferenceInterface>(`${this.baseUrl}/gaming/find`, { id: id, coords: coords }, { responseType: 'json' });
+    sendPosition(id: number, coords: Coords): Observable<ClickResponse> {
+        return this.http.post<ClickResponse>(`${this.baseUrl}/gaming/find`, { id: id, coords: coords }, { responseType: 'json' });
     }
     createGameByName(name: string): Observable<Number> {
         return this.http.post<Number>(`${this.baseUrl}/gaming/new`, { name: name }, { responseType: 'json' });

@@ -13,6 +13,7 @@ import { CounterController } from './controllers/counter/counter.controller';
 import { GamecardsController } from './controllers/gamecards/gamecards.controller';
 import { StoreController } from './controllers/store/store.controller';
 import { TimerController } from './controllers/timer/timer.controller';
+import { GameManager } from './services/game-manager/game-manager.service';
 import { StoreService } from './services/store/store.service';
 
 @Module({
@@ -27,7 +28,7 @@ import { StoreService } from './services/store/store.service';
         }),
         MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
     ],
-    controllers: [CourseController, DateController, ExampleController, GamecardsController, StoreController, TimerController, CounterController],
+    controllers: [CourseController, DateController, ExampleController, GamecardsController, GameManager, StoreController, TimerController, CounterController],
     providers: [ChatGateway, CourseService, DateService, ExampleService, Logger, StoreService],
 })
 export class AppModule {}
