@@ -40,4 +40,10 @@ describe('TopBarComponent', () => {
         expect(localStorage.getItem).toHaveBeenCalled();
         expect(component.userName).toEqual('');
     });
+
+    it('should set userName to empty string if storedUserName is undefined or null', () => {
+        spyOn(localStorage, 'getItem').and.returnValue(null);
+        component.ngOnInit();
+        expect(component.userName).toEqual('');
+    });
 });
