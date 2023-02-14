@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -33,10 +34,9 @@ describe('CreateImageComponent', () => {
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], ['closeAll']);
         differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
         communicationSpy = jasmine.createSpyObj('CommunicationService', ['createImage']);
-        component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy);
         // image = await getImageBitmap();
         canvasRef = new ElementRef<HTMLCanvasElement>(document.createElement('canvas'));
-
+        component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy);
         await TestBed.configureTestingModule({
             declarations: [CreateImageComponent],
             providers: [
