@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { TimerService } from '@app/services/timer.service';
 import { of, Subscription } from 'rxjs';
 import { TimerComponent } from './timer.component';
@@ -41,7 +41,7 @@ describe('TimerComponent', () => {
         expect(result).toEqual('01');
     });
 
-    it('should not pad the value with 0 if it is greater than or equal to 10', () => {
+    it('should not pad the value with 0 if it bigger or equal to 10', () => {
         const result = component.pad(10);
         expect(result).toEqual('10');
     });
@@ -61,5 +61,6 @@ describe('TimerComponent', () => {
         expect(component.sec).toEqual(1);
         expect(component.minutes).toEqual('01');
         expect(component.seconds).toEqual('01');
+        discardPeriodicTasks();
     }));
 });
