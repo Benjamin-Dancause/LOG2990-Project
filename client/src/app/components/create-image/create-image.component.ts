@@ -173,15 +173,8 @@ export class CreateImageComponent implements OnInit {
         this.ctxModifiable?.clearRect(0, 0, this.width, this.height);
     }
     deleteBoth(): void {
-        const name: string = 'Langevin';
-        this.communication.getGameByName(name).subscribe((games: GameplayData) => {
-            console.log(games);
-        });
-        /*this.communication.getAllGames().subscribe((games: GameSelectionPageData[]) => {
-            console.log(games);
-        });*/
-        //this.deleteOriginal();
-        //this.deleteModifiable();
+        this.deleteOriginal();
+        this.deleteModifiable();
     }
     createDifference(): void {
         if (this.ctxOriginal && this.ctxModifiable) {
