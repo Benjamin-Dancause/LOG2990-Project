@@ -44,7 +44,7 @@ export class CommunicationService {
         return this.http.post<GameplayData>(`${this.baseUrl}/games/gameByName`, { name }, { responseType: 'json' });
     }
 
-    /*getAvailableGames(): Observable<Gamecard[]> {
+    /* getAvailableGames(): Observable<Gamecard[]> {
         return this.http.get<Gamecard[]>(`${this.baseUrl}/games/allGames`);
     }*/
     sendPosition(id: number, coords: Coords): Observable<DifferenceInterface> {
