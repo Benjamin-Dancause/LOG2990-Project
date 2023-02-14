@@ -85,11 +85,10 @@ export class StoreService {
         let gamesData: Data[] = await this.extractData();
         const game = gamesData.find((game) => game.name === name);
 
-        if (!game) {
-            return undefined;
+        if (game) {
+            return { id: 0, count: game.count, differences: game.differences };
         }
-
-        return { id: 0, count: game.count, differences: game.differences };
+        return undefined;
     }
 
     async extractData(): Promise<Data[]> {

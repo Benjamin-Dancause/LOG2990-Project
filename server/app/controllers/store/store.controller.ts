@@ -29,6 +29,9 @@ export class StoreController {
         const modifPath = await this.storeService.storeImage(name + '_modif', modifiableImage);
         relativePaths.push(modifPath);
 
+        const testing = await this.storeService.getGameDifferenceByName('Langevin');
+        console.log(testing);
+
         await this.storeService.storeInfo(name, relativePaths, difficulty, count, differences);
     }
 
@@ -54,13 +57,5 @@ export class StoreController {
     })
     async getGameByName(@Body() body: { name: string }) {
         return this.storeService.getGameByName(body);
-    }
-
-    @Get('/gameDiffs')
-    @ApiOkResponse({
-        description: 'gets game information for a single game',
-    })
-    async getGameDiffByName(name) {
-        return this.storeService.getGameDifferenceByName(name);
     }
 }
