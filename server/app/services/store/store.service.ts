@@ -64,6 +64,11 @@ export class StoreService {
 
     async getAllGames(): Promise<GameSelectionPageData[]> {
         let gamesData: Data[] = await this.extractData();
+        console.log(
+            gamesData.map((game) => {
+                console.log(game.images[0]);
+            }),
+        );
         return gamesData.map((game) => ({
             name: game.name,
             image: game.images[0],
