@@ -17,7 +17,6 @@ export class GameManagerController {
     })
     async checkPos(@Body() body: { name: string; coords: Coords }) {
         return await this.gameManager.verifyPos(body.name, body.coords);
-        // return { isDifference: false, differenceNumber: 1, coords: [{ x: 1, y: 1 }] };
     }
 
     @Post('/diffAmount')

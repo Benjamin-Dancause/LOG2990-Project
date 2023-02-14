@@ -1,5 +1,4 @@
 import { promises as fs } from 'fs';
-import { DifferenceInterface } from '../game/game.service';
 import { StoreService } from '../store/store.service';
 
 export interface Coords {
@@ -11,23 +10,18 @@ interface GameDiffData {
     count: number;
     differences: Coords[][];
 }
+export interface DifferenceInterface {
+    isDifference: boolean;
+    differenceNumber: number;
+    coords: Coords[];
+}
 export class GameManager {
     constructor(private storeService : StoreService) {}
 
     createGame(gameData: GameDiffData): number {
         return gameData.count;
     }
-    // deleteGame(gameId: number): void {
-    //     for (let i = 0; i < this.games.length; i++) {
-    //         if (this.games[i].id === gameId) {
-    //             this.games[i] = null;
-    //             this.games.splice(i, 1);
-    //         }
-    //     }
-    // }
-    // async verifyPos(name: string, coords: Coords): Promise<DifferenceInterface> {
-    //     return await this.checkDifference(name, coords);
-    // }
+
 
     async verifyPos(name : string, clickCoord: Coords): Promise<DifferenceInterface> {
         const infoPath = `assets/data/gamesData.json`;

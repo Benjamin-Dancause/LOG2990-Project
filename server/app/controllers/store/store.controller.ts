@@ -29,9 +29,6 @@ export class StoreController {
         const modifPath = await this.storeService.storeImage(name + '_modif', modifiableImage);
         relativePaths.push(modifPath);
 
-        const testing = await this.storeService.getGameDifferenceByName('Langevin');
-        console.log(testing);
-
         await this.storeService.storeInfo(name, relativePaths, difficulty, count, differences);
     }
 
