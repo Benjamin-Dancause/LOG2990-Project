@@ -1,7 +1,6 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Coords } from '@app/classes/coords';
-import { Gamecard } from '@app/classes/gamecard';
 import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { CommunicationService, DifferenceInterface } from '@app/services/communication.service';
 import { Message } from '@common/message';
@@ -126,7 +125,7 @@ describe('CommunicationService', () => {
             expect(response).toEqual(mockResponse);
         });
 
-        const req = httpMock.expectOne(`${baseUrl}/games/allGames`);
+        const req = httpMock.expectOne(`${baseUrl}/games/all`);
         expect(req.request.method).toBe('GET');
         req.flush(mockResponse);
     });
@@ -148,24 +147,6 @@ describe('CommunicationService', () => {
         expect(req.request.method).toBe('POST');
         expect(req.request.body).toEqual({ name });
         req.flush(expectedData);
-    });
-
-    it('should return an array of Gamecard objects', () => {
-        const expectedGames: Gamecard[] = [
-            { name: 'Game 1', image: 'image 1', difficulty: false, configuration: false },
-            { name: 'Game 2', image: 'image 2', difficulty: true, configuration: false },
-            { name: 'Game 3', image: 'image 3', difficulty: false, configuration: false },
-        ];
-
-        service.getAvailableGames().subscribe((games: Gamecard[]) => {
-            expect(games.length).toBe(3);
-            expect(games).toEqual(expectedGames);
-        });
-
-        const req = httpMock.expectOne(`${service['baseUrl']}/games/all`);
-        expect(req.request.method).toEqual('GET');
-
-        req.flush(expectedGames);
     });
 
     it('should send position and return difference', () => {
