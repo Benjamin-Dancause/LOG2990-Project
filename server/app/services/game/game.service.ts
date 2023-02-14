@@ -12,16 +12,30 @@ interface Game {
 
 @Injectable()
 export class GameService {
-    async checkDifference(clickCoord: Coords, game: Game): Promise<{ isDifference: boolean; differenceNumber: number; coords: Coords[] }> {
-        for (const difference of game.differences) {
+    id: number;
+    diffCount: number;
+    differences: Coords[][];
+    
+    constructor(gameData: GameDiffData) {
+        this.id = gameData.id;
+        this.diffCount = gameData.count;
+        this.differences = gameData.differences;
+    }
+    async checkDifference(clickCoord: Coords): Promise<{ isDifference: boolean; differenceNumber: number; coords: Coords[] }> {
+        for (const difference of this.differences) {
             for (const coord of difference) {
                 if (coord.x === clickCoord.x && coord.y === clickCoord.y) {
-                    const differenceNumber = game.differences.indexOf(difference) + 1;
-                    const coords = game.differences[differenceNumber - 1];
-                    game.differences.splice(differenceNumber - 1, 1);
+                    const differenceNumber = this.differences.indexOf(difference) + 1;
+                    const coords = this.differences[differenceNumber - 1];
+                    this.differences.splice(differenceNumber - 1, 1);
                     return { isDifference: true, differenceNumber, coords };
                 }
             }
         }
     }
+}
+export interface GameDiffData {
+    id: number;
+    count: number;
+    differences: Coords[][];
 }
