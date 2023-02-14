@@ -125,7 +125,7 @@ describe('CommunicationService', () => {
             expect(response).toEqual(mockResponse);
         });
 
-        const req = httpMock.expectOne(`${baseUrl}/games/allGames`);
+        const req = httpMock.expectOne(`${baseUrl}/games/all`);
         expect(req.request.method).toBe('GET');
         req.flush(mockResponse);
     });
