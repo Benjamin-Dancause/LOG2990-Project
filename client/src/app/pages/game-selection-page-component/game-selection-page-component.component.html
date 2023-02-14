@@ -6,9 +6,9 @@
         <app-game-card
             class="component"
             *ngFor="let game of displayedGames; index as i"
-            [gameTitle]="game.title"
+            [gameTitle]="game.name"
             [imageUrl]="game.image"
-            [level]="game.level"
+            [difficulty]="game.difficulty"
             [configuration]="game.configuration"
         ></app-game-card>
     </div>

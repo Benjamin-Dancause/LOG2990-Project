@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class GameCardComponent {
     @Input() gameTitle: string;
     @Input() imageUrl: string;
-    @Input() level: string;
+    @Input() difficulty: boolean;
     @Input() configuration: boolean;
 
     @ViewChild('namePopupTemplate', { static: true })
@@ -33,25 +33,11 @@ export class GameCardComponent {
     constructor(public dialog: MatDialog) {}
 
     get color() {
-        switch (this.level) {
-            case 'easy':
-                return 'green';
-            case 'hard':
-                return 'red';
-            default:
-                return 'yellow';
-        }
+        return this.difficulty ? 'red' : 'green';
     }
 
     get levelText() {
-        switch (this.level) {
-            case 'easy':
-                return 'Facile';
-            case 'hard':
-                return 'Difficile';
-            default:
-                return 'Moyen';
-        }
+        return this.difficulty ? 'Difficile' : 'Facile';
     }
     get topThreeBestTimesSolo() {
         return this.bestSoloTimes.slice(0, 3);

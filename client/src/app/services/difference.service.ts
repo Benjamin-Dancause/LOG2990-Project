@@ -76,7 +76,10 @@ export class DifferenceService {
                 differences.push([]);
                 while (queue.length > 0) {
                     const [x, y] = queue.shift() as number[];
-                    differences[count - 1].push(new Coords(x, y));
+                    const coord = new Coords(x, y);
+                    if (differences[count - 1].find((c) => c.x === coord.x && c.y === coord.y) === undefined) {
+                        differences[count - 1].push(new Coords(x, y));
+                    }
                     if (diff[x][y] === 0) {
                         if (x < CANVAS_WIDTH - 1 && pixels3.data[(x + 1 + y * CANVAS_WIDTH) * ARRAY_OFFSET + 3] === BLACK) {
                             queue.push([x + 1, y]);

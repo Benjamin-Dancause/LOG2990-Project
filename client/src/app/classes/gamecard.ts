@@ -1,6 +1,6 @@
 export class Gamecard {
-    title: string;
+    name: string;
     image: string;
-    level: string;
+    difficulty: boolean;
     configuration: boolean;
 }

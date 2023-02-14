@@ -11,7 +11,7 @@ export class GamecardsController {
         description: 'Get all gamecards',
     })
     sendAllGamecards() {
-        const file = readFileSync('./games/games.json');
+        const file = readFileSync('./assets/data/gamesData.json');
         const data = JSON.parse(file.toString());
         return data;
     }
