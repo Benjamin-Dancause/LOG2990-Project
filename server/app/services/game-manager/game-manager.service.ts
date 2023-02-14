@@ -21,6 +21,7 @@ export class GameManager {
         gameData.id = ++this.gamesId;
         const game = new GameService(gameData);
         this.games.push(game);
+        console.log(gameData);
         return gameData.id;
     }
     deleteGame(gameId: number): void {
