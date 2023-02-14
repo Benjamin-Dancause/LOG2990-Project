@@ -28,7 +28,6 @@ describe('CommunicationService', () => {
 
     it('should return expected message (HttpClient called once)', () => {
         const expectedMessage: Message = { body: 'Hello', title: 'World' };
-
         // check the content of the mocked call
         service.basicGet().subscribe({
             next: (response: Message) => {
@@ -69,5 +68,31 @@ describe('CommunicationService', () => {
         const req = httpMock.expectOne(`${baseUrl}/example`);
         expect(req.request.method).toBe('GET');
         req.error(new ProgressEvent('Random error occurred'));
+    });
+
+    it('should return a message when sending a GET request (HttpClient called once)', () => {
+        const returnedMessage: Message = { body: 'Hello', title: 'World' };
+        // subscribe to the mocked call
+        service.basicGet().subscribe({
+            next: (message: Message) => {
+                expect(message).toEqual(returnedMessage);
+            },
+            error: fail,
+        });
+        const req = httpMock.expectOne(`${baseUrl}/example/get`);
+        expect(req.request.method).toBe('GET');
+        // actually send the request
+        req.flush(returnedMessage);
+    });
+    it('should return a list of game names (HttpClient called once)', () => {
+        const expectedGameNames: string[] = ['Game 1', 'Game 2', 'Game 3'];
+        service.getGameNames().subscribe({
+            next: (response) => {
+                expect(response).toEqual(expectedGameNames);
+            },
+        });
+        const req = httpMock.expectOne(`${baseUrl}/games/names`);
+        expect(req.request.method).toBe('GET');
+        req.flush(expectedGameNames);
     });
 });

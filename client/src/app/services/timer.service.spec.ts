@@ -44,4 +44,13 @@ describe('TimerService', () => {
             expect(result).toEqual(mockResponse);
         });
     });
+
+    it('should make a GET request to the API to get the time', () => {
+        const mockResponse = { data: { time: 0 } };
+        spyOn(httpClient, 'get').and.returnValue(of(mockResponse));
+
+        service.getTime().subscribe(() => {
+            expect(httpClient.get).toHaveBeenCalledWith(`${baseUrl}/timer`);
+        });
+    });
 });
