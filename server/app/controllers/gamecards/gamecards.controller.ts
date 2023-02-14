@@ -4,8 +4,6 @@ import { readFileSync } from 'fs';
 
 @Controller('games')
 export class GamecardsController {
-    constructor() {}
-
     @Get('/all')
     @ApiOkResponse({
         description: 'Get all gamecards',
