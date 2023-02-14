@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Gamecard } from '@app/classes/gamecard';
+import { GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { CommunicationService } from '@app/services/communication.service';
 
 const PAGE_SIZE = 4;
@@ -10,16 +10,18 @@ const PAGE_SIZE = 4;
     styleUrls: ['./game-selection-page-component.component.scss'],
 })
 export class GameSelectionPageComponent implements OnInit {
-    games: Gamecard[] = [];
+    games: GameSelectionPageData[] = [];
 
     currentPage = 0;
     pageSize = PAGE_SIZE;
     lastPage = 0;
 
     constructor(protected communication: CommunicationService) {
-        communication.getAvailableGames().subscribe((gamecards: Gamecard[]) => {
+        communication.getAllGames().subscribe((gamecards: GameSelectionPageData[]) => {
             for (const gamecard of gamecards) {
-                gamecard.configuration = false;
+                console.log(gamecard.image);
+                console.log(gamecard.name);
+                console.log(gamecard.difficulty);
             }
             this.games = gamecards;
             this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
@@ -32,6 +34,10 @@ export class GameSelectionPageComponent implements OnInit {
 
     ngOnInit(): void {
         this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
+
+        for (const game of this.games) {
+            console.log('test' + game.image);
+        }
     }
 
     onBack() {

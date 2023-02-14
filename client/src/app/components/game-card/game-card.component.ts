@@ -1,14 +1,17 @@
-import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-game-card',
     templateUrl: './game-card.component.html',
     styleUrls: ['./game-card.component.scss'],
 })
-export class GameCardComponent {
+export class GameCardComponent implements AfterViewInit {
+    private readonly serverUrl: string = environment.serverUrl;
     @Input() gameTitle: string;
     @Input() imageUrl: string;
+    @Input() imageLink: string;
     @Input() difficulty: boolean;
     @Input() configuration: boolean;
 
@@ -31,6 +34,11 @@ export class GameCardComponent {
     ];
 
     constructor(public dialog: MatDialog) {}
+
+    ngAfterViewInit(): void {
+        this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
+        console.log(this.imageLink);
+    }
 
     get color() {
         return this.difficulty ? 'red' : 'green';

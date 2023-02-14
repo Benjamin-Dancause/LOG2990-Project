@@ -1,7 +1,6 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Coords } from '@app/classes/coords';
-import { Gamecard } from '@app/classes/gamecard';
 import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
@@ -37,7 +36,7 @@ export class CommunicationService {
 
     getAllGames(): Observable<GameSelectionPageData[]> {
         return this.http
-            .get<GameSelectionPageData[]>(`${this.baseUrl}/games/allGames`)
+            .get<GameSelectionPageData[]>(`${this.baseUrl}/games/all`)
             .pipe(catchError(this.handleError<GameSelectionPageData[]>('getAll')));
     }
 
@@ -45,9 +44,9 @@ export class CommunicationService {
         return this.http.post<GameplayData>(`${this.baseUrl}/games/gameByName`, { name: name }, { responseType: 'json' });
     }
 
-    getAvailableGames(): Observable<Gamecard[]> {
-        return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
-    }
+    /*getAvailableGames(): Observable<Gamecard[]> {
+        return this.http.get<Gamecard[]>(`${this.baseUrl}/games/allGames`);
+    }*/
     sendPosition(id: number, coords: Coords): Observable<DifferenceInterface> {
         return this.http.post<DifferenceInterface>(`${this.baseUrl}/gaming/find`, { id: id, coords: coords }, { responseType: 'json' });
     }
