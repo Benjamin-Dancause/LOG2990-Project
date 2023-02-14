@@ -229,8 +229,9 @@ export class CreateImageComponent implements OnInit {
                         count: difference.count,
                         differences: difference.differences,
                     };
-                    this.communication.imagesPost(request).subscribe();
-                    this.router.navigate(['config']);
+                    await this.communication.imagesPost(request).subscribe(() => {
+                        this.router.navigate(['config']);
+                    });
                 } else {
                     this.showError(NAMEERROR_MSG);
                     this.gameName = '';

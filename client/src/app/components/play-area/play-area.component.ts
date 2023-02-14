@@ -43,9 +43,13 @@ export class PlayAreaComponent implements AfterViewInit {
     private rectangleY = RECTANGLE_Y;
     private rectangleWidth = RECTANGLE_WIDTH;
     private rectangleHeight = RECTANGLE_HEIGHT;
-    private differenceFound : number[] = [];
-    private gameName : string = '';
-    constructor(private readonly drawService: DrawService, private counterService: CounterService, private communicationService : CommunicationService) {}
+    private differenceFound: number[] = [];
+    private gameName: string = '';
+    constructor(
+        private readonly drawService: DrawService,
+        private counterService: CounterService,
+        private communicationService: CommunicationService,
+    ) {}
 
     get width(): number {
         return this.canvasSize.x;
@@ -72,8 +76,7 @@ export class PlayAreaComponent implements AfterViewInit {
             this.canvas.nativeElement.focus();
         }
 
-        this.gameName = localStorage.getItem("gameTitle") as string || '';
-
+        this.gameName = (localStorage.getItem('gameTitle') as string) || '';
     }
 
     drawDarkRectangle() {
@@ -89,9 +92,9 @@ export class PlayAreaComponent implements AfterViewInit {
             const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
 
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
-            
-            this.communicationService.sendPosition(this.gameName, this.mousePosition).subscribe((response : ClickResponse) => {
-                console.log(response)
+
+            this.communicationService.sendPosition(this.gameName, this.mousePosition).subscribe((response: ClickResponse) => {
+                console.log(response);
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.differenceFound.push(response.differenceNumber);
                     context.fillStyle = 'green';
