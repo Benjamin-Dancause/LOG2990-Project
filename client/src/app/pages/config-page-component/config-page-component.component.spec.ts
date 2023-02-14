@@ -24,10 +24,10 @@ describe('ConfigPageComponent', () => {
         { name: 'Game 11', image: 'image11', difficulty: false, configuration: true },
     ];
 
-    const communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAvailableGames']);
+    const communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAllGames']);
 
     beforeEach(async () => {
-        communicationService.getAvailableGames.and.returnValue(of(gamecards));
+        communicationService.getAllGames.and.returnValue(of(gamecards));
 
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
