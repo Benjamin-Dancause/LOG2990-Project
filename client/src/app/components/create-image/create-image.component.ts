@@ -9,6 +9,7 @@ const SCREEN_WIDTH = 640;
 const SCREEN_HEIGHT = 480;
 const BMP_MIN = 66;
 const BMP_MAX = 77;
+const BIT_DEPTH = 24;
 const DIFFCOUNT_MAX = 9;
 const DIFFCOUNT_MIN = 3;
 const DIFFERROR_MSG = 'Vous devez avoir entre 3 et 9 différences';
@@ -171,12 +172,11 @@ export class CreateImageComponent implements OnInit {
         }
     }
     async verifyBMP(file: File): Promise<boolean> {
-        const bmp: number[] = [BMP_MIN, BMP_MAX];
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = () => {
                 const imageData = new Uint8Array(reader.result as ArrayBuffer);
-                resolve(imageData[0] === bmp[0] && imageData[1] === bmp[1]);
+                resolve(imageData[0] === BMP_MIN && imageData[1] === BMP_MAX && imageData[28] === BIT_DEPTH);
             };
             reader.readAsArrayBuffer(file);
         });
