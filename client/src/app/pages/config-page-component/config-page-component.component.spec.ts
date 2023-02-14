@@ -1,6 +1,8 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Gamecard } from '@app/classes/gamecard';
+import { CommunicationService } from '@app/services/communication.service';
+import { of } from 'rxjs';
 import { ConfigPageComponent } from './config-page-component.component';
 
 const PAGE_SIZE = 4;
@@ -22,10 +24,15 @@ describe('ConfigPageComponent', () => {
         { title: 'Game 11', image: 'image11', level: 'medium', configuration: true },
     ];
 
+    const communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAvailableGames']);
+
     beforeEach(async () => {
+        communicationService.getAvailableGames.and.returnValue(of(gamecards));
+
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             declarations: [ConfigPageComponent],
+            providers: [{ provide: CommunicationService, useValue: communicationService }],
         }).compileComponents();
 
         fixture = TestBed.createComponent(ConfigPageComponent);
