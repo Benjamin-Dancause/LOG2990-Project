@@ -7,9 +7,8 @@
             class="component"
             *ngFor="let game of displayedGames; index as i"
             [gameTitle]="game.name"
-            [imageUrl]="game.image"
+            [imageLink]="game.image"
             [difficulty]="game.difficulty"
-            [configuration]="game.configuration"
         ></app-game-card>
     </div>
     <app-previous-next-button

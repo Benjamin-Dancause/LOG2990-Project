@@ -33,12 +33,12 @@ export class CommunicationService {
 
     getAllGames(): Observable<GameSelectionPageData[]> {
         return this.http
-            .get<GameSelectionPageData[]>(`${this.baseUrl}/games/allGames`)
+            .get<GameSelectionPageData[]>(`${this.baseUrl}/games/all`)
             .pipe(catchError(this.handleError<GameSelectionPageData[]>('getAll')));
     }
 
     getGameByName(name: string): Observable<GameplayData> {
-        return this.http.post<GameplayData>(`${this.baseUrl}/games/gameByName`, { name: name }, { responseType: 'json' });
+        return this.http.post<GameplayData>(`${this.baseUrl}/games/gameByName`, { name }, { responseType: 'json' });
     }
 
     getAvailableGames(): Observable<Gamecard[]> {
