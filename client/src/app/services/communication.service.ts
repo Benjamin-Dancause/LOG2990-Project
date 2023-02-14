@@ -51,6 +51,9 @@ export class CommunicationService {
     sendPosition(id: number, coords: Coords): Observable<DifferenceInterface> {
         return this.http.post<DifferenceInterface>(`${this.baseUrl}/gaming/find`, { id: id, coords: coords }, { responseType: 'json' });
     }
+    createGameByName(name: string): Observable<Number> {
+        return this.http.post<Number>(`${this.baseUrl}/gaming/new`, { name: name }, { responseType: 'json' });
+    }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);
     }
