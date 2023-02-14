@@ -44,11 +44,11 @@ export class CommunicationService {
     getAvailableGames(): Observable<Gamecard[]> {
         return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
     }
-    sendPosition(id: number, coords: Coords): Observable<ClickResponse> {
-        return this.http.post<ClickResponse>(`${this.baseUrl}/gaming/find`, { id: id, coords: coords }, { responseType: 'json' });
+    sendPosition(name : string, coords: Coords): Observable<ClickResponse> {
+        return this.http.post<ClickResponse>(`${this.baseUrl}/gaming/find`, { name: name, coords: coords }, { responseType: 'json' });
     }
-    createGameByName(name: string): Observable<Number> {
-        return this.http.post<Number>(`${this.baseUrl}/gaming/new`, { name: name }, { responseType: 'json' });
+    getDiffAmount(name: string): Observable<number> {
+        return this.http.post<number>(`${this.baseUrl}/gaming/diffAmount`, { name: name }, { responseType: 'json' });
     }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);

@@ -15,15 +15,16 @@ export class GameManagerController {
     @ApiOkResponse({
         description: 'Position of click',
     })
-    async checkPos(@Body() body: { id: number; coords: Coords }) {
-        return await this.gameManager.verifyPos(body.id, body.coords);
+    async checkPos(@Body() body: { name: string; coords: Coords }) {
+        return await this.gameManager.verifyPos(body.name, body.coords);
+        // return { isDifference: false, differenceNumber: 1, coords: [{ x: 1, y: 1 }] };
     }
 
-    @Post('/new')
+    @Post('/diffAmount')
     @ApiOkResponse({
         description: 'New game',
     })
-    async createNewGame(@Body() body: { name: string }) {
+    async sendDiffAmount(@Body() body: { name: string }) {
         return this.gameManager.createGame(await this.storeService.getGameDifferenceByName(body.name));
     }
 }

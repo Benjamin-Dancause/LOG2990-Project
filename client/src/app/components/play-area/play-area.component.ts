@@ -86,9 +86,9 @@ export class PlayAreaComponent implements AfterViewInit {
 
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
             
-            this.communicationService.sendPosition(0, this.mousePosition).subscribe((response : ClickResponse) => {
-                
-                if (response.success && !this.differenceFound.includes(response.differenceNumber)) {
+            this.communicationService.sendPosition("Langevin", this.mousePosition).subscribe((response : ClickResponse) => { //hardcode name
+                console.log(response)
+                if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.differenceFound.push(response.differenceNumber);
                     context.fillStyle = 'green';
                     context.font = '20px Arial';

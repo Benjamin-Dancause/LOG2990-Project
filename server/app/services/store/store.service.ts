@@ -6,7 +6,7 @@ interface Coords {
     y: number;
 }
 
-interface Data {
+export interface Data {
     name: string;
     images: string[];
     difficulty: boolean;
