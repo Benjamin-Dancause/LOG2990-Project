@@ -13,6 +13,7 @@ import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { ButtonComponent } from './components/button/button.component';
+import { CounterComponent } from './components/counter/counter.component';
 import { CreateImageComponent } from './components/create-image/create-image.component';
 import { GiveUpButtonComponent } from './components/give-up-button/give-up-button.component';
 import { HintButtonComponent } from './components/hint-button/hint-button.component';
@@ -22,11 +23,10 @@ import { PreviousNextButtonComponent } from './components/previous-next-button/p
 import { SettingsButtonComponent } from './components/settings-button/settings-button.component';
 import { SliderComponent } from './components/slider/slider.component';
 import { TimerComponent } from './components/timer/timer.component';
-import { TopBarComponent } from './components/top-bar/top-bar/top-bar.component';
+import { TopBarComponent } from './components/top-bar/top-bar.component';
 import { ConfigPageComponent } from './pages/config-page-component/config-page-component.component';
 import { CreatePageComponent } from './pages/create-page/create-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
-import { CounterComponent } from './components/counter/counter.component';
 
 /**
  * Main module that is used in main.ts.
