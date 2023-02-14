@@ -48,13 +48,12 @@ export class StoreController {
         return this.storeService.getAllGames();
     }
 
-    @Get(':id')
+    @Post('gameByName')
     @ApiOkResponse({
         description: 'gets game information for a single game',
     })
-    async getGameById(id: number) {
-        console.log(id);
-        return this.storeService.getGameById(id);
+    async getGameByName(@Body() body: { name: string }) {
+        return this.storeService.getGameByName(body);
     }
 
     @Get('/gameDiffs')

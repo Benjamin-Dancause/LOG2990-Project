@@ -1,4 +1,4 @@
-import { Injectable, Param } from '@nestjs/common';
+import { Body, Injectable } from '@nestjs/common';
 import { promises as fs } from 'fs';
 
 interface Coords {
@@ -7,7 +7,6 @@ interface Coords {
 }
 
 interface Data {
-    id: number;
     name: string;
     images: string[];
     difficulty: boolean;
@@ -39,9 +38,7 @@ export class StoreService {
     async storeInfo(name: string, relativePaths: string[], difficulty: boolean, count: number, differences: Coords[][]): Promise<void> {
         const infoPath = `assets/data/gamesData.json`;
         let gamesData: Data[] = await this.extractData();
-        const gamesNumber = gamesData.length + 1;
         const gameData: Data = {
-            id: gamesNumber,
             name: name,
             images: relativePaths,
             difficulty: difficulty,
@@ -74,11 +71,10 @@ export class StoreService {
         }));
     }
 
-    async getGameById(@Param('id') id: number): Promise<GameplayData> {
+    async getGameByName(@Body() body: { name: string }): Promise<GameplayData> {
         let gamesData: Data[] = await this.extractData();
-        console.log(id);
-        const game = gamesData.find((game) => game.id === id);
-
+        const name = body.name;
+        const game = gamesData.find((game) => game.name === name);
         if (game) {
             return { name: game.name, images: game.images, difficulty: game.difficulty, count: game.count };
         }

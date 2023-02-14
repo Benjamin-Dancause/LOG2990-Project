@@ -35,9 +35,8 @@ export class CommunicationService {
             .pipe(catchError(this.handleError<GameSelectionPageData[]>('getAll')));
     }
 
-    getGameById(id: number): Observable<GameplayData> {
-        console.log(id);
-        return this.http.get<GameplayData>(`${this.baseUrl}/games/${id}`);
+    getGameByName(name: string): Observable<GameplayData> {
+        return this.http.post<GameplayData>(`${this.baseUrl}/games/gameByName`, { name: name }, { responseType: 'json' });
     }
 
     getAvailableGames(): Observable<Gamecard[]> {
