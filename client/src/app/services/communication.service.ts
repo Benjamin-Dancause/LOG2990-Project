@@ -1,5 +1,6 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
 import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { Message } from '@common/message';
@@ -7,6 +8,11 @@ import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
+export interface DifferenceInterface {
+    isDifference: boolean;
+    differenceNumber: number;
+    coords: Coords[];
+}
 @Injectable({
     providedIn: 'root',
 })
@@ -41,6 +47,9 @@ export class CommunicationService {
 
     getAvailableGames(): Observable<Gamecard[]> {
         return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
+    }
+    sendPosition(id: number, coords: Coords): Observable<DifferenceInterface> {
+        return this.http.post<DifferenceInterface>(`${this.baseUrl}/gaming/find`, { id: id, coords: coords }, { responseType: 'json' });
     }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);

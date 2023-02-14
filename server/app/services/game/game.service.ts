@@ -9,26 +9,31 @@ interface Game {
     name: string;
     differences: Coords[][];
 }
+export interface DifferenceInterface {
+    isDifference: boolean;
+    differenceNumber: number;
+    coords: Coords[];
+}
 
 @Injectable()
 export class GameService {
     id: number;
     diffCount: number;
     differences: Coords[][];
-    
+
     constructor(gameData: GameDiffData) {
         this.id = gameData.id;
         this.diffCount = gameData.count;
         this.differences = gameData.differences;
     }
-    async checkDifference(clickCoord: Coords): Promise<{ isDifference: boolean; differenceNumber: number; coords: Coords[] }> {
+    async checkDifference(clickCoord: Coords): Promise<DifferenceInterface> {
         for (const difference of this.differences) {
             for (const coord of difference) {
                 if (coord.x === clickCoord.x && coord.y === clickCoord.y) {
                     const differenceNumber = this.differences.indexOf(difference) + 1;
                     const coords = this.differences[differenceNumber - 1];
                     this.differences.splice(differenceNumber - 1, 1);
-                    return { isDifference: true, differenceNumber, coords };
+                    return { isDifference: true, differenceNumber: differenceNumber, coords: coords };
                 }
             }
         }
