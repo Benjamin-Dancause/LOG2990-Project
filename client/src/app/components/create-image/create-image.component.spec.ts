@@ -30,7 +30,7 @@ describe('CreateImageComponent', () => {
     }
 
     beforeEach(async () => {
-        dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], ['closeAll']); 
+        dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], ['closeAll']);
         differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
         communicationSpy = jasmine.createSpyObj('CommunicationService', ['createImage']);
         component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy);
@@ -408,13 +408,13 @@ describe('CreateImageComponent', () => {
     it('should call showSave if diffCount is between 3 and 9', async () => {
         const coord: Coords[][] = [];
         component.diffCanvas = canvas;
-        //const differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
-        differenceSpy.getDifference.and.returnValue({count: 3, differences: coord});
+        // const differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
+        differenceSpy.getDifference.and.returnValue({ count: 3, differences: coord });
         spyOn(component, 'createDifference');
         spyOn(component, 'showSave');
-      
+
         component.inputName();
-      
+
         expect(component.showSave).toHaveBeenCalled();
     });
     /*
@@ -494,9 +494,9 @@ describe('CreateImageComponent', () => {
         const gameName = 'new game';
         const callbackSpy = jasmine.createSpy('callback');
         communicationSpy.getGameNames.and.returnValue(of(['existing game 1', 'existing game 2']));
-    
+
         component.verifyName(gameName, callbackSpy);
-    
+
         expect(callbackSpy).toHaveBeenCalledWith(true);
     });
 });
