@@ -11,7 +11,8 @@ describe('CounterComponent', () => {
     let fixture: ComponentFixture<CounterComponent>;
 
     beforeEach(() => {
-        counterServiceSpy = jasmine.createSpyObj('CounterService', ['getCounter', 'incrementCounter', 'resetCounter']);
+        counterServiceSpy = jasmine.createSpyObj('CounterService', ['getCounter', 'resetCounter']);
+        counterServiceSpy.resetCounter.and.returnValue(of({}));
     });
 
     beforeEach(async () => {
@@ -57,4 +58,13 @@ describe('CounterComponent', () => {
             expect(component.counter).toBe(5);
         });
     });
+
+    /*
+    describe('ngOnDestroy', () => {
+        it('should reset counter', () => {
+            component.ngOnDestroy();
+            expect(counterServiceSpy.resetCounter).toHaveBeenCalled();
+        });
+    });
+    */
 });
