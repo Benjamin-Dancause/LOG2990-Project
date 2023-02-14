@@ -31,15 +31,15 @@ describe('GameCardComponent', () => {
         expect(component.color).toBe('red');
     });
 
-    // it('should set difficulty to easy and return Facile as difficultyText', () => {
-    //     component.difficulty = false;
-    //     expect(component.difficultyText).toBe('Facile');
-    // });
+    it('should set difficulty to easy and return Facile as difficultyText', () => {
+        component.difficulty = false;
+        expect(component.levelText).toBe('Facile');
+    });
 
-    // it('should set difficulty to hard and return Difficile as difficultyText', () => {
-    //     component.difficulty = true;
-    //     expect(component.difficultyText).toBe('Difficile');
-    // });
+    it('should set difficulty to hard and return Difficile as difficultyText', () => {
+        component.difficulty = true;
+        expect(component.levelText).toBe('Difficile');
+    });
 
     it('should return top 3 best solo times', () => {
         const topThreeBestSoloTimes = component.topThreeBestTimesSolo;
