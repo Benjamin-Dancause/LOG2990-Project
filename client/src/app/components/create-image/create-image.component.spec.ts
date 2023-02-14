@@ -226,6 +226,7 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'verifyBMP').and.returnValue(Promise.resolve(true));
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
 
+        // eslint-disable-next-line no-console
         console.log('testing');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeDiff(fileEvent as any);

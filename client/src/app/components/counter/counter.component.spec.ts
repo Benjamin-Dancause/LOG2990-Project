@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CounterService } from '@app/services/counter.service';
 import { CounterComponent } from './counter.component';
@@ -16,6 +17,7 @@ describe('CounterComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [CounterComponent],
             providers: [{ provide: CounterService, useValue: counterServiceSpy }],
+            imports: [HttpClientModule],
         }).compileComponents();
 
         fixture = TestBed.createComponent(CounterComponent);
@@ -26,7 +28,9 @@ describe('CounterComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+    /*
     describe('ngOnInit', () => {
         it('should initialize subscription to counter', () => {});
     });
+    */
 });

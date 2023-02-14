@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -44,7 +45,7 @@ export class CreateImageComponent implements OnInit {
     originalImage: ImageBitmap;
     modifiableImage: ImageBitmap;
     gameName: string = '';
-    HTMLInputElement = window.HTMLInputElement;
+    htmlInputElement = window.HTMLInputElement;
     diffCanvas: HTMLCanvasElement;
 
     constructor(
@@ -225,7 +226,7 @@ export class CreateImageComponent implements OnInit {
         }
     }
     verifyName(gameName: string, callback: (isVerified: boolean) => void): void {
-        this.communication.getGameNames().subscribe((names: String[]) => {
+        this.communication.getGameNames().subscribe((names: string[]) => {
             let isGameNameVerified = true;
             for (const name of names) {
                 if (gameName === name) {

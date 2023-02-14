@@ -15,6 +15,4 @@ export class TopBarComponent implements OnInit {
         const storedUserName = localStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
     }
-
-    constructor() {}
 }

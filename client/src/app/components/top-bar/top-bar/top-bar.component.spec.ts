@@ -21,7 +21,7 @@ describe('TopBarComponent', () => {
     });
 
     it('should have userName', () => {
-        let stubUserName = 'stubUserName';
+        const stubUserName = 'stubUserName';
         spyOn(localStorage, 'setItem');
 
         localStorage.setItem('userName', stubUserName);
@@ -31,7 +31,7 @@ describe('TopBarComponent', () => {
     });
 
     it('should be empty if no userName has been saved', () => {
-        let stubUserName = undefined;
+        const stubUserName = undefined;
         spyOn(localStorage, 'setItem');
 
         localStorage.storeItem('userName', stubUserName);
@@ -39,5 +39,4 @@ describe('TopBarComponent', () => {
         expect(localStorage.getItem).toHaveBeenCalled();
         expect(component.userName).toEqual('');
     });
-    
 });
