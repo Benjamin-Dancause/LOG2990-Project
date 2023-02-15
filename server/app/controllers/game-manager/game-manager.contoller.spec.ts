@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { GameManagerController } from './game-manager.controller';
 
 describe('GameManagerController', () => {
-    let gameManagerController: GameManagerController;
+    let controller: GameManagerController;
     let gameManager: GameManager;
     let storeService: StoreService;
 
@@ -12,39 +12,49 @@ describe('GameManagerController', () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [GameManagerController],
             providers: [
-                { provide: GameManager, useValue: gameManager },
-                { provide: StoreService, useValue: storeService },
+                {
+                    provide: GameManager,
+                    useValue: {
+                        createGame: jest.fn(),
+                        verifyPos: jest.fn(),
+                    },
+                },
+                {
+                    provide: StoreService,
+                    useValue: {
+                        getGameDifferenceByName: jest.fn(),
+                    },
+                },
             ],
         }).compile();
 
-        gameManagerController = module.get<GameManagerController>(GameManagerController);
+        controller = module.get<GameManagerController>(GameManagerController);
+        gameManager = module.get<GameManager>(GameManager);
+        storeService = module.get<StoreService>(StoreService);
     });
-
     describe('checkPos', () => {
-        it('should return result from gameManager.verifyPos', async () => {
-            const expectedResult = {};
+        it('should return an DifferenceInterface object', async () => {
+            const result = { isDifference: true, differenceNumber: 1, coords: [{ x: 1, y: 1 }] };
+            jest.spyOn(gameManager, 'verifyPos').mockResolvedValue(result);
 
-            const result = await gameManagerController.checkPos({
-                name: 'test',
-                coords: { x: 2, y: 3 },
-            });
+            const body = { name: 'game1', coords: { x: 1, y: 1 } };
+            const expected = result;
 
-            expect(gameManager.verifyPos).toHaveBeenCalledWith(1, { x: 2, y: 3 });
-            expect(result).toBe(expectedResult);
+            expect(await controller.checkPos(body)).toBe(expected);
+            expect(gameManager.verifyPos).toHaveBeenCalledWith(body.name, body.coords);
         });
     });
 
-    describe('createNewGame', () => {
-        it('should return result from gameManager.createGame', async () => {
-            const expectedResult = {};
+    describe('sendDiffAmount', () => {
+        it('should return a number', async () => {
+            const result = 5;
+            jest.spyOn(gameManager, 'createGame').mockReturnValue(result);
+            const body = { name: 'game1' };
+            const expected = result;
 
-            const result = await gameManagerController.sendDiffAmount({
-                name: 'test',
-            });
-
-            expect(storeService.getGameDifferenceByName).toHaveBeenCalledWith('test');
-            expect(gameManager.createGame).toHaveBeenCalledWith({});
-            expect(result).toBe(expectedResult);
+            expect(await controller.sendDiffAmount(body)).toBe(expected);
+            expect(storeService.getGameDifferenceByName).toHaveBeenCalledWith(body.name);
+            expect(gameManager.createGame).toHaveBeenCalledWith({ diffAmount: result });
         });
     });
 });
