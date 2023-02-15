@@ -152,8 +152,8 @@ describe('CommunicationService', () => {
 
     it('should get all available games', () => {
         const expectedGames: Gamecard[] = [
-            {name: "test1", image: "relative/path.bmp", difficulty: true, configuration: false },
-            {name: "test2", image: "relative/path_2.bmp", difficulty: false, configuration: false}
+            { name: 'test1', image: 'relative/path.bmp', difficulty: true, configuration: false },
+            { name: 'test2', image: 'relative/path_2.bmp', difficulty: false, configuration: false },
         ];
         service.getAvailableGames().subscribe({
             next: (response) => {
@@ -166,7 +166,7 @@ describe('CommunicationService', () => {
     });
 
     it('should send position and return difference', () => {
-        const name = "test-game";
+        const name = 'test-game';
         const coords = { x: 10, y: 20 };
         const difference: ClickResponse = {
             isDifference: false,
@@ -189,7 +189,7 @@ describe('CommunicationService', () => {
     });
 
     it('should get the amount of differences in a game', () => {
-        const name = "test-game";
+        const name = 'test-game';
         const differenceNumber = 5;
 
         service.getDiffAmount(name).subscribe((data) => {
@@ -198,7 +198,7 @@ describe('CommunicationService', () => {
 
         const req = httpMock.expectOne(`${service['baseUrl']}/gaming/diffAmount`);
         expect(req.request.method).toBe('POST');
-        expect(req.request.body).toEqual({name});
+        expect(req.request.body).toEqual({ name });
 
         req.flush(differenceNumber);
     });

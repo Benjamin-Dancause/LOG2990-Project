@@ -15,6 +15,7 @@ export class CounterComponent implements OnInit, OnDestroy {
     constructor(private counterService: CounterService) {}
 
     ngOnInit(): void {
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         this.intervalSubscription = interval(200).subscribe(() => {
             this.counterService.getCounter().subscribe((counter) => {
                 this.counter = counter;

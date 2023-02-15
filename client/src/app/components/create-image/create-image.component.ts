@@ -28,7 +28,7 @@ const DIFFCOUNT_MIN = 3;
 const DIFFERROR_MSG = 'Vous devez avoir entre 3 et 9 différences';
 const FORMATERROR_MSG = 'Le format des images est invalide';
 const NAMEERROR_MSG = 'Ce nom est déjà pris ou est vide';
-const NOIMAGE_MSG = "Aucune images détectées";
+const NOIMAGE_MSG = 'Aucune images détectées';
 
 @Component({
     selector: 'app-create-image',

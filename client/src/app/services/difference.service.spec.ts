@@ -40,7 +40,7 @@ describe('DifferenceService', () => {
     it('should return coordinate [1, 1] when i = 2564', () => {
         expect(service.findXY(ARRAY_OFFSET * CANVAS_WIDTH + ARRAY_OFFSET)).toEqual([1, 1]);
     });
-    
+
     it('should return i = 4 when coodinates = [1, 0]', () => {
         expect(service.findI([1, 0])).toEqual(ARRAY_OFFSET);
     });

@@ -51,9 +51,11 @@ describe('CounterComponent', () => {
     */
     describe('ngOnInit', () => {
         it('should initialize subscription to counter', () => {
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             counterServiceSpy.getCounter.and.returnValue(of(5));
             component.ngOnInit();
             expect(counterServiceSpy.getCounter).toHaveBeenCalled();
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             expect(component.counter).toBe(5);
         });
     });

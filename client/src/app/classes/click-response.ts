@@ -1,5 +1,4 @@
-import { Coords } from "./coords";
-
+import { Coords } from './coords';
 
 export class ClickResponse {
     isDifference: boolean;

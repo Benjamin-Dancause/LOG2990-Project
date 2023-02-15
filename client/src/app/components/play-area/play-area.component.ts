@@ -8,7 +8,6 @@ import { DifferenceService } from '@app/services/difference.service';
 import { DrawService } from '@app/services/draw.service';
 import { environment } from 'src/environments/environment';
 
-
 // TODO : Avoir un fichier séparé pour les constantes!
 export const DEFAULT_WIDTH = 640;
 export const DEFAULT_HEIGHT = 480;
@@ -38,8 +37,9 @@ export class PlayAreaComponent implements AfterViewInit {
     buttonPressed = '';
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
+    difference: DifferenceService;
 
-    private readonly serverURL : string = environment.serverUrl;
+    private readonly serverURL: string = environment.serverUrl;
     private isClickDisabled = false;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     private imageLeftStr: string = '';
@@ -48,10 +48,9 @@ export class PlayAreaComponent implements AfterViewInit {
     private ctxRight: CanvasRenderingContext2D | null = null;
     private ctxLeftTop: CanvasRenderingContext2D | null = null;
     private ctxRightTop: CanvasRenderingContext2D | null = null;
-    private differenceFound : number[] = [];
-    private gameName : string = '';
-    difference: DifferenceService;
-    constructor(private counterService: CounterService, private communicationService : CommunicationService, difference : DifferenceService) {}
+    private differenceFound: number[] = [];
+    private gameName: string = '';
+    constructor(private counterService: CounterService, private communicationService: CommunicationService, difference: DifferenceService) {}
 
     get width(): number {
         return this.canvasSize.x;
@@ -67,8 +66,7 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-
-        this.gameName = localStorage.getItem("gameTitle") as string || '';
+        this.gameName = (localStorage.getItem('gameTitle') as string) || '';
 
         this.gameName = (localStorage.getItem('gameTitle') as string) || '';
         this.communicationService.getGameByName(this.gameName).subscribe((game) => {
@@ -76,7 +74,6 @@ export class PlayAreaComponent implements AfterViewInit {
             this.imageRightStr = this.serverURL + '/' + game.images[1];
             this.initCanvases();
         });
-
     }
 
     async initCanvases() {
@@ -100,13 +97,13 @@ export class PlayAreaComponent implements AfterViewInit {
 
     flashPixel(coords: Coords[]) {
         this.ctxRight = this.canvasRight.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        let on = true;
+        const on = true;
         for (let i = 0; i < coords.length; i++) {
             setInterval(() => {
                 if (this.ctxRight) {
                     this.ctxRight.fillStyle = on ? 'white' : 'black';
                     this.ctxRight.fillRect(coords[i].x, coords[i].y, 1, 1);
-                    on != on;
+                    on !== on;
                 }
             }, 100);
         }
@@ -128,8 +125,8 @@ export class PlayAreaComponent implements AfterViewInit {
             const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
 
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
-            
-            this.communicationService.sendPosition(this.gameName, this.mousePosition).subscribe((response : ClickResponse) => {
+
+            this.communicationService.sendPosition(this.gameName, this.mousePosition).subscribe((response: ClickResponse) => {
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.differenceFound.push(response.differenceNumber);
                     context.fillStyle = 'green';
@@ -138,11 +135,12 @@ export class PlayAreaComponent implements AfterViewInit {
                     this.successSound.currentTime = 0;
                     this.counterService.incrementCounter().subscribe();
                     this.successSound.play();
-                    //this.flashPixel(response.coords);
+                    // this.flashPixel(response.coords);
                     setTimeout(() => {
                         this.ctxLeftTop?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                         this.ctxRightTop?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                         this.updateImages(response.coords);
+                        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
                     }, 2000);
                 } else {
                     context.fillStyle = 'red';
@@ -154,6 +152,7 @@ export class PlayAreaComponent implements AfterViewInit {
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                         this.isClickDisabled = false;
+                        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
                     }, 1000);
                 }
             });

@@ -21,7 +21,7 @@ export class DifferenceService {
     findI(xy: number[]): number {
         return (xy[0] + xy[1] * CANVAS_WIDTH) * ARRAY_OFFSET;
     }
-    
+
     drawCircle(xy: number[], r: number, ctx: CanvasRenderingContext2D): void {
         if (r === 0) {
             return;

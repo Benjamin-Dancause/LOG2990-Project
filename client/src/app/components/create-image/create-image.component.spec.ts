@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,9 +19,7 @@ describe('CreateImageComponent', () => {
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let differenceSpy: jasmine.SpyObj<DifferenceService>;
     let routerSpy: jasmine.SpyObj<Router>;
-    // let difference: DifferenceService;
     let communicationSpy: jasmine.SpyObj<CommunicationService>;
-    // let image: ImageBitmap;
     const canvas = document.createElement('canvas');
     let canvasRef: ElementRef<HTMLCanvasElement>;
     canvas.width = 640;
@@ -33,10 +32,10 @@ describe('CreateImageComponent', () => {
     }
 
     beforeEach(async () => {
-        dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], ['closeAll']);
-        differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
-        communicationSpy = jasmine.createSpyObj('CommunicationService', ['createImage']);
-        // image = await getImageBitmap();
+        dialogSpy = jasmine.createSpyObj(['open']);
+        differenceSpy = jasmine.createSpyObj(['findDifference', 'getDifference', 'isDifficult', 'drawCircle']);
+        communicationSpy = jasmine.createSpyObj(['getGameNames', 'imagesPost']);
+        routerSpy = jasmine.createSpyObj(['navigate']);
         canvasRef = new ElementRef<HTMLCanvasElement>(document.createElement('canvas'));
         component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy);
         await TestBed.configureTestingModule({
@@ -347,13 +346,6 @@ describe('CreateImageComponent', () => {
         expect(component.ctxOriginal?.drawImage).toHaveBeenCalled();
         expect(component.ctxModifiable?.drawImage).toHaveBeenCalled();
     });
-    it('should not delete original canvas if ctx is missing', async () => {
-        /* let ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['clearRect']);
-        ctxOriginalStub = null;
-        component.ctxOriginal = ctxOriginalStub;
-        component.deleteOriginal();
-        expect(component.ctxOriginal?.clearRect).not.toHaveBeenCalled();*/
-    });
     it('should delete original canvas', async () => {
         const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['clearRect']);
         component.ctxOriginal = ctxOriginalStub;
@@ -414,7 +406,6 @@ describe('CreateImageComponent', () => {
     it('should call showSave if diffCount is between 3 and 9', async () => {
         const coord: Coords[][] = [];
         component.diffCanvas = canvas;
-        // const differenceSpy = jasmine.createSpyObj('DifferenceService', ['findDifference'], ['getDifference']);
         differenceSpy.getDifference.and.returnValue({ count: 3, differences: coord });
         spyOn(component, 'createDifference');
         spyOn(component, 'showSave');
@@ -423,58 +414,66 @@ describe('CreateImageComponent', () => {
 
         expect(component.showSave).toHaveBeenCalled();
     });
-    /*
-    it('should reject the promise if the FileReader onerror event is triggered', async () => {
-        /*spyOn(canvasRef.nativeElement, 'toBlob').and.callFake((callback) => {
-            callback(new Blob());
-        });
-        spyOn(FileReader.prototype, 'readAsDataURL').and.callThrough();
-        spyOn(FileReader.prototype, 'onerror').and.callFake(() => {
-            const reader = new FileReader();
-            (reader as any).error = 'FileReader error';
-        });
-        component.convertToBase64(canvasRef).catch((error) => {
-            expect(error).toBe('FileReader error');
-        });
-    });
-    
-    /*
-    it('should call showErrorDifference method if diffCount is less than 3', async () => {
-        const coord : Coords[][] = [];
+    it('should call showError method if diffCount is less than 3', async () => {
+        const coord: Coords[][] = [];
         component.diffCanvas = canvas;
         spyOn(component, 'createDifference');
-        spyOn(component, 'showSave');
-        differenceSpy.getDifference.and.returnValue({count: 4, differences: coord});
+        spyOn(component, 'showError');
+        differenceSpy.getDifference.and.returnValue({ count: 2, differences: coord });
         component.inputName();
-        expect(component.showSave).toHaveBeenCalled();
+        expect(component.showError).toHaveBeenCalled();
     });
+    it('should save game card', async () => {
+        const coord: Coords[][] = [];
+        spyOn(component, 'createDifference');
+        spyOn(component, 'convertToBase64');
+        spyOn(component, 'showError');
+        differenceSpy.getDifference.and.returnValue({ count: 2, differences: coord });
+        differenceSpy.isDifficult.and.returnValue(true);
+        spyOn(component, 'verifyName').and.callFake((gameName: string, callback: (isVerified: boolean) => void) => {
+            callback(true);
+        });
+        const response = new HttpResponse({
+            body: 'test',
+            status: 200,
+            statusText: 'OK',
+            headers: new HttpHeaders(),
+        });
 
+        communicationSpy.imagesPost.and.returnValue(of(response));
+        component.saveGameCard();
+        expect(component.showError).not.toHaveBeenCalled();
+    });
+    it('should not save game card', async () => {
+        const coord: Coords[][] = [];
+        spyOn(component, 'createDifference');
+        spyOn(component, 'convertToBase64');
+        spyOn(component, 'showError');
+        differenceSpy.getDifference.and.returnValue({ count: 2, differences: coord });
+        differenceSpy.isDifficult.and.returnValue(true);
+        spyOn(component, 'verifyName').and.callFake((gameName: string, callback: (isVerified: boolean) => void) => {
+            callback(false);
+        });
+        const response = new HttpResponse({
+            body: 'test',
+            status: 200,
+            statusText: 'OK',
+            headers: new HttpHeaders(),
+        });
+
+        communicationSpy.imagesPost.and.returnValue(of(response));
+        component.saveGameCard();
+        expect(component.showError).toHaveBeenCalled();
+    });
     it('should call showErrorDifference method if diffCount is greater than 9', async () => {
-        spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
-        spyOn(difference, 'countDifference').and.returnValue(10);
+        const coord: Coords[][] = [];
+        component.diffCanvas = canvas;
+        differenceSpy.getDifference.and.returnValue({ count: 10, differences: coord });
+        spyOn(component, 'createDifference');
         spyOn(component, 'showError').and.callThrough();
         component.inputName();
         expect(component.showError).toHaveBeenCalled();
     });
-
-    it('should call showErrorDifference method if createDifference returns false', async () => {
-        spyOn(component, 'createDifference').and.returnValue(Promise.resolve(canvas));
-        spyOn(component, 'showError').and.callThrough();
-        component.inputName();
-        expect(component.showError).toHaveBeenCalled();
-    });
-    it('should return false if name is already existing', async () => {
-        const result = component.verifyName('test1');
-        expect(result).toBe(false);
-    });
-    it('should return true if name does not exist', async () => {
-        const result = component.verifyName('notexist');
-        expect(result).toBe(true);
-    });
-    it('should append the difference canvas and the difference count and difficulty to the neg div', async () => {
-        const negDiv = document.createElement('div');
-        negDiv.id = 'neg';
-    });*/
     it('should create difference', async () => {
         const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
         const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
@@ -488,14 +487,6 @@ describe('CreateImageComponent', () => {
         component.createDifference();
         expect(component.diffCanvas).toBeTruthy();
     });
-    it('should convert to bitmap', async () => {
-        /* const imageData = await fs.readFile(`../../../assets/testimages/image_2_diff.bmp`);
-        const imageBlob = new Blob([imageData], { type: 'image/bmp' });
-        const file = new File([imageBlob], 'image_2_diff.bmp', { type: 'image/bmp' });
-
-        const result = await component.convertImage(file);
-        expect(result).toBeInstanceOf(ImageBitmap);*/
-    });
     it('should call the callback with true if the game name does not exist in the names list', () => {
         const gameName = 'new game';
         const callbackSpy = jasmine.createSpy('callback');
@@ -504,5 +495,14 @@ describe('CreateImageComponent', () => {
         component.verifyName(gameName, callbackSpy);
 
         expect(callbackSpy).toHaveBeenCalledWith(true);
+    });
+    it('should call the callback with false if the game name does exist in the names list', () => {
+        const gameName = 'existing game 1';
+        const callbackSpy = jasmine.createSpy('callback');
+        communicationSpy.getGameNames.and.returnValue(of(['existing game 1', 'existing game 2']));
+
+        component.verifyName(gameName, callbackSpy);
+
+        expect(callbackSpy).toHaveBeenCalledWith(false);
     });
 });
