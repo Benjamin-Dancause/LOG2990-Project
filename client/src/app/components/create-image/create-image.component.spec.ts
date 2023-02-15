@@ -2,9 +2,11 @@
 import { ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSliderModule } from '@angular/material/slider';
 import { Router } from '@angular/router';
 import { Coords } from '@app/classes/coords';
 
+import { SliderComponent } from '@app/components/slider/slider.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
 import { of } from 'rxjs';
@@ -38,7 +40,8 @@ describe('CreateImageComponent', () => {
         canvasRef = new ElementRef<HTMLCanvasElement>(document.createElement('canvas'));
         component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy);
         await TestBed.configureTestingModule({
-            declarations: [CreateImageComponent],
+            imports: [MatSliderModule],
+            declarations: [CreateImageComponent, SliderComponent],
             providers: [
                 { provide: MatDialog, useValue: dialogSpy },
                 { provide: DifferenceService, useValue: differenceSpy },
@@ -367,6 +370,7 @@ describe('CreateImageComponent', () => {
         expect(component.ctxModifiable?.clearRect).toHaveBeenCalled();
     });
     it('should be a BMP', async () => {
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         const header = new Uint8Array([66, 77]);
         const blob = new Blob([header]);
         const file = new File([blob], 'image.bmp', { type: 'image/bmp' });

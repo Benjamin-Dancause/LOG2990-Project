@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatSliderModule } from '@angular/material/slider';
 import { SliderComponent } from './slider.component';
 
@@ -14,7 +16,7 @@ describe('SliderComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [SliderComponent],
-            imports: [MatSliderModule],
+            imports: [MatSliderModule, MatFormFieldModule, MatInputModule],
         }).compileComponents();
         fixture = TestBed.createComponent(SliderComponent);
         component = fixture.componentInstance;

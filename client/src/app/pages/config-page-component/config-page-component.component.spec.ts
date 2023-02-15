@@ -1,6 +1,12 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
+import { RouterTestingModule } from '@angular/router/testing';
 import { Gamecard } from '@app/classes/gamecard';
+import { GameCardComponent } from '@app/components/game-card/game-card.component';
+import { HomeButtonComponent } from '@app/components/home-button/home-button.component';
+import { PreviousNextButtonComponent } from '@app/components/previous-next-button/previous-next-button.component';
+import { SettingsButtonComponent } from '@app/components/settings-button/settings-button.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { of } from 'rxjs';
 import { ConfigPageComponent } from './config-page-component.component';
@@ -30,8 +36,8 @@ describe('ConfigPageComponent', () => {
         communicationService.getAllGames.and.returnValue(of(gamecards));
 
         await TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule],
-            declarations: [ConfigPageComponent],
+            imports: [HttpClientTestingModule, MatDialogModule, RouterTestingModule],
+            declarations: [ConfigPageComponent, GameCardComponent, PreviousNextButtonComponent, HomeButtonComponent, SettingsButtonComponent],
             providers: [{ provide: CommunicationService, useValue: communicationService }],
         }).compileComponents();
 

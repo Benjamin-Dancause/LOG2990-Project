@@ -62,6 +62,7 @@ export class CreateImageComponent implements OnInit {
     htmlInputElement = window.HTMLInputElement;
     diffCanvas: HTMLCanvasElement;
 
+    // eslint-disable-next-line max-params
     constructor(
         public dialog: MatDialog,
         public difference: DifferenceService,
@@ -173,8 +174,8 @@ export class CreateImageComponent implements OnInit {
         this.ctxModifiable?.clearRect(0, 0, this.width, this.height);
     }
     deleteBoth(): void {
-        //this.deleteOriginal();
-        //this.deleteModifiable();
+        // this.deleteOriginal();
+        // this.deleteModifiable();
         // this.communication.createGameByName('Langevin').subscribe((id) => {
         //     console.log(id);
         // });

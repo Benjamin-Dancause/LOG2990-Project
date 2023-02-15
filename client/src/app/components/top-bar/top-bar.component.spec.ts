@@ -1,5 +1,7 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { CounterComponent } from '@app/components/counter/counter.component';
+import { TimerComponent } from '@app/components/timer/timer.component';
 import { TopBarComponent } from './top-bar.component';
 
 describe('TopBarComponent', () => {
@@ -8,7 +10,8 @@ describe('TopBarComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TopBarComponent],
+            declarations: [TopBarComponent, TimerComponent, CounterComponent],
+            imports: [HttpClientTestingModule],
         }).compileComponents();
 
         fixture = TestBed.createComponent(TopBarComponent);
