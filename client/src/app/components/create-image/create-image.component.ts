@@ -28,6 +28,7 @@ const DIFFCOUNT_MIN = 3;
 const DIFFERROR_MSG = 'Vous devez avoir entre 3 et 9 différences';
 const FORMATERROR_MSG = 'Le format des images est invalide';
 const NAMEERROR_MSG = 'Ce nom est déjà pris ou est vide';
+const NOIMAGE_MSG = "Pas d'images";
 
 @Component({
     selector: 'app-create-image',
@@ -103,6 +104,10 @@ export class CreateImageComponent implements OnInit {
         });
     }
     showDifference(): void {
+        if (!this.originalImage && !this.modifiableImage) {
+            this.showError(NOIMAGE_MSG);
+            return;
+        }
         this.createDifference();
         this.dialog.open(this.negativeTemplate, {
             width: '700px',
@@ -174,11 +179,8 @@ export class CreateImageComponent implements OnInit {
         this.ctxModifiable?.clearRect(0, 0, this.width, this.height);
     }
     deleteBoth(): void {
-        // this.deleteOriginal();
-        // this.deleteModifiable();
-        // this.communication.createGameByName('Langevin').subscribe((id) => {
-        //     console.log(id);
-        // });
+        this.deleteOriginal();
+        this.deleteModifiable();
     }
     createDifference(): void {
         if (this.ctxOriginal && this.ctxModifiable) {

@@ -370,9 +370,11 @@ describe('CreateImageComponent', () => {
         expect(component.ctxModifiable?.clearRect).toHaveBeenCalled();
     });
     it('should be a BMP', async () => {
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        const header = new Uint8Array([66, 77]);
-        const blob = new Blob([header]);
+        const blobHeader = new Uint8Array(54);
+        blobHeader[0] = 66;
+        blobHeader[1] = 77;
+        blobHeader[28] = 24;
+        const blob = new Blob([blobHeader]);
         const file = new File([blob], 'image.bmp', { type: 'image/bmp' });
         const result = await component.verifyBMP(file);
 
