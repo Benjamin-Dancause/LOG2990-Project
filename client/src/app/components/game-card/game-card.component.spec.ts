@@ -57,10 +57,25 @@ describe('GameCardComponent', () => {
         expect(component.dialog.open).toHaveBeenCalled();
     });
 
-    it('should save the user name', () => {
-        spyOn(localStorage, 'setItem').and.callThrough();
-        component.userName = 'test name';
+    it('should save the user name, game title, and difficulty', () => {
+        const storageSpy = spyOn(localStorage, 'setItem');
+        component.userName = 'John Doe';
+        component.gameTitle = 'Tic Tac Toe';
+        component.difficulty = true;
         component.saveUserName();
-        expect(localStorage.setItem).toHaveBeenCalledWith('userName', 'test name');
+        expect(storageSpy).toHaveBeenCalledWith('userName', 'John Doe');
+        expect(storageSpy).toHaveBeenCalledWith('gameTitle', 'Tic Tac Toe');
+        expect(storageSpy).toHaveBeenCalledWith('difficulty', 'Difficile');
+    });
+
+    it('should save the user name and game title without difficulty', () => {
+        const storageSpy = spyOn(localStorage, 'setItem');
+        component.userName = 'Jane Doe';
+        component.gameTitle = 'Checkers';
+        component.difficulty = false;
+        component.saveUserName();
+        expect(storageSpy).toHaveBeenCalledWith('userName', 'Jane Doe');
+        expect(storageSpy).toHaveBeenCalledWith('gameTitle', 'Checkers');
+        expect(storageSpy).toHaveBeenCalledWith('difficulty', 'Facile');
     });
 });
