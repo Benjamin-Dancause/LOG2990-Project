@@ -37,4 +37,24 @@ describe('GamePageComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should set showPopup to true when allDifferencesFound is true', () => {
+        component.allDifferencesFound = true;
+        component.ngOnInit();
+        expect(component.showPopup).toBeTrue();
+    });
+
+    it('should set showPopup to false when returnToMainMenu is called', () => {
+        component.showPopup = true;
+        component.returnToMainMenu();
+        expect(component.showPopup).toBeFalse();
+    });
+
+    it('should set allDifferencesFound to true and showPopup to true when findAllDifferences is called', () => {
+        component.allDifferencesFound = false;
+        component.showPopup = false;
+        component.findAllDifferences();
+        expect(component.allDifferencesFound).toBeTrue();
+        expect(component.showPopup).toBeTrue();
+    });
 });
