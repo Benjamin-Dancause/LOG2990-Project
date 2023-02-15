@@ -24,6 +24,7 @@ describe('DifferenceService', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
+
     it('should return coordinate [0, 0] when i = 0', () => {
         expect(service.findXY(0)).toEqual([0, 0]);
     });
@@ -39,6 +40,23 @@ describe('DifferenceService', () => {
     it('should return coordinate [1, 1] when i = 2564', () => {
         expect(service.findXY(ARRAY_OFFSET * CANVAS_WIDTH + ARRAY_OFFSET)).toEqual([1, 1]);
     });
+    
+    it('should return i = 4 when coodinates = [1, 0]', () => {
+        expect(service.findI([1, 0])).toEqual(ARRAY_OFFSET);
+    });
+
+    it('should return i = 2560 when coodinates = [0, 1]', () => {
+        expect(service.findI([0, 1])).toEqual(ARRAY_OFFSET * CANVAS_WIDTH);
+    });
+
+    it('should return i = 2564 when coodinates = [1, 1]', () => {
+        expect(service.findI([1, 1])).toEqual(ARRAY_OFFSET * CANVAS_WIDTH + ARRAY_OFFSET);
+    });
+
+    it('should return i = 0 when coodinates = [0, 0]', () => {
+        expect(service.findI([0, 0])).toEqual(0);
+    });
+
     it('should return 1 when there is only 1 difference', () => {
         ctxStub1?.fillRect(0, 0, TEST_VALUE2, TEST_VALUE2);
         const diff = service.findDifference(ctxStub1, ctxStub2, 0);
