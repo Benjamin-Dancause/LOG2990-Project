@@ -18,7 +18,7 @@ export class ConfigPageComponent implements OnInit {
 
     constructor(protected communication: CommunicationService) {
         communication.getAllGames().subscribe((gamecards: GameSelectionPageData[]) => {
-            /*for (const gamecard of gamecards) {
+            /* for (const gamecard of gamecards) {
                 gamecard.configuration = true;
             }*/
             this.games = gamecards;

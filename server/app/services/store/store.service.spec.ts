@@ -1,4 +1,3 @@
-import { DateService } from '@app/services/date/date.service';
 import { StoreService } from '@app/services/store/store.service';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -9,7 +8,7 @@ describe('StoreService', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [StoreService, DateService, Logger],
+            providers: [StoreService, Logger],
         }).compile();
 
         service = module.get<StoreService>(StoreService);
@@ -95,5 +94,169 @@ describe('StoreService', () => {
         jest.spyOn(fs, 'readFile').mockImplementationOnce(async () => Promise.resolve(JSON.stringify(gameData)));
         const nameArray = await service.getAllNames();
         expect(nameArray).toEqual(['game1', 'game2', 'game3']);
+    });
+
+    it('getAllGames() should return an array of games with name, main image and difficulty', async () => {
+        const gamesData = [
+            {
+                name: 'test1',
+                images: ['image1', 'image2'],
+                difficulty: true,
+                count: 5,
+                differences: [
+                    { x: 1, y: 1 },
+                    { x: 1, y: 1 },
+                ],
+            },
+            {
+                name: 'test2',
+                images: ['image1', 'image2'],
+                difficulty: false,
+                count: 6,
+                differences: [
+                    { x: 2, y: 2 },
+                    { x: 2, y: 2 },
+                ],
+            },
+            {
+                name: 'test3',
+                images: ['image1', 'image2'],
+                difficulty: true,
+                count: 7,
+                differences: [
+                    { x: 3, y: 3 },
+                    { x: 3, y: 3 },
+                ],
+            },
+        ];
+        jest.spyOn(fs, 'readFile').mockImplementationOnce(async () => Promise.resolve(JSON.stringify(gamesData)));
+        const game = await service.getAllGames();
+        const expectedGame = [
+            { name: 'test1', image: 'image1', difficulty: true },
+            { name: 'test2', image: 'image1', difficulty: false },
+            { name: 'test3', image: 'image1', difficulty: true },
+        ];
+        expect(game).toEqual(expectedGame);
+    });
+
+    it('getGameByName() should return a name, two images, difficulty boolean and difference count if given correct name', async () => {
+        const gamesData = [
+            {
+                name: 'test1',
+                images: ['image1', 'image2'],
+                difficulty: true,
+                count: 5,
+                differences: [
+                    { x: 1, y: 1 },
+                    { x: 1, y: 1 },
+                ],
+            },
+            {
+                name: 'test2',
+                images: ['image1', 'image2'],
+                difficulty: false,
+                count: 6,
+                differences: [
+                    { x: 2, y: 2 },
+                    { x: 2, y: 2 },
+                ],
+            },
+        ];
+        jest.spyOn(fs, 'readFile').mockImplementationOnce(async () => Promise.resolve(JSON.stringify(gamesData)));
+        const game = await service.getGameByName({ name: 'test2' });
+        const expectedGame = { name: 'test2', images: ['image1', 'image2'], difficulty: false, count: 6 };
+        expect(game).toEqual(expectedGame);
+    });
+
+    it('getGameByName() should return undefined if given incorrect name', async () => {
+        const gamesData = [
+            {
+                name: 'test1',
+                images: ['image1', 'image2'],
+                difficulty: true,
+                count: 5,
+                differences: [
+                    { x: 1, y: 1 },
+                    { x: 1, y: 1 },
+                ],
+            },
+            {
+                name: 'test2',
+                images: ['image1', 'image2'],
+                difficulty: false,
+                count: 6,
+                differences: [
+                    { x: 2, y: 2 },
+                    { x: 2, y: 2 },
+                ],
+            },
+        ];
+        jest.spyOn(fs, 'readFile').mockImplementationOnce(async () => Promise.resolve(JSON.stringify(gamesData)));
+        const game = await service.getGameByName({ name: 'test3' });
+        expect(game).toBe(undefined);
+    });
+
+    it('getGameDifferenceByName() should return an id of 0, the difference count and the difference array if given a correct name', async () => {
+        const gamesData = [
+            {
+                name: 'test1',
+                images: ['image1', 'image2'],
+                difficulty: true,
+                count: 5,
+                differences: [
+                    { x: 1, y: 1 },
+                    { x: 1, y: 1 },
+                ],
+            },
+            {
+                name: 'test2',
+                images: ['image1', 'image2'],
+                difficulty: false,
+                count: 6,
+                differences: [
+                    { x: 2, y: 2 },
+                    { x: 2, y: 2 },
+                ],
+            },
+        ];
+        jest.spyOn(fs, 'readFile').mockImplementationOnce(async () => Promise.resolve(JSON.stringify(gamesData)));
+        const game = await service.getGameDifferenceByName('test2');
+        const expectedGame = {
+            id: 0,
+            count: 6,
+            differences: [
+                { x: 2, y: 2 },
+                { x: 2, y: 2 },
+            ],
+        };
+        expect(game).toEqual(expectedGame);
+    });
+
+    it('getGameByName() should return undefined if given incorrect name', async () => {
+        const gamesData = [
+            {
+                name: 'test1',
+                images: ['image1', 'image2'],
+                difficulty: true,
+                count: 5,
+                differences: [
+                    { x: 1, y: 1 },
+                    { x: 1, y: 1 },
+                ],
+            },
+            {
+                name: 'test2',
+                images: ['image1', 'image2'],
+                difficulty: false,
+                count: 6,
+                differences: [
+                    { x: 2, y: 2 },
+                    { x: 2, y: 2 },
+                ],
+            },
+        ];
+        jest.spyOn(fs, 'readFile').mockImplementationOnce(async () => Promise.resolve(JSON.stringify(gamesData)));
+        const game = await service.getGameDifferenceByName('test6');
+        expect(game).toBe(undefined);
     });
 });

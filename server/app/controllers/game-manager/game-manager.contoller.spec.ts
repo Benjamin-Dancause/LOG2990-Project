@@ -9,17 +9,6 @@ describe('GameManagerController', () => {
     let storeService: StoreService;
 
     beforeEach(async () => {
-        /*
-        gameManager = {
-            verifyPos: jest.fn(),
-            createGame: jest.fn(),
-        };
-
-        storeService = {
-            getGameDifferenceByName: jest.fn(),
-        };
-        */
-
         const module: TestingModule = await Test.createTestingModule({
             controllers: [GameManagerController],
             providers: [
@@ -36,7 +25,7 @@ describe('GameManagerController', () => {
             const expectedResult = {};
 
             const result = await gameManagerController.checkPos({
-                id: 1,
+                name: 'test',
                 coords: { x: 2, y: 3 },
             });
 
@@ -48,7 +37,10 @@ describe('GameManagerController', () => {
     describe('createNewGame', () => {
         it('should return result from gameManager.createGame', async () => {
             const expectedResult = {};
-            const result = await gameManagerController.createNewGame({ name: 'test' });
+
+            const result = await gameManagerController.sendDiffAmount({
+                name: 'test',
+            });
 
             expect(storeService.getGameDifferenceByName).toHaveBeenCalledWith('test');
             expect(gameManager.createGame).toHaveBeenCalledWith({});

@@ -2,6 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { Vec2 } from '@app/interfaces/vec2';
+import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
 import { DrawService } from '@app/services/draw.service';
 
@@ -11,6 +12,7 @@ describe('PlayAreaComponent', () => {
     let mouseEvent: MouseEvent;
     let drawService: DrawService;
     let counterService: CounterService;
+    let communicationService: CommunicationService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -24,7 +26,7 @@ describe('PlayAreaComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         drawService = new DrawService();
-        component = new PlayAreaComponent(drawService, counterService);
+        component = new PlayAreaComponent(drawService, counterService, communicationService);
     });
 
     it('should create', () => {

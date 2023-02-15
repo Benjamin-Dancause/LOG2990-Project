@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameSelectionPageData, GameplayData } from '@app/components/create-image/create-image.component';
+import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -44,11 +44,11 @@ export class CommunicationService {
     getAvailableGames(): Observable<Gamecard[]> {
         return this.http.get<Gamecard[]>(`${this.baseUrl}/games/all`);
     }
-    sendPosition(name : string, coords: Coords): Observable<ClickResponse> {
-        return this.http.post<ClickResponse>(`${this.baseUrl}/gaming/find`, { name: name, coords: coords }, { responseType: 'json' });
+    sendPosition(name: string, coords: Coords): Observable<ClickResponse> {
+        return this.http.post<ClickResponse>(`${this.baseUrl}/gaming/find`, { name, coords }, { responseType: 'json' });
     }
     getDiffAmount(name: string): Observable<number> {
-        return this.http.post<number>(`${this.baseUrl}/gaming/diffAmount`, { name: name }, { responseType: 'json' });
+        return this.http.post<number>(`${this.baseUrl}/gaming/diffAmount`, { name }, { responseType: 'json' });
     }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);

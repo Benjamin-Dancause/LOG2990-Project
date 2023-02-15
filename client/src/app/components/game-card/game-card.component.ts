@@ -8,7 +8,6 @@ import { environment } from 'src/environments/environment';
     styleUrls: ['./game-card.component.scss'],
 })
 export class GameCardComponent implements OnInit {
-    private readonly serverUrl: string = environment.serverUrl;
     @Input() gameTitle: string;
     @Input() imageUrl: string;
     @Input() imageLink: string;
@@ -33,12 +32,9 @@ export class GameCardComponent implements OnInit {
         { name: 'User 8', time: '00:30' },
     ];
 
-    constructor(public dialog: MatDialog) {}
+    private readonly serverUrl: string = environment.serverUrl;
 
-    ngOnInit(): void {
-        this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
-        console.log(this.imageLink);
-    }
+    constructor(public dialog: MatDialog) {}
 
     get color() {
         return this.difficulty ? 'red' : 'green';
@@ -55,6 +51,10 @@ export class GameCardComponent implements OnInit {
         return this.best1vs1Times.slice(0, 3);
     }
 
+    ngOnInit(): void {
+        this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
+    }
+
     openSettings(): void {
         this.dialog.open(this.namePopupTemplate, {
             width: '400px',
@@ -64,5 +64,11 @@ export class GameCardComponent implements OnInit {
     saveUserName() {
         localStorage.setItem('userName', this.userName);
         localStorage.setItem('gameTitle', this.gameTitle);
+        if (this.difficulty) {
+            localStorage.setItem('difficulty', 'Difficile');
+        }
+        if (!this.difficulty) {
+            localStorage.setItem('difficulty', 'Facile');
+        }
     }
 }

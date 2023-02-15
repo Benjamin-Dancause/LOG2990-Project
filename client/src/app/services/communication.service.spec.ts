@@ -1,8 +1,9 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Coords } from '@app/classes/coords';
+import { ClickResponse } from '@app/classes/click-response';
+import { Gamecard } from '@app/classes/gamecard';
 import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
-import { CommunicationService, DifferenceInterface } from '@app/services/communication.service';
+import { CommunicationService } from '@app/services/communication.service';
 import { Message } from '@common/message';
 
 describe('CommunicationService', () => {
@@ -149,10 +150,25 @@ describe('CommunicationService', () => {
         req.flush(expectedData);
     });
 
+    it('should get all available games', () => {
+        const expectedGames: Gamecard[] = [
+            {name: "test1", image: "relative/path.bmp", difficulty: true, configuration: false },
+            {name: "test2", image: "relative/path_2.bmp", difficulty: false, configuration: false}
+        ];
+        service.getAvailableGames().subscribe({
+            next: (response) => {
+                expect(response).toEqual(expectedGames);
+            },
+        });
+        const req = httpMock.expectOne(`${baseUrl}/games/all`);
+        expect(req.request.method).toBe('GET');
+        req.flush(expectedGames);
+    });
+
     it('should send position and return difference', () => {
-        const id = 123;
-        const coords: Coords = { x: 10, y: 20 };
-        const difference: DifferenceInterface = {
+        const name = "test-game";
+        const coords = { x: 10, y: 20 };
+        const difference: ClickResponse = {
             isDifference: false,
             differenceNumber: 5,
             coords: [
@@ -161,29 +177,29 @@ describe('CommunicationService', () => {
             ],
         };
 
-        service.sendPosition(id, coords).subscribe((data) => {
+        service.sendPosition(name, coords).subscribe((data) => {
             expect(data).toEqual(difference);
         });
 
         const req = httpMock.expectOne(`${service['baseUrl']}/gaming/find`);
         expect(req.request.method).toBe('POST');
-        expect(req.request.body).toEqual({ id, coords });
+        expect(req.request.body).toEqual({ name, coords });
 
         req.flush(difference);
     });
 
-    it('should create a game by name and return its id', () => {
-        const expectedId = 123;
-        const name = 'test-game';
+    it('should get the amount of differences in a game', () => {
+        const name = "test-game";
+        const differenceNumber = 5;
 
-        service.createGameByName(name).subscribe((id: number) => {
-            expect(id).toBe(expectedId);
+        service.getDiffAmount(name).subscribe((data) => {
+            expect(data).toEqual(differenceNumber);
         });
 
-        const req = httpMock.expectOne(`${baseUrl}/gaming/new`);
+        const req = httpMock.expectOne(`${service['baseUrl']}/gaming/diffAmount`);
         expect(req.request.method).toBe('POST');
-        expect(req.request.body).toEqual({ name });
+        expect(req.request.body).toEqual({name});
 
-        req.flush(expectedId);
+        req.flush(differenceNumber);
     });
 });
