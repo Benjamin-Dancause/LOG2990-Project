@@ -29,7 +29,16 @@ import { StoreService } from './services/store/store.service';
         }),
         MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
     ],
-    controllers: [CourseController, DateController, ExampleController, GamecardsController, GameManagerController, StoreController, TimerController, CounterController],
+    controllers: [
+        CourseController,
+        DateController,
+        ExampleController,
+        GamecardsController,
+        GameManagerController,
+        StoreController,
+        TimerController,
+        CounterController,
+    ],
     providers: [ChatGateway, CourseService, DateService, ExampleService, Logger, StoreService, GameManager],
 })
 export class AppModule {}
