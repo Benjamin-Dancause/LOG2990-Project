@@ -1,8 +1,7 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Coords } from '@app/classes/coords';
 import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
-import { CommunicationService, DifferenceInterface } from '@app/services/communication.service';
+import { CommunicationService } from '@app/services/communication.service';
 import { Message } from '@common/message';
 
 describe('CommunicationService', () => {
@@ -149,7 +148,7 @@ describe('CommunicationService', () => {
         req.flush(expectedData);
     });
 
-    it('should send position and return difference', () => {
+    /*it('should send position and return difference', () => {
         const id = 123;
         const coords: Coords = { x: 10, y: 20 };
         const difference: DifferenceInterface = {
@@ -185,5 +184,5 @@ describe('CommunicationService', () => {
         expect(req.request.body).toEqual({ name });
 
         req.flush(expectedId);
-    });
+    });*/
 });

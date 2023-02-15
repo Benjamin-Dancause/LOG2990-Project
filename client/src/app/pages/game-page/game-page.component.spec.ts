@@ -6,7 +6,7 @@ import { GiveUpButtonComponent } from '@app/components/give-up-button/give-up-bu
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { TimerComponent } from '@app/components/timer/timer.component';
-import { TopBarComponent } from '@app/components/top-bar/top-bar/top-bar.component';
+import { TopBarComponent } from '@app/components/top-bar/top-bar.component';
 import { GamePageComponent } from './game-page.component';
 
 describe('GamePageComponent', () => {
