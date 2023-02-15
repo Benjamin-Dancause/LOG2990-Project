@@ -169,20 +169,7 @@ describe('CommunicationService', () => {
         expect(req.request.body).toEqual({ id, coords });
 
         req.flush(difference);
-    });
-
-    it('should create a game by name and return its id', () => {
-        const expectedId = 123;
-        const name = 'test-game';
-
-        service.createGameByName(name).subscribe((id: number) => {
-            expect(id).toBe(expectedId);
-        });
-
-        const req = httpMock.expectOne(`${baseUrl}/gaming/new`);
-        expect(req.request.method).toBe('POST');
-        expect(req.request.body).toEqual({ name });
-
-        req.flush(expectedId);
     });*/
+
+    
 });
