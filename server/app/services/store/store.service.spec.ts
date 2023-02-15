@@ -1,4 +1,3 @@
-import { DateService } from '@app/services/date/date.service';
 import { StoreService } from '@app/services/store/store.service';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -9,7 +8,7 @@ describe('StoreService', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [StoreService, DateService, Logger],
+            providers: [StoreService, Logger],
         }).compile();
 
         service = module.get<StoreService>(StoreService);
