@@ -20,6 +20,8 @@ export enum MouseButton {
     Back = 3,
     Forward = 4,
 }
+const BIGTIMEOUT = 2000;
+const SMALLTIMOUT = 1000;
 
 @Component({
     selector: 'app-play-area',
@@ -140,8 +142,7 @@ export class PlayAreaComponent implements AfterViewInit {
                         this.ctxLeftTop?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                         this.ctxRightTop?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                         this.updateImages(response.coords);
-                        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                    }, 2000);
+                    }, BIGTIMEOUT);
                 } else {
                     context.fillStyle = 'red';
                     context.font = '20px Arial';
@@ -152,8 +153,7 @@ export class PlayAreaComponent implements AfterViewInit {
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                         this.isClickDisabled = false;
-                        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                    }, 1000);
+                    }, SMALLTIMOUT);
                 }
             });
         }
