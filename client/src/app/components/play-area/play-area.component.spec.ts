@@ -4,15 +4,15 @@ import { PlayAreaComponent } from '@app/components/play-area/play-area.component
 import { Vec2 } from '@app/interfaces/vec2';
 import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
-import { DrawService } from '@app/services/draw.service';
+import { DifferenceService } from '@app/services/difference.service';
 
 describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
     let mouseEvent: MouseEvent;
-    let drawService: DrawService;
     let counterService: CounterService;
     let communicationService: CommunicationService;
+    let differenceService: DifferenceService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -25,8 +25,7 @@ describe('PlayAreaComponent', () => {
         fixture = TestBed.createComponent(PlayAreaComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        drawService = new DrawService();
-        component = new PlayAreaComponent(drawService, counterService, communicationService);
+        component = new PlayAreaComponent(counterService, communicationService, differenceService);
     });
 
     it('should create', () => {
