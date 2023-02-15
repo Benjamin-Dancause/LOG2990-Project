@@ -20,6 +20,7 @@ export enum MouseButton {
     Back = 3,
     Forward = 4,
 }
+const SMALLINTERVAL = 100;
 const BIGTIMEOUT = 2000;
 const SMALLTIMOUT = 1000;
 
@@ -107,7 +108,7 @@ export class PlayAreaComponent implements AfterViewInit {
                     this.ctxRight.fillRect(coords[i].x, coords[i].y, 1, 1);
                     on !== on;
                 }
-            }, 100);
+            }, SMALLINTERVAL);
         }
     }
 
