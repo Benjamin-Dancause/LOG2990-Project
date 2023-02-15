@@ -64,5 +64,11 @@ export class GameCardComponent implements OnInit {
     saveUserName() {
         localStorage.setItem('userName', this.userName);
         localStorage.setItem('gameTitle', this.gameTitle);
+        if (this.difficulty) {
+            localStorage.setItem('difficulty', 'Difficile');
+        }
+        if (!this.difficulty) {
+            localStorage.setItem('difficulty', 'Facile');
+        }
     }
 }
