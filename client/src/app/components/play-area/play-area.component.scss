@@ -1,21 +1,24 @@
 .canvas {
-    background-color: white;
+    position: absolute;
+    top: 25%
 }
 
-#canvas-1 {
+#canvas-1, #canvas-3 {
     margin-left: 70px;
 
     border: 1px solid rgb(126, 222, 235);
     border-left: 3px solid rgba(109, 188, 199, 0.774);
     box-shadow: 0 0 30px 4px rgb(123, 226, 252);
+    left: 35%;
 }
 
-#canvas-2 {
+#canvas-2, #canvas-4 {
     margin-right: 70px;
 
     border: 1px solid rgb(126, 222, 235);
     border-left: 3px solid rgba(109, 188, 199, 0.774);
     box-shadow: 0 0 30px 4px rgb(123, 226, 252);
+    left : 3%
 }
 
 #grid-container {
@@ -36,11 +39,14 @@
     margin-bottom: auto;
 }
 
-#canvas-1,
-#canvas-2 {
-    height: 500px;
-}
-
 #mouse-position-display p {
     margin: 0;
 }
+
+.canvasContainer {
+    position:relative;
+    width:650px;
+    height:500px;
+}
+
+

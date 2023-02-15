@@ -1,14 +1,13 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
+import { Coords } from '@app/classes/coords';
 import { Vec2 } from '@app/interfaces/vec2';
 import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
+import { DifferenceService } from '@app/services/difference.service';
 import { DrawService } from '@app/services/draw.service';
+import { environment } from 'src/environments/environment';
 
-const RECTANGLE_X = 100;
-const RECTANGLE_Y = 100;
-const RECTANGLE_WIDTH = 100;
-const RECTANGLE_HEIGHT = 100;
 
 // TODO : Avoir un fichier séparé pour les constantes!
 export const DEFAULT_WIDTH = 640;
@@ -30,26 +29,29 @@ export enum MouseButton {
     providers: [CounterService, DrawService],
 })
 export class PlayAreaComponent implements AfterViewInit {
-    @ViewChild('gridCanvas', { static: false }) private canvas!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLeft', { static: false }) private canvasLeft!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasRight', { static: false }) private canvasRight!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasRightTop', { static: false }) private canvasLeftTop!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLeftTop', { static: false }) private canvasRightTop!: ElementRef<HTMLCanvasElement>;
 
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
 
+    private readonly serverURL : string = environment.serverUrl;
     private isClickDisabled = false;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    private rectangleX = RECTANGLE_X;
-    private rectangleY = RECTANGLE_Y;
-    private rectangleWidth = RECTANGLE_WIDTH;
-    private rectangleHeight = RECTANGLE_HEIGHT;
-    private differenceFound: number[] = [];
-    private gameName: string = '';
-    constructor(
-        private readonly drawService: DrawService,
-        private counterService: CounterService,
-        private communicationService: CommunicationService,
-    ) {}
+    private imageLeftStr: string = '';
+    private imageRightStr: string = '';
+    private ctxLeft: CanvasRenderingContext2D | null = null;
+    private ctxRight: CanvasRenderingContext2D | null = null;
+    private ctxLeftTop: CanvasRenderingContext2D | null = null;
+    private ctxRightTop: CanvasRenderingContext2D | null = null;
+    private differenceFound : number[] = [];
+    private gameName : string = '';
+    difference: DifferenceService;
+    constructor(private counterService: CounterService, private communicationService : CommunicationService, difference : DifferenceService) {}
 
     get width(): number {
         return this.canvasSize.x;
@@ -65,25 +67,59 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        // this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        // this.drawService.drawGrid();
-        // this.drawService.drawWord('Différence');
-        // this.drawDarkRectangle();
-        // this.canvas.nativeElement.focus();
-        if (this.canvas && this.canvas.nativeElement) {
-            this.drawService.context = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-            this.drawDarkRectangle();
-            this.canvas.nativeElement.focus();
-        }
+
+        this.gameName = localStorage.getItem("gameTitle") as string || '';
 
         this.gameName = (localStorage.getItem('gameTitle') as string) || '';
+        this.communicationService.getGameByName(this.gameName).subscribe((game) => {
+            this.imageLeftStr = this.serverURL + '/' + game.images[0];
+            this.imageRightStr = this.serverURL + '/' + game.images[1];
+            this.initCanvases();
+        });
+
     }
 
-    drawDarkRectangle() {
-        this.drawService.context.fillStyle = 'rgba(0, 0, 0, 0.5)';
-        this.drawService.context.fillRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
+    async initCanvases() {
+        const img1 = new Image();
+        img1.src = this.imageLeftStr;
+        img1.setAttribute('crossOrigin', 'anonymous');
+        img1.onload = () => {
+            this.ctxLeft = this.canvasLeft.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+            this.ctxLeft?.drawImage(img1, 0, 0);
+        };
+        const img2 = new Image();
+        img2.src = this.imageRightStr;
+        img2.setAttribute('crossOrigin', 'anonymous');
+        img2.onload = () => {
+            this.ctxRight = this.canvasRight.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+            this.ctxRight?.drawImage(img2, 0, 0);
+        };
+        this.ctxLeftTop = this.canvasLeftTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.ctxRightTop = this.canvasRightTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
     }
 
+    flashPixel(coords: Coords[]) {
+        this.ctxRight = this.canvasRight.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        let on = true;
+        for (let i = 0; i < coords.length; i++) {
+            setInterval(() => {
+                if (this.ctxRight) {
+                    this.ctxRight.fillStyle = on ? 'white' : 'black';
+                    this.ctxRight.fillRect(coords[i].x, coords[i].y, 1, 1);
+                    on != on;
+                }
+            }, 100);
+        }
+    }
+
+    updateImages(coords: Coords[]) {
+        for (let i = 0; i < coords.length; i++) {
+            const dataLeft = this.ctxLeft?.getImageData(coords[i].x, coords[i].y, 1, 1) as ImageData;
+            const pixel = dataLeft.data;
+            const imageData = new ImageData(pixel, 1, 1);
+            this.ctxRight?.putImageData(imageData, coords[i].x, coords[i].y);
+        }
+    }
     // TODO : déplacer ceci dans un service de gestion de la souris!
 
     async mouseHitDetect(event: MouseEvent) {
@@ -92,9 +128,8 @@ export class PlayAreaComponent implements AfterViewInit {
             const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
 
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
-
-            this.communicationService.sendPosition(this.gameName, this.mousePosition).subscribe((response: ClickResponse) => {
-                console.log(response);
+            
+            this.communicationService.sendPosition(this.gameName, this.mousePosition).subscribe((response : ClickResponse) => {
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.differenceFound.push(response.differenceNumber);
                     context.fillStyle = 'green';
@@ -103,11 +138,12 @@ export class PlayAreaComponent implements AfterViewInit {
                     this.successSound.currentTime = 0;
                     this.counterService.incrementCounter().subscribe();
                     this.successSound.play();
+                    //this.flashPixel(response.coords);
                     setTimeout(() => {
-                        context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
-                        this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
-                        this.drawDarkRectangle();
-                    }, 1000);
+                        this.ctxLeftTop?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+                        this.ctxRightTop?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+                        this.updateImages(response.coords);
+                    }, 2000);
                 } else {
                     context.fillStyle = 'red';
                     context.font = '20px Arial';
@@ -117,8 +153,6 @@ export class PlayAreaComponent implements AfterViewInit {
                     this.isClickDisabled = true;
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
-                        this.drawService.context.clearRect(this.rectangleX, this.rectangleY, this.rectangleWidth, this.rectangleHeight);
-                        this.drawDarkRectangle();
                         this.isClickDisabled = false;
                     }, 1000);
                 }

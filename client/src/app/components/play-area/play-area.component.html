@@ -1,13 +1,23 @@
 <div id="grid-container">
-    <canvas class="canvas" id="canvas-1" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height">
+    <div id="canvasContainer">
+    <canvas class="canvas" id="canvas-1" #gridCanvasLeft (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height">
         Your browser does not support the canvas element.
     </canvas>
-    <div id="mouse-position-display">
+    <canvas class="canvas" id="canvas-3" #gridCanvasLeftTop (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height">
+        Your browser does not support the canvas element.
+    </canvas>
+    </div>
+    <!-- <div id="mouse-position-display">
         <p>Clique en...</p>
         <p *ngIf="mousePosition.x !== 0">X : {{ mousePosition.x }}</p>
         <p *ngIf="mousePosition.y !== 0">Y : {{ mousePosition.y }}</p>
-    </div>
-    <canvas class="canvas" id="canvas-2" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height">
+    </div> -->
+    <div id="canvasContainer">
+    <canvas class="canvas" id="canvas-2" #gridCanvasRight (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height">
         Your browser does not support the canvas element.
     </canvas>
+    <canvas class="canvas" id="canvas-4" #gridCanvasRightTop (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height">
+        Your browser does not support the canvas element.
+    </canvas>
+    </div>
 </div>
