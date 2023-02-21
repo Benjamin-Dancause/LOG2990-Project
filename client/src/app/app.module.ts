@@ -26,6 +26,7 @@ import { TimerComponent } from './components/timer/timer.component';
 import { TopBarComponent } from './components/top-bar/top-bar.component';
 import { ConfigPageComponent } from './pages/config-page-component/config-page-component.component';
 import { CreatePageComponent } from './pages/create-page/create-page.component';
+import { GameOneVsOnePageComponent } from './pages/game-one-vs-one-page/game-one-vs-one-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
 
 /**
@@ -64,6 +65,7 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
         HintButtonComponent,
         GiveUpButtonComponent,
         CounterComponent,
+        GameOneVsOnePageComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],
