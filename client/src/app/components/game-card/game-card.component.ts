@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
+import { CommunicationService } from '@app/services/communication.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -34,7 +36,7 @@ export class GameCardComponent implements OnInit {
 
     private readonly serverUrl: string = environment.serverUrl;
 
-    constructor(public dialog: MatDialog) {}
+    constructor(public dialog: MatDialog, private communication: CommunicationService) {}
 
     get color() {
         return this.difficulty ? 'red' : 'green';
@@ -70,5 +72,21 @@ export class GameCardComponent implements OnInit {
         if (!this.difficulty) {
             localStorage.setItem('difficulty', 'Facile');
         }
+    }
+
+    deleteGame(gameTitle: string) {
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+            data: {
+                title: 'Confirmation',
+                message: 'Êtes-vous sûr de vouloir supprimer cette partie ?',
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result === 'yes') {
+                this.communication.deleteGame(gameTitle).subscribe(() => {
+                    location.reload();
+                });
+            }
+        });
     }
 }
