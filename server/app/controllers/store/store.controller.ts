@@ -63,4 +63,14 @@ export class StoreController {
     async deleteGame(@Param('name') name: string) {
         return this.storeService.deleteGame(name);
     }
+
+    @Get(':name')
+    @ApiOkResponse({
+        description: 'check game availability',
+    })
+    async getGameAvailability(@Param('name') name: string) {
+        const isAvailable = await this.storeService.getGameAvailability(name);
+        console.log(isAvailable);
+        return isAvailable;
+    }
 }

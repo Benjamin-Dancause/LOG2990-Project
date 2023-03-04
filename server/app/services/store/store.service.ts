@@ -111,4 +111,15 @@ export class StoreService {
             await fs.writeFile(infoPath, JSON.stringify(gamesData, null, 4));
         }
     }
+
+    async getGameAvailability(name: string): Promise<boolean> {
+        const gamesData: Data[] = await this.extractData();
+        const index = gamesData.findIndex((game) => game.name === name);
+        console.log(index);
+        if (index === -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
