@@ -109,7 +109,6 @@ export class StoreService {
         const index = gamesData.findIndex((game) => game.name === name);
         if (index !== -1) {
             gamesData.splice(index, 1);
-
             const filePath1 = `assets/images/${name}_modif.bmp`;
             const filePath2 = `assets/images/${name}_orig.bmp`;
             this.deleteFile(filePath1);
