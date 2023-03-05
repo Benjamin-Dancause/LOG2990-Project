@@ -1,5 +1,5 @@
 .outline > h1 {
-    min-width: 400px;
+    min-width: 200px;
 }
 
 .outline > * {
@@ -7,12 +7,14 @@
     justify-content: space-around;
     align-items: center;
     padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
     font-size: 20px;
     color: white;
 }
 
 .outline {
-    min-width: 300px;
+    min-width: 100px;
     min-height: 60px;
     border-radius: 40px;
     background-color: rgba(255, 255, 255, 15%);
@@ -20,6 +22,9 @@
     border: 1px solid rgb(123, 226, 252);
     border-left: 3px solid rgba(123, 226, 252, 0.774);
     box-shadow: 0 0 30px 4px rgb(123, 226, 252);
+}
+.name {
+    min-width: 300px;
 }
 
 .container {
@@ -40,5 +45,9 @@
     box-shadow: 0 0 30px 4px rgb(123, 226, 252);
 }
 
-
-
+.container .vertical-bar {
+    border: 1px solid white;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    height: 60px;
+}
