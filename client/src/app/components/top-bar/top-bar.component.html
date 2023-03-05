@@ -10,7 +10,7 @@
         <div>Vous : {{ userName }}</div>
     <app-counter></app-counter>
     </div>
-    <div class="outline name">
+    <div *ngIf="!single" class="outline name">
         <div>Adversaire : Nom de l'adversaire</div>
     <app-counter></app-counter>
     </div>
