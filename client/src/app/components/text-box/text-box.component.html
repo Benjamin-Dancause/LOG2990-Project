@@ -1,1 +1,12 @@
-<p>text-box works!</p>
+<div class="message-box">
+    <div class="message-area" #messageArea>
+      <div *ngFor="let message of messages" class="message" [ngClass]="{ 'event': message.type === 'event', 'opponent': message.type === 'opponent', 'self': message.type === 'self' }">
+        {{ message.content }}
+      </div>
+    </div>
+    <div class="input-area">
+      <input type="text" [(ngModel)]="newMessage" placeholder="Saisissez votre message ici (max 200 caractères)" maxlength="200" (keyup.enter)="sendMessage()" #inputBox>
+      <button (click)="sendMessage()">Envoyer</button>
+    </div>
+  </div>
+  
