@@ -9,6 +9,7 @@ import { CounterService } from '@app/services/counter.service';
 })
 export class TopBarComponent implements OnInit {
     @Input() name: string;
+    @Input() single: boolean;
     userName: string;
 
     ngOnInit() {
