@@ -15,6 +15,7 @@ import { GameManagerController } from './controllers/game-manager/game-manager.c
 import { GamecardsController } from './controllers/gamecards/gamecards.controller';
 import { StoreController } from './controllers/store/store.controller';
 import { TimerController } from './controllers/timer/timer.controller';
+import { SocketManagerGateway } from './gateways/socket-manager/socket-manager.gateway';
 import { GameManager } from './services/game-manager/game-manager.service';
 import { SocketManagerService } from './services/socket-manager/socket-manager.service';
 import { StoreService } from './services/store/store.service';
@@ -30,7 +31,6 @@ import { StoreService } from './services/store/store.service';
             }),
         }),
         MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
-        
     ],
     controllers: [
         CourseController,
@@ -42,6 +42,17 @@ import { StoreService } from './services/store/store.service';
         TimerController,
         CounterController,
     ],
-    providers: [ChatGateway, CourseService, DateService, ExampleService, Logger, StoreService, GameManager, SocketManagerService, http.Server],
+    providers: [
+        ChatGateway,
+        CourseService,
+        DateService,
+        ExampleService,
+        Logger,
+        StoreService,
+        GameManager,
+        SocketManagerService,
+        http.Server,
+        SocketManagerGateway,
+    ],
 })
 export class AppModule {}
