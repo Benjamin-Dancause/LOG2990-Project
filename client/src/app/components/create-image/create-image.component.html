@@ -1,16 +1,23 @@
 <div class="container">
     <div class="canvas-area">
+        <button class="btn delete-btn" (click)="deleteOriginal()">
+            <img class="del-icon" src="../../assets/delete-icon.png" />
+        </button>
         <div class="canvas-wrap">
-            <button class="btn delete-btn" (click)="deleteOriginal()">
-                <img class="del-icon" src="../../assets/delete-icon.png" />
-            </button>
-            <canvas #originalCanvas class="image-container" width="640" height="480"></canvas>
+            <div class="canvas-container">
+                <app-drawing class="drawing"></app-drawing>
+                <canvas #originalCanvas class="image-container" width="640" height="480"></canvas>
+            </div>
         </div>
+        <app-drawing-tools id="tools"></app-drawing-tools>
+        <button class="btn delete-btn" (click)="deleteModifiable()">
+            <img class="del-icon" src="../../assets/delete-icon.png" />
+        </button>
         <div class="canvas-wrap">
-            <button class="btn delete-btn" (click)="deleteModifiable()">
-                <img class="del-icon" src="../../assets/delete-icon.png" />
-            </button>
-            <canvas #modifiableCanvas class="image-container" width="640" height="480"></canvas>
+            <div class="canvas-container">
+                <app-drawing class="drawing"></app-drawing>
+                <canvas #modifiableCanvas class="image-container" width="640" height="480"></canvas>
+            </div>
         </div>
     </div>
     <div class="button-area">
@@ -27,6 +34,8 @@
         </div>
         <button class="btn" (click)="inputName()">Sauvegarder</button>
     </div>
+    <app-drawing></app-drawing>
+    <app-drawing></app-drawing>
     <ng-template #inputDifferentTemplate>
         <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
         <div class="input-container-original">
