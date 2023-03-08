@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
@@ -9,6 +10,7 @@ import { environment } from 'src/environments/environment';
 export class SocketClientService {
 
   socket: Socket;
+  numClientsSubject: new Subject<number>();
 
   isSocketAlive() {
     return this.socket && this.socket.connected;
