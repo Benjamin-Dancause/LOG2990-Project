@@ -29,6 +29,8 @@ export enum MouseButton {
 export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvasLeft', { static: false }) private canvasLeft!: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvasRight', { static: false }) private canvasRight!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLeftTop', { static: false }) private canvasLeftTop!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasRightTop', { static: false }) private canvasRightTop!: ElementRef<HTMLCanvasElement>;
 
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
@@ -39,6 +41,8 @@ export class PlayAreaComponent implements AfterViewInit {
     private imageRightStr: string = '';
     private ctxLeft: CanvasRenderingContext2D | null = null;
     private ctxRight: CanvasRenderingContext2D | null = null;
+    private ctxLeftTop: CanvasRenderingContext2D | null = null;
+    private ctxRightTop: CanvasRenderingContext2D | null = null;
     private gameName: string = '';
     constructor(private counterService: CounterService, private communicationService: CommunicationService, private input : InputService, private  game : GameService) {}
 
@@ -65,6 +69,8 @@ export class PlayAreaComponent implements AfterViewInit {
             this.ctxRight = this.canvasRight.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxRight?.drawImage(img2, 0, 0);
         };
+        this.ctxLeftTop = this.canvasLeftTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.ctxRightTop = this.canvasRightTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
     }
 
     ngAfterViewInit(): void {
@@ -78,7 +84,8 @@ export class PlayAreaComponent implements AfterViewInit {
         });
 
         this.input.mouseDown$.subscribe((event) => {
-            this.game.checkClick(event, this.counterService, this.ctxLeft as CanvasRenderingContext2D, this.ctxRight as CanvasRenderingContext2D);
+            let ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+            this.game.checkClick(event, this.counterService, ctxs);
         });
     }
 

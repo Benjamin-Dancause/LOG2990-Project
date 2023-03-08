@@ -25,7 +25,7 @@ export class InputService {
     });
 
     document.addEventListener('mousedown', (event) => {
-      if (event.button === 0) {
+      if (event.button === 0 && event.target instanceof HTMLCanvasElement) {
         this.mouseDownSubject.next(event);
       }
     });
