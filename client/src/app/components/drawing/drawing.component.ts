@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Component({
@@ -6,12 +6,14 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements OnInit {
-    @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement>;
+export class DrawingComponent implements AfterViewInit {
+    @ViewChild('drawingCanvas') canvas: ElementRef<HTMLCanvasElement>;
 
     constructor(private drawingService: DrawingService) {}
 
-    ngOnInit() {}
+    ngAfterViewInit() {
+        this.drawingService.register(this.canvas.nativeElement);
+    }
 
     onMouseDown(event: MouseEvent) {
         this.drawingService.start(event, event.target as HTMLCanvasElement);

@@ -7,7 +7,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     styleUrls: ['./drawing-tools.component.scss'],
 })
 export class DrawingToolsComponent implements OnInit {
-    constructor(private drawingService: DrawingService) {}
+    constructor(private drawingService: DrawingService /*private drawingCanvasDirective: DrawingCanvasDirective*/) {}
     color: string;
     radius: number;
 
@@ -30,5 +30,8 @@ export class DrawingToolsComponent implements OnInit {
     }
     setRadius(): void {
         this.drawingService.setRadius(this.radius);
+    }
+    swapDrawings(): void {
+        this.drawingService.swapDrawings();
     }
 }

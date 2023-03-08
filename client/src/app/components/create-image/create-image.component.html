@@ -5,7 +5,7 @@
         </button>
         <div class="canvas-wrap">
             <div class="canvas-container">
-                <app-drawing class="drawing"></app-drawing>
+                <app-drawing useMe class="drawing"></app-drawing>
                 <canvas #originalCanvas class="image-container" width="640" height="480"></canvas>
             </div>
         </div>
@@ -15,7 +15,7 @@
         </button>
         <div class="canvas-wrap">
             <div class="canvas-container">
-                <app-drawing class="drawing"></app-drawing>
+                <app-drawing useMe class="drawing"></app-drawing>
                 <canvas #modifiableCanvas class="image-container" width="640" height="480"></canvas>
             </div>
         </div>
@@ -34,8 +34,6 @@
         </div>
         <button class="btn" (click)="inputName()">Sauvegarder</button>
     </div>
-    <app-drawing></app-drawing>
-    <app-drawing></app-drawing>
     <ng-template #inputDifferentTemplate>
         <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
         <div class="input-container-original">
