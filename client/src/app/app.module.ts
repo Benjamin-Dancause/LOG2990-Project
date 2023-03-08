@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GameCardComponent } from '@app/components/game-card/game-card.component';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import { TextBoxComponent } from '@app/components/text-box/text-box.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AppComponent } from '@app/pages/app/app.component';
@@ -66,6 +67,7 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
         GiveUpButtonComponent,
         CounterComponent,
         GameOneVsOnePageComponent,
+        TextBoxComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],
