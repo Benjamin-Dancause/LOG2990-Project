@@ -11,7 +11,10 @@ export class DrawingToolsComponent implements OnInit {
     color: string;
     radius: number;
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.radius = 25;
+        this.setRadius();
+    }
 
     selectPen(): void {
         this.drawingService.setTool('pen');
