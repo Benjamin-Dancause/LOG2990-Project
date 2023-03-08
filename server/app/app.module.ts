@@ -14,8 +14,8 @@ import { CounterController } from './controllers/counter/counter.controller';
 import { GameManagerController } from './controllers/game-manager/game-manager.controller';
 import { GamecardsController } from './controllers/gamecards/gamecards.controller';
 import { StoreController } from './controllers/store/store.controller';
-import { TimerController } from './controllers/timer/timer.controller';
 import { SocketManagerGateway } from './gateways/socket-manager/socket-manager.gateway';
+import { TimerGateway } from './gateways/timer/timer.gateway';
 import { GameManager } from './services/game-manager/game-manager.service';
 import { SocketManagerService } from './services/socket-manager/socket-manager.service';
 import { StoreService } from './services/store/store.service';
@@ -39,7 +39,6 @@ import { StoreService } from './services/store/store.service';
         GamecardsController,
         GameManagerController,
         StoreController,
-        TimerController,
         CounterController,
     ],
     providers: [
@@ -53,6 +52,7 @@ import { StoreService } from './services/store/store.service';
         SocketManagerService,
         http.Server,
         SocketManagerGateway,
+        TimerGateway,
     ],
 })
 export class AppModule {}
