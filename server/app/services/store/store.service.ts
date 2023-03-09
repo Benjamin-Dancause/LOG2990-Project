@@ -1,5 +1,6 @@
 import { Body, Injectable } from '@nestjs/common';
 import { promises as fs } from 'fs';
+import { promisify } from 'util';
 
 interface Coords {
     x: number;
@@ -108,7 +109,30 @@ export class StoreService {
         const index = gamesData.findIndex((game) => game.name === name);
         if (index !== -1) {
             gamesData.splice(index, 1);
+            const filePath1 = `assets/images/${name}_modif.bmp`;
+            const filePath2 = `assets/images/${name}_orig.bmp`;
+            this.deleteFile(filePath1);
+            this.deleteFile(filePath2);
             await fs.writeFile(infoPath, JSON.stringify(gamesData, null, 4));
+        }
+    }
+
+    async getGameAvailability(name: string): Promise<boolean> {
+        const gamesData: Data[] = await this.extractData();
+        const index = gamesData.findIndex((game) => game.name === name);
+        if (index === -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    async deleteFile(filePath: string): Promise<void> {
+        try {
+            await promisify(fs.unlink)(filePath);
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error(`Error deleting file: ${error}`);
         }
     }
 }
