@@ -1,0 +1,18 @@
+<div class="container">
+    <div class="button-tools">
+        <div class="drawing-tools">
+            <button type="button" (click)="selectPen()">Draw</button>
+            <button type="button" (click)="selectEraser()">Erase</button>
+            <button type="button" (click)="selectRectangle()">Rectangle</button>
+        </div>
+        <div class="drawing-tools">
+            <button type="button">Undo</button>
+            <button type="button">Redo</button>
+            <button type="button" (click)="swapDrawings()">Swap</button>
+        </div>
+    </div>
+    <div class="input-tools">
+        <input type="color" [(ngModel)]="color" (change)="setColor()" />
+        <input type="range" min="1" max="50" [(ngModel)]="radius" (change)="setRadius()" />
+    </div>
+</div>

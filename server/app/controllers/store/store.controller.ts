@@ -1,5 +1,5 @@
 import { StoreService } from '@app/services/store/store.service';
-import { Body, Controller, Get, Header, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 
@@ -54,5 +54,13 @@ export class StoreController {
     })
     async getGameByName(@Body() body: { name: string }) {
         return this.storeService.getGameByName(body);
+    }
+
+    @Delete(':name')
+    @ApiOkResponse({
+        description: 'delete game from data',
+    })
+    async deleteGame(@Param('name') name: string) {
+        return this.storeService.deleteGame(name);
     }
 }

@@ -64,7 +64,8 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
     }
 }
 .image-container {
-    display: block;
+    display: flex;
+    flex-direction: column;
     width: 640px;
     height: 480px;
     border-top: 1px solid $cyan-border;
@@ -79,6 +80,9 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
 }
 
 .canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
     border: 3px solid $cyan-border;
     box-shadow: 0 0 30px 4px $cyan-glow;
     border-left: 10px solid $cyan-border-left;
@@ -110,4 +114,17 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+#tools {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.drawing {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
 }

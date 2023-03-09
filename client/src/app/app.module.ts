@@ -16,6 +16,8 @@ import { MaterialPageComponent } from '@app/pages/material-page/material-page.co
 import { ButtonComponent } from './components/button/button.component';
 import { CounterComponent } from './components/counter/counter.component';
 import { CreateImageComponent } from './components/create-image/create-image.component';
+import { DrawingToolsComponent } from './components/drawing-tools/drawing-tools.component';
+import { DrawingComponent } from './components/drawing/drawing.component';
 import { GiveUpButtonComponent } from './components/give-up-button/give-up-button.component';
 import { HintButtonComponent } from './components/hint-button/hint-button.component';
 import { HomeButtonComponent } from './components/home-button/home-button.component';
@@ -39,15 +41,10 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
 @NgModule({
     declarations: [
         AppComponent,
-
         GamePageComponent,
-
         MainPageComponent,
-
         MaterialPageComponent,
-
         PlayAreaComponent,
-
         SidebarComponent,
         ButtonComponent,
         CreatePageComponent,
@@ -67,6 +64,8 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
         GiveUpButtonComponent,
         CounterComponent,
         GameOneVsOnePageComponent,
+        DrawingComponent,
+        DrawingToolsComponent,
         TextBoxComponent,
     ],
     providers: [],

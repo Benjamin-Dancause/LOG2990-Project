@@ -50,6 +50,9 @@ export class CommunicationService {
     getDiffAmount(name: string): Observable<number> {
         return this.http.post<number>(`${this.baseUrl}/gaming/diffAmount`, { name }, { responseType: 'json' });
     }
+    deleteGame(name: string) {
+        return this.http.delete(`${this.baseUrl}/games/${name}`);
+    }
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);
     }

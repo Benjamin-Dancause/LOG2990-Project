@@ -36,14 +36,14 @@ export interface GameDiffData {
 @Injectable()
 export class StoreService {
     async storeInfo(name: string, relativePaths: string[], difficulty: boolean, count: number, differences: Coords[][]): Promise<void> {
-        const infoPath = `assets/data/gamesData.json`;
-        let gamesData: Data[] = await this.extractData();
+        const infoPath = 'assets/data/gamesData.json';
+        const gamesData: Data[] = await this.extractData();
         const gameData: Data = {
-            name: name,
+            name,
             images: relativePaths,
-            difficulty: difficulty,
-            count: count,
-            differences: differences,
+            difficulty,
+            count,
+            differences,
         };
         gamesData.push(gameData);
         await fs.writeFile(infoPath, JSON.stringify(gamesData, null, 4));
@@ -58,12 +58,12 @@ export class StoreService {
     }
 
     async getAllNames(): Promise<string[]> {
-        let gamesData: Data[] = await this.extractData();
+        const gamesData: Data[] = await this.extractData();
         return gamesData.map((game) => game.name);
     }
 
     async getAllGames(): Promise<GameSelectionPageData[]> {
-        let gamesData: Data[] = await this.extractData();
+        const gamesData: Data[] = await this.extractData();
         console.log(
             gamesData.map((game) => {
                 console.log(game.images[0]);
@@ -77,7 +77,7 @@ export class StoreService {
     }
 
     async getGameByName(@Body() body: { name: string }): Promise<GameplayData> {
-        let gamesData: Data[] = await this.extractData();
+        const gamesData: Data[] = await this.extractData();
         const name = body.name;
         const game = gamesData.find((game) => game.name === name);
         if (game) {
@@ -87,7 +87,7 @@ export class StoreService {
     }
 
     async getGameDifferenceByName(name: string): Promise<GameDiffData> {
-        let gamesData: Data[] = await this.extractData();
+        const gamesData: Data[] = await this.extractData();
         const game = gamesData.find((game) => game.name === name);
 
         if (game) {
@@ -97,8 +97,18 @@ export class StoreService {
     }
 
     async extractData(): Promise<Data[]> {
-        const infoPath = `assets/data/gamesData.json`;
+        const infoPath = 'assets/data/gamesData.json';
         const gamesContent = await fs.readFile(infoPath, 'utf-8');
         return JSON.parse(gamesContent);
+    }
+
+    async deleteGame(name: string): Promise<void> {
+        const infoPath = 'assets/data/gamesData.json';
+        const gamesData: Data[] = await this.extractData();
+        const index = gamesData.findIndex((game) => game.name === name);
+        if (index !== -1) {
+            gamesData.splice(index, 1);
+            await fs.writeFile(infoPath, JSON.stringify(gamesData, null, 4));
+        }
     }
 }
