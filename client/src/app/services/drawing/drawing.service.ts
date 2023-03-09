@@ -7,12 +7,12 @@ import { Coords } from '@app/classes/coords';
 export class DrawingService {
     @ViewChildren('drawingCanvas') canvases: ElementRef<HTMLCanvasElement>;
     private currentTool: string = 'pen';
-    currentCanvas: HTMLCanvasElement;
-    currentCtx: CanvasRenderingContext2D | null;
-    canvasRegistry: HTMLCanvasElement[] = [];
     private isDrawing: boolean = false;
     private currentColor: string;
     private currentRadius: number;
+    currentCanvas: HTMLCanvasElement;
+    currentCtx: CanvasRenderingContext2D | null;
+    canvasRegistry: HTMLCanvasElement[] = [];
     lastPos: Coords;
     constructor() {}
 
@@ -28,7 +28,7 @@ export class DrawingService {
     setRadius(radius: number): void {
         this.currentRadius = radius;
     }
-    setActiveCanvas(canvas: HTMLCanvasElement) {
+    setActiveCanvas(canvas: HTMLCanvasElement): void {
         this.currentCanvas = canvas;
         this.currentCtx = this.currentCanvas.getContext('2d');
     }
@@ -57,7 +57,7 @@ export class DrawingService {
         }
     }
 
-    draw(event: MouseEvent) {
+    draw(event: MouseEvent): void {
         if (this.currentCtx) {
             this.currentCtx.moveTo(this.lastPos.x, this.lastPos.y);
             this.currentCtx.lineTo(event.offsetX, event.offsetY);
@@ -69,7 +69,7 @@ export class DrawingService {
             this.lastPos = { x: event.offsetX, y: event.offsetY };
         }
     }
-    erase(event: MouseEvent) {
+    erase(event: MouseEvent): void {
         if (this.currentCtx) {
             this.currentCtx.clearRect(
                 event.offsetX - this.currentRadius * 0.5,
@@ -78,10 +78,6 @@ export class DrawingService {
                 this.currentRadius,
             );
         }
-    }
-    clearDrawing(canvas: HTMLCanvasElement) {
-        this.setActiveCanvas(canvas);
-        this.currentCtx?.clearRect(0, 0, 640, 480);
     }
     swapDrawings(): void {
         let firstCtx = this.canvasRegistry[0].getContext('2d');
@@ -95,5 +91,33 @@ export class DrawingService {
             firstCtx.putImageData(image2, 0, 0);
             secondCtx.putImageData(image1, 0, 0);
         }
+    }
+    copyLeftOnRight(): void {
+        let firstCtx = this.canvasRegistry[0].getContext('2d');
+        let secondCtx = this.canvasRegistry[1].getContext('2d');
+        if (firstCtx && secondCtx) {
+            const image = firstCtx.getImageData(0, 0, 640, 480);
+            secondCtx.clearRect(0, 0, 640, 480);
+            secondCtx.putImageData(image, 0, 0);
+        }
+    }
+    copyRightOnLeft(): void {
+        let firstCtx = this.canvasRegistry[0].getContext('2d');
+        let secondCtx = this.canvasRegistry[1].getContext('2d');
+        if (firstCtx && secondCtx) {
+            const image = secondCtx.getImageData(0, 0, 640, 480);
+            firstCtx.clearRect(0, 0, 640, 480);
+            firstCtx.putImageData(image, 0, 0);
+        }
+    }
+    deleteLeft(): void {
+        this.clearDrawing(this.canvasRegistry[0]);
+    }
+    deleteRight(): void {
+        this.clearDrawing(this.canvasRegistry[1]);
+    }
+    clearDrawing(canvas: HTMLCanvasElement): void {
+        this.setActiveCanvas(canvas);
+        this.currentCtx?.clearRect(0, 0, 640, 480);
     }
 }
