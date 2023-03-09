@@ -136,7 +136,7 @@ export class PlayAreaComponent implements AfterViewInit {
                     context.font = '20px Arial';
                     context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
                     this.successSound.currentTime = 0;
-                    this.counterService.incrementCounter().subscribe();
+                    this.counterService.incrementCounter();
                     this.successSound.play();
                     // this.flashPixel(response.coords);
                     setTimeout(() => {
