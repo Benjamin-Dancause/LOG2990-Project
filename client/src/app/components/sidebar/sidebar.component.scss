@@ -62,3 +62,25 @@ p {
     margin-bottom: 10px;
 }
 
+.text-section > * {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 20px;
+    color: black;
+}
+
+.text-section {
+    min-width: 100px;
+    min-height: 60px;
+    // border-radius: 40px;
+    background-color: rgba(255, 255, 255, 0.99);
+
+    border: 1px solid rgb(123, 226, 252);
+    border-left: 3px solid rgba(123, 226, 252, 0.774);
+    box-shadow: 0 0 30px 4px rgb(123, 226, 252);
+}
+
