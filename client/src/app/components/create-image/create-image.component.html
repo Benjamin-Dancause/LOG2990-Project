@@ -29,7 +29,7 @@
             <app-slider></app-slider>
             <button class="btn" (click)="showDifference()">Détecter les différences</button>
             <button class="btn delete-btn" (click)="deleteBoth()">
-                <img class="del-icon" src="../../assets/delete-icon.png" />
+                <img class="del-icon" src="./assets/delete-icon.png" />
             </button>
         </div>
         <button class="btn" (click)="inputName()">Sauvegarder</button>
@@ -57,7 +57,7 @@
     <ng-template #errorTemplate>
         <div>
             <h3>{{ errorMessage }}</h3>
-            <img src="../../assets/error_icon.png" class="error-icon" />
+            <img src="./assets/error_icon.png" class="error-icon" />
         </div>
     </ng-template>
     <ng-template #negativeTemplate>
