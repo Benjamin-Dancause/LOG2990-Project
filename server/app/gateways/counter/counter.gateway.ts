@@ -1,15 +1,15 @@
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { ConnectedSocket, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway({namespace: '/counter'})
 export class CounterGateway {
   @WebSocketServer() server: Server;
   
-  /*private counters: Map<string, number> = new Map();
+  private counters: Map<string, number> = new Map();
 
   handleConnection(client: Socket) {
     const clientId = client.handshake.query.clientId as string;
-    //console.log(clientId);
+    console.log('counter: ' + clientId);
     if(clientId){
       client.join(clientId);
       const count: number = this.getCounterFromRoom(clientId);
@@ -45,5 +45,5 @@ export class CounterGateway {
     const counter = this.counters.get(client.id);
 
     this.server.emit('counterUpdate', {counter});
-  }*/
+  }
 }

@@ -1,7 +1,7 @@
 import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway({namespace: '/timer'})
 export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   
@@ -10,7 +10,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
   handleConnection(client: Socket) {
     const roomId = client.handshake.query.id as string;
-    console.log(roomId);
+    console.log('timer: ' + roomId);
     if(roomId){
       client.join(roomId);
       const time: number = this.getTimeFromRoom(roomId);

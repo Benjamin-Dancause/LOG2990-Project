@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { io, Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CounterService {
-    /*private readonly baseUrl: string = environment.webSocketUrl;
+    private readonly baseUrl: string = environment.webSocketUrl;
     private socket: Socket;
     private _counter: number = 0;
 
@@ -27,5 +30,5 @@ export class CounterService {
 
     resetCounter() {
         this.socket.emit('resetCounter');
-    }*/
+    }
 }
