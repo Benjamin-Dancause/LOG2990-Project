@@ -9,12 +9,15 @@ import { ExampleService } from '@app/services/example/example.service';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CounterController } from './controllers/counter/counter.controller';
+import * as http from 'http';
 import { GameManagerController } from './controllers/game-manager/game-manager.controller';
 import { GamecardsController } from './controllers/gamecards/gamecards.controller';
 import { StoreController } from './controllers/store/store.controller';
-import { TimerController } from './controllers/timer/timer.controller';
+import { CounterGateway } from './gateways/counter/counter.gateway';
+import { SocketManagerGateway } from './gateways/socket-manager/socket-manager.gateway';
+import { TimerGateway } from './gateways/timer/timer.gateway';
 import { GameManager } from './services/game-manager/game-manager.service';
+import { SocketManagerService } from './services/socket-manager/socket-manager.service';
 import { StoreService } from './services/store/store.service';
 
 @Module({
@@ -36,9 +39,20 @@ import { StoreService } from './services/store/store.service';
         GamecardsController,
         GameManagerController,
         StoreController,
-        TimerController,
-        CounterController,
     ],
-    providers: [ChatGateway, CourseService, DateService, ExampleService, Logger, StoreService, GameManager],
+    providers: [
+        ChatGateway,
+        CourseService,
+        DateService,
+        ExampleService,
+        Logger,
+        StoreService,
+        GameManager,
+        SocketManagerService,
+        http.Server,
+        SocketManagerGateway,
+        TimerGateway,
+        CounterGateway,
+    ],
 })
 export class AppModule {}
