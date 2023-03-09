@@ -34,4 +34,16 @@ export class DrawingToolsComponent implements OnInit {
     swapDrawings(): void {
         this.drawingService.swapDrawings();
     }
+    copyLeft(): void {
+        this.drawingService.copyLeftOnRight();
+    }
+    copyRight(): void {
+        this.drawingService.copyRightOnLeft();
+    }
+    deleteLeft(): void {
+        this.drawingService.deleteLeft();
+    }
+    deleteRight(): void {
+        this.drawingService.deleteRight();
+    }
 }

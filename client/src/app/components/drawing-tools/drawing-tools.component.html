@@ -1,14 +1,18 @@
 <div class="container">
     <div class="button-tools">
         <div class="drawing-tools">
-            <button type="button" (click)="selectPen()">Draw</button>
-            <button type="button" (click)="selectEraser()">Erase</button>
-            <button type="button" (click)="selectRectangle()">Rectangle</button>
+            <button (click)="selectPen()">Draw</button>
+            <button (click)="selectEraser()">Erase</button>
+            <button (click)="selectRectangle()">Rectangle</button>
+            <button (click)="copyLeft()">CopyLeft</button>
+            <button (click)="deleteLeft()">DeleteLeft</button>
         </div>
         <div class="drawing-tools">
-            <button type="button">Undo</button>
-            <button type="button">Redo</button>
-            <button type="button" (click)="swapDrawings()">Swap</button>
+            <button>Undo</button>
+            <button>Redo</button>
+            <button (click)="swapDrawings()">Swap</button>
+            <button (click)="copyRight()">CopyRight</button>
+            <button (click)="deleteRight()">DeleteRight</button>
         </div>
     </div>
     <div class="input-tools">
