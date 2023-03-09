@@ -53,7 +53,7 @@ export class PlayAreaComponent implements AfterViewInit {
     private ctxRightTop: CanvasRenderingContext2D | null = null;
     private differenceFound: number[] = [];
     private gameName: string = '';
-    constructor(private counterService: CounterService, private communicationService: CommunicationService, difference: DifferenceService) {}
+    constructor(/*private counterService: CounterService,*/ private communicationService: CommunicationService, difference: DifferenceService) {}
 
     get width(): number {
         return this.canvasSize.x;
@@ -136,7 +136,7 @@ export class PlayAreaComponent implements AfterViewInit {
                     context.font = '20px Arial';
                     context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
                     this.successSound.currentTime = 0;
-                    this.counterService.incrementCounter().subscribe();
+                    //this.counterService.incrementCounter();
                     this.successSound.play();
                     // this.flashPixel(response.coords);
                     setTimeout(() => {

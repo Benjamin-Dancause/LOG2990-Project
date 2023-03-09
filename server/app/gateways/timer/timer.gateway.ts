@@ -49,7 +49,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   onReset(client: Socket, roomId: string){
     const time = 0;
     this.timers.set(roomId, time);
-    this.emitTimeToRoom(roomId, time);
+    client.disconnect();
   }
 
 }

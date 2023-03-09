@@ -10,10 +10,10 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as http from 'http';
-import { CounterController } from './controllers/counter/counter.controller';
 import { GameManagerController } from './controllers/game-manager/game-manager.controller';
 import { GamecardsController } from './controllers/gamecards/gamecards.controller';
 import { StoreController } from './controllers/store/store.controller';
+import { CounterGateway } from './gateways/counter/counter.gateway';
 import { SocketManagerGateway } from './gateways/socket-manager/socket-manager.gateway';
 import { TimerGateway } from './gateways/timer/timer.gateway';
 import { GameManager } from './services/game-manager/game-manager.service';
@@ -39,7 +39,6 @@ import { StoreService } from './services/store/store.service';
         GamecardsController,
         GameManagerController,
         StoreController,
-        CounterController,
     ],
     providers: [
         ChatGateway,
@@ -53,6 +52,7 @@ import { StoreService } from './services/store/store.service';
         http.Server,
         SocketManagerGateway,
         TimerGateway,
+        CounterGateway,
     ],
 })
 export class AppModule {}

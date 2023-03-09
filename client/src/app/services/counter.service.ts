@@ -1,25 +1,31 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CounterService {
-    _counter = 0;
-    private readonly baseUrl: string = environment.serverUrl;
+    /*private readonly baseUrl: string = environment.webSocketUrl;
+    private socket: Socket;
+    private _counter: number = 0;
 
-    constructor(private http: HttpClient) {}
-
-    getCounter() {
-        return this.http.get<number>(`${this.baseUrl}/counter`);
+    constructor() {}
+    
+    initializeSocket(): Observable<number> {
+        const uniqueId = Math.random().toString(36).substring(7)
+        this.socket = io(this.baseUrl, { query: {clientId: uniqueId, counter: this._counter}});
+        return new Observable<number>( observer => {
+        this.socket.on('counterUpdate', (counter: number) => {
+            this._counter = counter;
+            observer.next(counter);
+        })
+       });
     }
 
     incrementCounter() {
-        return this.http.post<number>(`${this.baseUrl}/counter/increment`, {});
+        this.socket.emit('incrementCounter');
     }
 
     resetCounter() {
-        return this.http.post<number>(`${this.baseUrl}/counter/reset`, {});
-    }
+        this.socket.emit('resetCounter');
+    }*/
 }
