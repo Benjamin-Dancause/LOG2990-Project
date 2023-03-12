@@ -1,4 +1,5 @@
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
+import { Inject } from '@nestjs/common/decorators';
 import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
@@ -7,14 +8,13 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   
   
-  private timerManager: TimerManagerService;
+  constructor(@Inject(TimerManagerService) private readonly timerManager: TimerManagerService) {};
   
   handleConnection(client: Socket) {
     const roomId = client.handshake.query.id as string;
-    console.log('timer: ' + roomId);
     if(roomId){
       client.join(roomId);
-      console.log('1');
+      console.log('timer: ' + roomId);
       this.timerManager.startTimer(roomId);
     }
   }
@@ -25,10 +25,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.leave(roomId);
       this.timerManager.deleteTimerData(roomId);
     }
-  }
-
-  emitTimeToRoom(roomId: string, time: number) {
-    this.server.to(roomId).emit('timer', time);
   }
 
   @SubscribeMessage('reset-timer')
