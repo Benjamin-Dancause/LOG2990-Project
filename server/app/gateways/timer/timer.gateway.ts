@@ -12,9 +12,9 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
   handleConnection(client: Socket) {
     const roomId = client.handshake.query.id as string;
+    console.log('timer: ' + roomId);
     if(roomId){
       client.join(roomId);
-      console.log('timer: ' + roomId);
       this.timerManager.startTimer(roomId);
     }
   }
@@ -25,6 +25,10 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.leave(roomId);
       this.timerManager.deleteTimerData(roomId);
     }
+  }
+
+  emitTimeToRoom(roomId: string, time: number) {
+    this.server.to(roomId).emit(roomId, time);
   }
 
   @SubscribeMessage('reset-timer')
