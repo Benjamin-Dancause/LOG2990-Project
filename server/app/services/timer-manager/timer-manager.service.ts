@@ -1,12 +1,14 @@
-import { TimerGateway } from '@app/gateways/timer/timer.gateway';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { WebSocketServer } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 
 @Injectable()
 export class TimerManagerService {
-
+    @WebSocketServer() server: Server;
+    
     private timers = new Map<string, number>();
     private intervals = new Map<string, NodeJS.Timeout>();
-    constructor(@Inject(TimerGateway) private timerGateway: TimerGateway){};
+    
 
     startTimer(roomId: string) {
         const time: number = this.getTimeFromRoom(roomId);
@@ -19,8 +21,12 @@ export class TimerManagerService {
 
     updateTimer(roomId: string) {
         this.timers.set(roomId, this.timers.get(roomId) + 1);
-        this.timerGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
+        this.emitTimeToRoom(roomId, this.timers.get(roomId));
     }
+
+    emitTimeToRoom(roomId: string, time: number) {
+    this.server.to(roomId).emit(roomId, time);
+  }
 
     getTimeFromRoom(roomId: string): number {
         return this.timers.get(roomId) || 0;

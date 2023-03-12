@@ -1,13 +1,11 @@
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { Inject } from '@nestjs/common/decorators';
-import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { Socket } from 'socket.io';
 
 @WebSocketGateway()
 export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server;
-  
-  
+
   constructor(@Inject(TimerManagerService) private readonly timerManager: TimerManagerService) {};
   
   handleConnection(client: Socket) {
@@ -25,10 +23,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.leave(roomId);
       this.timerManager.deleteTimerData(roomId);
     }
-  }
-
-  emitTimeToRoom(roomId: string, time: number) {
-    this.server.to(roomId).emit(roomId, time);
   }
 
   @SubscribeMessage('reset-timer')
