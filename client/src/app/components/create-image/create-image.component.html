@@ -1,7 +1,7 @@
 <div class="container">
     <div class="canvas-area">
         <button class="btn delete-btn" (click)="deleteOriginal()">
-            <img class="del-icon" src="../../assets/delete-icon.png" />
+            <img class="del-icon" src="./assets/delete-icon.png" />
         </button>
         <div class="canvas-wrap">
             <div class="canvas-container">
@@ -11,7 +11,7 @@
         </div>
         <app-drawing-tools id="tools"></app-drawing-tools>
         <button class="btn delete-btn" (click)="deleteModifiable()">
-            <img class="del-icon" src="../../assets/delete-icon.png" />
+            <img class="del-icon" src="./assets/delete-icon.png" />
         </button>
         <div class="canvas-wrap">
             <div class="canvas-container">
@@ -29,7 +29,7 @@
             <app-slider></app-slider>
             <button class="btn" (click)="showDifference()">Détecter les différences</button>
             <button class="btn delete-btn" (click)="deleteBoth()">
-                <img class="del-icon" src="../../assets/delete-icon.png" />
+                <img class="del-icon" src="./assets/delete-icon.png" />
             </button>
         </div>
         <button class="btn" (click)="inputName()">Sauvegarder</button>
@@ -57,7 +57,7 @@
     <ng-template #errorTemplate>
         <div>
             <h3>{{ errorMessage }}</h3>
-            <img src="../../assets/error_icon.png" class="error-icon" />
+            <img src="./assets/error_icon.png" class="error-icon" />
         </div>
     </ng-template>
     <ng-template #negativeTemplate>
