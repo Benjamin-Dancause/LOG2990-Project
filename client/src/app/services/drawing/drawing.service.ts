@@ -24,6 +24,7 @@ export class DrawingService {
     }
     setColor(color: string): void {
         this.currentColor = color;
+        console.log(this.currentColor);
     }
     setRadius(radius: number): void {
         this.currentRadius = radius;
@@ -36,7 +37,12 @@ export class DrawingService {
         this.setActiveCanvas(canvas);
         this.isDrawing = true;
         this.lastPos = { x: event.offsetX, y: event.offsetY };
-        this.currentCtx?.beginPath();
+        if (this.currentCtx) {
+            this.currentCtx.beginPath();
+            this.currentCtx.lineCap = 'round';
+            this.currentCtx.lineJoin = 'round';
+            this.currentCtx.lineWidth = this.currentRadius;
+        }
     }
     end(): void {
         this.isDrawing = false;
@@ -52,6 +58,9 @@ export class DrawingService {
             case 'eraser':
                 this.erase(event);
                 break;
+            case 'rectangle':
+                this.drawRectangle(event);
+                break;
             default:
                 break;
         }
@@ -62,9 +71,6 @@ export class DrawingService {
             this.currentCtx.moveTo(this.lastPos.x, this.lastPos.y);
             this.currentCtx.lineTo(event.offsetX, event.offsetY);
             this.currentCtx.strokeStyle = this.currentColor;
-            this.currentCtx.lineCap = 'round';
-            this.currentCtx.lineJoin = 'round';
-            this.currentCtx.lineWidth = this.currentRadius;
             this.currentCtx.stroke();
             this.lastPos = { x: event.offsetX, y: event.offsetY };
         }
@@ -77,6 +83,11 @@ export class DrawingService {
                 this.currentRadius,
                 this.currentRadius,
             );
+        }
+    }
+    drawRectangle(event: MouseEvent): void {
+        if (this.currentCtx) {
+            this.currentCtx.strokeRect(event.offsetX, event.offsetY, this.lastPos.x - event.offsetX, this.lastPos.y - event.offsetY);
         }
     }
     swapDrawings(): void {
