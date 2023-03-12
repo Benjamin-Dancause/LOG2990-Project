@@ -19,6 +19,7 @@ import { TimerGateway } from './gateways/timer/timer.gateway';
 import { GameManager } from './services/game-manager/game-manager.service';
 import { SocketManagerService } from './services/socket-manager/socket-manager.service';
 import { StoreService } from './services/store/store.service';
+import { TimerManagerService } from './services/timer-manager/timer-manager.service';
 
 @Module({
     imports: [
@@ -53,6 +54,7 @@ import { StoreService } from './services/store/store.service';
         SocketManagerGateway,
         TimerGateway,
         CounterGateway,
+        TimerManagerService,
     ],
 })
 export class AppModule {}
