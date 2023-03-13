@@ -13,11 +13,15 @@ export class DrawingService {
     currentCanvas: HTMLCanvasElement;
     currentCtx: CanvasRenderingContext2D | null;
     canvasRegistry: HTMLCanvasElement[] = [];
+    backgroundRegistry: HTMLCanvasElement[] = [];
     lastPos: Coords;
     constructor() {}
 
     register(canvas: HTMLCanvasElement): void {
         this.canvasRegistry.push(canvas);
+    }
+    registerBackground(canvas: HTMLCanvasElement): void {
+        this.backgroundRegistry.push(canvas);
     }
     setTool(tool: string): void {
         this.currentTool = tool;
@@ -46,6 +50,7 @@ export class DrawingService {
     }
     end(): void {
         this.isDrawing = false;
+        this.printDrawing();
         this.currentCtx?.clearRect(0, 0, 640, 480);
     }
     execute(event: MouseEvent): void {
@@ -78,12 +83,11 @@ export class DrawingService {
     }
     erase(event: MouseEvent): void {
         if (this.currentCtx) {
-            this.currentCtx.clearRect(
-                event.offsetX - this.currentRadius * 0.5,
-                event.offsetY - this.currentRadius * 0.5,
-                this.currentRadius,
-                this.currentRadius,
-            );
+            this.currentCtx.moveTo(this.lastPos.x, this.lastPos.y);
+            this.currentCtx.lineTo(event.offsetX, event.offsetY);
+            this.currentCtx.strokeStyle = 'white';
+            this.currentCtx.stroke();
+            this.lastPos = { x: event.offsetX, y: event.offsetY };
         }
     }
     drawRectangle(event: MouseEvent): void {
@@ -94,41 +98,41 @@ export class DrawingService {
         }
     }
     swapDrawings(): void {
-        let firstCtx = this.canvasRegistry[0].getContext('2d');
-        let secondCtx = this.canvasRegistry[1].getContext('2d');
-        if (firstCtx && secondCtx) {
-            const image1 = firstCtx.getImageData(0, 0, 640, 480);
-            const image2 = secondCtx.getImageData(0, 0, 640, 480);
-            firstCtx.clearRect(0, 0, 640, 480);
-            secondCtx.clearRect(0, 0, 640, 480);
+        const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d');
+        const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d');
+        if (backgroundFirstCtx && backgroundSecondCtx) {
+            const image1 = backgroundFirstCtx.getImageData(0, 0, 640, 480);
+            const image2 = backgroundSecondCtx.getImageData(0, 0, 640, 480);
+            backgroundFirstCtx.clearRect(0, 0, 640, 480);
+            backgroundSecondCtx.clearRect(0, 0, 640, 480);
 
-            firstCtx.putImageData(image2, 0, 0);
-            secondCtx.putImageData(image1, 0, 0);
+            backgroundFirstCtx.putImageData(image2, 0, 0);
+            backgroundSecondCtx.putImageData(image1, 0, 0);
         }
     }
     copyLeftOnRight(): void {
-        let firstCtx = this.canvasRegistry[0].getContext('2d');
-        let secondCtx = this.canvasRegistry[1].getContext('2d');
-        if (firstCtx && secondCtx) {
-            const image = firstCtx.getImageData(0, 0, 640, 480);
-            secondCtx.clearRect(0, 0, 640, 480);
-            secondCtx.putImageData(image, 0, 0);
+        const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d');
+        const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d');
+        if (backgroundFirstCtx && backgroundSecondCtx) {
+            const image = backgroundFirstCtx.getImageData(0, 0, 640, 480);
+            backgroundSecondCtx.clearRect(0, 0, 640, 480);
+            backgroundSecondCtx.putImageData(image, 0, 0);
         }
     }
     copyRightOnLeft(): void {
-        let firstCtx = this.canvasRegistry[0].getContext('2d');
-        let secondCtx = this.canvasRegistry[1].getContext('2d');
-        if (firstCtx && secondCtx) {
-            const image = secondCtx.getImageData(0, 0, 640, 480);
-            firstCtx.clearRect(0, 0, 640, 480);
-            firstCtx.putImageData(image, 0, 0);
+        const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d');
+        const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d');
+        if (backgroundFirstCtx && backgroundSecondCtx) {
+            const image = backgroundSecondCtx.getImageData(0, 0, 640, 480);
+            backgroundFirstCtx.clearRect(0, 0, 640, 480);
+            backgroundFirstCtx.putImageData(image, 0, 0);
         }
     }
     deleteLeft(): void {
-        this.clearDrawing(this.canvasRegistry[0]);
+        this.clearDrawing(this.backgroundRegistry[0]);
     }
     deleteRight(): void {
-        this.clearDrawing(this.canvasRegistry[1]);
+        this.clearDrawing(this.backgroundRegistry[1]);
     }
     clearDrawing(canvas: HTMLCanvasElement): void {
         this.setActiveCanvas(canvas);
@@ -137,11 +141,15 @@ export class DrawingService {
     unregister(): void {
         this.canvasRegistry.length = 0;
     }
-    test(): void {
-        let firstCtx = this.canvasRegistry[0].getContext('2d');
-        let secondCtx = this.canvasRegistry[1];
-        if (firstCtx && secondCtx) {
-            firstCtx.drawImage(secondCtx, 0, 0);
+    printDrawing(): void {
+        const firstCanvas = this.canvasRegistry[0];
+        const secondCanvas = this.canvasRegistry[1];
+        const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d');
+        const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d');
+        if (backgroundFirstCtx && backgroundSecondCtx) {
+            backgroundFirstCtx.drawImage(firstCanvas, 0, 0);
+            backgroundSecondCtx.drawImage(secondCanvas, 0, 0);
         }
     }
+    test(): void {}
 }

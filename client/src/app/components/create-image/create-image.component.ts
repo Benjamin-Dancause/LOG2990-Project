@@ -74,6 +74,12 @@ export class CreateImageComponent implements OnInit {
     ngOnInit(): void {
         this.ctxOriginal = this.originalCanvas.nativeElement.getContext('2d');
         this.ctxModifiable = this.modifiableCanvas.nativeElement.getContext('2d');
+        if (this.ctxOriginal && this.ctxModifiable) {
+            this.ctxOriginal.fillStyle = 'white';
+            this.ctxModifiable.fillStyle = 'white';
+            this.ctxOriginal.fillRect(0, 0, this.width, this.height);
+            this.ctxModifiable.fillRect(0, 0, this.width, this.height);
+        }
     }
 
     showInputDifferent(): void {

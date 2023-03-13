@@ -33,7 +33,6 @@ import { CreatePageComponent } from './pages/create-page/create-page.component';
 import { GameOneVsOnePageComponent } from './pages/game-one-vs-one-page/game-one-vs-one-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
 import { SocketPageComponent } from './pages/socket-page/socket-page.component';
-import { BackgroundDrawingComponent } from './components/background-drawing/background-drawing.component';
 
 /**
  * Main module that is used in main.ts.
@@ -72,7 +71,6 @@ import { BackgroundDrawingComponent } from './components/background-drawing/back
         TextBoxComponent,
         SocketComponent,
         SocketPageComponent,
-        BackgroundDrawingComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],

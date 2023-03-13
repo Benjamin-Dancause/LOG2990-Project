@@ -8,11 +8,13 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class DrawingComponent implements AfterViewInit, OnDestroy {
     @ViewChild('drawingCanvas') canvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('backgroundCanvas') backgroundCanvas: ElementRef<HTMLCanvasElement>;
 
     constructor(private drawingService: DrawingService) {}
 
     ngAfterViewInit() {
         this.drawingService.register(this.canvas.nativeElement);
+        this.drawingService.registerBackground(this.backgroundCanvas.nativeElement);
     }
 
     onMouseDown(event: MouseEvent) {
