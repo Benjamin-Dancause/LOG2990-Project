@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    top: 50%;
+}
+
+.button-tools {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.button-tools .drawing-tools {
+    margin-right: 10px;
+}
+
+.drawing-tools {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.drawing-tools button {
+    margin-bottom: 10px;
+}
+
+.input-tools {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

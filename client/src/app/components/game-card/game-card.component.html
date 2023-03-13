@@ -34,7 +34,7 @@
         <div class="button-container">
             <button *ngIf="!configuration" id="settings" (click)="openSettings()">Jouer en solo</button>
             <button *ngIf="!configuration" id="settings" [routerLink]="['/gameOneVsOne']">Créer/joindre une partie 1vs1</button>
-            <button *ngIf="configuration">Supprimer partie</button>
+            <button *ngIf="configuration" (click)="deleteGame(gameTitle)">Supprimer partie</button>
             <button *ngIf="configuration">Réinitialiser les meilleurs temps</button>
         </div>
 
@@ -66,6 +66,17 @@
                 >
                     Sauvegarder
                 </button>
+            </mat-dialog-actions>
+        </ng-template>
+        <ng-template #notAvailableTemplate>
+            <h2 mat-dialog-title>Le jeu que vous voulez accèder a été supprimé récemment</h2>
+            <mat-dialog-content>
+                <div class="container">
+                    <p>Veuillez retourner à la page de sélection et choisir un autre jeu</p>
+                </div>
+            </mat-dialog-content>
+            <mat-dialog-actions>
+                <button mat-button routerLink="/game-selection" mat-dialog-close>OK</button>
             </mat-dialog-actions>
         </ng-template>
     </div>

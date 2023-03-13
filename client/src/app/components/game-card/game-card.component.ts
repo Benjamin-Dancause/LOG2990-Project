@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
+import { CommunicationService } from '@app/services/communication.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -15,7 +18,10 @@ export class GameCardComponent implements OnInit {
     @Input() configuration: boolean;
 
     @ViewChild('namePopupTemplate', { static: true })
-    namePopupTemplate: TemplateRef<unknown>;
+    namePopupTemplate: TemplateRef<any>;
+    @ViewChild('notAvailableTemplate', { static: true })
+    notAvailableTemplate: TemplateRef<any>;
+
     userName: string;
 
     bestSoloTimes = [
@@ -34,7 +40,7 @@ export class GameCardComponent implements OnInit {
 
     private readonly serverUrl: string = environment.serverUrl;
 
-    constructor(public dialog: MatDialog) {}
+    constructor(public dialog: MatDialog, private communication: CommunicationService) {}
 
     get color() {
         return this.difficulty ? 'red' : 'green';
@@ -56,8 +62,19 @@ export class GameCardComponent implements OnInit {
     }
 
     openSettings(): void {
-        this.dialog.open(this.namePopupTemplate, {
-            width: '400px',
+        this.communication.getGameAvailability(this.gameTitle).subscribe((isAvailable) => {
+            if (isAvailable) {
+                this.dialog.open(this.namePopupTemplate, {
+                    width: '400px',
+                });
+            } else {
+                const dialogRef = this.dialog.open(this.notAvailableTemplate, {
+                    width: '400px',
+                });
+                dialogRef.afterClosed().subscribe(() => {
+                    this.reloadPage();
+                });
+            }
         });
     }
 
@@ -70,5 +87,25 @@ export class GameCardComponent implements OnInit {
         if (!this.difficulty) {
             localStorage.setItem('difficulty', 'Facile');
         }
+    }
+
+    deleteGame(gameTitle: string) {
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+            data: {
+                title: 'Confirmation',
+                message: 'Êtes-vous sûr de vouloir supprimer cette partie ?',
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result === 'yes') {
+                this.communication.deleteGame(gameTitle).subscribe(() => {
+                    this.reloadPage();
+                });
+            }
+        });
+    }
+
+    reloadPage() {
+        location.reload();
     }
 }

@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GameCardComponent } from '@app/components/game-card/game-card.component';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import { TextBoxComponent } from '@app/components/text-box/text-box.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AppComponent } from '@app/pages/app/app.component';
@@ -15,6 +16,8 @@ import { MaterialPageComponent } from '@app/pages/material-page/material-page.co
 import { ButtonComponent } from './components/button/button.component';
 import { CounterComponent } from './components/counter/counter.component';
 import { CreateImageComponent } from './components/create-image/create-image.component';
+import { DrawingToolsComponent } from './components/drawing-tools/drawing-tools.component';
+import { DrawingComponent } from './components/drawing/drawing.component';
 import { GiveUpButtonComponent } from './components/give-up-button/give-up-button.component';
 import { HintButtonComponent } from './components/hint-button/hint-button.component';
 import { HomeButtonComponent } from './components/home-button/home-button.component';
@@ -22,12 +25,14 @@ import { MainPageButtonComponent } from './components/main-page-button/main-page
 import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
 import { SettingsButtonComponent } from './components/settings-button/settings-button.component';
 import { SliderComponent } from './components/slider/slider.component';
+import { SocketComponent } from './components/socket/socket.component';
 import { TimerComponent } from './components/timer/timer.component';
 import { TopBarComponent } from './components/top-bar/top-bar.component';
 import { ConfigPageComponent } from './pages/config-page-component/config-page-component.component';
 import { CreatePageComponent } from './pages/create-page/create-page.component';
 import { GameOneVsOnePageComponent } from './pages/game-one-vs-one-page/game-one-vs-one-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
+import { SocketPageComponent } from './pages/socket-page/socket-page.component';
 
 /**
  * Main module that is used in main.ts.
@@ -38,15 +43,10 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
 @NgModule({
     declarations: [
         AppComponent,
-
         GamePageComponent,
-
         MainPageComponent,
-
         MaterialPageComponent,
-
         PlayAreaComponent,
-
         SidebarComponent,
         ButtonComponent,
         CreatePageComponent,
@@ -66,6 +66,11 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
         GiveUpButtonComponent,
         CounterComponent,
         GameOneVsOnePageComponent,
+        DrawingComponent,
+        DrawingToolsComponent,
+        TextBoxComponent,
+        SocketComponent,
+        SocketPageComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],

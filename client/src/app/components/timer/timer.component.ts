@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TimerService } from '@app/services/timer.service';
-import { interval, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-timer',
@@ -13,24 +12,20 @@ export class TimerComponent implements OnInit, OnDestroy {
     sec = 0;
     minutes = '00';
     seconds = '00';
-    private intervalSubscription: Subscription;
 
     constructor(private timerService: TimerService) {}
 
     ngOnInit(): void {
-        this.intervalSubscription = interval(1000).subscribe(() => {
-            this.timerService.getTime().subscribe((time) => {
-                this.min = Math.floor(time / 60);
-                this.sec = time % 60;
-                this.minutes = this.pad(this.min);
-                this.seconds = this.pad(this.sec);
-            });
+        this.timerService.getTime().subscribe((time) => {
+            this.min = Math.floor(time / 60);
+            this.sec = time % 60;
+            this.minutes = this.pad(this.min);
+            this.seconds = this.pad(this.sec);
         });
     }
 
     ngOnDestroy(): void {
-        this.intervalSubscription.unsubscribe();
-        this.timerService.resetTimer().subscribe();
+        this.timerService.resetTimer();
     }
 
     pad(value: number) {
