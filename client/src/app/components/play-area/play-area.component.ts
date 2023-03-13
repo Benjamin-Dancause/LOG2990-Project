@@ -75,8 +75,6 @@ export class PlayAreaComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.gameName = (localStorage.getItem('gameTitle') as string) || '';
-
-        this.gameName = (localStorage.getItem('gameTitle') as string) || '';
         this.communicationService.getGameByName(this.gameName).subscribe((game) => {
             this.imageLeftStr = this.serverURL + '/' + game.images[0];
             this.imageRightStr = this.serverURL + '/' + game.images[1];
