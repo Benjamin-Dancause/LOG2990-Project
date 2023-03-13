@@ -12,7 +12,6 @@ export class TimerManagerService {
     startTimer(roomId: string) {
         const time: number = this.getTimeFromRoom(roomId);
         this.timers.set(roomId, time);
-        console.log(roomId + '/' + this.timers.get(roomId));
         const intervalId = setInterval( () => {
             this.updateTimer(roomId);
         }, 1000);
@@ -21,7 +20,6 @@ export class TimerManagerService {
  
     updateTimer(roomId: string) {
         this.timers.set(roomId, this.timers.get(roomId) + 1);
-        console.log(roomId + '/' + this.timers.get(roomId));
         this.timerGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
     }
 

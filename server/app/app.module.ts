@@ -20,6 +20,7 @@ import { GameManager } from './services/game-manager/game-manager.service';
 import { SocketManagerService } from './services/socket-manager/socket-manager.service';
 import { StoreService } from './services/store/store.service';
 import { TimerManagerService } from './services/timer-manager/timer-manager.service';
+import { CounterManagerService } from './services/counter-manager/counter-manager.service';
 
 @Module({
     imports: [
@@ -55,6 +56,7 @@ import { TimerManagerService } from './services/timer-manager/timer-manager.serv
         TimerGateway,
         CounterGateway,
         TimerManagerService,
+        CounterManagerService,
     ],
 })
 export class AppModule {}

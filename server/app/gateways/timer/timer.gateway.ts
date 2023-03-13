@@ -1,3 +1,4 @@
+import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { forwardRef } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators';
@@ -8,7 +9,8 @@ import { Server, Socket } from 'socket.io';
 export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
-  constructor(@Inject(forwardRef(() => TimerManagerService)) private readonly timerManager: TimerManagerService) {};
+  constructor(@Inject(forwardRef(() => TimerManagerService)) private readonly timerManager: TimerManagerService,
+              @Inject(CounterManagerService) private readonly counterManager: CounterManagerService) {};
   
   handleConnection(client: Socket) {
     const roomId = client.handshake.query.id as string;
@@ -16,6 +18,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if(roomId){
       client.join(roomId);
       this.timerManager.startTimer(roomId);
+      this.counterManager.startCounter(roomId);
     }
   }
   
@@ -24,11 +27,11 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if(roomId){
       client.leave(roomId);
       this.timerManager.deleteTimerData(roomId);
+      this.counterManager.deleteCounterData(roomId);
     }
   }
 
   emitTimeToRoom(roomId: string, time: number) {
-    console.log(roomId + '/' + time);
     this.server.to(roomId).emit('timer', time);
 }
 
@@ -36,6 +39,18 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   onReset(client: Socket, roomId: string){
     this.timerManager.resetTimer(roomId);
     client.disconnect();
+  }
+
+  @SubscribeMessage('incrementCounter')
+  handleIncrementCounter(client: Socket) {
+    const counter = this.counterManager.incrementCounter(client);
+    this.server.emit('counterUpdate', counter);
+  }
+
+  @SubscribeMessage('resetCounter')
+  handleResetCounter(client: Socket) {
+    const counter = this.counterManager.resetCounter(client);
+    this.server.emit('counterUpdate', counter);
   }
 
 }
