@@ -29,7 +29,7 @@ export class GameService {
     flashDifferences(coords: Coords[], ctxs : CanvasRenderingContext2D[]) {
         ctxs[2].fillStyle = 'blue';
         ctxs[3].fillStyle = 'blue';
-        const successFlash = setInterval(() => {
+        const flash = setInterval(() => {
             for (const coordinate of coords) {
                 ctxs[2].fillRect(coordinate.x, coordinate.y, 1, 1);
                 ctxs[3].fillRect(coordinate.x, coordinate.y, 1, 1);
@@ -41,8 +41,7 @@ export class GameService {
         }, 200);
 
         setTimeout(() => {
-            clearInterval(successFlash);
-            //this.updateCanvasDisplay(positionArray);
+            clearInterval(flash);
         }, 1000);
     }
     
