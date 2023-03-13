@@ -8,7 +8,7 @@ import { CounterService } from './counter.service';
 
 const BIGTIMEOUT = 2000;
 const SMALLTIMOUT = 1000;
-//const SMALLINTERVAL = 100;
+
 @Injectable({
     providedIn: 'root',
 })
@@ -21,7 +21,7 @@ export class GameService {
     private differenceFound: number[] = [];
     private gameName: string = '';
 
-    constructor(private communicationService: CommunicationService, private counterService: CounterService) {
+    constructor(private communicationService: CommunicationService) {
         this.gameName = (localStorage.getItem('gameTitle') as string) || '';
     }
 
@@ -69,7 +69,7 @@ export class GameService {
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.successSound.currentTime = 0;
-                    this.counterService.incrementCounter().subscribe();
+                    //this.counterService.incrementCounter().subscribe();
                     this.successSound.play();
                     this.flashDifferences(response.coords, ctxs);
                     setTimeout(() => {
