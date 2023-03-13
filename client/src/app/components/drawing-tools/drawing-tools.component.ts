@@ -46,4 +46,7 @@ export class DrawingToolsComponent implements OnInit {
     deleteRight(): void {
         this.drawingService.deleteRight();
     }
+    test(): void {
+        this.drawingService.test();
+    }
 }

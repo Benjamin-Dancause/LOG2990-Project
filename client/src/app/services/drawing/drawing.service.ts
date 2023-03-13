@@ -46,9 +46,10 @@ export class DrawingService {
     }
     end(): void {
         this.isDrawing = false;
+        this.currentCtx?.clearRect(0, 0, 640, 480);
     }
     execute(event: MouseEvent): void {
-        if (!this.isDrawing) {
+        if (!this.isDrawing || this.currentCanvas != event.target) {
             return;
         }
         switch (this.currentTool) {
@@ -87,7 +88,9 @@ export class DrawingService {
     }
     drawRectangle(event: MouseEvent): void {
         if (this.currentCtx) {
-            this.currentCtx.strokeRect(event.offsetX, event.offsetY, this.lastPos.x - event.offsetX, this.lastPos.y - event.offsetY);
+            this.currentCtx.fillStyle = this.currentColor;
+            this.currentCtx.clearRect(0, 0, 640, 480);
+            this.currentCtx.fillRect(event.offsetX, event.offsetY, this.lastPos.x - event.offsetX, this.lastPos.y - event.offsetY);
         }
     }
     swapDrawings(): void {
@@ -130,5 +133,15 @@ export class DrawingService {
     clearDrawing(canvas: HTMLCanvasElement): void {
         this.setActiveCanvas(canvas);
         this.currentCtx?.clearRect(0, 0, 640, 480);
+    }
+    unregister(): void {
+        this.canvasRegistry.length = 0;
+    }
+    test(): void {
+        let firstCtx = this.canvasRegistry[0].getContext('2d');
+        let secondCtx = this.canvasRegistry[1];
+        if (firstCtx && secondCtx) {
+            firstCtx.drawImage(secondCtx, 0, 0);
+        }
     }
 }
