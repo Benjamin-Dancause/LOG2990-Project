@@ -90,4 +90,8 @@ export class GameService {
             });
         }
     }
+
+    clearDifferenceArray() {
+        this.differenceFound = [];
+    }
 }

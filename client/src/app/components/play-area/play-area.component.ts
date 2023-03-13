@@ -4,6 +4,7 @@ import { CounterService } from '@app/services/counter.service';
 import { DrawService } from '@app/services/draw.service';
 import { GameService } from '@app/services/game.service';
 import { InputService } from '@app/services/input.service';
+import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 // TODO : Avoir un fichier séparé pour les constantes!
@@ -44,7 +45,8 @@ export class PlayAreaComponent implements AfterViewInit {
     private ctxLeftTop: CanvasRenderingContext2D | null = null;
     private ctxRightTop: CanvasRenderingContext2D | null = null;
     private gameName: string = '';
-    constructor(private counterService: CounterService, private communicationService: CommunicationService, private input : InputService, private  game : GameService) {}
+    private mouseDownSubscription: Subscription;
+    constructor(private counterService: CounterService, private communicationService: CommunicationService, private input : InputService, private game : GameService) {}
 
     get width(): number {
         return this.canvasSize.x;
@@ -81,10 +83,15 @@ export class PlayAreaComponent implements AfterViewInit {
             this.initCanvases();
         });
 
-        this.input.mouseDown$.subscribe((event) => {
+        this.mouseDownSubscription = this.input.mouseDown$.subscribe((event) => {
             let ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
             this.game.checkClick(event, this.counterService, ctxs);
         });
+    }
+
+    ngOnDestroy(): void {
+        this.mouseDownSubscription.unsubscribe();
+        this.game.clearDifferenceArray();
     }
 
 }
