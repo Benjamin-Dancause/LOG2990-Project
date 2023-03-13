@@ -5,7 +5,7 @@
         <span>{{ message.text }}</span>
       </div>
     </div>
-    <div *ngIf="!single" class="input-area">
+    <div *ngIf="!solo" class="input-area">
       <input type="text" placeholder="Entrez votre message (max. 200 caractères)" [(ngModel)]="messageText" (keydown.enter)="sendMessage()" maxlength="200" #inputBox>
       <button (click)="sendMessage()">Envoyer</button>
     </div>

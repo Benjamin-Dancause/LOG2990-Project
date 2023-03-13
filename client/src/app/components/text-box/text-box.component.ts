@@ -8,7 +8,8 @@ import { CounterService } from '@app/services/counter.service';
     providers: [CounterService],
 })
 export class TextBoxComponent implements OnInit {
-    @Input() single: boolean = false;
+    @Input() single: boolean = true;
+    @Input() solo: boolean;
     @Input() opponentName: string = '';
     @ViewChild('messageArea') messageArea: ElementRef;
 
