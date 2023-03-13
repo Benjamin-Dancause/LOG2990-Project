@@ -42,8 +42,9 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('incrementCounter')
-  handleIncrementCounter(client: Socket) {
-    const counter = this.counterManager.incrementCounter(client);
+  handleIncrementCounter(client: Socket, roomId: string) {
+    const counter: number = this.counterManager.incrementCounter(roomId);
+    console.log('counter: ' + counter);
     this.server.emit('counterUpdate', counter);
   }
 

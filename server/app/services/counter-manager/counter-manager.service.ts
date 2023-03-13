@@ -8,7 +8,8 @@ export class CounterManagerService {
 
     startCounter(roomId: string) {
         const count: number = this.getCounterFromRoom(roomId);
-         this.counters.set(roomId, count);
+        console.log('counter: ' + count);
+        this.counters.set(roomId, count);
     }
 
     deleteCounterData(roomId: string) {
@@ -19,9 +20,11 @@ export class CounterManagerService {
         return this.counters.get(roomId) || 0;
     }
 
-    incrementCounter(client: Socket): number {
-        this.counters.set(client.id, this.counters.get(client.id) + 1);
-        const counter = this.counters.get(client.id);
+    incrementCounter(roomId: string): number {
+        console.log(roomId);
+        this.counters.set(roomId, this.counters.get(roomId) + 1);
+        const counter = this.counters.get(roomId);
+        console.log('counter: ' + counter);
         return counter;
     }
 

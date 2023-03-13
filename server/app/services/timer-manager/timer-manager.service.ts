@@ -35,6 +35,7 @@ export class TimerManagerService {
 
     resetTimer(roomId: string) {
         const time = 0;
+        console.log('reset id: ' + roomId);
         this.timers.set(roomId, time);
     }
 }
