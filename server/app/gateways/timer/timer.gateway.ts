@@ -1,12 +1,14 @@
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
+import { forwardRef } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators';
-import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway()
 export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: Server;
 
-  constructor(@Inject(TimerManagerService) private readonly timerManager: TimerManagerService) {};
+  constructor(@Inject(forwardRef(() => TimerManagerService)) private readonly timerManager: TimerManagerService) {};
   
   handleConnection(client: Socket) {
     const roomId = client.handshake.query.id as string;
@@ -18,12 +20,17 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
   
   handleDisconnect(@ConnectedSocket() client: Socket) {
-    const roomId = client.handshake.query.roomId as string;
+    const roomId = client.handshake.query.id as string;
     if(roomId){
       client.leave(roomId);
       this.timerManager.deleteTimerData(roomId);
     }
   }
+
+  emitTimeToRoom(roomId: string, time: number) {
+    console.log(roomId + '/' + time);
+    this.server.to(roomId).emit('timer', time);
+}
 
   @SubscribeMessage('reset-timer')
   onReset(client: Socket, roomId: string){

@@ -17,10 +17,10 @@ export class TimerService {
         const uniqueId = Math.random().toString(36).substring(7)
         this.socket = io(this.baseUrl, { query: {id: uniqueId }});
         return new Observable<number>(observer => {
-        this.socket.on('timer', (time:number) => {
-            observer.next(time);
+            this.socket.on('timer', (time:number) => {
+                observer.next(time);
+            });
         });
-       });
     }
 
     resetTimer() {

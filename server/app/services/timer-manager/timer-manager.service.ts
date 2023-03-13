@@ -1,32 +1,29 @@
-import { Injectable } from '@nestjs/common';
-import { WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { TimerGateway } from '@app/gateways/timer/timer.gateway';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class TimerManagerService {
-    @WebSocketServer() server: Server;
     
     private timers = new Map<string, number>();
     private intervals = new Map<string, NodeJS.Timeout>();
     
+    constructor(@Inject(forwardRef( () => TimerGateway)) private readonly timerGateway: TimerGateway) {};
 
     startTimer(roomId: string) {
         const time: number = this.getTimeFromRoom(roomId);
         this.timers.set(roomId, time);
+        console.log(roomId + '/' + this.timers.get(roomId));
         const intervalId = setInterval( () => {
             this.updateTimer(roomId);
         }, 1000);
         this.intervals.set(roomId, intervalId);
     }
-
+ 
     updateTimer(roomId: string) {
         this.timers.set(roomId, this.timers.get(roomId) + 1);
-        this.emitTimeToRoom(roomId, this.timers.get(roomId));
+        console.log(roomId + '/' + this.timers.get(roomId));
+        this.timerGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
     }
-
-    emitTimeToRoom(roomId: string, time: number) {
-    this.server.to(roomId).emit(roomId, time);
-  }
 
     getTimeFromRoom(roomId: string): number {
         return this.timers.get(roomId) || 0;
