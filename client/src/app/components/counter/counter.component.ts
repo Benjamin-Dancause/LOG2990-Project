@@ -11,15 +11,15 @@ export class CounterComponent implements OnInit, OnDestroy {
     counter: number = 0;
     
     
-    constructor(/*private counterService: CounterService*/) {}
+    constructor(private counterService: CounterService) {}
 
     ngOnInit(): void {
-        /*this.counterService.initializeSocket().subscribe((counter) => {
+        this.counterService.initializeSocket().subscribe((counter) => {
             this.counter = counter;
-        });*/
+        });
     }
 
     ngOnDestroy(): void {
-        //this.counterService.resetCounter();
+        this.counterService.resetCounter();
     }
 }

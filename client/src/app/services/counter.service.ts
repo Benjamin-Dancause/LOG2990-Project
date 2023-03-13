@@ -1,34 +1,32 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Socket } from 'socket.io-client';
-//import { environment } from 'src/environments/environment';
+import { io, Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CounterService {
-    //private readonly baseUrl: string = environment.webSocketUrl;
-    private socket: Socket;
-    //private _counter: number = 0;
+    private readonly baseUrl: string = environment.webSocketUrl;
+    private counterSocket: Socket;
 
     constructor() {}
     
     initializeSocket(): Observable<number> {
-        //const uniqueId = Math.random().toString(36).substring(7)
-        /*this.socket = io(this.baseUrl, { query: {clientId: uniqueId, counter: this._counter}});*/
+        const uniqueId = Math.random().toString(36).substring(7)
+        this.counterSocket = io(this.baseUrl, { query: {id: uniqueId}});
         return new Observable<number>( observer => {
-        this.socket.on('counterUpdate', (counter: number) => {
-            //this._counter = counter;
+        this.counterSocket.on('counterUpdate', (counter: number) => {
             observer.next(counter);
         })
        });
     }
 
     incrementCounter() {
-        this.socket.emit('incrementCounter');
+        this.counterSocket.emit('incrementCounter');
     }
 
     resetCounter() {
-        this.socket.emit('resetCounter');
+        this.counterSocket.emit('resetCounter');
     }
 }
