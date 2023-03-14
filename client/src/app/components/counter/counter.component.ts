@@ -11,7 +11,7 @@ export class CounterComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         console.log('ready before');
-        this.counterService.initializeSocket();
+        this.counterService.initializeCounter();
     }
 
     ngOnDestroy(): void {

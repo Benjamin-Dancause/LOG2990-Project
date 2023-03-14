@@ -16,18 +16,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         @Inject(CounterManagerService) private readonly counterManager: CounterManagerService,
     ) {}
 
-    handleConnection(client: Socket) {
-        const roomId = randomUUID();
-        this.socketIdToRoomId[client.id] = roomId;
-        console.log('handleConnection line 19', client.id, roomId);
-
-        if (roomId) {
-            client.join(roomId);
-            console.log('Counter roomID for handleConnection in Gateway: ' + roomId);
-            this.timerManager.startTimer(roomId);
-            this.counterManager.startCounter(roomId);
-        }
-    }
+    handleConnection(client: Socket) {}
 
     handleDisconnect(@ConnectedSocket() client: Socket) {
         const roomId = this.socketIdToRoomId[client.id];
@@ -46,6 +35,21 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     onReset(client: Socket, roomId: string) {
         this.timerManager.resetTimer(roomId);
         client.disconnect();
+    }
+
+    @SubscribeMessage('solo-game')
+    onSoloGame(client: Socket) {
+        const roomId = randomUUID();
+        console.log(client.id);
+        this.socketIdToRoomId[client.id] = roomId;
+        console.log('handleConnection line 19', client.id, roomId);
+
+        if (roomId) {
+            client.join(roomId);
+            console.log('Counter roomID for handleConnection in Gateway: ' + roomId);
+            this.timerManager.startTimer(roomId);
+            this.counterManager.startCounter(roomId);
+        }
     }
 
     @SubscribeMessage('increment-counter')

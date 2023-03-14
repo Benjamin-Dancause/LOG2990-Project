@@ -33,7 +33,7 @@
 
         <div class="button-container">
             <button *ngIf="!configuration" id="settings" (click)="openSettings()">Jouer en solo</button>
-            <button *ngIf="!configuration" id="settings" [routerLink]="['/gameOneVsOne']">Créer/joindre une partie 1vs1</button>
+            <button *ngIf="!configuration" id="settings" routerLink="/waitingRoom">Créer/joindre une partie 1vs1</button>
             <button *ngIf="configuration" (click)="deleteGame(gameTitle)">Supprimer partie</button>
             <button *ngIf="configuration">Réinitialiser les meilleurs temps</button>
         </div>
@@ -81,73 +81,3 @@
         </ng-template>
     </div>
 </div>
-
-<!-- <div class="bigContainer">
-    <div class="container">
-        <h3>{{ gameTitle }}</h3>
-        <div class="image-container">
-            <img [src]="imageLink" />
-        </div>
-        <div [ngStyle]="{ 'background-color': color }" id="difficulty">
-            <span>{{ levelText }}</span>
-        </div>
-        <div class="best-times-container">
-            <h4>Meilleurs temps</h4>
-            <div class="solo">
-                <h4>Solo</h4>
-                <div
-                    *ngFor="let time of bestSoloTimes.slice(0, 3); let i = index"
-                    class="best-time"
-                    [ngClass]="{ gold: i === 0, silver: i === 1, bronze: i === 2 }"
-                >
-                    <span>{{ time.name }} {{ time.time }}</span>
-                </div>
-            </div>
-            <div class="oneVsOne">
-                <h4>1vs1</h4>
-                <div
-                    *ngFor="let time of best1vs1Times.slice(0, 3); let i = index"
-                    class="best-time"
-                    [ngClass]="{ gold: i === 0, silver: i === 1, bronze: i === 2 }"
-                >
-                    <span>{{ time.name }} {{ time.time }}</span>
-                </div>
-            </div>
-        </div>
-        <div class="button-container">
-            <button *ngIf="!configuration" id="settings" (click)="openSettings()">Jouer en solo</button>
-            <button *ngIf="!configuration" id="settings" (click)="open1vs1Settings()">Créer/joindre une partie 1vs1</button>
-            <button *ngIf="configuration">Supprimer partie</button>
-            <button *ngIf="configuration">Réinitialiser les meilleurs temps</button>
-        </div>
-        <ng-template #namePopupTemplate>
-            <h2 mat-dialog-title>Paramètres de jeu - {{ isOneVsOne ? 'Mode 1vs1' : 'Mode classique' }}</h2>
-            <mat-dialog-content>
-                <div class="container">
-                    <mat-form-field>
-                        <mat-label>Nom d'utilisateur</mat-label>
-                        <input matInput type="text" [(ngModel)]="userName" [minlength]="4" maxlength="15" #inputRef="ngModel" required />
-                        <mat-error *ngIf="inputRef.invalid && (inputRef.dirty || inputRef.touched)">
-                            Le nom d'utilisateur doit comporter au moins 4 caractères petit coquin
-                        </mat-error>
-                        <mat-hint>min. 4 et max. 15 caractères</mat-hint>
-                    </mat-form-field>
-                    <div id="char-count">
-                        <mat-hint *ngIf="userName">{{ userName.length }} caractères entrés</mat-hint>
-                    </div>
-                </div>
-            </mat-dialog-content>
-            <mat-dialog-actions>
-                <button mat-button mat-dialog-close>Annuler</button>
-                <button
-                    mat-button
-                    (click)="saveUserName()"
-                    [disabled]="!inputRef.valid"
-                    [mat-dialog-close]="true"
-                    [routerLink]="inputRef.valid ? (isOneVsOne ? ['/gameOneVsOne'] : ['/game']) : []"
-                >
-                    Sauvegarder
-                </button>
-            </mat-dialog-actions>
-        </
- -->

@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { CommunicationService } from '@app/services/communication.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
 
 const PAGE_SIZE = 4;
 
@@ -17,13 +18,8 @@ export class GameSelectionPageComponent implements OnInit {
     pageSize = PAGE_SIZE;
     lastPage = 0;
 
-    constructor(protected communication: CommunicationService) {
+    constructor(protected communication: CommunicationService, public waitingRoomService: WaitingRoomService) {
         communication.getAllGames().subscribe((gamecards: GameSelectionPageData[]) => {
-            for (const gamecard of gamecards) {
-                console.log(gamecard.image);
-                console.log(gamecard.name);
-                console.log(gamecard.difficulty);
-            }
             this.games = gamecards;
             this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
         });
@@ -34,6 +30,7 @@ export class GameSelectionPageComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.waitingRoomService.initializeSocket();
         this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
 
         for (const game of this.games) {
