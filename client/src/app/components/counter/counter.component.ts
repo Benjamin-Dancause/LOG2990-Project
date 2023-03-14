@@ -5,7 +5,6 @@ import { CounterService } from '@app/services/counter.service';
     selector: 'app-counter',
     templateUrl: './counter.component.html',
     styleUrls: ['./counter.component.scss'],
-    providers: [CounterService],
 })
 export class CounterComponent implements OnInit, OnDestroy {
     constructor(public counterService: CounterService) {}

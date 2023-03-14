@@ -9,15 +9,13 @@ import { environment } from 'src/environments/environment';
 export class TimerService {
     private readonly baseUrl: string = environment.webSocketUrl;
     private socket: Socket;
-    
-    constructor() {
-    }
-    
+
+    constructor() {}
+
     getTime(): Observable<number> {
-        const uniqueId = Math.random().toString(36).substring(7)
-        this.socket = io(this.baseUrl, { query: {id: uniqueId }});
-        return new Observable<number>(observer => {
-            this.socket.on('timer', (time:number) => {
+        this.socket = io(this.baseUrl);
+        return new Observable<number>((observer) => {
+            this.socket.on('timer', (time: number) => {
                 observer.next(time);
             });
         });

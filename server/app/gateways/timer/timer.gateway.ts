@@ -3,11 +3,13 @@ import { TimerManagerService } from '@app/services/timer-manager/timer-manager.s
 import { forwardRef } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators';
 import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway()
 export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
+    socketIdToRoomId: Record<string, string> = {};
 
     constructor(
         @Inject(forwardRef(() => TimerManagerService)) private readonly timerManager: TimerManagerService,
@@ -15,7 +17,8 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     ) {}
 
     handleConnection(client: Socket) {
-        const roomId = client.handshake.query.id as string;
+        const roomId = randomUUID();
+        this.socketIdToRoomId[client.id] = roomId;
         console.log('handleConnection line 19', client.id, roomId);
 
         if (roomId) {
@@ -27,7 +30,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     handleDisconnect(@ConnectedSocket() client: Socket) {
-        const roomId = client.handshake.query.id as string;
+        const roomId = this.socketIdToRoomId[client.id];
         if (roomId) {
             client.leave(roomId);
             this.timerManager.deleteTimerData(roomId);
@@ -46,18 +49,17 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @SubscribeMessage('increment-counter')
-    handleIncrementCounter(client: Socket, roomId: string) {
-        console.log(client, roomId);
-
-        console.log('This is my room id in incrementCounter for gateway:' + roomId);
+    handleIncrementCounter(client: Socket) {
+        const roomId = this.socketIdToRoomId[client.id];
         const counter: number = this.counterManager.incrementCounter(roomId);
         console.log('counter received by manager: ' + counter);
-        this.server.emit('counter-update', counter);
+        this.server.to(roomId).emit('counter-update', counter);
     }
 
-    @SubscribeMessage('resetCounter')
+    @SubscribeMessage('reset-counter')
     handleResetCounter(client: Socket) {
-        const counter = this.counterManager.resetCounter(client);
+        const roomId = this.socketIdToRoomId[client.id];
+        const counter = this.counterManager.resetCounter(roomId);
         this.server.emit('counter-update', counter);
     }
 }

@@ -10,16 +10,12 @@ export class CounterService {
     private counterSocket: Socket;
     counter: number = 0;
 
-    constructor() {
-        setInterval(() => {
-            console.log('interval', this.counterSocket);
-        }, 1000);
-    }
-
     initializeSocket(): void {
         // const uniqueId = Math.random().toString(36).substring(7);
         // this.counterSocket = io(this.baseUrl, { query: { id: uniqueId } });
         // console.log('This is the uniqueID for counter: ' + uniqueId);
+
+        if (this.counterSocket) return;
 
         this.counterSocket = io(this.baseUrl);
         console.log('This is the uniqueID for counter: ' + this.counterSocket.id);

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Socket } from 'socket.io';
 
 @Injectable()
 export class CounterManagerService {
@@ -28,8 +27,10 @@ export class CounterManagerService {
         return counter;
     }
 
-    resetCounter(client: Socket) {
-        this.counters.set(client.id, 0);
-        const counter = this.counters.get(client.id);
+    resetCounter(roomId: string): number {
+        this.counters.set(roomId, 0);
+        const counter = this.counters.get(roomId);
+        console.log('counter after reset: ' + counter);
+        return counter;
     }
 }

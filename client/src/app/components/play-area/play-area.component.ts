@@ -5,7 +5,6 @@ import { Vec2 } from '@app/interfaces/vec2';
 import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
 import { DifferenceService } from '@app/services/difference.service';
-import { DrawService } from '@app/services/draw.service';
 import { environment } from 'src/environments/environment';
 
 // TODO : Avoir un fichier séparé pour les constantes!
@@ -28,7 +27,6 @@ const SMALLTIMOUT = 1000;
     selector: 'app-play-area',
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
-    providers: [CounterService, DrawService],
 })
 export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvasLeft', { static: false }) private canvasLeft!: ElementRef<HTMLCanvasElement>;
