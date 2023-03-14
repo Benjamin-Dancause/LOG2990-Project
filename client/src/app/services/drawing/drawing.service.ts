@@ -140,6 +140,7 @@ export class DrawingService {
     }
     unregister(): void {
         this.canvasRegistry.length = 0;
+        this.backgroundRegistry.length = 0;
     }
     printDrawing(): void {
         const firstCanvas = this.canvasRegistry[0];
@@ -150,6 +151,12 @@ export class DrawingService {
             backgroundFirstCtx.drawImage(firstCanvas, 0, 0);
             backgroundSecondCtx.drawImage(secondCanvas, 0, 0);
         }
+    }
+    getLeftDrawing(): HTMLCanvasElement {
+        return this.backgroundRegistry[0];
+    }
+    getRightDrawing(): HTMLCanvasElement {
+        return this.backgroundRegistry[1];
     }
     test(): void {}
 }

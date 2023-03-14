@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
-import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 
 export interface GameSelectionPageData {
     name: string;
@@ -28,14 +29,14 @@ const DIFFCOUNT_MIN = 3;
 const DIFFERROR_MSG = 'Vous devez avoir entre 3 et 9 différences';
 const FORMATERROR_MSG = 'Le format des images est invalide';
 const NAMEERROR_MSG = 'Ce nom est déjà pris ou est vide';
-const NOIMAGE_MSG = 'Aucune images détectées';
+//const NOIMAGE_MSG = 'Aucune images détectées';
 
 @Component({
     selector: 'app-create-image',
     templateUrl: './create-image.component.html',
     styleUrls: ['./create-image.component.scss'],
 })
-export class CreateImageComponent implements OnInit {
+export class CreateImageComponent implements AfterViewInit {
     @ViewChild('myCanvas') canvasRef: ElementRef;
     @ViewChild('inputDifferentTemplate', { static: true })
     inputDifferentTemplate: TemplateRef<unknown>;
@@ -63,15 +64,22 @@ export class CreateImageComponent implements OnInit {
     htmlInputElement = window.HTMLInputElement;
     diffCanvas: HTMLCanvasElement;
 
+    @ViewChild('differenceCanvas', { static: true })
+    differenceCanvas: ElementRef<HTMLCanvasElement>;
+    ctxDiff: CanvasRenderingContext2D | null;
+    @Input() nbDiff: number;
+    @Input() difficulty: string;
+
     // eslint-disable-next-line max-params
     constructor(
         public dialog: MatDialog,
         public difference: DifferenceService,
         private communication: CommunicationService,
         private router: Router,
+        private drawingService: DrawingService,
     ) {}
 
-    ngOnInit(): void {
+    ngAfterViewInit(): void {
         this.ctxOriginal = this.originalCanvas.nativeElement.getContext('2d');
         this.ctxModifiable = this.modifiableCanvas.nativeElement.getContext('2d');
         if (this.ctxOriginal && this.ctxModifiable) {
@@ -110,23 +118,15 @@ export class CreateImageComponent implements OnInit {
         });
     }
     showDifference(): void {
-        if (!this.originalImage && !this.modifiableImage) {
-            this.showError(NOIMAGE_MSG);
-            return;
-        }
-        this.createDifference();
         this.dialog.open(this.negativeTemplate, {
             width: '700px',
             height: '650px',
         });
-        const negDiv = document.getElementById('neg') as HTMLDivElement;
-        negDiv.appendChild(this.diffCanvas);
-        const nbdiff = document.createElement('p');
-        nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.getDifference(this.diffCanvas).count.toString());
-        negDiv.appendChild(nbdiff);
-        const dificulty = document.createElement('p');
-        dificulty.innerHTML = 'Difficulté : '.concat(this.difference.isDifficult(this.diffCanvas) ? 'Difficile' : 'Facile');
-        negDiv.appendChild(dificulty);
+        this.diffCanvas = document.getElementById('diff') as HTMLCanvasElement;
+        this.ctxDiff = this.diffCanvas.getContext('2d');
+        this.createDifference();
+        this.nbDiff = this.difference.getDifference(this.diffCanvas).count;
+        this.difficulty = this.difference.isDifficult(this.diffCanvas) ? 'Difficile' : 'Facile';
     }
     async storeOriginal(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
@@ -179,10 +179,10 @@ export class CreateImageComponent implements OnInit {
         }
     }
     deleteOriginal(): void {
-        this.ctxOriginal?.clearRect(0, 0, this.width, this.height);
+        this.ctxOriginal?.fillRect(0, 0, this.width, this.height);
     }
     deleteModifiable(): void {
-        this.ctxModifiable?.clearRect(0, 0, this.width, this.height);
+        this.ctxModifiable?.fillRect(0, 0, this.width, this.height);
     }
     deleteBoth(): void {
         this.deleteOriginal();
@@ -192,9 +192,32 @@ export class CreateImageComponent implements OnInit {
         if (this.ctxOriginal && this.ctxModifiable) {
             const slider = document.getElementById('slider') as HTMLInputElement;
             const radius = slider.innerHTML as unknown as number;
-            const diff = this.difference.findDifference(this.ctxOriginal, this.ctxModifiable, radius);
-            this.diffCanvas = diff;
+            const left = this.syncLeft();
+            const right = this.syncRight();
+            if (left && right) {
+                const diff = this.difference.findDifference(left, right, radius);
+                this.ctxDiff?.clearRect(0, 0, this.width, this.height);
+                this.ctxDiff?.drawImage(diff, 0, 0);
+            }
         }
+    }
+    syncLeft(): ImageData | undefined {
+        const leftDrawing = this.drawingService.getLeftDrawing();
+        if (this.ctxDiff) {
+            this.ctxDiff.clearRect(0, 0, this.width, this.height);
+            this.ctxDiff.drawImage(this.originalCanvas.nativeElement, 0, 0, this.width, this.height);
+            this.ctxDiff.drawImage(leftDrawing, 0, 0);
+        }
+        return this.ctxDiff?.getImageData(0, 0, 640, 480);
+    }
+    syncRight(): ImageData | undefined {
+        const rightDrawing = this.drawingService.getRightDrawing();
+        if (this.ctxDiff) {
+            this.ctxDiff.clearRect(0, 0, this.width, this.height);
+            this.ctxDiff.drawImage(this.modifiableCanvas.nativeElement, 0, 0, this.width, this.height);
+            this.ctxDiff.drawImage(rightDrawing, 0, 0);
+        }
+        return this.ctxDiff?.getImageData(0, 0, 640, 480);
     }
     async verifyBMP(file: File): Promise<boolean> {
         return new Promise((resolve) => {
