@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
@@ -11,7 +11,7 @@ const PAGE_SIZE = 4;
     templateUrl: './game-selection-page-component.component.html',
     styleUrls: ['./game-selection-page-component.component.scss'],
 })
-export class GameSelectionPageComponent implements OnInit {
+export class GameSelectionPageComponent implements OnInit, AfterViewInit, OnDestroy {
     games: GameSelectionPageData[] = [];
 
     currentPage = 0;
@@ -36,6 +36,15 @@ export class GameSelectionPageComponent implements OnInit {
         for (const game of this.games) {
             console.log('test' + game.image);
         }
+    }
+
+    ngAfterViewInit(): void {
+        this.waitingRoomService.socket.on('connection-count', (message: string) => {
+            console.log(message);
+        });
+    }
+    ngOnDestroy() {
+        this.waitingRoomService.disconnectSocket();
     }
 
     onBack() {

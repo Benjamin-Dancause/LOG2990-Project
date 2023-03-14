@@ -13,7 +13,10 @@ export class WaitingRoomService {
         // const uniqueId = Math.random().toString(36).substring(7);
         // this.counterSocket = io(this.baseUrl, { query: { id: uniqueId } });
         // console.log('This is the uniqueID for counter: ' + uniqueId);
-        if (this.socket) return;
+        if (this.socket) {
+            this.socket.connect();
+            return;
+        }
         this.socket = io(this.baseUrl);
         console.log('This is the uniqueID for socket: ' + this.socket.id);
         this.socket.on('counter-update', (counter: number) => {
@@ -23,5 +26,9 @@ export class WaitingRoomService {
 
     soloGame(): void {
         this.socket.emit('solo-game');
+    }
+
+    disconnectSocket() {
+        this.socket.disconnect();
     }
 }

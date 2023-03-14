@@ -10,15 +10,24 @@ import { Server, Socket } from 'socket.io';
 export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
     socketIdToRoomId: Record<string, string> = {};
+    connectionCounter: number = 0;
 
     constructor(
         @Inject(forwardRef(() => TimerManagerService)) private readonly timerManager: TimerManagerService,
         @Inject(CounterManagerService) private readonly counterManager: CounterManagerService,
     ) {}
 
-    handleConnection(client: Socket) {}
+    handleConnection(client: Socket) {
+        this.connectionCounter++;
+        console.log('New connection, total clients connected is now: ' + this.connectionCounter);
+        if (this.connectionCounter > 1) {
+            this.server.sockets.emit('connection-count', 'There is now more than 1 person online');
+        }
+    }
 
     handleDisconnect(@ConnectedSocket() client: Socket) {
+        this.connectionCounter--;
+        console.log('New disconnection, total clients connected is now: ' + this.connectionCounter);
         const roomId = this.socketIdToRoomId[client.id];
         if (roomId) {
             client.leave(roomId);
