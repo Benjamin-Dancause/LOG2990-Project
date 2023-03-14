@@ -50,3 +50,16 @@
 }
 
 
+#grid-container .cheat-message {
+    position: absolute;
+    left: 65%;
+    bottom: 20px;
+    height: 40px;
+    background-color: rgba(247, 247, 247, 0.79);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: red;
+    border: 1px solid rgb(126, 222, 235);
+}

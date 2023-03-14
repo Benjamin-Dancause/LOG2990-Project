@@ -1,4 +1,5 @@
 <div id="grid-container">
+    <div class="cheat-message" *ngIf="isCheatEnabled">Mode triche activé</div>
     <div id="canvasContainer">
     <canvas class="canvas" id="canvas-1" #gridCanvasLeft [attr.width]="width" [attr.height]="height">
         Your browser does not support the canvas element.

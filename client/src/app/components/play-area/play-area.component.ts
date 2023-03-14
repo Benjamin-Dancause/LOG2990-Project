@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
 import { DrawService } from '@app/services/draw.service';
@@ -26,16 +26,15 @@ export enum MouseButton {
     styleUrls: ['./play-area.component.scss'],
     providers: [CounterService, DrawService],
 })
-export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
+export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvasLeft', { static: false }) private canvasLeft!: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvasRight', { static: false }) private canvasRight!: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvasLeftTop', { static: false }) private canvasLeftTop!: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvasRightTop', { static: false }) private canvasRightTop!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('canvas2', { static: true }) private canvas2!: ElementRef<HTMLCanvasElement>;
+
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
-
-    cheatMode = false;
+    isCheatEnabled = false;
 
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
@@ -60,6 +59,13 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    @HostListener('document:keydown', ['$event'])
+    handleKeyboardEvent(event: KeyboardEvent) {
+        if (event.key === 't') {
+            this.isCheatEnabled = !this.isCheatEnabled;
+        }
     }
 
     async initCanvases() {
@@ -95,28 +101,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
         });
     }
 
-    ngOnInit(): void {
-        document.addEventListener('keydown', this.onKeyDown.bind(this));
-    }
-
     ngOnDestroy(): void {
         this.mouseDownSubscription.unsubscribe();
         this.game.clearDifferenceArray();
-        document.removeEventListener('keydown', this.onKeyDown);
-    }
-
-    onKeyDown(event: KeyboardEvent): void {
-        if (event.key === 't') {
-            this.cheatMode = !this.cheatMode;
-            const context = this.canvas2.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-            context.font = '30px Arial';
-            context.fillStyle = 'red';
-
-            context.textBaseline = 'middle';
-            context.clearRect(0, this.canvas2.nativeElement.height - 30, this.canvas2.nativeElement.width, 30);
-            if (this.cheatMode) {
-                context.fillText('Triche', this.canvas2.nativeElement.width / 2, this.canvas2.nativeElement.height - 15);
-            }
-        }
     }
 }
