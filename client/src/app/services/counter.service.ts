@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
@@ -9,24 +8,33 @@ import { environment } from 'src/environments/environment';
 export class CounterService {
     private readonly baseUrl: string = environment.webSocketUrl;
     private counterSocket: Socket;
+    counter: number = 0;
 
-    constructor() {}
-    
-    initializeSocket(): Observable<number> {
-        const uniqueId = Math.random().toString(36).substring(7)
-        this.counterSocket = io(this.baseUrl, { query: {id: uniqueId}});
-        return new Observable<number>( observer => {
-        this.counterSocket.on('counterUpdate', (counter: number) => {
-            observer.next(counter);
-        })
-       });
+    constructor() {
+        setInterval(() => {
+            console.log('interval', this.counterSocket);
+        }, 1000);
+    }
+
+    initializeSocket(): void {
+        // const uniqueId = Math.random().toString(36).substring(7);
+        // this.counterSocket = io(this.baseUrl, { query: { id: uniqueId } });
+        // console.log('This is the uniqueID for counter: ' + uniqueId);
+
+        this.counterSocket = io(this.baseUrl);
+        console.log('This is the uniqueID for counter: ' + this.counterSocket.id);
+        this.counterSocket.on('counter-update', (counter: number) => {
+            this.counter = counter;
+            console.log('I entered the observable return');
+        });
     }
 
     incrementCounter() {
-        this.counterSocket.emit('incrementCounter');
+        console.log('Incrementing counter called in service', this.counterSocket);
+        this.counterSocket.emit('increment-counter');
     }
 
     resetCounter() {
-        this.counterSocket.emit('resetCounter');
+        this.counterSocket.emit('reset-counter');
     }
 }

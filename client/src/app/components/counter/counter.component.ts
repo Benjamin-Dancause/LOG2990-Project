@@ -8,15 +8,11 @@ import { CounterService } from '@app/services/counter.service';
     providers: [CounterService],
 })
 export class CounterComponent implements OnInit, OnDestroy {
-    counter: number = 0;
-    
-    
-    constructor(private counterService: CounterService) {}
+    constructor(public counterService: CounterService) {}
 
     ngOnInit(): void {
-        this.counterService.initializeSocket().subscribe((counter) => {
-            this.counter = counter;
-        });
+        console.log('ready before');
+        this.counterService.initializeSocket();
     }
 
     ngOnDestroy(): void {

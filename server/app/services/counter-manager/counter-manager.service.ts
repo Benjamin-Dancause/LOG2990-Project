@@ -3,7 +3,6 @@ import { Socket } from 'socket.io';
 
 @Injectable()
 export class CounterManagerService {
-
     private counters: Map<string, number> = new Map();
 
     startCounter(roomId: string) {
@@ -21,10 +20,11 @@ export class CounterManagerService {
     }
 
     incrementCounter(roomId: string): number {
-        console.log(roomId);
+        console.log('roomID received in manager:' + roomId);
+        console.log('Current value in the map for the counter: ' + this.counters.get(roomId));
         this.counters.set(roomId, this.counters.get(roomId) + 1);
         const counter = this.counters.get(roomId);
-        console.log('counter: ' + counter);
+        console.log('New value in the map for the counter: ' + counter);
         return counter;
     }
 
