@@ -25,6 +25,26 @@ export class GameService {
     }
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
+        ctxs[2].fillStyle = 'blue';
+        ctxs[3].fillStyle = 'blue';
+        const flash = setInterval(() => {
+            for (const coordinate of coords) {
+                ctxs[2].fillRect(coordinate.x, coordinate.y, 1, 1);
+                ctxs[3].fillRect(coordinate.x, coordinate.y, 1, 1);
+            }
+            setTimeout(() => {
+                ctxs[2].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                ctxs[3].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+            }, 100);
+        }, 200);
+
+        setTimeout(() => {
+            clearInterval(flash);
+        }, 1000);
+    }
+
+    /*
+    flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
         const fillStyleBackup: (string | CanvasGradient | CanvasPattern)[] = [];
         for (const ctx of ctxs) {
             fillStyleBackup.push(ctx.fillStyle);
@@ -48,6 +68,8 @@ export class GameService {
             clearInterval(flash);
         }, 1000);
     }
+    */
+    /*
     flashAllPoints(ctxs: CanvasRenderingContext2D[]) {
         const flash = setInterval(() => {
             for (const ctx of ctxs) {
@@ -63,6 +85,7 @@ export class GameService {
             clearInterval(flash);
         }, 1000);
     }
+    
 
     flashDifferences2(coords: Coords[], ctxs: CanvasRenderingContext2D[], isDifference: boolean, differenceNumber: number) {
         let flashIntervalId: number;
@@ -102,6 +125,7 @@ export class GameService {
             }
         }, flashDuration);
     }
+    */
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
         for (let i = 0; i < coords.length; i++) {
@@ -130,8 +154,6 @@ export class GameService {
                     // this.counterService.incrementCounter().subscribe();
                     this.successSound.play();
                     this.flashDifferences(response.coords, ctxs);
-                    // this.flashAllPoints(ctxs);
-                    this.flashDifferences2(response.coords, ctxs, response.isDifference, response.differenceNumber);
                     setTimeout(() => {
                         context?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                         this.updateImages(response.coords, ctxs[0], ctxs[1]);
