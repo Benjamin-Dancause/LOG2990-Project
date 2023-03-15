@@ -1,8 +1,13 @@
 /* eslint-disable no-console */
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
+
+interface Lobby {
+    gameMaster: string;
+    gameTitle: string;
+}
 
 const PAGE_SIZE = 4;
 
@@ -11,7 +16,7 @@ const PAGE_SIZE = 4;
     templateUrl: './game-selection-page-component.component.html',
     styleUrls: ['./game-selection-page-component.component.scss'],
 })
-export class GameSelectionPageComponent implements OnInit, AfterViewInit, OnDestroy {
+export class GameSelectionPageComponent implements OnInit, AfterViewInit {
     games: GameSelectionPageData[] = [];
 
     currentPage = 0;
@@ -42,8 +47,12 @@ export class GameSelectionPageComponent implements OnInit, AfterViewInit, OnDest
         this.waitingRoomService.socket.on('connection-count', (message: string) => {
             console.log(message);
         });
+        this.waitingRoomService.socket.on('lobby-created', (lobby: Lobby) => {
+            console.log(lobby.gameMaster + ' has created a lobby for: ' + lobby.gameTitle);
+        });
     }
-    ngOnDestroy() {
+
+    disconnectSocket() {
         this.waitingRoomService.disconnectSocket();
     }
 

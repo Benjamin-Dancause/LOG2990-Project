@@ -33,7 +33,7 @@
 
         <div class="button-container">
             <button *ngIf="!configuration" id="settings" (click)="openSettings()">Jouer en solo</button>
-            <button *ngIf="!configuration" id="settings" routerLink="/waitingRoom">Créer/joindre une partie 1vs1</button>
+            <button *ngIf="!configuration" id="settings" (click)="saveGameName()" routerLink="/waitingRoom">Créer/joindre une partie 1vs1</button>
             <button *ngIf="configuration" (click)="deleteGame(gameTitle)">Supprimer partie</button>
             <button *ngIf="configuration">Réinitialiser les meilleurs temps</button>
         </div>

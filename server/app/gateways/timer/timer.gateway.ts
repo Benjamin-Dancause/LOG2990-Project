@@ -1,10 +1,16 @@
 import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
+import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
 import { forwardRef } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators';
 import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
+
+interface Lobby {
+    gameMaster: string;
+    gameTitle: string;
+}
 
 @WebSocketGateway()
 export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -15,6 +21,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     constructor(
         @Inject(forwardRef(() => TimerManagerService)) private readonly timerManager: TimerManagerService,
         @Inject(CounterManagerService) private readonly counterManager: CounterManagerService,
+        @Inject(WaitingRoomManagerService) private readonly waitingRoomManager: WaitingRoomManagerService,
     ) {}
 
     handleConnection(client: Socket) {
@@ -58,6 +65,30 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
             console.log('Counter roomID for handleConnection in Gateway: ' + roomId);
             this.timerManager.startTimer(roomId);
             this.counterManager.startCounter(roomId);
+        }
+    }
+
+    @SubscribeMessage('handle-lobby')
+    onHandleLobby(client: Socket, lobby: Lobby) {
+        let roomId = '';
+        if (!this.waitingRoomManager.isOtherLobby(lobby.gameTitle)) {
+            roomId = randomUUID();
+            console.log(client.id);
+            this.socketIdToRoomId[client.id] = roomId;
+            console.log('handleConnection line 19', client.id, roomId);
+
+            if (roomId) {
+                client.join(roomId);
+                this.waitingRoomManager.createLobby(lobby.gameTitle, roomId);
+                console.log('Room Creator: ' + roomId);
+            }
+        } else {
+            const roomToJoin = this.waitingRoomManager.joinLobby(lobby.gameTitle);
+            if (roomToJoin) {
+                client.join(roomToJoin);
+                console.log('Room joiner: ' + roomToJoin);
+                this.server.to(roomToJoin).emit('lobby-created', roomToJoin);
+            }
         }
     }
 
