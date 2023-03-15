@@ -123,8 +123,13 @@ export class CreateImageComponent implements AfterViewInit {
             height: '650px',
         });
         this.diffCanvas = document.getElementById('diff') as HTMLCanvasElement;
-        this.ctxDiff = this.diffCanvas.getContext('2d');
-        this.createDifference();
+        this.ctxDiff = this.diffCanvas.getContext('2d', { willReadFrequently: true });
+
+        const diff = this.createDifference();
+        if (this.ctxDiff) {
+            this.ctxDiff.clearRect(0, 0, this.width, this.height);
+            this.ctxDiff.drawImage(diff, 0, 0, this.width, this.height);
+        }
         this.nbDiff = this.difference.getDifference(this.diffCanvas).count;
         this.difficulty = this.difference.isDifficult(this.diffCanvas) ? 'Difficile' : 'Facile';
     }
@@ -188,36 +193,15 @@ export class CreateImageComponent implements AfterViewInit {
         this.deleteOriginal();
         this.deleteModifiable();
     }
-    createDifference(): void {
-        if (this.ctxOriginal && this.ctxModifiable) {
-            const slider = document.getElementById('slider') as HTMLInputElement;
-            const radius = slider.innerHTML as unknown as number;
-            const left = this.syncLeft();
-            const right = this.syncRight();
-            if (left && right) {
-                const diff = this.difference.findDifference(left, right, radius);
-                this.ctxDiff?.clearRect(0, 0, this.width, this.height);
-                this.ctxDiff?.drawImage(diff, 0, 0);
-            }
+    createDifference(): HTMLCanvasElement {
+        const slider = document.getElementById('slider') as HTMLInputElement;
+        const radius = slider.innerHTML as unknown as number;
+        const left = this.drawingService.getLeftDrawing(this.originalCanvas.nativeElement);
+        const right = this.drawingService.getRightDrawing(this.modifiableCanvas.nativeElement);
+        if (left && right) {
+            return this.difference.findDifference(left, right, radius);
         }
-    }
-    syncLeft(): ImageData | undefined {
-        const leftDrawing = this.drawingService.getLeftDrawing();
-        if (this.ctxDiff) {
-            this.ctxDiff.clearRect(0, 0, this.width, this.height);
-            this.ctxDiff.drawImage(this.originalCanvas.nativeElement, 0, 0, this.width, this.height);
-            this.ctxDiff.drawImage(leftDrawing, 0, 0);
-        }
-        return this.ctxDiff?.getImageData(0, 0, 640, 480);
-    }
-    syncRight(): ImageData | undefined {
-        const rightDrawing = this.drawingService.getRightDrawing();
-        if (this.ctxDiff) {
-            this.ctxDiff.clearRect(0, 0, this.width, this.height);
-            this.ctxDiff.drawImage(this.modifiableCanvas.nativeElement, 0, 0, this.width, this.height);
-            this.ctxDiff.drawImage(rightDrawing, 0, 0);
-        }
-        return this.ctxDiff?.getImageData(0, 0, 640, 480);
+        return this.diffCanvas;
     }
     async verifyBMP(file: File): Promise<boolean> {
         return new Promise((resolve) => {
@@ -234,8 +218,8 @@ export class CreateImageComponent implements AfterViewInit {
     }
 
     inputName(): void {
-        this.createDifference();
-        const diffCount = this.difference.getDifference(this.diffCanvas).count;
+        const diff = this.createDifference();
+        const diffCount = this.difference.getDifference(diff).count;
         if (diffCount >= DIFFCOUNT_MIN && diffCount <= DIFFCOUNT_MAX) {
             this.showSave();
             return;
@@ -245,13 +229,13 @@ export class CreateImageComponent implements AfterViewInit {
 
     async saveGameCard(): Promise<void> {
         if (this.ctxOriginal && this.ctxModifiable) {
-            this.createDifference();
-            const difference = this.difference.getDifference(this.diffCanvas);
-            const difficulty = this.difference.isDifficult(this.diffCanvas);
+            const diff = this.createDifference();
+            const difference = this.difference.getDifference(diff);
+            const difficulty = this.difference.isDifficult(diff);
             this.verifyName(`${this.gameName}`, async (isVerified) => {
                 if (isVerified) {
-                    const originalCanvasString = await this.convertToBase64(this.originalCanvas);
-                    const modifiableCanvasString = await this.convertToBase64(this.modifiableCanvas);
+                    const originalCanvasString = await this.drawingService.base64Left(this.originalCanvas.nativeElement);
+                    const modifiableCanvasString = await this.drawingService.base64Right(this.modifiableCanvas.nativeElement);
 
                     const request = {
                         name: this.gameName,
@@ -280,22 +264,6 @@ export class CreateImageComponent implements AfterViewInit {
                 }
             }
             callback(isGameNameVerified);
-        });
-    }
-    async convertToBase64(canvasRef: ElementRef<HTMLCanvasElement>): Promise<string> {
-        return new Promise((resolve, reject) => {
-            canvasRef.nativeElement.toBlob((blob) => {
-                const reader = new FileReader();
-                if (blob) {
-                    reader.readAsDataURL(blob);
-                    reader.onload = () => {
-                        resolve(reader.result as string);
-                    };
-                    reader.onerror = (error) => {
-                        reject(error);
-                    };
-                }
-            });
         });
     }
 }

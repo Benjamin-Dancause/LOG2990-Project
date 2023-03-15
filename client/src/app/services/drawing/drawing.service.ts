@@ -152,11 +152,39 @@ export class DrawingService {
             backgroundSecondCtx.drawImage(secondCanvas, 0, 0);
         }
     }
-    getLeftDrawing(): HTMLCanvasElement {
-        return this.backgroundRegistry[0];
+    getLeftDrawing(canvas: HTMLCanvasElement): ImageData | undefined {
+        return this.sync(canvas, this.backgroundRegistry[0]);
     }
-    getRightDrawing(): HTMLCanvasElement {
-        return this.backgroundRegistry[1];
+    getRightDrawing(canvas: HTMLCanvasElement): ImageData | undefined {
+        return this.sync(canvas, this.backgroundRegistry[1]);
+    }
+    sync(background: HTMLCanvasElement, drawing: HTMLCanvasElement): ImageData | undefined {
+        const canvas = document.createElement('canvas');
+        canvas.width = 640;
+        canvas.height = 480;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.drawImage(background, 0, 0, 640, 480);
+            ctx.drawImage(drawing, 0, 0, 640, 480);
+        }
+        return ctx?.getImageData(0, 0, 640, 480);
+    }
+    base64Left(image: HTMLCanvasElement): Promise<string> {
+        return this.convertToBase64(image, this.backgroundRegistry[0]);
+    }
+    base64Right(image: HTMLCanvasElement): Promise<string> {
+        return this.convertToBase64(image, this.backgroundRegistry[1]);
+    }
+    async convertToBase64(image: HTMLCanvasElement, drawing: HTMLCanvasElement): Promise<string> {
+        const canvas = document.createElement('canvas');
+        canvas.width = 640;
+        canvas.height = 480;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.drawImage(image, 0, 0, 640, 480);
+            ctx.drawImage(drawing, 0, 0, 640, 480);
+        }
+        return canvas.toDataURL('image/png').split(',')[1];
     }
     test(): void {}
 }
