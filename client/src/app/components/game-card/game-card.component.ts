@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -10,7 +11,7 @@ import { environment } from 'src/environments/environment';
     templateUrl: './game-card.component.html',
     styleUrls: ['./game-card.component.scss'],
 })
-export class GameCardComponent implements OnInit {
+export class GameCardComponent implements OnInit, AfterViewInit {
     @Input() gameTitle: string;
     @Input() imageUrl: string;
     @Input() imageLink: string;
@@ -24,6 +25,7 @@ export class GameCardComponent implements OnInit {
 
     userName: string;
     name: string;
+    createButton: boolean = true;
 
     bestSoloTimes = [
         { name: 'User 1', time: '00:30' },
@@ -41,7 +43,9 @@ export class GameCardComponent implements OnInit {
 
     private readonly serverUrl: string = environment.serverUrl;
 
-    constructor(public dialog: MatDialog, private communication: CommunicationService) {}
+    constructor(public dialog: MatDialog, private communication: CommunicationService, private waitingRoomService: WaitingRoomService) {
+        this.buttonUpdating();
+    }
 
     get color() {
         return this.difficulty ? 'red' : 'green';
@@ -60,6 +64,11 @@ export class GameCardComponent implements OnInit {
 
     ngOnInit(): void {
         this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
+        this.buttonUpdating();
+    }
+
+    ngAfterViewInit(): void {
+        this.buttonUpdating();
     }
 
     openSettings(): void {
@@ -95,6 +104,19 @@ export class GameCardComponent implements OnInit {
         if (!this.difficulty) {
             localStorage.setItem('difficulty', 'Facile');
         }
+    }
+
+    buttonUpdating() {
+        this.waitingRoomService.socket.on('awaiting-lobby', (gameTitle: string) => {
+            if (gameTitle === this.gameTitle) {
+                this.createButton = false;
+            }
+        });
+        this.waitingRoomService.socket.on('completed-lobby', (gameTitle: string) => {
+            if (gameTitle === this.gameTitle) {
+                this.createButton = true;
+            }
+        });
     }
 
     deleteGame(gameTitle: string) {

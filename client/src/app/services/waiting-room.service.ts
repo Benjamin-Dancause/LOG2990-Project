@@ -38,6 +38,14 @@ export class WaitingRoomService {
         this.socket.emit('reject-player', { gameMaster: name, gameTitle: gameTitle });
     }
 
+    closeLobby(gameTitle: string) {
+        this.socket.emit('close-lobby', gameTitle);
+    }
+
+    leaveLobby(name: string, gameTitle: string) {
+        this.socket.emit('leave-lobby', { gameMaster: name, gameTitle: gameTitle });
+    }
+
     disconnectSocket() {
         this.socket.disconnect();
     }

@@ -4,7 +4,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 interface GameInfo {
     gameMaster: string;
     joiningPlayer: string;
-    gameTitle;
+    gameTitle: string;
 }
 
 @Injectable()
@@ -50,5 +50,9 @@ export class WaitingRoomManagerService {
             };
             return completeGameInfo;
         }
+    }
+    deleteLobbyInfo(roomId: string) {
+        this.openLobbies.delete(roomId);
+        this.lobbyGameInfo.delete(roomId);
     }
 }

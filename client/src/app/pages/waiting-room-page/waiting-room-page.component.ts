@@ -19,6 +19,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
     public joiningPlayer: string = '';
     public gameTitle: string = '';
     protected awaitingPlayer: boolean = false;
+    protected roomId: string = '';
 
     constructor(public waitingRoomService: WaitingRoomService, private router: Router) {}
 
@@ -51,6 +52,20 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
         });
 
         this.waitingRoomService.socket.on('rejection', (url) => {
+            console.log('You have been kicked by player');
+            this.router.navigate([url]);
+        });
+
+        this.waitingRoomService.socket.on('rejection', (url) => {
+            console.log('You have been kicked by player');
+            this.router.navigate([url]);
+        });
+
+        this.waitingRoomService.socket.on('leave', (url) => {
+            this.router.navigate([url]);
+        });
+
+        this.waitingRoomService.socket.on('lobby-closed', (url) => {
             this.router.navigate([url]);
         });
     }
@@ -67,6 +82,14 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
 
     incomingPlayer() {
         return this.awaitingPlayer && this.gameMaster === this.inputName ? true : false;
+    }
+
+    leaveLobby() {
+        if (this.inputName !== this.joiningPlayer) {
+            this.waitingRoomService.closeLobby(this.gameTitle);
+        }
+
+        this.waitingRoomService.leaveLobby(this.gameMaster, this.gameTitle);
     }
 
     startOneVsOneGame() {

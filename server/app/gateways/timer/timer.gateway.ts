@@ -101,6 +101,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 const incompleteSocketIds: PlayerSockets = { masterSocket: client };
                 this.roomIdToPlayerSockets.set(roomId, incompleteSocketIds);
                 console.log('Room Creator: ' + roomId);
+                this.server.sockets.emit('awaiting-lobby', lobby.gameTitle);
             }
         } else {
             const roomToJoin = this.waitingRoomManager.joinLobby(lobby.gameTitle);
@@ -113,6 +114,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 this.roomIdToPlayerSockets.set(roomToJoin, socketInfo);
                 console.log('Master socket: ' + socketInfo.masterSocket.id + '\n' + 'Joiner socket: ' + socketInfo.joiningSocket.id);
                 this.server.to(roomToJoin).emit('lobby-created', gameInfo);
+                this.server.sockets.emit('completed-lobby', lobby.gameTitle);
             }
         }
     }
@@ -138,6 +140,37 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
             const socketsReplace: PlayerSockets = { masterSocket: client };
             this.roomIdToPlayerSockets.set(roomId, socketsReplace);
             socketToReject.leave(roomId);
+            this.server.sockets.emit('awaiting-lobby', lobby.gameTitle);
+        }
+    }
+
+    /*@SubscribeMessage('leave-lobby')
+    onLeaveLobby(client: Socket, lobby: Lobby) {
+        const roomId = this.socketIdToRoomId[client.id];
+        console.log(roomId);
+        const socketInfo = this.roomIdToPlayerSockets.get(roomId);
+        if (socketToLeave) {
+            this.server.to(socketToLeave.id).emit('leave', '/game-selection');
+            this.waitingRoomManager.createLobby(lobby.gameTitle, roomId);
+            this.waitingRoomManager.initializeGameInfo(lobby.gameTitle, lobby.gameMaster);
+            const socketsReplace: PlayerSockets = { masterSocket: client };
+            this.roomIdToPlayerSockets.set(roomId, socketsReplace);
+            socketToLeave.leave(roomId);
+            this.server.sockets.emit('awaiting-lobby', lobby.gameTitle);
+        }
+    }*/
+
+    @SubscribeMessage('close-lobby')
+    onCloseLobby(client: Socket, gameTitle: string) {
+        const roomId = this.socketIdToRoomId[client.id];
+        const socketInfo: PlayerSockets = this.roomIdToPlayerSockets.get(roomId);
+        this.server.to(roomId).emit('lobby-closed', '/game-selection');
+        this.roomIdToPlayerSockets.delete(roomId);
+        delete this.socketIdToRoomId[client.id];
+        socketInfo.masterSocket.leave(roomId);
+        this.waitingRoomManager.deleteLobbyInfo(gameTitle);
+        if (socketInfo.joiningSocket) {
+            socketInfo.joiningSocket.leave(roomId);
         }
     }
 
