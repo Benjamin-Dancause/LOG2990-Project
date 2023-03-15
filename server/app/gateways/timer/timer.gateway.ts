@@ -18,10 +18,16 @@ interface GameInfo {
     gameTitle: string;
 }
 
+interface PlayerSockets {
+    masterSocket: Socket;
+    joiningSocket?: Socket;
+}
+
 @WebSocketGateway()
 export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
     socketIdToRoomId: Record<string, string> = {};
+    roomIdToPlayerSockets = new Map<string, PlayerSockets>();
     connectionCounter: number = 0;
 
     constructor(
@@ -59,7 +65,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.disconnect();
     }
 
-    @SubscribeMessage('start-oneVsOne')
+    @SubscribeMessage('start-OneVsOne')
     onStartOneVsOne(client: Socket) {
         const roomId = this.socketIdToRoomId[client.id];
         this.server.to(roomId).emit('redirectToGame', '/gameOneVsOne');
@@ -92,6 +98,8 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 client.join(roomId);
                 this.waitingRoomManager.createLobby(lobby.gameTitle, roomId);
                 this.waitingRoomManager.initializeGameInfo(lobby.gameTitle, lobby.gameMaster);
+                const incompleteSocketIds: PlayerSockets = { masterSocket: client };
+                this.roomIdToPlayerSockets.set(roomId, incompleteSocketIds);
                 console.log('Room Creator: ' + roomId);
             }
         } else {
@@ -99,7 +107,11 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
             if (roomToJoin) {
                 client.join(roomToJoin);
                 const gameInfo: GameInfo = this.waitingRoomManager.completeGameInfo(lobby.gameTitle, lobby.gameMaster);
-                console.log('Room joiner: ' + gameInfo);
+                const initialSockets: PlayerSockets = this.roomIdToPlayerSockets.get(roomToJoin);
+                const socketInfo: PlayerSockets = { masterSocket: initialSockets.masterSocket, joiningSocket: client };
+                console.log(socketInfo.joiningSocket);
+                this.roomIdToPlayerSockets.set(roomToJoin, socketInfo);
+                console.log('Master socket: ' + socketInfo.masterSocket.id + '\n' + 'Joiner socket: ' + socketInfo.joiningSocket.id);
                 this.server.to(roomToJoin).emit('lobby-created', gameInfo);
             }
         }
@@ -111,6 +123,22 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const counter: number = this.counterManager.incrementCounter(roomId);
         console.log('counter received by manager: ' + counter);
         this.server.to(roomId).emit('counter-update', counter);
+    }
+
+    @SubscribeMessage('reject-player')
+    onRejectPlayer(client: Socket, lobby: Lobby) {
+        const roomId = this.socketIdToRoomId[client.id];
+        console.log(roomId);
+        const socketInfo = this.roomIdToPlayerSockets.get(roomId);
+        const socketToReject: Socket = socketInfo.joiningSocket;
+        if (socketToReject) {
+            this.server.to(socketToReject.id).emit('rejection', '/game-selection');
+            this.waitingRoomManager.createLobby(lobby.gameTitle, roomId);
+            this.waitingRoomManager.initializeGameInfo(lobby.gameTitle, lobby.gameMaster);
+            const socketsReplace: PlayerSockets = { masterSocket: client };
+            this.roomIdToPlayerSockets.set(roomId, socketsReplace);
+            socketToReject.leave(roomId);
+        }
     }
 
     @SubscribeMessage('reset-counter')

@@ -11,10 +11,6 @@ export class WaitingRoomService {
 
     constructor() {}
     initializeSocket(): void {
-        // const uniqueId = Math.random().toString(36).substring(7);
-        // this.counterSocket = io(this.baseUrl, { query: { id: uniqueId } });
-        // console.log('This is the uniqueID for counter: ' + uniqueId);
-
         if (this.socket) {
             this.socket.connect();
             return;
@@ -35,7 +31,11 @@ export class WaitingRoomService {
     }
 
     startOneVsOneGame() {
-        this.socket.emit('start-oneVsOne');
+        this.socket.emit('start-OneVsOne');
+    }
+
+    rejectPlayer(name: string, gameTitle: string) {
+        this.socket.emit('reject-player', { gameMaster: name, gameTitle: gameTitle });
     }
 
     disconnectSocket() {
