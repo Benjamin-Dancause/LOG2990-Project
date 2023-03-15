@@ -26,6 +26,7 @@ export class TextBoxComponent implements OnInit {
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
         this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
+        this.addOpponentMessage('Bonjour, je suis un adversaire.');
     }
 
     sendMessage() {
