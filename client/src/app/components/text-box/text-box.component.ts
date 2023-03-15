@@ -1,4 +1,6 @@
+// eslint-disable-next-line max-classes-per-file
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CounterService } from '@app/services/counter.service';
 
 @Component({
@@ -17,10 +19,13 @@ export class TextBoxComponent implements OnInit {
     messageText: string = '';
     userName: string;
 
+    constructor(public dialog: MatDialog) {}
+
     ngOnInit(): void {
         const storedUserName = localStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
+        this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
     }
 
     sendMessage() {
@@ -59,6 +64,23 @@ export class TextBoxComponent implements OnInit {
         this.scrollMessageArea();
     }
 
+    writeQuitMessage() {
+        const systemMessage = `${this.userName} à quitter la partie.`;
+        this.addSystemMessage(systemMessage);
+    }
+
+    /*
+    addQuitMessage(text: string) {
+        const message: Message = {
+            type: 'system',
+            timestamp: this.getTimestamp(),
+            text: `${text} a quitté la partie.`,
+        };
+        this.messages.push(message);
+        this.scrollMessageArea();
+    }
+    */
+
     getTimestamp() {
         const now = new Date();
         const hour = now.getHours().toString().padStart(2, '0');
@@ -72,6 +94,26 @@ export class TextBoxComponent implements OnInit {
             const messageAreaEl = this.messageArea.nativeElement as HTMLElement;
             messageAreaEl.scrollTop = messageAreaEl.scrollHeight;
         }, 0);
+    }
+
+    giveUpConfirmPrompt(): void {
+        const dialogRef = this.dialog.open(GiveUpPromptComponent, {
+            width: '500px',
+            height: '250px',
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.addSystemMessage(`${this.userName} a quitté la partie.`);
+            }
+        });
+    }
+}
+export class GiveUpPromptComponent {
+    constructor(public dialogRef: MatDialogRef<GiveUpPromptComponent>) {}
+
+    closeDialog(result: boolean) {
+        this.dialogRef.close(result);
     }
 }
 
