@@ -27,6 +27,7 @@ export class TextBoxComponent implements OnInit {
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
         this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
         this.addOpponentMessage('Bonjour, je suis un adversaire.');
+        this.writeQuitMessage();
     }
 
     sendMessage() {
@@ -66,7 +67,7 @@ export class TextBoxComponent implements OnInit {
     }
 
     writeQuitMessage() {
-        const systemMessage = `${this.userName} à quitter la partie.`;
+        const systemMessage = `${this.userName} à quitté la partie.`;
         this.addSystemMessage(systemMessage);
     }
 
