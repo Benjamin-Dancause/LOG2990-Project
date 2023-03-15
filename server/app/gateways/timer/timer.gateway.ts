@@ -18,6 +18,13 @@ interface GameInfo {
     gameTitle: string;
 }
 
+interface CompleteGameInfo {
+    gameMaster: string;
+    joiningPlayer: string;
+    gameTitle: string;
+    roomId: string;
+}
+
 interface PlayerSockets {
     masterSocket: Socket;
     joiningSocket?: Socket;
@@ -108,12 +115,18 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
             if (roomToJoin) {
                 client.join(roomToJoin);
                 const gameInfo: GameInfo = this.waitingRoomManager.completeGameInfo(lobby.gameTitle, lobby.gameMaster);
+                const completeGameInfo: CompleteGameInfo = {
+                    gameMaster: gameInfo.gameMaster,
+                    joiningPlayer: gameInfo.joiningPlayer,
+                    gameTitle: gameInfo.gameTitle,
+                    roomId: roomToJoin,
+                };
                 const initialSockets: PlayerSockets = this.roomIdToPlayerSockets.get(roomToJoin);
                 const socketInfo: PlayerSockets = { masterSocket: initialSockets.masterSocket, joiningSocket: client };
                 console.log(socketInfo.joiningSocket);
                 this.roomIdToPlayerSockets.set(roomToJoin, socketInfo);
                 console.log('Master socket: ' + socketInfo.masterSocket.id + '\n' + 'Joiner socket: ' + socketInfo.joiningSocket.id);
-                this.server.to(roomToJoin).emit('lobby-created', gameInfo);
+                this.server.to(roomToJoin).emit('lobby-created', completeGameInfo);
                 this.server.sockets.emit('completed-lobby', lobby.gameTitle);
             }
         }
@@ -144,21 +157,27 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
     }
 
-    /*@SubscribeMessage('leave-lobby')
-    onLeaveLobby(client: Socket, lobby: Lobby) {
+    @SubscribeMessage('leave-lobby')
+    onLeaveLobby(client: Socket, roomId: string) {
+        this.server.to(roomId).emit('get-gamemaster');
+    }
+
+    @SubscribeMessage('master-info')
+    onMasterInfo(client: Socket, lobby: Lobby) {
         const roomId = this.socketIdToRoomId[client.id];
         console.log(roomId);
         const socketInfo = this.roomIdToPlayerSockets.get(roomId);
-        if (socketToLeave) {
-            this.server.to(socketToLeave.id).emit('leave', '/game-selection');
+        const socketToReject: Socket = socketInfo.joiningSocket;
+        if (socketToReject) {
+            this.server.to(socketToReject.id).emit('leave', '/game-selection');
             this.waitingRoomManager.createLobby(lobby.gameTitle, roomId);
             this.waitingRoomManager.initializeGameInfo(lobby.gameTitle, lobby.gameMaster);
             const socketsReplace: PlayerSockets = { masterSocket: client };
             this.roomIdToPlayerSockets.set(roomId, socketsReplace);
-            socketToLeave.leave(roomId);
+            socketToReject.leave(roomId);
             this.server.sockets.emit('awaiting-lobby', lobby.gameTitle);
         }
-    }*/
+    }
 
     @SubscribeMessage('close-lobby')
     onCloseLobby(client: Socket, gameTitle: string) {

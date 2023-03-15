@@ -2,10 +2,11 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
 
-interface GameInfo {
+interface CompleteGameInfo {
     gameMaster: string;
     joiningPlayer: string;
     gameTitle: string;
+    roomId: string;
 }
 
 @Component({
@@ -32,7 +33,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.waitingRoomService.socket.on('lobby-created', (gameInfo: GameInfo) => {
+        this.waitingRoomService.socket.on('lobby-created', (gameInfo: CompleteGameInfo) => {
             console.log(
                 'Info for the room, GameMaster: ' +
                     gameInfo.gameMaster +
@@ -44,15 +45,11 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
 
             this.gameMaster = gameInfo.gameMaster;
             this.joiningPlayer = gameInfo.joiningPlayer;
+            this.roomId = gameInfo.roomId;
             this.awaitingPlayer = true;
         });
 
         this.waitingRoomService.socket.on('redirectToGame', (url) => {
-            this.router.navigate([url]);
-        });
-
-        this.waitingRoomService.socket.on('rejection', (url) => {
-            console.log('You have been kicked by player');
             this.router.navigate([url]);
         });
 
@@ -67,6 +64,10 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
 
         this.waitingRoomService.socket.on('lobby-closed', (url) => {
             this.router.navigate([url]);
+        });
+
+        this.waitingRoomService.socket.on('get-gamemaster', (url) => {
+            this.waitingRoomService.sendMasterInfo(this.inputName, this.gameTitle);
         });
     }
 
@@ -89,7 +90,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
             this.waitingRoomService.closeLobby(this.gameTitle);
         }
 
-        this.waitingRoomService.leaveLobby(this.gameMaster, this.gameTitle);
+        this.waitingRoomService.leaveLobby(this.roomId);
     }
 
     startOneVsOneGame() {

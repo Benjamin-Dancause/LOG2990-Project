@@ -42,8 +42,12 @@ export class WaitingRoomService {
         this.socket.emit('close-lobby', gameTitle);
     }
 
-    leaveLobby(name: string, gameTitle: string) {
-        this.socket.emit('leave-lobby', { gameMaster: name, gameTitle: gameTitle });
+    leaveLobby(roomId: string) {
+        this.socket.emit('leave-lobby', roomId);
+    }
+
+    sendMasterInfo(name: string, gameTitle: string) {
+        this.socket.emit('master-info', { gameMaster: name, gameTitle: gameTitle });
     }
 
     disconnectSocket() {
