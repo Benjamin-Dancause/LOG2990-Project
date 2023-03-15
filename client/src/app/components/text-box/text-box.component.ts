@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { CounterService } from '@app/services/counter.service';
 
 @Component({
@@ -97,7 +97,7 @@ export class TextBoxComponent implements OnInit {
             messageAreaEl.scrollTop = messageAreaEl.scrollHeight;
         }, 0);
     }
-
+    /*
     giveUpConfirmPrompt(): void {
         const dialogRef = this.dialog.open(GiveUpPromptComponent, {
             width: '500px',
@@ -110,7 +110,9 @@ export class TextBoxComponent implements OnInit {
             }
         });
     }
+    */
 }
+/*
 export class GiveUpPromptComponent {
     constructor(public dialogRef: MatDialogRef<GiveUpPromptComponent>) {}
 
@@ -118,7 +120,7 @@ export class GiveUpPromptComponent {
         this.dialogRef.close(result);
     }
 }
-
+*/
 interface Message {
     type: 'system' | 'opponent' | 'self';
     timestamp: string;
