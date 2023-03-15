@@ -12,7 +12,7 @@ export class DrawingToolsComponent implements OnInit {
     radius: number;
 
     ngOnInit(): void {
-        this.radius = 25;
+        this.radius = 5;
         this.setRadius();
     }
 
@@ -45,6 +45,12 @@ export class DrawingToolsComponent implements OnInit {
     }
     deleteRight(): void {
         this.drawingService.deleteRight();
+    }
+    undo(): void {
+        this.drawingService.undoAction();
+    }
+    redo(): void {
+        this.drawingService.redoAction();
     }
     test(): void {
         this.drawingService.test();

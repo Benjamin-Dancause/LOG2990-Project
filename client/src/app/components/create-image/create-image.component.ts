@@ -87,6 +87,7 @@ export class CreateImageComponent implements AfterViewInit {
             this.ctxModifiable.fillStyle = 'white';
             this.ctxOriginal.fillRect(0, 0, this.width, this.height);
             this.ctxModifiable.fillRect(0, 0, this.width, this.height);
+            this.drawingService.saveAction();
         }
     }
 
