@@ -23,6 +23,7 @@ export class GameCardComponent implements OnInit {
     notAvailableTemplate: TemplateRef<any>;
 
     userName: string;
+    name: string;
 
     bestSoloTimes = [
         { name: 'User 1', time: '00:30' },
@@ -79,6 +80,9 @@ export class GameCardComponent implements OnInit {
     }
 
     saveGameName() {
+        this.name = Math.random().toString(36).substring(7);
+        localStorage.setItem('1v1username', this.name);
+        console.log('Name is: ' + this.name);
         localStorage.setItem('gameTitle', this.gameTitle);
     }
 
