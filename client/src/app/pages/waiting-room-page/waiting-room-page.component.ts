@@ -72,7 +72,9 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
         });
 
         this.waitingRoomService.socket.on('get-gamemaster', (url) => {
-            this.waitingRoomService.sendMasterInfo(this.inputName, this.gameTitle);
+            if (this.inputName === this.gameMaster) {
+                this.waitingRoomService.sendMasterInfo(this.inputName, this.gameTitle);
+            }
         });
     }
 
