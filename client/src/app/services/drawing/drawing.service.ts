@@ -122,6 +122,7 @@ export class DrawingService {
             backgroundFirstCtx.putImageData(image2, 0, 0);
             backgroundSecondCtx.putImageData(image1, 0, 0);
         }
+        this.saveAction();
     }
     copyLeftOnRight(): void {
         const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
@@ -131,6 +132,7 @@ export class DrawingService {
             backgroundSecondCtx.clearRect(0, 0, 640, 480);
             backgroundSecondCtx.putImageData(image, 0, 0);
         }
+        this.saveAction();
     }
     copyRightOnLeft(): void {
         const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
@@ -140,12 +142,15 @@ export class DrawingService {
             backgroundFirstCtx.clearRect(0, 0, 640, 480);
             backgroundFirstCtx.putImageData(image, 0, 0);
         }
+        this.saveAction();
     }
     deleteLeft(): void {
         this.clearDrawing(this.backgroundRegistry[0]);
+        this.saveAction();
     }
     deleteRight(): void {
         this.clearDrawing(this.backgroundRegistry[1]);
+        this.saveAction();
     }
     clearDrawing(canvas: HTMLCanvasElement): void {
         this.setActiveCanvas(canvas);
@@ -166,13 +171,13 @@ export class DrawingService {
     undoAction(): void {
         const undo = this.undo.pop();
         if (undo) {
-            if (this.undo.length !== 0) this.redo.push(undo);
+            this.redo.push(undo);
             const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
             const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d', { willReadFrequently: true });
-            if (backgroundFirstCtx && backgroundSecondCtx) {
-                backgroundFirstCtx.putImageData(undo.left, 0, 0);
-                backgroundSecondCtx.putImageData(undo.right, 0, 0);
-                console.log('devrait undo');
+            if (backgroundFirstCtx && backgroundSecondCtx && this.undo[this.undo.length - 1]) {
+                backgroundFirstCtx.putImageData(this.undo[this.undo.length - 1].left, 0, 0);
+                backgroundSecondCtx.putImageData(this.undo[this.undo.length - 1].right, 0, 0);
+                console.log('devrait undo' + this.undo[this.undo.length - 1]);
             }
         }
     }
@@ -185,6 +190,7 @@ export class DrawingService {
             if (backgroundFirstCtx && backgroundSecondCtx) {
                 backgroundFirstCtx.putImageData(redo.left, 0, 0);
                 backgroundSecondCtx.putImageData(redo.right, 0, 0);
+                console.log('devrait redo' + redo);
             }
         }
     }
@@ -192,6 +198,8 @@ export class DrawingService {
     unregister(): void {
         this.canvasRegistry.length = 0;
         this.backgroundRegistry.length = 0;
+        this.undo = [];
+        this.redo = [];
     }
     printDrawing(): void {
         const firstCanvas = this.canvasRegistry[0];
