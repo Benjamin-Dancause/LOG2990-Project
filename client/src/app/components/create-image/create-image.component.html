@@ -63,6 +63,9 @@
     <ng-template #negativeTemplate>
         <div id="neg">
             <h3>Voici les différences</h3>
+            <canvas id="diff" width="640" height="480"></canvas>
+            <p>Nombre d'erreur : {{ nbDiff }}</p>
+            <span>Difficulté : {{ difficulty }}</span>
         </div>
     </ng-template>
     <ng-template #saveTemplate>
