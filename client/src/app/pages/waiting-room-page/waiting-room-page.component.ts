@@ -59,7 +59,12 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
         });
 
         this.waitingRoomService.socket.on('leave', (url) => {
+            this.awaitingPlayer = false;
             this.router.navigate([url]);
+        });
+
+        this.waitingRoomService.socket.on('player-left', (url) => {
+            this.awaitingPlayer = false;
         });
 
         this.waitingRoomService.socket.on('lobby-closed', (url) => {

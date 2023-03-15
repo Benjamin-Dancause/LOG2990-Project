@@ -167,9 +167,10 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const roomId = this.socketIdToRoomId[client.id];
         console.log(roomId);
         const socketInfo = this.roomIdToPlayerSockets.get(roomId);
-        const socketToReject: Socket = socketInfo.joiningSocket;
-        if (socketToReject) {
+        if (socketInfo) {
+            const socketToReject: Socket = socketInfo.joiningSocket;
             this.server.to(socketToReject.id).emit('leave', '/game-selection');
+            this.server.to(roomId).emit('player-left');
             this.waitingRoomManager.createLobby(lobby.gameTitle, roomId);
             this.waitingRoomManager.initializeGameInfo(lobby.gameTitle, lobby.gameMaster);
             const socketsReplace: PlayerSockets = { masterSocket: client };

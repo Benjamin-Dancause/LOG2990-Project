@@ -3,21 +3,20 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class TimerManagerService {
-    
     private timers = new Map<string, number>();
     private intervals = new Map<string, NodeJS.Timeout>();
-    
-    constructor(@Inject(forwardRef( () => TimerGateway)) private readonly timerGateway: TimerGateway) {};
+
+    constructor(@Inject(forwardRef(() => TimerGateway)) private readonly timerGateway: TimerGateway) {}
 
     startTimer(roomId: string) {
         const time: number = this.getTimeFromRoom(roomId);
         this.timers.set(roomId, time);
-        const intervalId = setInterval( () => {
+        const intervalId = setInterval(() => {
             this.updateTimer(roomId);
         }, 1000);
         this.intervals.set(roomId, intervalId);
     }
- 
+
     updateTimer(roomId: string) {
         this.timers.set(roomId, this.timers.get(roomId) + 1);
         this.timerGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
