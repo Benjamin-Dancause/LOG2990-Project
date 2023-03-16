@@ -4,9 +4,6 @@
         <span class="message-header">{{ message.type === 'system' ? '' : message.type === 'opponent' ? opponentName : '' }} </span>
         <span>{{ message.text }}</span>
       </div>
-      <div class="message" >
-        {{ message }}
-      </div>
       
     </div>
     <div *ngIf="!solo" class="input-area">

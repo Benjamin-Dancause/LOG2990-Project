@@ -30,8 +30,8 @@ export class TextBoxComponent implements OnInit {
         this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
         this.addOpponentMessage('Bonjour, je suis un adversaire.');
         this.writeQuitMessage();
-        this.gameService.errorMessage.subscribe((message: string) => {
-            this.message = message;
+        this.gameService.errorMessage.subscribe(() => {
+            this.writeErrorMessage();
         });
     }
 
@@ -72,7 +72,17 @@ export class TextBoxComponent implements OnInit {
     }
 
     writeQuitMessage() {
-        const systemMessage = `${this.userName} à quitté la partie.`;
+        const systemMessage = `${this.getTimestamp()} - ${this.userName} à quitté la partie.`;
+        this.addSystemMessage(systemMessage);
+    }
+
+    writeErrorMessage() {
+        const systemMessage = `${this.getTimestamp()} - Erreur par ${this.userName}`;
+        this.addSystemMessage(systemMessage);
+    }
+
+    writeSucessMessage() {
+        const systemMessage = `${this.getTimestamp()} - Différence trouvée par ${this.userName}`;
         this.addSystemMessage(systemMessage);
     }
 
