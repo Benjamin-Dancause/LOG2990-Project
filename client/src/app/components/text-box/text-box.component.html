@@ -4,6 +4,10 @@
         <span class="message-header">{{ message.type === 'system' ? '' : message.type === 'opponent' ? opponentName : '' }} </span>
         <span>{{ message.text }}</span>
       </div>
+      <div class="message" >
+        {{ message }}
+      </div>
+      
     </div>
     <div *ngIf="!solo" class="input-area">
       <input type="text" placeholder="Entrez votre message (max. 200 caractères)" [(ngModel)]="messageText" (keydown.enter)="sendMessage()" maxlength="200" #inputBox>

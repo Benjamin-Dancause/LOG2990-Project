@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
@@ -16,6 +16,7 @@ const SMALLTIMOUT = 1000;
 export class GameService {
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
+    errorMessage = new EventEmitter<string>();
     private isClickDisabled = false;
     private differenceFound: number[] = [];
     private gameName: string = '';
@@ -159,6 +160,8 @@ export class GameService {
                         this.updateImages(response.coords, ctxs[0], ctxs[1]);
                     }, BIGTIMEOUT);
                 } else {
+                    // le code pour que ca envoit un message de systeme pour dire que c'est pas la bonne difference dans chat-box
+                    this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
                     this.errorSound.currentTime = 0;

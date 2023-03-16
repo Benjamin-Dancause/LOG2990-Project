@@ -2,6 +2,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CounterService } from '@app/services/counter.service';
+import { GameService } from '@app/services/game.service';
 
 @Component({
     selector: 'app-text-box',
@@ -18,8 +19,9 @@ export class TextBoxComponent implements OnInit {
     messages: Message[] = [];
     messageText: string = '';
     userName: string;
+    message = '';
 
-    constructor(public dialog: MatDialog) {}
+    constructor(public dialog: MatDialog, private gameService: GameService) {}
 
     ngOnInit(): void {
         const storedUserName = localStorage.getItem('userName');
@@ -28,6 +30,9 @@ export class TextBoxComponent implements OnInit {
         this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
         this.addOpponentMessage('Bonjour, je suis un adversaire.');
         this.writeQuitMessage();
+        this.gameService.errorMessage.subscribe((message: string) => {
+            this.message = message;
+        });
     }
 
     sendMessage() {
@@ -71,18 +76,6 @@ export class TextBoxComponent implements OnInit {
         this.addSystemMessage(systemMessage);
     }
 
-    /*
-    addQuitMessage(text: string) {
-        const message: Message = {
-            type: 'system',
-            timestamp: this.getTimestamp(),
-            text: `${text} a quitté la partie.`,
-        };
-        this.messages.push(message);
-        this.scrollMessageArea();
-    }
-    */
-
     getTimestamp() {
         const now = new Date();
         const hour = now.getHours().toString().padStart(2, '0');
@@ -97,30 +90,8 @@ export class TextBoxComponent implements OnInit {
             messageAreaEl.scrollTop = messageAreaEl.scrollHeight;
         }, 0);
     }
-    /*
-    giveUpConfirmPrompt(): void {
-        const dialogRef = this.dialog.open(GiveUpPromptComponent, {
-            width: '500px',
-            height: '250px',
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                this.addSystemMessage(`${this.userName} a quitté la partie.`);
-            }
-        });
-    }
-    */
 }
-/*
-export class GiveUpPromptComponent {
-    constructor(public dialogRef: MatDialogRef<GiveUpPromptComponent>) {}
 
-    closeDialog(result: boolean) {
-        this.dialogRef.close(result);
-    }
-}
-*/
 interface Message {
     type: 'system' | 'opponent' | 'self';
     timestamp: string;
