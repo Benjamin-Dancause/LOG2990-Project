@@ -62,22 +62,25 @@ export class GameService {
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             ctxs[2].fillStyle = 'blue';
             ctxs[3].fillStyle = 'blue';
+            let i = 0;
             const flash = setInterval(() => {
                 for (const coordinate of gameData.differences) {
-                    for (const coord of coordinate) {
-                        ctxs[2].fillRect(coord.x, coord.y, 1, 1);
-                        ctxs[3].fillRect(coord.x, coord.y, 1, 1);
+                    if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate)+1)) {
+                        for (const coord of coordinate) {
+                            ctxs[2].fillRect(coord.x, coord.y, 1, 1);
+                            ctxs[3].fillRect(coord.x, coord.y, 1, 1);
+                        }
                     }
                 }
+                i++;
                 setTimeout(() => {
                     ctxs[2].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
                     ctxs[3].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
                 }, 100);
+                if (i === 4) {
+                    clearInterval(flash);
+                }
             }, 200);
-            
-            setTimeout(() => {
-                clearInterval(flash);
-            }, 1000);
         });
     }
 
@@ -130,11 +133,6 @@ export class GameService {
 
     clearDifferenceArray() {
         this.differenceFound = [];
-    }
-
-    async getAllDifferences() {
-        this.communicationService.getAllDiffs(this.gameName).subscribe((response: GameDiffData) => {
-            console.log(response);
-        });
+        this.isCheatEnabled = false;
     }
 }
