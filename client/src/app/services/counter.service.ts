@@ -10,8 +10,18 @@ export class CounterService {
     constructor(public waitingRoomService: WaitingRoomService) {}
 
     initializeCounter(): void {
-        this.waitingRoomService.socket.on('counter-update', (counter: number) => {
-            this.counter = counter;
+        this.waitingRoomService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
+            const playerName: string = sessionStorage.getItem('userName') as string;
+            const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
+            const gameMode: string = sessionStorage.getItem('gameMode') as string;
+            const isPlayer1: boolean = gameMaster === playerName;
+            console.log('LINE 17 IN COUNTER SERVICE: ' + isPlayer1);
+            if (!(gameMode === 'solo') && isPlayer1 !== counterInfo.player1) {
+                console.log('Your opponent found a difference !');
+            } else {
+                console.log('You have Found a difference !');
+            }
+            this.counter = counterInfo.counter;
             console.log('I entered the observable return');
         });
     }

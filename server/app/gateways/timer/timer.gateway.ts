@@ -156,11 +156,11 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
             if (player1) {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player1');
                 console.log('New count for client "' + client.id + '" is : ' + counter);
-                this.server.to(roomId).emit('counter-update', counter);
+                this.server.to(roomId).emit('counter-update', { counter: counter, player1: player1 });
             } else {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player2');
                 console.log('New count for client "' + client.id + '" is : ' + counter);
-                this.server.to(roomId).emit('counter-update', counter);
+                this.server.to(roomId).emit('counter-update', { counter: counter, player1: player1 });
             }
         }
     }
