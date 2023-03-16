@@ -1,5 +1,8 @@
+// eslint-disable-next-line max-classes-per-file
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { CounterService } from '@app/services/counter.service';
+import { GameService } from '@app/services/game.service';
 
 @Component({
     selector: 'app-text-box',
@@ -16,11 +19,23 @@ export class TextBoxComponent implements OnInit {
     messages: Message[] = [];
     messageText: string = '';
     userName: string;
+    message = '';
+
+    constructor(public dialog: MatDialog, private gameService: GameService) {}
 
     ngOnInit(): void {
         const storedUserName = localStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
+        this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
+        this.addOpponentMessage('Bonjour, je suis un adversaire.');
+        // this.writeQuitMessage();
+        this.gameService.errorMessage.subscribe(() => {
+            this.writeErrorMessage();
+        });
+        this.gameService.successMessage.subscribe(() => {
+            this.writeSucessMessage();
+        });
     }
 
     sendMessage() {
@@ -57,6 +72,21 @@ export class TextBoxComponent implements OnInit {
         };
         this.messages.push(message);
         this.scrollMessageArea();
+    }
+
+    writeQuitMessage() {
+        const systemMessage = `${this.getTimestamp()} - ${this.userName} à quitté la partie.`;
+        this.addSystemMessage(systemMessage);
+    }
+
+    writeErrorMessage() {
+        const systemMessage = `${this.getTimestamp()} - Erreur par ${this.userName}`;
+        this.addSystemMessage(systemMessage);
+    }
+
+    writeSucessMessage() {
+        const systemMessage = `${this.getTimestamp()} - Différence trouvée par ${this.userName}`;
+        this.addSystemMessage(systemMessage);
     }
 
     getTimestamp() {
