@@ -29,7 +29,7 @@ export class TextBoxComponent implements OnInit {
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
         this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
         this.addOpponentMessage('Bonjour, je suis un adversaire.');
-        this.writeQuitMessage();
+        // this.writeQuitMessage();
         this.gameService.errorMessage.subscribe(() => {
             this.writeErrorMessage();
         });
