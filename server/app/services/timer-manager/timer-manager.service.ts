@@ -9,13 +9,15 @@ export class TimerManagerService {
     constructor(@Inject(forwardRef(() => TimerGateway)) private readonly timerGateway: TimerGateway) {}
 
     startTimer(roomId: string) {
-        const time: number = this.getTimeFromRoom(roomId);
-        console.log('Line 13 ' + roomId);
-        this.timers.set(roomId, time);
-        const intervalId = setInterval(() => {
-            this.updateTimer(roomId);
-        }, 1000);
-        this.intervals.set(roomId, intervalId);
+        if(!this.timers.has(roomId)) {
+            const time: number = this.getTimeFromRoom(roomId);
+            console.log('Line 13 ' + roomId);
+            this.timers.set(roomId, time);
+            const intervalId = setInterval(() => {
+                this.updateTimer(roomId);
+            }, 1000);
+            this.intervals.set(roomId, intervalId);
+        }
     }
 
     updateTimer(roomId: string) {
@@ -37,5 +39,6 @@ export class TimerManagerService {
         const time = 0;
         console.log('reset id: ' + roomId);
         this.timers.set(roomId, time);
+        this.deleteTimerData(roomId);
     }
 }

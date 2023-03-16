@@ -48,6 +48,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
             this.joiningPlayer = gameInfo.joiningPlayer;
             sessionStorage.setItem('joiningPlayer', this.joiningPlayer);
             this.roomId = gameInfo.roomId;
+            sessionStorage.setItem('roomId', this.roomId);
             this.awaitingPlayer = true;
         });
 

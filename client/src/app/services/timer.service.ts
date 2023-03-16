@@ -16,7 +16,7 @@ export class TimerService {
         });
     }
 
-    resetTimer() {
-        this.waitingRoomService.socket.emit('reset-timer');
+    resetTimer(roomId: string) {
+        this.waitingRoomService.socket.emit('reset-timer', roomId);
     }
 }
