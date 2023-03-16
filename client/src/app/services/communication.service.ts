@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
+import { GameSelectionPageData, GameplayData } from '@app/components/create-image/create-image.component';
+import { GameDiffData } from '@app/interfaces/gameDiffData';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -49,6 +50,9 @@ export class CommunicationService {
     }
     getDiffAmount(name: string): Observable<number> {
         return this.http.post<number>(`${this.baseUrl}/gaming/diffAmount`, { name }, { responseType: 'json' });
+    }
+    getAllDiffs(name: string): Observable<GameDiffData> {
+        return this.http.post<GameDiffData>(`${this.baseUrl}/gaming/findAll`, { name }, { responseType: 'json' });
     }
     deleteGame(name: string) {
         return this.http.delete(`${this.baseUrl}/games/${name}`);

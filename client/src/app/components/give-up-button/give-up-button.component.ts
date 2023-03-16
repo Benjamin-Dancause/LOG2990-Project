@@ -1,4 +1,4 @@
-import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 // eslint-disable-next-line no-restricted-imports
 import { TextBoxComponent } from '@app/components/text-box/text-box.component';
@@ -11,7 +11,7 @@ import { GameCardService } from '@app/services/game-card.service';
     styleUrls: ['./give-up-button.component.scss'],
     providers: [TextBoxComponent],
 })
-export class GiveUpButtonComponent {
+export class GiveUpButtonComponent implements OnInit {
     @Input() text: string;
     @Input() color: string;
     @ViewChild('giveUpPromptTemplate', { static: true }) giveUpPromptTemplate: TemplateRef<unknown>;
@@ -27,5 +27,15 @@ export class GiveUpButtonComponent {
             width: '500px',
             height: '250px',
         });
+    }
+
+    removeUser(): void {
+        this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
+    }
+
+    ngOnInit() {
+        // Game logic to detect if all differences have been found
+        this.gameTitle = localStorage.getItem('gameTitle') as string;
+        this.userName = localStorage.getItem('userName') as string;
     }
 }

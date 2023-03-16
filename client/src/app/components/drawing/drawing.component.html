@@ -1,2 +1,12 @@
-<canvas #drawingCanvas width="640" height="480" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)">
-</canvas>
+<div class="container">
+    <canvas id="background-canvas" #backgroundCanvas width="640" height="480"></canvas>
+    <canvas
+        id="drawing-canvas"
+        #drawingCanvas
+        width="640"
+        height="480"
+        (mousedown)="onMouseDown($event)"
+        (mouseup)="onMouseUp($event)"
+        (mousemove)="onMouseMove($event)"
+    ></canvas>
+</div>

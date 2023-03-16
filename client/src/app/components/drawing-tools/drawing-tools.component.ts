@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { DrawingService } from '@app/services/drawing/drawing.service';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { DrawingService, Tools } from '@app/services/drawing/drawing.service';
 
 @Component({
     selector: 'app-drawing-tools',
@@ -12,18 +12,18 @@ export class DrawingToolsComponent implements OnInit {
     radius: number;
 
     ngOnInit(): void {
-        this.radius = 25;
+        this.radius = 5;
         this.setRadius();
     }
 
     selectPen(): void {
-        this.drawingService.setTool('pen');
+        this.drawingService.setTool(Tools.PEN);
     }
     selectEraser(): void {
-        this.drawingService.setTool('eraser');
+        this.drawingService.setTool(Tools.ERASER);
     }
     selectRectangle(): void {
-        this.drawingService.setTool('rectangle');
+        this.drawingService.setTool(Tools.RECTANGLE);
     }
     setColor(): void {
         this.drawingService.setColor(this.color);
@@ -45,5 +45,24 @@ export class DrawingToolsComponent implements OnInit {
     }
     deleteRight(): void {
         this.drawingService.deleteRight();
+    }
+    @HostListener('document:keydown.control.z')
+    undo(): void {
+        this.drawingService.undoAction();
+    }
+    @HostListener('document:keydown.control.shift.z')
+    redo(): void {
+        this.drawingService.redoAction();
+    }
+    @HostListener('document:keydown.shift', ['$event'])
+    isSquare(): void {
+        this.drawingService.isSquare();
+    }
+    @HostListener('document:keyup.shift', ['$event'])
+    notSquare(): void {
+        this.drawingService.notSquare();
+    }
+    test(): void {
+        this.drawingService.test();
     }
 }
