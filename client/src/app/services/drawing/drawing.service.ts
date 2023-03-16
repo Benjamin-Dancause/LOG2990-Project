@@ -17,6 +17,7 @@ export class DrawingService {
     @ViewChildren('drawingCanvas') canvases: ElementRef<HTMLCanvasElement>;
     private currentTool: string = 'pen';
     private isDrawing: boolean = false;
+    private square: boolean = false;
     private currentColor: string = '#000000';
     private currentRadius: number;
     currentCanvas: HTMLCanvasElement;
@@ -106,11 +107,24 @@ export class DrawingService {
         }
     }
     drawRectangle(event: MouseEvent): void {
-        if (this.currentCtx) {
+        if (this.currentCtx && !this.square) {
             this.currentCtx.fillStyle = this.currentColor;
             this.currentCtx.clearRect(0, 0, 640, 480);
             this.currentCtx.fillRect(event.offsetX, event.offsetY, this.lastPos.x - event.offsetX, this.lastPos.y - event.offsetY);
+        } else if (this.currentCtx && this.square) {
+            this.currentCtx.fillStyle = this.currentColor;
+            this.currentCtx.clearRect(0, 0, 640, 480);
+            const width = event.offsetX - this.lastPos.x;
+            const height = event.offsetY - this.lastPos.y;
+            const size = Math.min(width, height);
+            this.currentCtx.fillRect(this.lastPos.x, this.lastPos.y, size, size);
         }
+    }
+    isSquare(): void {
+        this.square = true;
+    }
+    notSquare(): void {
+        this.square = false;
     }
     swapDrawings(): void {
         const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
@@ -177,7 +191,6 @@ export class DrawingService {
             if (backgroundFirstCtx && backgroundSecondCtx && this.undo[this.undo.length - 1]) {
                 backgroundFirstCtx.putImageData(this.undo[this.undo.length - 1].left, 0, 0);
                 backgroundSecondCtx.putImageData(this.undo[this.undo.length - 1].right, 0, 0);
-                console.log('devrait undo' + this.undo[this.undo.length - 1]);
             }
         }
     }
@@ -190,7 +203,6 @@ export class DrawingService {
             if (backgroundFirstCtx && backgroundSecondCtx) {
                 backgroundFirstCtx.putImageData(redo.left, 0, 0);
                 backgroundSecondCtx.putImageData(redo.right, 0, 0);
-                console.log('devrait redo' + redo);
             }
         }
     }

@@ -20,7 +20,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     onMouseDown(event: MouseEvent) {
         this.drawingService.start(event, event.target as HTMLCanvasElement);
     }
-
     onMouseMove(event: MouseEvent) {
         this.drawingService.execute(event);
     }
