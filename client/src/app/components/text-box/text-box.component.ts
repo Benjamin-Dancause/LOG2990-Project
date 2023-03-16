@@ -33,6 +33,9 @@ export class TextBoxComponent implements OnInit {
         this.gameService.errorMessage.subscribe(() => {
             this.writeErrorMessage();
         });
+        this.gameService.successMessage.subscribe(() => {
+            this.writeSucessMessage();
+        });
     }
 
     sendMessage() {

@@ -17,6 +17,7 @@ export class GameService {
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
     errorMessage = new EventEmitter<string>();
+    successMessage = new EventEmitter<string>();
     private isClickDisabled = false;
     private differenceFound: number[] = [];
     private gameName: string = '';
@@ -149,6 +150,7 @@ export class GameService {
                 console.log(response);
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.differenceFound.push(response.differenceNumber);
+                    this.successMessage.emit('Trouvé');
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.successSound.currentTime = 0;
