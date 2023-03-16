@@ -1,19 +1,18 @@
 <div class="container">
     <div class="button-tools">
         <div class="drawing-tools">
-            <button (click)="selectPen()">Draw</button>
-            <button (click)="selectEraser()">Erase</button>
-            <button (click)="selectRectangle()">Rectangle</button>
-            <button (click)="copyLeft()">CopyLeft</button>
-            <button (click)="deleteLeft()">DeleteLeft</button>
+            <button class="btn" [ngClass]="{ active: activeButton === 'pen' }" (click)="selectPen()">Crayon</button>
+            <button class="btn" [ngClass]="{ active: activeButton === 'eraser' }" (click)="selectEraser()">Efface</button>
+            <button class="btn" [ngClass]="{ active: activeButton === 'rectangle' }" (click)="selectRectangle()">Rectangle</button>
+            <button class="btn" (click)="copyLeft()">Copier Dessin</button>
+            <button class="btn" (click)="deleteLeft()">Effacer Dessin</button>
         </div>
         <div class="drawing-tools">
-            <button (click)="undo()">Undo</button>
-            <button (click)="redo()">Redo</button>
-            <button (click)="swapDrawings()">Swap</button>
-            <button (click)="copyRight()">CopyRight</button>
-            <button (click)="deleteRight()">DeleteRight</button>
-            <button (click)="test()">test</button>
+            <button class="btn" (click)="undo()">Annuler</button>
+            <button class="btn" (click)="redo()">Refaire</button>
+            <button class="btn" (click)="swapDrawings()">Échanger</button>
+            <button class="btn" (click)="copyRight()">Copier Dessin</button>
+            <button class="btn" (click)="deleteRight()">Effacer Dessin</button>
         </div>
     </div>
     <div class="input-tools">
