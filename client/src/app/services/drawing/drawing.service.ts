@@ -191,7 +191,6 @@ export class DrawingService {
             if (backgroundFirstCtx && backgroundSecondCtx && this.undo[this.undo.length - 1]) {
                 backgroundFirstCtx.putImageData(this.undo[this.undo.length - 1].left, 0, 0);
                 backgroundSecondCtx.putImageData(this.undo[this.undo.length - 1].right, 0, 0);
-                console.log('devrait undo' + this.undo[this.undo.length - 1]);
             }
         }
     }
@@ -204,7 +203,6 @@ export class DrawingService {
             if (backgroundFirstCtx && backgroundSecondCtx) {
                 backgroundFirstCtx.putImageData(redo.left, 0, 0);
                 backgroundSecondCtx.putImageData(redo.right, 0, 0);
-                console.log('devrait redo' + redo);
             }
         }
     }
