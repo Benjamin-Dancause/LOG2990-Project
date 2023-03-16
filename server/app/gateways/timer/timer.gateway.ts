@@ -78,6 +78,12 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server.to(roomId).emit('redirectToGame', '/gameOneVsOne');
     }
 
+    @SubscribeMessage('init-OneVsOne-components')
+    onInitOneVsOneComponents(client: Socket) {
+        const roomId = this.socketIdToRoomId[client.id];
+        this.timerManager.startTimer(roomId);
+    }
+
     @SubscribeMessage('solo-game')
     onSoloGame(client: Socket) {
         const roomId = randomUUID();

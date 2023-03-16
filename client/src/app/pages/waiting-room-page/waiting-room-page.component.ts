@@ -51,6 +51,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
 
         this.waitingRoomService.socket.on('redirectToGame', (url) => {
             this.router.navigate([url]);
+            this.waitingRoomService.initOneVsOneComponents();
         });
 
         this.waitingRoomService.socket.on('rejection', (url) => {

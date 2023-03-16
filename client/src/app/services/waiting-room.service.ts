@@ -26,6 +26,10 @@ export class WaitingRoomService {
         this.socket.emit('solo-game');
     }
 
+    oneVsOne(): void {
+        this.socket.emit('one-vs-one-game');
+    }
+
     handleLobby(name: string, gameTitle: string): void {
         this.socket.emit('handle-lobby', { gameMaster: name, gameTitle: gameTitle });
     }
@@ -48,6 +52,10 @@ export class WaitingRoomService {
 
     sendMasterInfo(name: string, gameTitle: string) {
         this.socket.emit('master-info', { gameMaster: name, gameTitle: gameTitle });
+    }
+
+    initOneVsOneComponents() {
+        this.socket.emit('init-OneVsOne-components');
     }
 
     disconnectSocket() {
