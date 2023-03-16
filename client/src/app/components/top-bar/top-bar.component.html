@@ -8,10 +8,10 @@
     <div class="vertical-bar"></div>
     <div class="outline name">
         <div>Vous : {{ userName }}</div>
-        <app-counter></app-counter>
+        <app-counter [playerSide]="true"></app-counter>
     </div>
     <div *ngIf="!single" class="outline name">
         <div>Adversaire : {{opponent}}</div>
-        <app-counter></app-counter>
+        <app-counter [playerSide]="false"></app-counter>
     </div>
 </header>

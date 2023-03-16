@@ -34,7 +34,7 @@ export class CounterService {
         this.waitingRoomService.socket.emit('increment-counter', player1);
     }
 
-    resetCounter() {
-        this.waitingRoomService.socket.emit('reset-counter');
+    resetCounter(player1: boolean) {
+        this.waitingRoomService.socket.emit('reset-counter', player1);
     }
 }

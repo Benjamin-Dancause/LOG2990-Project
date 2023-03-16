@@ -242,9 +242,18 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @SubscribeMessage('reset-counter')
-    handleResetCounter(client: Socket) {
-        const roomId = this.socketIdToRoomId[client.id];
-        const counter = this.counterManager.resetCounter(roomId);
-        this.server.emit('counter-update', counter);
+    handleResetCounter(client: Socket, player1: boolean) {
+        const roomId = [...client.rooms][1];
+        if(roomId) {
+            if(player1) {
+                const counter = this.counterManager.resetCounter(roomId + '_player1');
+                this.server.to(roomId).emit('counter-update',  { counter: counter, player1: player1 });
+            }
+            else {
+                const counter = this.counterManager.resetCounter(roomId + '_player2');
+                this.server.to(roomId).emit('counter-update',  { counter: counter, player1: player1 });
+            }
+
+        }
     }
 }
