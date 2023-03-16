@@ -4,6 +4,7 @@ import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/components/play-area/play-area.component';
+import { GameDiffData } from '@app/interfaces/gameDiffData';
 import { CommunicationService } from './communication.service';
 import { CounterService } from './counter.service';
 
@@ -19,28 +20,24 @@ export class GameService {
     private isClickDisabled = false;
     private differenceFound: number[] = [];
     private gameName: string = '';
+    private isCheatEnabled = false;
+    private cheatTimeout: any;
 
     constructor(private communicationService: CommunicationService) {
         this.gameName = (localStorage.getItem('gameTitle') as string) || '';
     }
 
-    flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
-        const fillStyleBackup: (string | CanvasGradient | CanvasPattern)[] = [];
-        for (const ctx of ctxs) {
-            fillStyleBackup.push(ctx.fillStyle);
-            ctx.fillStyle = 'blue';
-        }
+    flashDifferences(coords: Coords[], ctxs : CanvasRenderingContext2D[]) {
+        ctxs[2].fillStyle = 'blue';
+        ctxs[3].fillStyle = 'blue';
         const flash = setInterval(() => {
             for (const coordinate of coords) {
-                for (const ctx of ctxs) {
-                    ctx.fillRect(coordinate.x, coordinate.y, 1, 1);
-                }
+                ctxs[2].fillRect(coordinate.x, coordinate.y, 1, 1);
+                ctxs[3].fillRect(coordinate.x, coordinate.y, 1, 1);
             }
             setTimeout(() => {
-                for (const ctx of ctxs) {
-                    ctx.clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-                    ctx.fillStyle = fillStyleBackup.shift() as string;
-                }
+                ctxs[2].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                ctxs[3].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
             }, 100);
         }, 200);
 
@@ -48,60 +45,43 @@ export class GameService {
             clearInterval(flash);
         }, 1000);
     }
-    flashAllPoints(ctxs: CanvasRenderingContext2D[]) {
-        const flash = setInterval(() => {
-            for (const ctx of ctxs) {
-                ctx.fillStyle = 'blue';
-                ctx.fillRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+
+    cheatMode(ctxs: CanvasRenderingContext2D[]) {
+        this.isCheatEnabled = !this.isCheatEnabled
+        if (!this.isCheatEnabled) {
+            clearInterval(this.cheatTimeout);
+            return;
+        }
+        this.flashAllDifferences(ctxs);
+        this.cheatTimeout = setInterval(() => {
+            this.flashAllDifferences(ctxs);
+        }, SMALLTIMOUT);
+    }
+
+    flashAllDifferences(ctxs: CanvasRenderingContext2D[]) {
+        this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
+            ctxs[2].fillStyle = 'blue';
+            ctxs[3].fillStyle = 'blue';
+            const flash = setInterval(() => {
+                for (const coordinate of gameData.differences) {
+                    for (const coord of coordinate) {
+                        ctxs[2].fillRect(coord.x, coord.y, 1, 1);
+                        ctxs[3].fillRect(coord.x, coord.y, 1, 1);
+                    }
+                }
                 setTimeout(() => {
-                    ctx.clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                    ctxs[2].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                    ctxs[3].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
                 }, 100);
-            }
-        }, 200);
-
-        setTimeout(() => {
-            clearInterval(flash);
-        }, 1000);
-    }
-
-    flashDifferences2(coords: Coords[], ctxs: CanvasRenderingContext2D[], isDifference: boolean, differenceNumber: number) {
-        let flashIntervalId: number;
-        const flashDuration = 1000;
-        const flashDelay = 200;
-
-        if (!isDifference || this.differenceFound.includes(differenceNumber)) {
-            return;
-        }
-
-        const coordinatesToFlash = coords.filter((coordinate) => {
-            const pixelData = ctxs[0].getImageData(coordinate.x, coordinate.y, 1, 1).data;
-            const isPixelDifferent = pixelData.some((channelValue) => channelValue !== pixelData[0]);
-            return isPixelDifferent;
+            }, 200);
+            
+            setTimeout(() => {
+                clearInterval(flash);
+            }, 1000);
         });
-
-        if (coordinatesToFlash.length === 0) {
-            return;
-        }
-
-        let isFlashOn = false;
-        flashIntervalId = setInterval(() => {
-            isFlashOn = !isFlashOn;
-            ctxs[2].fillStyle = isFlashOn ? 'blue' : 'white';
-            ctxs[3].fillStyle = isFlashOn ? 'blue' : 'white';
-            for (const coordinate of coordinatesToFlash) {
-                ctxs[2].fillRect(coordinate.x, coordinate.y, 1, 1);
-                ctxs[3].fillRect(coordinate.x, coordinate.y, 1, 1);
-            }
-        }, flashDelay);
-
-        setTimeout(() => {
-            clearInterval(flashIntervalId);
-            for (const coordinate of coordinatesToFlash) {
-                ctxs[2].clearRect(coordinate.x, coordinate.y, 1, 1);
-                ctxs[3].clearRect(coordinate.x, coordinate.y, 1, 1);
-            }
-        }, flashDuration);
     }
+
+
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
         for (let i = 0; i < coords.length; i++) {
@@ -112,7 +92,7 @@ export class GameService {
         }
     }
 
-    async checkClick(event: MouseEvent, counter: CounterService, ctxs: CanvasRenderingContext2D[]) {
+    async checkClick(event: MouseEvent, counter : CounterService, ctxs : CanvasRenderingContext2D[]) {
         if (!this.isClickDisabled && event?.button === MouseButton.Left) {
             const clickedCanvas = event.target as HTMLCanvasElement;
             const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -121,7 +101,6 @@ export class GameService {
             const mousePosition = { x: event.offsetX, y: event.offsetY };
 
             this.communicationService.sendPosition(this.gameName, mousePosition).subscribe((response: ClickResponse) => {
-                console.log(response);
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.differenceFound.push(response.differenceNumber);
                     context.fillStyle = 'green';
@@ -130,8 +109,6 @@ export class GameService {
                     // this.counterService.incrementCounter().subscribe();
                     this.successSound.play();
                     this.flashDifferences(response.coords, ctxs);
-                    // this.flashAllPoints(ctxs);
-                    this.flashDifferences2(response.coords, ctxs, response.isDifference, response.differenceNumber);
                     setTimeout(() => {
                         context?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                         this.updateImages(response.coords, ctxs[0], ctxs[1]);
@@ -153,5 +130,11 @@ export class GameService {
 
     clearDifferenceArray() {
         this.differenceFound = [];
+    }
+
+    async getAllDifferences() {
+        this.communicationService.getAllDiffs(this.gameName).subscribe((response: GameDiffData) => {
+            console.log(response);
+        });
     }
 }

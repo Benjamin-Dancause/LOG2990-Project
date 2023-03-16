@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
 import { DrawService } from '@app/services/draw.service';
@@ -46,6 +46,7 @@ export class PlayAreaComponent implements AfterViewInit {
     private ctxRightTop: CanvasRenderingContext2D | null = null;
     private gameName: string = '';
     private mouseDownSubscription: Subscription;
+    private keyDownSubscription: Subscription;
     constructor(
         private counterService: CounterService,
         private communicationService: CommunicationService,
@@ -59,13 +60,6 @@ export class PlayAreaComponent implements AfterViewInit {
 
     get height(): number {
         return this.canvasSize.y;
-    }
-
-    @HostListener('document:keydown', ['$event'])
-    handleKeyboardEvent(event: KeyboardEvent) {
-        if (event.key === 't') {
-            this.isCheatEnabled = !this.isCheatEnabled;
-        }
     }
 
     async initCanvases() {
@@ -99,10 +93,20 @@ export class PlayAreaComponent implements AfterViewInit {
             const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
             this.game.checkClick(event, this.counterService, ctxs);
         });
+
+        this.keyDownSubscription = this.input.keyDown$.subscribe((event) => {
+            if (event === 't') {
+                this.isCheatEnabled = !this.isCheatEnabled;
+                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+                this.game.cheatMode(ctxs);
+            }
+        }
+        );
     }
 
     ngOnDestroy(): void {
         this.mouseDownSubscription.unsubscribe();
+        this.keyDownSubscription.unsubscribe();
         this.game.clearDifferenceArray();
     }
 }
