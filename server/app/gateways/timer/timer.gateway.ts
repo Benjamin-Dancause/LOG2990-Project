@@ -85,10 +85,15 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @SubscribeMessage('init-OneVsOne-components')
-    onInitOneVsOneComponents(client: Socket) {
-        const roomId = this.socketIdToRoomId[client.id];
+    onInitOneVsOneComponents(client: Socket, player1: boolean) {
+        const roomId = [...client.rooms][1];
         if (roomId) {
-            this.timerManager.startTimer(roomId);
+            if (player1) {
+                this.timerManager.startTimer(roomId);
+                this.counterManager.startCounter(roomId + '_player1');
+            } else {
+                this.counterManager.startCounter(roomId + '_player2');
+            }
         }
     }
 

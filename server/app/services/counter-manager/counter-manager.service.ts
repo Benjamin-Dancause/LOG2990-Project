@@ -6,6 +6,7 @@ export class CounterManagerService {
 
     startCounter(roomId: string) {
         const count: number = this.getCounterFromRoom(roomId);
+        console.log('LINE 9 COUNTER ROOMID: ' + roomId);
         console.log('counter: ' + count);
         this.counters.set(roomId, count);
     }

@@ -89,7 +89,7 @@ export class PlayAreaComponent implements AfterViewInit {
             this.roomId = gameplayInfo.roomId;
             this.player1 = gameplayInfo.player1;
             console.log('Game Title: ' + this.gameName + '\n' + 'RoomId: ' + this.roomId + '\n' + 'Player1 ?: ' + this.player1 + '\n');
-            this.waitingRoomService.initOneVsOneComponents();
+            this.waitingRoomService.initOneVsOneComponents(this.player1);
         });
         this.waitingRoomService.assignPlayerInfo(this.gameName);
         this.communicationService.getGameByName(this.gameName).subscribe((game) => {

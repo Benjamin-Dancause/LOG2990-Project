@@ -62,8 +62,8 @@ export class WaitingRoomService {
         this.socket.emit('get-OneVsOne-info', gameTitle);
     }
 
-    initOneVsOneComponents() {
-        this.socket.emit('init-OneVsOne-components');
+    initOneVsOneComponents(player1: boolean) {
+        this.socket.emit('init-OneVsOne-components', player1);
     }
 
     disconnectSocket() {
