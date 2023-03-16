@@ -6,6 +6,7 @@ import { WaitingRoomService } from './waiting-room.service';
 })
 export class CounterService {
     counter: number = 0;
+    counter2: number = 0;
 
     constructor(public waitingRoomService: WaitingRoomService) {}
 
@@ -17,11 +18,14 @@ export class CounterService {
             const isPlayer1: boolean = gameMaster === playerName;
             console.log('LINE 17 IN COUNTER SERVICE: ' + isPlayer1);
             if (!(gameMode === 'solo') && isPlayer1 !== counterInfo.player1) {
+                this.counter2 = counterInfo.counter;
                 console.log('Your opponent found a difference !');
+                console.log('Opponent count is: ' + this.counter2);
             } else {
+                this.counter = counterInfo.counter;
                 console.log('You have Found a difference !');
+                console.log('Your count is: ' + this.counter);
             }
-            this.counter = counterInfo.counter;
             console.log('I entered the observable return');
         });
     }
