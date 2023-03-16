@@ -105,7 +105,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (roomId) {
             client.join(roomId);
             this.timerManager.startTimer(roomId);
-            this.counterManager.startCounter(roomId);
+            this.counterManager.startCounter(roomId + '_player1');
         }
     }
 
@@ -149,11 +149,20 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @SubscribeMessage('increment-counter')
-    handleIncrementCounter(client: Socket) {
-        const roomId = this.socketIdToRoomId[client.id];
-        const counter: number = this.counterManager.incrementCounter(roomId);
-        console.log('counter received by manager: ' + counter);
-        this.server.to(roomId).emit('counter-update', counter);
+    handleIncrementCounter(client: Socket, player1: boolean) {
+        const roomId = [...client.rooms][1];
+        console.log('Value of player 1: ' + player1);
+        if (roomId) {
+            if (player1) {
+                const counter: number = this.counterManager.incrementCounter(roomId + '_player1');
+                console.log('New count for client "' + client.id + '" is : ' + counter);
+                this.server.to(roomId).emit('counter-update', counter);
+            } else {
+                const counter: number = this.counterManager.incrementCounter(roomId + '_player2');
+                console.log('New count for client "' + client.id + '" is : ' + counter);
+                this.server.to(roomId).emit('counter-update', counter);
+            }
+        }
     }
 
     @SubscribeMessage('reject-player')

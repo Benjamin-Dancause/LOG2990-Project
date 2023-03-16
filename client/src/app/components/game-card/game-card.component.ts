@@ -93,16 +93,18 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         sessionStorage.setItem('userName', this.name);
         console.log('Name is: ' + this.name);
         sessionStorage.setItem('gameTitle', this.gameTitle);
+        sessionStorage.setItem('gameMode', '1v1');
     }
     //Changer pour session Storage?
     saveUserName() {
-        localStorage.setItem('userName', this.userName);
-        localStorage.setItem('gameTitle', this.gameTitle);
+        sessionStorage.setItem('userName', this.userName);
+        sessionStorage.setItem('gameTitle', this.gameTitle);
+        sessionStorage.setItem('gameMode', 'solo');
         if (this.difficulty) {
-            localStorage.setItem('difficulty', 'Difficile');
+            sessionStorage.setItem('difficulty', 'Difficile');
         }
         if (!this.difficulty) {
-            localStorage.setItem('difficulty', 'Facile');
+            sessionStorage.setItem('difficulty', 'Facile');
         }
     }
 

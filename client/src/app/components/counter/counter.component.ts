@@ -9,6 +9,8 @@ import { CounterService } from '@app/services/counter.service';
 export class CounterComponent implements OnInit, OnDestroy {
     constructor(public counterService: CounterService) {}
 
+    count: number;
+
     ngOnInit(): void {
         console.log('ready before');
         this.counterService.initializeCounter();

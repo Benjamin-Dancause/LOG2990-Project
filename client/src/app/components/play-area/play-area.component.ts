@@ -59,7 +59,7 @@ export class PlayAreaComponent implements AfterViewInit {
     private differenceFound: number[] = [];
     private gameName: string = '';
     private roomId: string = '';
-    private player1: boolean = false;
+    private player1: boolean = true;
     constructor(
         private counterService: CounterService,
         private communicationService: CommunicationService,
@@ -91,7 +91,9 @@ export class PlayAreaComponent implements AfterViewInit {
             console.log('Game Title: ' + this.gameName + '\n' + 'RoomId: ' + this.roomId + '\n' + 'Player1 ?: ' + this.player1 + '\n');
             this.waitingRoomService.initOneVsOneComponents(this.player1);
         });
-        this.waitingRoomService.assignPlayerInfo(this.gameName);
+        if ((sessionStorage.getItem('gameMode') as string) === '1v1') {
+            this.waitingRoomService.assignPlayerInfo(this.gameName);
+        }
         this.communicationService.getGameByName(this.gameName).subscribe((game) => {
             this.imageLeftStr = this.serverURL + '/' + game.images[0];
             this.imageRightStr = this.serverURL + '/' + game.images[1];
@@ -158,7 +160,7 @@ export class PlayAreaComponent implements AfterViewInit {
                     context.font = '20px Arial';
                     context.fillText('Trouvé', this.mousePosition.x, this.mousePosition.y);
                     this.successSound.currentTime = 0;
-                    this.counterService.incrementCounter();
+                    this.counterService.incrementCounter(this.player1);
                     this.successSound.play();
                     // this.flashPixel(response.coords);
                     setTimeout(() => {

@@ -12,6 +12,6 @@ export class SidebarComponent implements OnInit {
     @Input() penalty: string;
 
     ngOnInit() {
-        this.difficulty = localStorage.getItem('difficulty') as string;
+        this.difficulty = sessionStorage.getItem('difficulty') as string;
     }
 }
