@@ -90,11 +90,11 @@ export class GameCardComponent implements OnInit, AfterViewInit {
 
     saveGameName() {
         this.name = Math.random().toString(36).substring(7);
-        localStorage.setItem('1v1username', this.name);
+        sessionStorage.setItem('1v1username', this.name);
         console.log('Name is: ' + this.name);
-        localStorage.setItem('gameTitle', this.gameTitle);
+        sessionStorage.setItem('gameTitle', this.gameTitle);
     }
-
+    //Changer pour session Storage?
     saveUserName() {
         localStorage.setItem('userName', this.userName);
         localStorage.setItem('gameTitle', this.gameTitle);

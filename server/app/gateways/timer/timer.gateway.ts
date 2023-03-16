@@ -30,6 +30,12 @@ interface PlayerSockets {
     joiningSocket?: Socket;
 }
 
+interface OneVsOneGameplayInfo {
+    gameTitle: string;
+    roomId: string;
+    player1: boolean;
+}
+
 @WebSocketGateway()
 export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
@@ -81,7 +87,9 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('init-OneVsOne-components')
     onInitOneVsOneComponents(client: Socket) {
         const roomId = this.socketIdToRoomId[client.id];
-        this.timerManager.startTimer(roomId);
+        if (roomId) {
+            this.timerManager.startTimer(roomId);
+        }
     }
 
     @SubscribeMessage('solo-game')
@@ -163,6 +171,28 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('leave-lobby')
     onLeaveLobby(client: Socket, roomId: string) {
         this.server.to(roomId).emit('get-gamemaster');
+    }
+    @SubscribeMessage('get-OneVsOne-info')
+    onHandleOneVsOneInfo(client: Socket, gameTitle: string) {
+        const socketRoom = [...client.rooms][1];
+        const roomId = this.socketIdToRoomId[client.id];
+        if (socketRoom === roomId) {
+            const gameInfo = this.waitingRoomManager.getGameplayInfo(gameTitle);
+            const gameplayInfo: OneVsOneGameplayInfo = {
+                gameTitle: gameInfo.gameTitle,
+                roomId: socketRoom,
+                player1: true,
+            };
+            this.server.to(client.id).emit('player-info', gameplayInfo);
+        } else {
+            const gameInfo = this.waitingRoomManager.getGameplayInfo(gameTitle);
+            const gameplayInfo: OneVsOneGameplayInfo = {
+                gameTitle: gameInfo.gameTitle,
+                roomId: socketRoom,
+                player1: false,
+            };
+            this.server.to(client.id).emit('player-info', gameplayInfo);
+        }
     }
 
     @SubscribeMessage('master-info')

@@ -51,8 +51,17 @@ export class WaitingRoomManagerService {
             return completeGameInfo;
         }
     }
+    //Todo switch roomId for gameTitle
     deleteLobbyInfo(roomId: string) {
         this.openLobbies.delete(roomId);
         this.lobbyGameInfo.delete(roomId);
+    }
+
+    getGameplayInfo(gameTitle: string): GameInfo {
+        console.log('line 60 ' + gameTitle);
+        const gameInfo: GameInfo = this.lobbyGameInfo.get(gameTitle);
+        console.log(gameInfo);
+        console.log(gameInfo.gameTitle);
+        return gameInfo;
     }
 }

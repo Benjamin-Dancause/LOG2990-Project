@@ -25,8 +25,8 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
     constructor(public waitingRoomService: WaitingRoomService, private router: Router) {}
 
     ngOnInit(): void {
-        this.inputName = localStorage.getItem('1v1username') as string;
-        this.gameTitle = localStorage.getItem('gameTitle') as string;
+        this.inputName = sessionStorage.getItem('1v1username') as string;
+        this.gameTitle = sessionStorage.getItem('gameTitle') as string;
         console.log('this was the player: ' + this.inputName);
         console.log('this was the chosen game: ' + this.gameTitle);
         this.waitingRoomService.handleLobby(this.inputName, this.gameTitle);
@@ -44,14 +44,15 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
             );
 
             this.gameMaster = gameInfo.gameMaster;
+            sessionStorage.setItem('gameMaster', this.gameMaster);
             this.joiningPlayer = gameInfo.joiningPlayer;
+            sessionStorage.setItem('joiningPlayer', this.joiningPlayer);
             this.roomId = gameInfo.roomId;
             this.awaitingPlayer = true;
         });
 
         this.waitingRoomService.socket.on('redirectToGame', (url) => {
             this.router.navigate([url]);
-            this.waitingRoomService.initOneVsOneComponents();
         });
 
         this.waitingRoomService.socket.on('rejection', (url) => {

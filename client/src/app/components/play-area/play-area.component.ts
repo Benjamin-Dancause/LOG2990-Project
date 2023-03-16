@@ -5,6 +5,7 @@ import { Vec2 } from '@app/interfaces/vec2';
 import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
 import { DifferenceService } from '@app/services/difference.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
 import { environment } from 'src/environments/environment';
 
 // TODO : Avoir un fichier séparé pour les constantes!
@@ -19,6 +20,12 @@ export enum MouseButton {
     Back = 3,
     Forward = 4,
 }
+interface OneVsOneGameplayInfo {
+    gameTitle: string;
+    roomId: string;
+    player1: boolean;
+}
+
 const SMALLINTERVAL = 100;
 const BIGTIMEOUT = 2000;
 const SMALLTIMOUT = 1000;
@@ -51,7 +58,18 @@ export class PlayAreaComponent implements AfterViewInit {
     private ctxRightTop: CanvasRenderingContext2D | null = null;
     private differenceFound: number[] = [];
     private gameName: string = '';
-    constructor(private counterService: CounterService, private communicationService: CommunicationService, difference: DifferenceService) {}
+    private roomId: string = '';
+    private player1: boolean = false;
+    constructor(
+        private counterService: CounterService,
+        private communicationService: CommunicationService,
+        difference: DifferenceService,
+        private waitingRoomService: WaitingRoomService,
+    ) {
+        this.gameName = sessionStorage.getItem('gameTitle') as string;
+        this.waitingRoomService.initOneVsOneComponents();
+        console.log(this.gameName);
+    }
 
     get width(): number {
         return this.canvasSize.x;
@@ -67,9 +85,13 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.gameName = (localStorage.getItem('gameTitle') as string) || '';
+        this.waitingRoomService.socket.on('player-info', (gameplayInfo: OneVsOneGameplayInfo) => {
+            this.roomId = gameplayInfo.roomId;
+            this.player1 = gameplayInfo.player1;
 
-        this.gameName = (localStorage.getItem('gameTitle') as string) || '';
+            console.log('Game Title: ' + this.gameName + '\n' + 'RoomId: ' + this.roomId + '\n' + 'Player1 ?: ' + this.player1 + '\n');
+        });
+        this.waitingRoomService.assignPlayerInfo(this.gameName);
         this.communicationService.getGameByName(this.gameName).subscribe((game) => {
             this.imageLeftStr = this.serverURL + '/' + game.images[0];
             this.imageRightStr = this.serverURL + '/' + game.images[1];

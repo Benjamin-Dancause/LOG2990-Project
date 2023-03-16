@@ -54,6 +54,14 @@ export class WaitingRoomService {
         this.socket.emit('master-info', { gameMaster: name, gameTitle: gameTitle });
     }
 
+    getGameTitle(roomId: String) {
+        this.socket.emit('get-gameTitle', roomId);
+    }
+
+    assignPlayerInfo(gameTitle: string) {
+        this.socket.emit('get-OneVsOne-info', gameTitle);
+    }
+
     initOneVsOneComponents() {
         this.socket.emit('init-OneVsOne-components');
     }

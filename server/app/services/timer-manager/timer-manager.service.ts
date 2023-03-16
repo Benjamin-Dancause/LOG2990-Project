@@ -10,6 +10,7 @@ export class TimerManagerService {
 
     startTimer(roomId: string) {
         const time: number = this.getTimeFromRoom(roomId);
+        console.log('Line 13 ' + roomId);
         this.timers.set(roomId, time);
         const intervalId = setInterval(() => {
             this.updateTimer(roomId);
