@@ -37,16 +37,9 @@ export class GameSelectionPageComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.waitingRoomService.initializeSocket();
         this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
-
-        for (const game of this.games) {
-            console.log('test' + game.image);
-        }
     }
 
     ngAfterViewInit(): void {
-        this.waitingRoomService.socket.on('connection-count', (message: string) => {
-            console.log(message);
-        });
         this.waitingRoomService.socket.on('lobby-created', (lobby: Lobby) => {
             console.log(lobby.gameMaster + ' has created a lobby for: ' + lobby.gameTitle);
         });

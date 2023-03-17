@@ -10,11 +10,10 @@ import { WaitingRoomService } from '@app/services/waiting-room.service';
 export class GamePageComponent implements OnInit {
     gameTitle: string;
     userName: string;
-    
+
     showPopup = false;
 
     constructor(private gameCardService: GameCardService, public waitingRoomService: WaitingRoomService) {}
-
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
@@ -29,8 +28,6 @@ export class GamePageComponent implements OnInit {
     ngAfterViewInit() {
         this.waitingRoomService.socket.on('send-victorious-player', (player1: boolean) => {
             this.showPopup = true;
-        })
+        });
     }
-   
-   
 }
