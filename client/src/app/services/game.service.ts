@@ -29,7 +29,6 @@ export class GameService {
     constructor(private communicationService: CommunicationService, private counterService: CounterService) {
         this.gameName = (sessionStorage.getItem('gameTitle') as string) || '';
         this.player1 = sessionStorage.getItem('userName') as string === sessionStorage.getItem('gameMaster') ? true : false;
-        //console.log("LINE 32 ============= IS HE HIM ? : " + this.player1);
     }
 
     flashDifferences(coords: Coords[], ctxs : CanvasRenderingContext2D[]) {

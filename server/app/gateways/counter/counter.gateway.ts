@@ -7,7 +7,6 @@ export class CounterGateway {
 
   handleConnection(client: Socket) {
     const clientId = client.handshake.query.clientId as string;
-    console.log('counter: ' + clientId);
     if(clientId){
       client.join(clientId);
       

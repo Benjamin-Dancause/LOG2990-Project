@@ -58,10 +58,7 @@ export class WaitingRoomManagerService {
     }
 
     getGameplayInfo(gameTitle: string): GameInfo {
-        console.log('line 60 ' + gameTitle);
         const gameInfo: GameInfo = this.lobbyGameInfo.get(gameTitle);
-        console.log(gameInfo);
-        console.log(gameInfo.gameTitle);
         return gameInfo;
     }
 }

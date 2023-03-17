@@ -26,7 +26,6 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
     ngOnInit() {
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
         this.player1 = this.isPlayer1();
-        this.waitingRoomService.soloGame();
     }
 
     ngAfterViewInit() {

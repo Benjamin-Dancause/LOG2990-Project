@@ -27,8 +27,6 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.inputName = sessionStorage.getItem('userName') as string;
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
-        console.log('this was the player: ' + this.inputName);
-        console.log('this was the chosen game: ' + this.gameTitle);
         this.waitingRoomService.handleLobby(this.inputName, this.gameTitle);
     }
 

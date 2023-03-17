@@ -63,8 +63,6 @@ export class PlayAreaComponent implements AfterViewInit {
         private waitingRoomService: WaitingRoomService,
     ) {
         this.gameName = sessionStorage.getItem('gameTitle') as string;
-
-         console.log(this.gameName);
     }
     
 

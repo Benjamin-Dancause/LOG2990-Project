@@ -16,7 +16,6 @@ export class CounterComponent implements OnInit, OnDestroy {
     @Input() playerSide: boolean;
 
     ngOnInit(): void {
-        console.log('ready before');
         this.counterService.resetCounter(this.player1);
         this.counterService.initializeCounter();
     }

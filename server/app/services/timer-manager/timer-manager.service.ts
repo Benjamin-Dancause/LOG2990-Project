@@ -17,6 +17,7 @@ export class TimerManagerService {
                 this.updateTimer(roomId);
             }, 1000);
             this.intervals.set(roomId, intervalId);
+            console.log("LINE 20 ============== " + this.intervals.get(roomId));
         }
     }
 
@@ -30,14 +31,14 @@ export class TimerManagerService {
     }
 
     deleteTimerData(roomId: string) {
-        this.timers.delete(roomId);
+        //console.log(this.intervals.get(roomId));
         clearInterval(this.intervals.get(roomId));
         this.intervals.delete(roomId);
+        this.timers.delete(roomId);
     }
 
     resetTimer(roomId: string) {
         const time = 0;
-        console.log('reset id: ' + roomId);
         this.timers.set(roomId, time);
         this.deleteTimerData(roomId);
     }

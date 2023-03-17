@@ -25,25 +25,19 @@ export class CounterService implements OnInit {
             const playerName: string = sessionStorage.getItem('userName') as string;
             const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
             const isPlayer1: boolean = gameMaster === playerName;
-
-            console.log('LINE 17 IN COUNTER SERVICE: ' + isPlayer1);
             if (!(this.gameMode === 'solo') && isPlayer1 !== counterInfo.player1) {
                 this.counter2 = counterInfo.counter;
                 if (this.counter2 === this.winCondition) {
                     this.waitingRoomService.sendVictoriousPlayer(isPlayer1);
                 }
-                console.log('Your opponent found a difference !');
-                console.log('Opponent count is: ' + this.counter2);
             } else {
                 this.counter = counterInfo.counter;
                 if (this.counter === this.winCondition) {
                     this.waitingRoomService.sendVictoriousPlayer(isPlayer1);
                 }
 
-                console.log('You have Found a difference !');
-                console.log('Your count is: ' + this.counter);
             }
-            console.log('I entered the observable return');
+
         });
     }
 
@@ -62,7 +56,6 @@ export class CounterService implements OnInit {
             } else {
                 this.winCondition = totalDiff;
             }
-            console.log('LINE 25 THIS IS THE 1v1 WIN COND: ' + this.winCondition);
         });
     }
 
