@@ -44,9 +44,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
 
     private readonly serverUrl: string = environment.serverUrl;
 
-    constructor(public dialog: MatDialog, private communication: CommunicationService, private waitingRoomService: WaitingRoomService, private gameCardService: GameCardService) {
-        this.buttonUpdating();
-    }
+    constructor(public dialog: MatDialog, private communication: CommunicationService, private waitingRoomService: WaitingRoomService, private gameCardService: GameCardService) {}
 
     get color() {
         return this.difficulty ? 'red' : 'green';
@@ -65,11 +63,16 @@ export class GameCardComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
-        this.buttonUpdating();
+        if(!this.configuration) {
+            this.buttonUpdating();
+        }
+        
     }
 
     ngAfterViewInit(): void {
-        this.buttonUpdating();
+        if(!this.configuration) {
+            this.buttonUpdating();
+        }
     }
 
     openSettings(): void {

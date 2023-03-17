@@ -67,6 +67,8 @@ export class WaitingRoomService {
     }
 
     disconnectSocket() {
-        this.socket.disconnect();
+        if(this.socket) {
+            this.socket.disconnect();
+        }
     }
 }
