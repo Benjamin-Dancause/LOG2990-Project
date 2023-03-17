@@ -1,6 +1,5 @@
 /* eslint-disable max-lines */
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
@@ -10,6 +9,7 @@ import { Coords } from '@app/classes/coords';
 import { SliderComponent } from '@app/components/slider/slider.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { of } from 'rxjs';
 import { CreateImageComponent } from './create-image.component';
 
@@ -20,8 +20,8 @@ describe('CreateImageComponent', () => {
     let differenceSpy: jasmine.SpyObj<DifferenceService>;
     let routerSpy: jasmine.SpyObj<Router>;
     let communicationSpy: jasmine.SpyObj<CommunicationService>;
+    let drawingSpy: jasmine.SpyObj<DrawingService>;
     const canvas = document.createElement('canvas');
-    let canvasRef: ElementRef<HTMLCanvasElement>;
     canvas.width = 640;
     canvas.height = 480;
 
@@ -36,8 +36,7 @@ describe('CreateImageComponent', () => {
         differenceSpy = jasmine.createSpyObj(['findDifference', 'getDifference', 'isDifficult', 'drawCircle']);
         communicationSpy = jasmine.createSpyObj(['getGameNames', 'imagesPost']);
         routerSpy = jasmine.createSpyObj(['navigate']);
-        canvasRef = new ElementRef<HTMLCanvasElement>(document.createElement('canvas'));
-        component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy);
+        component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy, drawingSpy);
         await TestBed.configureTestingModule({
             imports: [MatSliderModule],
             declarations: [CreateImageComponent, SliderComponent],
@@ -382,27 +381,6 @@ describe('CreateImageComponent', () => {
         expect(result).toBe(false);
     });
 
-    it('should return a promise that resolves to a string', async () => {
-        spyOn(canvasRef.nativeElement, 'toBlob').and.callFake((callback) => {
-            callback(new Blob());
-        });
-        spyOn(FileReader.prototype, 'readAsDataURL').and.callThrough();
-
-        const result = await component.convertToBase64(canvasRef);
-
-        expect(canvasRef.nativeElement.toBlob).toHaveBeenCalled();
-        expect(FileReader.prototype.readAsDataURL).toHaveBeenCalledWith(jasmine.any(Blob));
-        expect(result).toEqual(jasmine.any(String));
-    });
-
-    it('should reject the promise if the canvas toBlob method throws an error', async () => {
-        spyOn(canvasRef.nativeElement, 'toBlob').and.throwError('toBlob error');
-
-        component.convertToBase64(canvasRef).catch((error) => {
-            expect(error).toMatch('toBlob error');
-        });
-    });
-
     it('should call showSave if diffCount is between 3 and 9', async () => {
         const coord: Coords[][] = [];
         component.diffCanvas = canvas;
@@ -426,7 +404,7 @@ describe('CreateImageComponent', () => {
     it('should save game card', async () => {
         const coord: Coords[][] = [];
         spyOn(component, 'createDifference');
-        spyOn(component, 'convertToBase64');
+        //spyOn(component, 'convertToBase64');
         spyOn(component, 'showError');
         differenceSpy.getDifference.and.returnValue({ count: 2, differences: coord });
         differenceSpy.isDifficult.and.returnValue(true);
@@ -447,7 +425,7 @@ describe('CreateImageComponent', () => {
     it('should not save game card', async () => {
         const coord: Coords[][] = [];
         spyOn(component, 'createDifference');
-        spyOn(component, 'convertToBase64');
+        // spyOn(component, 'convertToBase64');
         spyOn(component, 'showError');
         differenceSpy.getDifference.and.returnValue({ count: 2, differences: coord });
         differenceSpy.isDifficult.and.returnValue(true);
