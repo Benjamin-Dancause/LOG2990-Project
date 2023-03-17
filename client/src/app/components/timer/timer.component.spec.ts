@@ -21,7 +21,7 @@ describe('TimerComponent', () => {
         component = fixture.componentInstance;
         timerService = TestBed.inject(TimerService);
 
-        spyOn(timerService, 'resetTimer').and.returnValue(of());
+        // spyOn(timerService, 'resetTimer').and.returnValue(of());
         fixture.detectChanges();
     });
 

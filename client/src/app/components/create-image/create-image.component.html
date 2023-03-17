@@ -4,21 +4,17 @@
             <img class="del-icon" src="./assets/delete-icon.png" />
         </button>
         <div class="canvas-wrap">
-            <div class="canvas-container">
-                <app-drawing useMe class="drawing"></app-drawing>
-                <canvas #originalCanvas class="image-container" width="640" height="480"></canvas>
-            </div>
+            <app-drawing class="drawing"></app-drawing>
+            <canvas #originalCanvas class="image-container" width="640" height="480"></canvas>
         </div>
         <app-drawing-tools id="tools"></app-drawing-tools>
+        <div class="canvas-wrap">
+            <app-drawing class="drawing"></app-drawing>
+            <canvas #modifiableCanvas class="image-container" width="640" height="480"></canvas>
+        </div>
         <button class="btn delete-btn" (click)="deleteModifiable()">
             <img class="del-icon" src="./assets/delete-icon.png" />
         </button>
-        <div class="canvas-wrap">
-            <div class="canvas-container">
-                <app-drawing useMe class="drawing"></app-drawing>
-                <canvas #modifiableCanvas class="image-container" width="640" height="480"></canvas>
-            </div>
-        </div>
     </div>
     <div class="button-area">
         <div class="add-btn">

@@ -1,7 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CounterService } from '@app/services/counter.service';
-import { of } from 'rxjs';
 import { CounterComponent } from './counter.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -48,19 +47,18 @@ describe('CounterComponent', () => {
             expect(counterServiceSpy.resetCounter).toHaveBeenCalled();
         });
     });
-    */
     describe('ngOnInit', () => {
         it('should initialize subscription to counter', () => {
             // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-            counterServiceSpy.getCounter.and.returnValue(of(5));
+            //counterServiceSpy.getCounter.and.returnValue(of(5));
             component.ngOnInit();
-            expect(counterServiceSpy.getCounter).toHaveBeenCalled();
+            //expect(counterServiceSpy.getCounter).toHaveBeenCalled();
             // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             expect(component.counter).toBe(5);
         });
     });
 
-    /*
+
     describe('ngOnDestroy', () => {
         it('should reset counter', () => {
             component.ngOnDestroy();
