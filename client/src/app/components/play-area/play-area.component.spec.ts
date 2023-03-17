@@ -5,6 +5,7 @@ import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
 import { GameService } from '@app/services/game.service';
 import { InputService } from '@app/services/input.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
 
 describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
@@ -14,6 +15,7 @@ describe('PlayAreaComponent', () => {
     let communicationService: CommunicationService;
     let inputService: InputService;
     let gameService: GameService;
+    let waitingRoomSpy: WaitingRoomService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -26,7 +28,7 @@ describe('PlayAreaComponent', () => {
         fixture = TestBed.createComponent(PlayAreaComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        component = new PlayAreaComponent(counterService, communicationService, inputService, gameService);
+        component = new PlayAreaComponent(counterService, communicationService, inputService, gameService, waitingRoomSpy);
     });
 
     it('should create', () => {

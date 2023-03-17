@@ -1,3 +1,4 @@
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { GameCardComponent } from '@app/components/game-card/game-card.component';
@@ -8,7 +9,8 @@ describe('GameCardComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [MatDialogModule],
+            imports: [MatDialogModule, HttpClientModule],
+            providers: [HttpClient],
             declarations: [GameCardComponent],
         }).compileComponents();
 

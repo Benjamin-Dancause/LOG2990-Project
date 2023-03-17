@@ -22,6 +22,7 @@ describe('CreateImageComponent', () => {
     let communicationSpy: jasmine.SpyObj<CommunicationService>;
     let drawingSpy: jasmine.SpyObj<DrawingService>;
     const canvas = document.createElement('canvas');
+
     canvas.width = 640;
     canvas.height = 480;
 
@@ -36,7 +37,8 @@ describe('CreateImageComponent', () => {
         differenceSpy = jasmine.createSpyObj(['findDifference', 'getDifference', 'isDifficult', 'drawCircle']);
         communicationSpy = jasmine.createSpyObj(['getGameNames', 'imagesPost']);
         routerSpy = jasmine.createSpyObj(['navigate']);
-        component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy, drawingSpy);
+        drawingSpy = jasmine.createSpyObj(['saveAction', 'getLeftDrawing', 'getRightDrawing', 'base64Left', 'base64Right']);
+        //component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy, drawingSpy);
         await TestBed.configureTestingModule({
             imports: [MatSliderModule],
             declarations: [CreateImageComponent, SliderComponent],
@@ -45,11 +47,14 @@ describe('CreateImageComponent', () => {
                 { provide: DifferenceService, useValue: differenceSpy },
                 { provide: CommunicationService, useValue: communicationSpy },
                 { provide: Router, useValue: routerSpy },
+                { provide: DrawingService, useValue: drawingSpy },
             ],
         }).compileComponents();
 
         fixture = TestBed.createComponent(CreateImageComponent);
         component = fixture.componentInstance;
+        component.originalCanvas.nativeElement = canvas;
+        component.modifiableCanvas.nativeElement = canvas;
         fixture.detectChanges();
     });
 
