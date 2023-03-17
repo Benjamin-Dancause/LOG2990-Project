@@ -16,10 +16,6 @@ export class WaitingRoomService {
             return;
         }
         this.socket = io(this.baseUrl);
-        console.log('This is the uniqueID for socket: ' + this.socket.id);
-        this.socket.on('counter-update', (counter: number) => {
-            console.log('I entered the observable return');
-        });
     }
     
     soloGame(): void {
@@ -76,3 +72,4 @@ export class WaitingRoomService {
         }
     }
 }
+

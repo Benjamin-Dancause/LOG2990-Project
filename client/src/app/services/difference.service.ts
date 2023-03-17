@@ -34,7 +34,6 @@ export class DifferenceService {
     }
 
     findDifference(image1: ImageData, image2: ImageData, radius: number): HTMLCanvasElement {
-        console.log('debut');
         const pixels1 = image1;
         const pixels2 = image2;
         const temp = document.createElement('canvas') as HTMLCanvasElement;
@@ -67,7 +66,6 @@ export class DifferenceService {
                 i += ARRAY_OFFSET * radius;
             }
         }
-        console.log('fin');
         return canvas3;
     }
 

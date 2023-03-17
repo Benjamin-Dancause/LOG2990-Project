@@ -54,17 +54,16 @@ export class PlayAreaComponent implements AfterViewInit {
     private keyDownSubscription: Subscription;
     private roomId: string = '';
     private player1: boolean = true;
-
+    
     constructor(
         private counterService: CounterService,
         private communicationService: CommunicationService,
         private input: InputService,
         private game: GameService,
         private waitingRoomService: WaitingRoomService,
-    ) {
-        this.gameName = sessionStorage.getItem('gameTitle') as string;
-
-         console.log(this.gameName);
+        ) {
+            this.gameName = sessionStorage.getItem('gameTitle') as string;
+            this.game.setGameName();
     }
     
 
@@ -128,7 +127,6 @@ export class PlayAreaComponent implements AfterViewInit {
         }
         );
 
-        this.game.setGameName();
     }
     
     ngOnDestroy(): void {
