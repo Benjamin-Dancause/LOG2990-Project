@@ -3,6 +3,7 @@ import { AfterViewInit, Component, Input, OnInit, TemplateRef, ViewChild } from 
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
+import { GameCardService } from '@app/services/game-card.service';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
 import { environment } from 'src/environments/environment';
 
@@ -43,7 +44,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
 
     private readonly serverUrl: string = environment.serverUrl;
 
-    constructor(public dialog: MatDialog, private communication: CommunicationService, private waitingRoomService: WaitingRoomService) {
+    constructor(public dialog: MatDialog, private communication: CommunicationService, private waitingRoomService: WaitingRoomService, private gameCardService: GameCardService) {
         this.buttonUpdating();
     }
 
@@ -122,17 +123,23 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     }
 
     deleteGame(gameTitle: string) {
-        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-            data: {
-                title: 'Confirmation',
-                message: 'Êtes-vous sûr de vouloir supprimer cette partie ?',
-            },
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result === 'yes') {
-                this.communication.deleteGame(gameTitle).subscribe(() => {
-                    this.reloadPage();
+        this.gameCardService.getPlayers(this.gameTitle).subscribe((players) => {
+            if (players.length === 0) {
+                const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+                    data: {
+                        title: 'Confirmation',
+                        message: 'Êtes-vous sûr de vouloir supprimer cette partie ?',
+                    },
                 });
+                dialogRef.afterClosed().subscribe((result) => {
+                    if (result === 'yes') {
+                        this.communication.deleteGame(gameTitle).subscribe(() => {
+                            this.reloadPage();
+                        });
+                    }
+                });
+            } else {
+                alert('This card is currently being played by another user.');
             }
         });
     }

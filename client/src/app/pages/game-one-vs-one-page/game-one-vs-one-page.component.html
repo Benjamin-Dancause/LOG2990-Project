@@ -2,9 +2,10 @@
     <section class="play-area-container">
         <app-top-bar name="Nom de la fiche" [single]="false"></app-top-bar>
         <app-play-area class="play-area" tabindex="0"></app-play-area>
-        <app-give-up-button text="Abandonner"></app-give-up-button>
+        <app-give-up-button text="Abandonner" ></app-give-up-button>
     </section>
     <app-sidebar difficulty="Facile" mode="1 VS 1" total="5" penalty="5"></app-sidebar>
+    
 </div>
 
 <div class="popup-overlay" [style.display]="showPopup ? 'block' : 'none'">

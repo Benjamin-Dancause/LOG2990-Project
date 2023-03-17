@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class GameOneVsOnePageComponent implements OnInit {
     showPopup = false;
     allDifferencesFound = false;
+    solo = false;
 
     findAllDifferences() {
         this.allDifferencesFound = true;

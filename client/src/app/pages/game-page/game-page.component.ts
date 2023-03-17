@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GameCardService } from '@app/services/game-card.service';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
 
 @Component({
@@ -7,16 +8,21 @@ import { WaitingRoomService } from '@app/services/waiting-room.service';
     styleUrls: ['./game-page.component.scss'],
 })
 export class GamePageComponent implements OnInit {
+    gameTitle: string;
+    userName: string;
     showPopup = false;
     allDifferencesFound = false;
+    solo = true;
 
-    constructor(public waitingRoomService: WaitingRoomService) {}
+    constructor(private gameCardService: GameCardService, public waitingRoomService: WaitingRoomService) {}
+
     findAllDifferences() {
         this.allDifferencesFound = true;
         this.showPopup = true;
     }
 
     returnToMainMenu() {
+        this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
         this.showPopup = false;
     }
 

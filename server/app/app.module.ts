@@ -11,6 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as http from 'http';
 import { GameManagerController } from './controllers/game-manager/game-manager.controller';
+import { GameController } from './controllers/game/game.controller';
 import { GamecardsController } from './controllers/gamecards/gamecards.controller';
 import { StoreController } from './controllers/store/store.controller';
 import { CounterGateway } from './gateways/counter/counter.gateway';
@@ -35,7 +36,7 @@ import { WaitingRoomManagerService } from './services/waiting-room-manager/waiti
         }),
         MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
     ],
-    controllers: [CourseController, DateController, ExampleController, GamecardsController, GameManagerController, StoreController],
+    controllers: [CourseController, DateController, ExampleController, GamecardsController, GameManagerController, StoreController, GameController],
     providers: [
         ChatGateway,
         CourseService,
