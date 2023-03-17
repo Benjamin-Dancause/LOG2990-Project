@@ -25,7 +25,8 @@ export class TimerComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.timerService.resetTimer();
+        const roomId = sessionStorage.getItem('roomId') as string;
+        this.timerService.resetTimer(roomId);
     }
 
     pad(value: number) {

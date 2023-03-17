@@ -1,29 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { io, Socket } from 'socket.io-client';
-import { environment } from 'src/environments/environment';
+import { WaitingRoomService } from './waiting-room.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class TimerService {
-    private readonly baseUrl: string = environment.webSocketUrl;
-    private socket: Socket;
-    
-    constructor() {
-    }
-    
+    constructor(public waitingRoomService: WaitingRoomService) {}
+
     getTime(): Observable<number> {
-        const uniqueId = Math.random().toString(36).substring(7)
-        this.socket = io(this.baseUrl, { query: {id: uniqueId }});
-        return new Observable<number>(observer => {
-        this.socket.on('timer', (time:number) => {
-            observer.next(time);
+        return new Observable<number>((observer) => {
+            this.waitingRoomService.socket.on('timer', (time: number) => {
+                observer.next(time);
+            });
         });
-       });
     }
 
-    resetTimer() {
-        this.socket.emit('reset-timer');
+    resetTimer(roomId: string) {
+        this.waitingRoomService.socket.emit('reset-timer', roomId);
     }
 }

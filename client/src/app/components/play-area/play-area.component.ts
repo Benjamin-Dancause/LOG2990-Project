@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
-import { DrawService } from '@app/services/draw.service';
 import { GameService } from '@app/services/game.service';
 import { InputService } from '@app/services/input.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -19,12 +19,17 @@ export enum MouseButton {
     Back = 3,
     Forward = 4,
 }
+interface OneVsOneGameplayInfo {
+    gameTitle: string;
+    roomId: string;
+    player1: boolean;
+}
 
 @Component({
     selector: 'app-play-area',
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
-    providers: [CounterService, DrawService],
+    //providers: [CounterService, DrawService],
 })
 export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvasLeft', { static: false }) private canvasLeft!: ElementRef<HTMLCanvasElement>;
@@ -47,12 +52,21 @@ export class PlayAreaComponent implements AfterViewInit {
     private gameName: string = '';
     private mouseDownSubscription: Subscription;
     private keyDownSubscription: Subscription;
+    private roomId: string = '';
+    private player1: boolean = true;
+
     constructor(
         private counterService: CounterService,
         private communicationService: CommunicationService,
         private input: InputService,
         private game: GameService,
-    ) {}
+        private waitingRoomService: WaitingRoomService,
+    ) {
+        this.gameName = sessionStorage.getItem('gameTitle') as string;
+
+         console.log(this.gameName);
+    }
+    
 
     get width(): number {
         return this.canvasSize.x;
@@ -62,6 +76,7 @@ export class PlayAreaComponent implements AfterViewInit {
         return this.canvasSize.y;
     }
 
+    
     async initCanvases() {
         const img1 = new Image();
         img1.src = this.imageLeftStr;
@@ -80,9 +95,19 @@ export class PlayAreaComponent implements AfterViewInit {
         this.ctxLeftTop = this.canvasLeftTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.ctxRightTop = this.canvasRightTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
     }
-
+    
     ngAfterViewInit(): void {
-        this.gameName = (localStorage.getItem('gameTitle') as string) || '';
+        this.waitingRoomService.socket.on('player-info', (gameplayInfo: OneVsOneGameplayInfo) => {
+            this.roomId = gameplayInfo.roomId;
+            this.player1 = gameplayInfo.player1;
+            console.log('Game Title: ' + this.gameName + '\n' + 'RoomId: ' + this.roomId + '\n' + 'Player1 ?: ' + this.player1 + '\n');
+            this.waitingRoomService.initOneVsOneComponents(this.player1);
+        });
+
+        if ((sessionStorage.getItem('gameMode') as string) === '1v1') {
+            this.waitingRoomService.assignPlayerInfo(this.gameName);
+        }
+
         this.communicationService.getGameByName(this.gameName).subscribe((game) => {
             this.imageLeftStr = this.serverURL + '/' + game.images[0];
             this.imageRightStr = this.serverURL + '/' + game.images[1];
@@ -103,10 +128,12 @@ export class PlayAreaComponent implements AfterViewInit {
         }
         );
     }
-
+    
     ngOnDestroy(): void {
         this.mouseDownSubscription.unsubscribe();
         this.keyDownSubscription.unsubscribe();
         this.game.clearDifferenceArray();
     }
 }
+
+

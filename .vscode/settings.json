@@ -10,5 +10,8 @@
     "eslint.workingDirectories": ["./client", "./server"],
     "eslint.probe": ["javascript", "typescript", "html", "vue", "markdown"],
     "eslint.validate": ["javascript", "typescript", "html", "vue", "markdown"],
-    "cSpell.words": ["responsetype"]
+    "cSpell.words": ["responsetype"],
+    "[html]": {
+        "editor.defaultFormatter": "ms-vsliveshare.vsliveshare"
+    }
 }
