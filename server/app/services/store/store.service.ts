@@ -90,7 +90,7 @@ export class StoreService {
     async getGameDifferenceByName(name: string): Promise<GameDiffData> {
         const gamesData: Data[] = await this.extractData();
         const game = gamesData.find((game) => game.name === name);
-
+        
         if (game) {
             return { id: 0, count: game.count, differences: game.differences };
         }

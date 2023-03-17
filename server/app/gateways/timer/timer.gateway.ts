@@ -256,4 +256,13 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         }
     }
+
+    @SubscribeMessage('on-victory-sequence')
+    handleVictorySequence(client: Socket, player1: boolean) {
+        const roomId = [...client.rooms][1];
+        if(roomId) {
+            this.timerManager.deleteTimerData(roomId);
+            this.server.to(roomId).emit('send-victorious-player', player1)
+        }
+    }
 }
