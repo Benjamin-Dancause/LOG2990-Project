@@ -35,7 +35,7 @@ export class GiveUpButtonComponent implements OnInit {
 
     ngOnInit() {
         // Game logic to detect if all differences have been found
-        this.gameTitle = localStorage.getItem('gameTitle') as string;
-        this.userName = localStorage.getItem('userName') as string;
+        this.gameTitle = sessionStorage.getItem('gameTitle') as string;
+        this.userName = sessionStorage.getItem('userName') as string;
     }
 }

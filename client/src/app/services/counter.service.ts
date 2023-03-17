@@ -1,34 +1,40 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Socket } from 'socket.io-client';
-//import { environment } from 'src/environments/environment';
+import { WaitingRoomService } from './waiting-room.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CounterService {
-    //private readonly baseUrl: string = environment.webSocketUrl;
-    private socket: Socket;
-    //private _counter: number = 0;
+    counter: number = 0;
+    counter2: number = 0;
 
-    constructor() {}
-    
-    initializeSocket(): Observable<number> {
-        //const uniqueId = Math.random().toString(36).substring(7)
-        /*this.socket = io(this.baseUrl, { query: {clientId: uniqueId, counter: this._counter}});*/
-        return new Observable<number>( observer => {
-        this.socket.on('counterUpdate', (counter: number) => {
-            //this._counter = counter;
-            observer.next(counter);
-        })
-       });
+    constructor(public waitingRoomService: WaitingRoomService) {}
+
+    initializeCounter(): void {
+        this.waitingRoomService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
+            const playerName: string = sessionStorage.getItem('userName') as string;
+            const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
+            const gameMode: string = sessionStorage.getItem('gameMode') as string;
+            const isPlayer1: boolean = gameMaster === playerName;
+            console.log('LINE 17 IN COUNTER SERVICE: ' + isPlayer1);
+            if (!(gameMode === 'solo') && isPlayer1 !== counterInfo.player1) {
+                this.counter2 = counterInfo.counter;
+                console.log('Your opponent found a difference !');
+                console.log('Opponent count is: ' + this.counter2);
+            } else {
+                this.counter = counterInfo.counter;
+                console.log('You have Found a difference !');
+                console.log('Your count is: ' + this.counter);
+            }
+            console.log('I entered the observable return');
+        });
     }
 
-    incrementCounter() {
-        this.socket.emit('incrementCounter');
+    incrementCounter(player1: boolean) {
+        this.waitingRoomService.socket.emit('increment-counter', player1);
     }
 
-    resetCounter() {
-        this.socket.emit('resetCounter');
+    resetCounter(player1: boolean) {
+        this.waitingRoomService.socket.emit('reset-counter', player1);
     }
 }

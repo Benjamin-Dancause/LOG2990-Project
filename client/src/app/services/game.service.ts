@@ -24,9 +24,12 @@ export class GameService {
     private gameName: string = '';
     private isCheatEnabled = false;
     private cheatTimeout: any;
+    private player1: boolean;
 
-    constructor(private communicationService: CommunicationService) {
-        this.gameName = (localStorage.getItem('gameTitle') as string) || '';
+    constructor(private communicationService: CommunicationService, private counterService: CounterService) {
+        this.gameName = (sessionStorage.getItem('gameTitle') as string) || '';
+        this.player1 = sessionStorage.getItem('userName') as string === sessionStorage.getItem('gameMaster') ? true : false;
+        //console.log("LINE 32 ============= IS HE HIM ? : " + this.player1);
     }
 
     flashDifferences(coords: Coords[], ctxs : CanvasRenderingContext2D[]) {
@@ -112,7 +115,7 @@ export class GameService {
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.successSound.currentTime = 0;
-                    // this.counterService.incrementCounter().subscribe();
+                    this.counterService.incrementCounter(this.player1);
                     this.successSound.play();
                     this.flashDifferences(response.coords, ctxs);
                     setTimeout(() => {

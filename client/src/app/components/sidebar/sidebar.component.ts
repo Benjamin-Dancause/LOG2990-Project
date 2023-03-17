@@ -14,6 +14,6 @@ export class SidebarComponent implements OnInit {
     @Input() solo: boolean;
 
     ngOnInit() {
-        this.difficulty = localStorage.getItem('difficulty') as string;
+        this.difficulty = sessionStorage.getItem('difficulty') as string;
     }
 }

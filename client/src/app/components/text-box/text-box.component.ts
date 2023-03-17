@@ -24,7 +24,7 @@ export class TextBoxComponent implements OnInit {
     constructor(public dialog: MatDialog, private gameService: GameService) {}
 
     ngOnInit(): void {
-        const storedUserName = localStorage.getItem('userName');
+        const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
         this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);

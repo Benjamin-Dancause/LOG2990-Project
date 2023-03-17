@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GameCardService } from '@app/services/game-card.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
 
 @Component({
     selector: 'app-game-page',
@@ -13,7 +14,7 @@ export class GamePageComponent implements OnInit {
     allDifferencesFound = false;
     solo = true;
 
-    constructor(private gameCardService: GameCardService) {}
+    constructor(private gameCardService: GameCardService, public waitingRoomService: WaitingRoomService) {}
 
     findAllDifferences() {
         this.allDifferencesFound = true;
@@ -27,8 +28,7 @@ export class GamePageComponent implements OnInit {
 
     ngOnInit() {
         // Game logic to detect if all differences have been found
-        this.gameTitle = localStorage.getItem('gameTitle') as string;
-        this.userName = localStorage.getItem('userName') as string;
+        this.waitingRoomService.soloGame();
         if (this.allDifferencesFound) {
             this.showPopup = true;
         }

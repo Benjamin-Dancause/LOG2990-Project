@@ -1,7 +1,13 @@
 /* eslint-disable no-console */
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { CommunicationService } from '@app/services/communication.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
+
+interface Lobby {
+    gameMaster: string;
+    gameTitle: string;
+}
 
 const PAGE_SIZE = 4;
 
@@ -10,20 +16,15 @@ const PAGE_SIZE = 4;
     templateUrl: './game-selection-page-component.component.html',
     styleUrls: ['./game-selection-page-component.component.scss'],
 })
-export class GameSelectionPageComponent implements OnInit {
+export class GameSelectionPageComponent implements OnInit, AfterViewInit {
     games: GameSelectionPageData[] = [];
 
     currentPage = 0;
     pageSize = PAGE_SIZE;
     lastPage = 0;
 
-    constructor(protected communication: CommunicationService) {
+    constructor(protected communication: CommunicationService, public waitingRoomService: WaitingRoomService) {
         communication.getAllGames().subscribe((gamecards: GameSelectionPageData[]) => {
-            for (const gamecard of gamecards) {
-                console.log(gamecard.image);
-                console.log(gamecard.name);
-                console.log(gamecard.difficulty);
-            }
             this.games = gamecards;
             this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
         });
@@ -34,11 +35,25 @@ export class GameSelectionPageComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.waitingRoomService.initializeSocket();
         this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
 
         for (const game of this.games) {
             console.log('test' + game.image);
         }
+    }
+
+    ngAfterViewInit(): void {
+        this.waitingRoomService.socket.on('connection-count', (message: string) => {
+            console.log(message);
+        });
+        this.waitingRoomService.socket.on('lobby-created', (lobby: Lobby) => {
+            console.log(lobby.gameMaster + ' has created a lobby for: ' + lobby.gameTitle);
+        });
+    }
+
+    disconnectSocket() {
+        this.waitingRoomService.disconnectSocket();
     }
 
     onBack() {

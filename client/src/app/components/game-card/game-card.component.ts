@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameCardService } from '@app/services/game-card.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -11,7 +12,7 @@ import { environment } from 'src/environments/environment';
     templateUrl: './game-card.component.html',
     styleUrls: ['./game-card.component.scss'],
 })
-export class GameCardComponent implements OnInit {
+export class GameCardComponent implements OnInit, AfterViewInit {
     @Input() gameTitle: string;
     @Input() imageUrl: string;
     @Input() imageLink: string;
@@ -24,6 +25,8 @@ export class GameCardComponent implements OnInit {
     notAvailableTemplate: TemplateRef<any>;
 
     userName: string;
+    name: string;
+    createButton: boolean = true;
 
     bestSoloTimes = [
         { name: 'User 1', time: '00:30' },
@@ -41,7 +44,9 @@ export class GameCardComponent implements OnInit {
 
     private readonly serverUrl: string = environment.serverUrl;
 
-    constructor(public dialog: MatDialog, private communication: CommunicationService, private gameCardService: GameCardService) {}
+    constructor(public dialog: MatDialog, private communication: CommunicationService, private waitingRoomService: WaitingRoomService, private gameCardService: GameCardService) {
+        this.buttonUpdating();
+    }
 
     get color() {
         return this.difficulty ? 'red' : 'green';
@@ -60,6 +65,11 @@ export class GameCardComponent implements OnInit {
 
     ngOnInit(): void {
         this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
+        this.buttonUpdating();
+    }
+
+    ngAfterViewInit(): void {
+        this.buttonUpdating();
     }
 
     openSettings(): void {
@@ -79,16 +89,37 @@ export class GameCardComponent implements OnInit {
         });
     }
 
+    saveGameName() {
+        this.name = Math.random().toString(36).substring(7);
+        sessionStorage.setItem('userName', this.name);
+        console.log('Name is: ' + this.name);
+        sessionStorage.setItem('gameTitle', this.gameTitle);
+        sessionStorage.setItem('gameMode', '1v1');
+    }
+    //Changer pour session Storage?
     saveUserName() {
-        localStorage.setItem('userName', this.userName);
-        localStorage.setItem('gameTitle', this.gameTitle);
+        sessionStorage.setItem('userName', this.userName);
+        sessionStorage.setItem('gameTitle', this.gameTitle);
+        sessionStorage.setItem('gameMode', 'solo');
         if (this.difficulty) {
-            localStorage.setItem('difficulty', 'Difficile');
+            sessionStorage.setItem('difficulty', 'Difficile');
         }
         if (!this.difficulty) {
-            localStorage.setItem('difficulty', 'Facile');
+            sessionStorage.setItem('difficulty', 'Facile');
         }
-        this.gameCardService.addPlayer(this.gameTitle, this.userName).subscribe();
+    }
+
+    buttonUpdating() {
+        this.waitingRoomService.socket.on('awaiting-lobby', (gameTitle: string) => {
+            if (gameTitle === this.gameTitle) {
+                this.createButton = false;
+            }
+        });
+        this.waitingRoomService.socket.on('completed-lobby', (gameTitle: string) => {
+            if (gameTitle === this.gameTitle) {
+                this.createButton = true;
+            }
+        });
     }
 
     deleteGame(gameTitle: string) {
