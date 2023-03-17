@@ -25,17 +25,16 @@ export class CounterService implements OnInit {
             const playerName: string = sessionStorage.getItem('userName') as string;
             const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
             const isPlayer1: boolean = gameMaster === playerName;
+            console.log("VALUE RECEIVED : " + counterInfo.player1 + " ================= VALUE isPlayer1 : " + isPlayer1);
             if (!(this.gameMode === 'solo') && isPlayer1 !== counterInfo.player1) {
                 this.counter2 = counterInfo.counter;
-                if (this.counter2 === this.winCondition) {
-                    this.waitingRoomService.sendVictoriousPlayer(isPlayer1);
-                }
-            } else {
+            } 
+            else {
                 this.counter = counterInfo.counter;
-                if (this.counter === this.winCondition) {
-                    this.waitingRoomService.sendVictoriousPlayer(isPlayer1);
-                }
+            }
 
+            if(this.counter === this.winCondition || this.counter2 === this.winCondition) {
+                this.waitingRoomService.sendVictoriousPlayer(counterInfo.player1);
             }
 
         });

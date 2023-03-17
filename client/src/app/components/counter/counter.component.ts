@@ -8,14 +8,14 @@ import { CounterService } from '@app/services/counter.service';
 })
 export class CounterComponent implements OnInit, OnDestroy {
     constructor(public counterService: CounterService) {
-        this.player1 = this.isPlayer1();
     }
-
+    
     count: number;
     player1: boolean;
     @Input() playerSide: boolean;
-
+    
     ngOnInit(): void {
+        this.player1 = this.isPlayer1();
         this.counterService.resetCounter(this.player1);
         this.counterService.initializeCounter();
     }

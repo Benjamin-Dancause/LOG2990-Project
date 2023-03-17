@@ -65,6 +65,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
             client.leave(roomId);
             this.timerManager.deleteTimerData(roomId);
             this.counterManager.deleteCounterData(roomId);
+            this.waitingRoomManager.deleteLobbyInfo(roomId);
         }
     }
 
@@ -75,6 +76,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('reset-timer')
     onReset(client: Socket, roomId: string) {
         this.timerManager.resetTimer(roomId);
+        console.log("INFO FOR TIMER HAS BEEN CALLED");
         client.disconnect();
     }
 
@@ -184,6 +186,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     onHandleOneVsOneInfo(client: Socket, gameTitle: string) {
         const socketRoom = [...client.rooms][1];
         const roomId = this.socketIdToRoomId[client.id];
+        console.log("LINE 187 ONE VS ONE INFO ROOMID :" + roomId);
         if (socketRoom === roomId) {
             const gameInfo = this.waitingRoomManager.getGameplayInfo(gameTitle);
             const gameplayInfo: OneVsOneGameplayInfo = {
@@ -191,6 +194,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 roomId: socketRoom,
                 player1: true,
             };
+            console.log(gameplayInfo, client.id);
             this.server.to(client.id).emit('player-info', gameplayInfo);
         } else {
             const gameInfo = this.waitingRoomManager.getGameplayInfo(gameTitle);
@@ -199,6 +203,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 roomId: socketRoom,
                 player1: false,
             };
+            console.log(gameplayInfo, client.id);
             this.server.to(client.id).emit('player-info', gameplayInfo);
         }
     }
@@ -238,6 +243,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     handleResetCounter(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
         if(roomId) {
+            console.log("INFO FOR COUNTER HAS BEEN CALLER");
             if(player1) {
                 const counter = this.counterManager.resetCounter(roomId + '_player1');
                 this.server.to(roomId).emit('counter-update',  { counter: counter, player1: player1 });

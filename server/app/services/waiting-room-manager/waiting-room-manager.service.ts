@@ -55,6 +55,7 @@ export class WaitingRoomManagerService {
     deleteLobbyInfo(roomId: string) {
         this.openLobbies.delete(roomId);
         this.lobbyGameInfo.delete(roomId);
+        console.log("INFO FOR LOBBY HAS BEEN WIPED : WAITING_ROOM_MANAGER");
     }
 
     getGameplayInfo(gameTitle: string): GameInfo {

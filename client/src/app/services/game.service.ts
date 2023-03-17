@@ -27,7 +27,7 @@ export class GameService {
     private player1: boolean;
 
     constructor(private communicationService: CommunicationService, private counterService: CounterService) {
-        this.player1 = sessionStorage.getItem('userName') as string === sessionStorage.getItem('gameMaster') ? true : false;
+        this.player1 = sessionStorage.getItem('userName') as string === sessionStorage.getItem('gameMaster') as string ? true : false;
     }
 
     flashDifferences(coords: Coords[], ctxs : CanvasRenderingContext2D[]) {

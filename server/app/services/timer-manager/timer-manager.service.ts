@@ -35,11 +35,14 @@ export class TimerManagerService {
         clearInterval(this.intervals.get(roomId));
         this.intervals.delete(roomId);
         this.timers.delete(roomId);
+        console.log("INFO FOR TIMER HAS BEEN WIPED : TIMER_MANAGER");
     }
 
     resetTimer(roomId: string) {
         const time = 0;
         this.timers.set(roomId, time);
         this.deleteTimerData(roomId);
+        console.log("TIMER HAS BEEN RESET : TIMER_MANAGER");
+        
     }
 }
