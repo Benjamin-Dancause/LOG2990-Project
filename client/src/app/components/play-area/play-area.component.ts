@@ -125,6 +125,8 @@ export class PlayAreaComponent implements AfterViewInit {
             }
         }
         );
+
+        this.game.setGameName();
     }
     
     ngOnDestroy(): void {

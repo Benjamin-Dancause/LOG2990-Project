@@ -27,7 +27,6 @@ export class GameService {
     private player1: boolean;
 
     constructor(private communicationService: CommunicationService, private counterService: CounterService) {
-        this.gameName = (sessionStorage.getItem('gameTitle') as string) || '';
         this.player1 = sessionStorage.getItem('userName') as string === sessionStorage.getItem('gameMaster') ? true : false;
     }
 
@@ -86,6 +85,10 @@ export class GameService {
                 }
             }, 200);
         });
+    }
+
+    setGameName() {
+        this.gameName = (sessionStorage.getItem('gameTitle') as string) || '';
     }
 
 
