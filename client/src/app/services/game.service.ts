@@ -24,13 +24,10 @@ export class GameService {
     private gameName: string = '';
     private isCheatEnabled = false;
     private cheatTimeout: any;
-    private player1: boolean;
 
-    constructor(private communicationService: CommunicationService, private counterService: CounterService) {
-        this.player1 = sessionStorage.getItem('userName') as string === sessionStorage.getItem('gameMaster') as string ? true : false;
-    }
+    constructor(private communicationService: CommunicationService, private counterService: CounterService) {}
 
-    flashDifferences(coords: Coords[], ctxs : CanvasRenderingContext2D[]) {
+    flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
         ctxs[2].fillStyle = 'blue';
         ctxs[3].fillStyle = 'blue';
         const flash = setInterval(() => {
@@ -50,7 +47,7 @@ export class GameService {
     }
 
     cheatMode(ctxs: CanvasRenderingContext2D[]) {
-        this.isCheatEnabled = !this.isCheatEnabled
+        this.isCheatEnabled = !this.isCheatEnabled;
         if (!this.isCheatEnabled) {
             clearInterval(this.cheatTimeout);
             return;
@@ -68,7 +65,7 @@ export class GameService {
             let i = 0;
             const flash = setInterval(() => {
                 for (const coordinate of gameData.differences) {
-                    if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate)+1)) {
+                    if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
                         for (const coord of coordinate) {
                             ctxs[2].fillRect(coord.x, coord.y, 1, 1);
                             ctxs[3].fillRect(coord.x, coord.y, 1, 1);
@@ -91,8 +88,6 @@ export class GameService {
         this.gameName = (sessionStorage.getItem('gameTitle') as string) || '';
     }
 
-
-
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
         for (let i = 0; i < coords.length; i++) {
             const dataLeft = ctxLeft?.getImageData(coords[i].x, coords[i].y, 1, 1) as ImageData;
@@ -102,7 +97,7 @@ export class GameService {
         }
     }
 
-    async checkClick(event: MouseEvent, counter : CounterService, ctxs : CanvasRenderingContext2D[]) {
+    async checkClick(event: MouseEvent, counter: CounterService, ctxs: CanvasRenderingContext2D[]) {
         if (!this.isClickDisabled && event?.button === MouseButton.Left) {
             const clickedCanvas = event.target as HTMLCanvasElement;
             const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -117,7 +112,9 @@ export class GameService {
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.successSound.currentTime = 0;
-                    this.counterService.incrementCounter(this.player1);
+                    const player1: boolean =
+                        (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false;
+                    this.counterService.incrementCounter(player1);
                     this.successSound.play();
                     this.flashDifferences(response.coords, ctxs);
                     setTimeout(() => {

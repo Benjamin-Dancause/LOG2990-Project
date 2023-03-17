@@ -76,7 +76,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('reset-timer')
     onReset(client: Socket, roomId: string) {
         this.timerManager.resetTimer(roomId);
-        console.log("INFO FOR TIMER HAS BEEN CALLED");
+        console.log('INFO FOR TIMER HAS BEEN CALLED');
         client.disconnect();
     }
 
@@ -89,7 +89,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('init-OneVsOne-components')
     onInitOneVsOneComponents(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
-        console.log(roomId + " ================= ITS OFF DA PERK")
+        console.log(roomId + ' ================= ITS OFF DA PERK');
         if (roomId) {
             if (player1) {
                 this.timerManager.startTimer(roomId);
@@ -186,7 +186,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     onHandleOneVsOneInfo(client: Socket, gameTitle: string) {
         const socketRoom = [...client.rooms][1];
         const roomId = this.socketIdToRoomId[client.id];
-        console.log("LINE 187 ONE VS ONE INFO ROOMID :" + roomId);
+        console.log('LINE 187 ONE VS ONE INFO ROOMID :' + roomId);
         if (socketRoom === roomId) {
             const gameInfo = this.waitingRoomManager.getGameplayInfo(gameTitle);
             const gameplayInfo: OneVsOneGameplayInfo = {
@@ -242,27 +242,25 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('reset-counter')
     handleResetCounter(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
-        if(roomId) {
-            console.log("INFO FOR COUNTER HAS BEEN CALLER");
-            if(player1) {
+        if (roomId) {
+            console.log('INFO FOR COUNTER HAS BEEN CALLER');
+            if (player1) {
                 const counter = this.counterManager.resetCounter(roomId + '_player1');
-                this.server.to(roomId).emit('counter-update',  { counter: counter, player1: player1 });
-            }
-            else {
+                this.server.to(roomId).emit('counter-update', { counter: counter, player1: player1 });
+            } else {
                 const counter = this.counterManager.resetCounter(roomId + '_player2');
-                this.server.to(roomId).emit('counter-update',  { counter: counter, player1: player1 });
+                this.server.to(roomId).emit('counter-update', { counter: counter, player1: player1 });
             }
-
         }
     }
 
     @SubscribeMessage('on-victory-sequence')
     handleVictorySequence(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
-        console.log("IS THE ROOMID OK OR NOT ===========" + roomId);
-        if(roomId) {
+        console.log('IS THE ROOMID OK OR NOT ===========' + roomId);
+        if (roomId) {
             this.timerManager.deleteTimerData(roomId);
-            this.server.to(roomId).emit('send-victorious-player', player1)
+            this.server.to(roomId).emit('send-victorious-player', player1);
         }
     }
 }
