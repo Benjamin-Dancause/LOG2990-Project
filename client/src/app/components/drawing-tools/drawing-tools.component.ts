@@ -15,6 +15,7 @@ export class DrawingToolsComponent implements OnInit {
     ngOnInit(): void {
         this.radius = 5;
         this.setRadius();
+        this.selectPen();
     }
 
     selectPen(): void {

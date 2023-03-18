@@ -183,14 +183,18 @@ export class DrawingService {
         }
     }
     undoAction(): void {
-        const undo = this.undo.pop();
-        if (undo) {
-            this.redo.push(undo);
-            const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
-            const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d', { willReadFrequently: true });
-            if (backgroundFirstCtx && backgroundSecondCtx && this.undo[this.undo.length - 1]) {
-                backgroundFirstCtx.putImageData(this.undo[this.undo.length - 1].left, 0, 0);
-                backgroundSecondCtx.putImageData(this.undo[this.undo.length - 1].right, 0, 0);
+        if (this.undo.length > 1) {
+            const undo = this.undo.pop();
+            console.log('undo', undo);
+            console.log('stack', this.undo);
+            if (undo) {
+                this.redo.push(undo);
+                const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
+                const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d', { willReadFrequently: true });
+                if (backgroundFirstCtx && backgroundSecondCtx && this.undo[this.undo.length - 1]) {
+                    backgroundFirstCtx.putImageData(this.undo[this.undo.length - 1].left, 0, 0);
+                    backgroundSecondCtx.putImageData(this.undo[this.undo.length - 1].right, 0, 0);
+                }
             }
         }
     }
