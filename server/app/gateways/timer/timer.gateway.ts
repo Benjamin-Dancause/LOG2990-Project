@@ -118,7 +118,7 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const roomId = [...client.rooms][1];
         if (roomId) {
             this.timerManager.deleteTimerData(roomId);
-            this.server.to(roomId).emit('player-left');
+            this.server.to(roomId).emit('player-quit-game');
         }
     }
 
@@ -197,8 +197,10 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @SubscribeMessage('leave-lobby')
-    onLeaveLobby(client: Socket, roomId: string) {
-        this.server.to(roomId).emit('get-gamemaster');
+    onLeaveLobby(client: Socket) {
+        const roomId = [...client.rooms][1];
+        this.server.to(roomId).emit('player-left');
+        client.leave(roomId);
     }
     @SubscribeMessage('get-OneVsOne-info')
     onHandleOneVsOneInfo(client: Socket, gameTitle: string) {
@@ -226,18 +228,13 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
     }
 
-    @SubscribeMessage('master-info')
-    onMasterInfo(client: Socket, lobby: Lobby) {
-        const roomId = this.socketIdToRoomId[client.id];
-        const socketInfo = this.roomIdToPlayerSockets.get(roomId);
-        if (socketInfo) {
-            const socketToReject: Socket = socketInfo.joiningSocket;
-            this.server.to(socketToReject.id).emit('leave', '/game-selection');
-            socketToReject.leave(roomId);
-            this.server.to(roomId).emit('player-left');
-            this.server.sockets.emit('awaiting-lobby', lobby.gameTitle);
+    @SubscribeMessage('reset-lobby')
+    onResetLobby(client: Socket, lobby: Lobby) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
             this.waitingRoomManager.createLobby(lobby.gameTitle, roomId);
             this.waitingRoomManager.initializeGameInfo(lobby.gameTitle, lobby.gameMaster);
+            this.server.sockets.emit('awaiting-lobby', lobby.gameTitle);
             const socketsReplace: PlayerSockets = { masterSocket: client };
             this.roomIdToPlayerSockets.set(roomId, socketsReplace);
         }

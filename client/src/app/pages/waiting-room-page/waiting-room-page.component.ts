@@ -59,23 +59,13 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
             this.router.navigate([url]);
         });
 
-        this.waitingRoomService.socket.on('leave', (url) => {
-            this.awaitingPlayer = false;
-            this.router.navigate([url]);
-        });
-
-        this.waitingRoomService.socket.on('player-left', (url) => {
+        this.waitingRoomService.socket.on('player-left', () => {
+            this.waitingRoomService.resetLobby(this.gameMaster, this.gameTitle);
             this.awaitingPlayer = false;
         });
 
         this.waitingRoomService.socket.on('lobby-closed', (url) => {
             this.router.navigate([url]);
-        });
-
-        this.waitingRoomService.socket.on('get-gamemaster', (url) => {
-            if (this.inputName === this.gameMaster) {
-                this.waitingRoomService.sendMasterInfo(this.inputName, this.gameTitle);
-            }
         });
     }
 
@@ -96,9 +86,10 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
     leaveLobby() {
         if (this.inputName !== this.joiningPlayer) {
             this.waitingRoomService.closeLobby(this.gameTitle);
+        } else {
+            this.waitingRoomService.leaveLobby();
+            this.router.navigate(['/game-selection']);
         }
-
-        this.waitingRoomService.leaveLobby(this.roomId);
     }
 
     startOneVsOneGame() {
