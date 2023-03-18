@@ -50,7 +50,8 @@ export class CommunicationService {
     getDiffAmount(name: string): Observable<number> {
         return this.http.post<number>(`${this.baseUrl}/gaming/diffAmount`, { name }, { responseType: 'json' });
     }
-    deleteGame(name: string) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    deleteGame(name: string): Observable<any> {
         return this.http.delete(`${this.baseUrl}/games/${name}`);
     }
     getGameAvailability(name: string): Observable<boolean> {
