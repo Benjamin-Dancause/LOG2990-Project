@@ -22,6 +22,7 @@ export class TextBoxComponent implements OnInit {
     userName: string;
     message = '';
     opponentName: string = '';
+    gameMode: string = '';
 
     constructor(public dialog: MatDialog, private gameService: GameService, private waitingRoomService: WaitingRoomService) {}
 
@@ -29,7 +30,8 @@ export class TextBoxComponent implements OnInit {
         const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
-        if ((sessionStorage.getItem('gameMode') as string) !== 'solo') {
+        this.gameMode = sessionStorage.getItem('gameMode') as string;
+        if (this.gameMode !== 'solo') {
             this.setOpponentName();
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
             this.waitingRoomService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
@@ -77,7 +79,6 @@ export class TextBoxComponent implements OnInit {
     sendMessage() {
         if (this.messageText.trim() === '') return;
         this.waitingRoomService.sendPlayerMessage(this.userName, this.messageText);
-        // this.addSelfMessage(this.messageText);
         this.messageText = '';
     }
 
@@ -117,12 +118,18 @@ export class TextBoxComponent implements OnInit {
     }
 
     writeErrorMessage(name: string) {
-        const systemMessage = `${this.getTimestamp()} - Erreur par ${name}`;
+        let systemMessage = `${this.getTimestamp()} - Erreur`;
+        if (this.gameMode !== 'solo') {
+            systemMessage += ` par ${name}`;
+        }
         this.addSystemMessage(systemMessage);
     }
 
     writeSucessMessage(name: string) {
-        const systemMessage = `${this.getTimestamp()} - Différence trouvée par ${name}`;
+        let systemMessage = `${this.getTimestamp()} - Différence trouvée`;
+        if (this.gameMode !== 'solo') {
+            systemMessage += ` par ${name}`;
+        }
         this.addSystemMessage(systemMessage);
     }
 
