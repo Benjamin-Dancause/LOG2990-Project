@@ -71,6 +71,10 @@ export class WaitingRoomService {
         this.socket.emit('leave-game');
     }
 
+    sendPlayerMessage(name: string, message: string) {
+        this.socket.emit('send-player-message', { name: name, message: message });
+    }
+
     sendVictoriousPlayer(player1: boolean) {
         this.socket.emit('on-victory-sequence', player1);
     }
