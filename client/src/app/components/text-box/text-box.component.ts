@@ -3,6 +3,7 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CounterService } from '@app/services/counter.service';
 import { GameService } from '@app/services/game.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
 
 @Component({
     selector: 'app-text-box',
@@ -13,34 +14,61 @@ import { GameService } from '@app/services/game.service';
 export class TextBoxComponent implements OnInit {
     @Input() single: boolean = true;
     @Input() solo: boolean;
-    @Input() opponentName: string = '';
+    //@Input() opponentName: string = '';
     @ViewChild('messageArea') messageArea: ElementRef;
 
     messages: Message[] = [];
     messageText: string = '';
     userName: string;
     message = '';
+    opponentName: string = '';
 
-    constructor(public dialog: MatDialog, private gameService: GameService) {}
+    constructor(public dialog: MatDialog, private gameService: GameService, private waitingRoomService: WaitingRoomService) {}
 
     ngOnInit(): void {
         const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
+        this.setOpponentName();
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
         this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
-        this.addOpponentMessage('Bonjour, je suis un adversaire.');
-        // this.writeQuitMessage();
+        this.waitingRoomService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
+            if (this.userName === messageInfo.name) {
+                this.addSelfMessage(messageInfo.message);
+            } else {
+                this.addOpponentMessage(messageInfo.message);
+            }
+        });
+        this.waitingRoomService.socket.on('player-quit-game', () => {
+            this.writeQuitMessage();
+        });
+        this.waitingRoomService.socket.on('player-error', (name: string) => {
+            this.writeErrorMessage(name);
+        });
+        this.waitingRoomService.socket.on('player-success', (name: string) => {
+            this.writeSucessMessage(name);
+        });
+
         this.gameService.errorMessage.subscribe(() => {
-            this.writeErrorMessage();
+            this.waitingRoomService.sendPlayerError(this.userName);
         });
         this.gameService.successMessage.subscribe(() => {
-            this.writeSucessMessage();
+            this.waitingRoomService.sendPlayerSuccess(this.userName);
         });
+    }
+
+    setOpponentName() {
+        const gameMaster = sessionStorage.getItem('gameMaster') as string;
+        if (gameMaster === this.userName) {
+            this.opponentName = sessionStorage.getItem('joiningPlayer') as string;
+        } else {
+            this.opponentName = sessionStorage.getItem('gameMaster') as string;
+        }
     }
 
     sendMessage() {
         if (this.messageText.trim() === '') return;
-        this.addSelfMessage(this.messageText);
+        this.waitingRoomService.sendPlayerMessage(this.userName, this.messageText);
+        // this.addSelfMessage(this.messageText);
         this.messageText = '';
     }
 
@@ -75,17 +103,17 @@ export class TextBoxComponent implements OnInit {
     }
 
     writeQuitMessage() {
-        const systemMessage = `${this.getTimestamp()} - ${this.userName} à quitté la partie.`;
+        const systemMessage = `${this.getTimestamp()} - ${this.opponentName} à quitté la partie.`;
         this.addSystemMessage(systemMessage);
     }
 
-    writeErrorMessage() {
-        const systemMessage = `${this.getTimestamp()} - Erreur par ${this.userName}`;
+    writeErrorMessage(name: string) {
+        const systemMessage = `${this.getTimestamp()} - Erreur par ${name}`;
         this.addSystemMessage(systemMessage);
     }
 
-    writeSucessMessage() {
-        const systemMessage = `${this.getTimestamp()} - Différence trouvée par ${this.userName}`;
+    writeSucessMessage(name: string) {
+        const systemMessage = `${this.getTimestamp()} - Différence trouvée par ${name}`;
         this.addSystemMessage(systemMessage);
     }
 
