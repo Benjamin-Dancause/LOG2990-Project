@@ -31,7 +31,7 @@ export class TextBoxComponent implements OnInit {
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
         if ((sessionStorage.getItem('gameMode') as string) !== 'solo') {
             this.setOpponentName();
-            this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
+            this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
             this.waitingRoomService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
                 if (this.userName === messageInfo.name) {
                     this.addSelfMessage(messageInfo.message);
