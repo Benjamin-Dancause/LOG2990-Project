@@ -3,7 +3,6 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/components/play-area/play-area.component';
 import { GameDiffData } from '@app/interfaces/gameDiffData';
 import { CommunicationService } from './communication.service';
 import { CounterService } from './counter.service';
@@ -11,6 +10,8 @@ import { WaitingRoomService } from './waiting-room.service';
 
 const BIGTIMEOUT = 2000;
 const SMALLTIMOUT = 1000;
+const DEFAULT_HEIGHT = 480;
+const DEFAULT_WIDTH = 640;
 
 @Injectable({
     providedIn: 'root',
