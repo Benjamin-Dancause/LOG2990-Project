@@ -9,7 +9,7 @@ import { WaitingRoomService } from './waiting-room.service';
 export class CounterService implements OnInit {
     counter: number = 0;
     counter2: number = 0;
-    winCondition: number;
+    winCondition: number = 1000;
     gameMode: string;
     allDiffsSubscription: Subscription;
 
@@ -21,6 +21,9 @@ export class CounterService implements OnInit {
         const gameTitle: string = sessionStorage.getItem('gameTitle') as string;
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.setWinCondition(this.gameMode, gameTitle);
+        console.log('This is my WinCon: ' + this.winCondition);
+        console.log('This is my Counter1: ' + this.counter);
+        console.log('This is my Counter2: ' + this.counter2);
         this.waitingRoomService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
             const playerName: string = sessionStorage.getItem('userName') as string;
             const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
@@ -43,6 +46,8 @@ export class CounterService implements OnInit {
     }
 
     resetCounter(player1: boolean) {
+        this.counter = 0;
+        this.counter2 = 0;
         this.waitingRoomService.socket.emit('reset-counter', player1);
     }
 
