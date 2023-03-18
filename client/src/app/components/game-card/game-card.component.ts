@@ -44,7 +44,13 @@ export class GameCardComponent implements OnInit, AfterViewInit {
 
     private readonly serverUrl: string = environment.serverUrl;
 
-    constructor(public dialog: MatDialog, private communication: CommunicationService, private waitingRoomService: WaitingRoomService, private gameCardService: GameCardService) {}
+    // eslint-disable-next-line max-params
+    constructor(
+        public dialog: MatDialog,
+        private communication: CommunicationService,
+        private waitingRoomService: WaitingRoomService,
+        private gameCardService: GameCardService,
+    ) {}
 
     get color() {
         return this.difficulty ? 'red' : 'green';
@@ -63,14 +69,13 @@ export class GameCardComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
-        if(!this.configuration) {
+        if (!this.configuration) {
             this.buttonUpdating();
         }
-        
     }
 
     ngAfterViewInit(): void {
-        if(!this.configuration) {
+        if (!this.configuration) {
             this.buttonUpdating();
         }
     }
@@ -98,7 +103,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         sessionStorage.setItem('gameTitle', this.gameTitle);
         sessionStorage.setItem('gameMode', '1v1');
     }
-    //Changer pour session Storage?
+    // Changer pour session Storage?
     saveUserName() {
         sessionStorage.setItem('userName', this.userName);
         sessionStorage.setItem('gameTitle', this.gameTitle);

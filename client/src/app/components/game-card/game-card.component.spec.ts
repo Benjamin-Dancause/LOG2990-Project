@@ -1,17 +1,32 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogModule } from '@angular/material/dialog';
+import { HttpClientModule } from '@angular/common/http';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { GameCardComponent } from '@app/components/game-card/game-card.component';
+import { CommunicationService } from '@app/services/communication.service';
+import { GameCardService } from '@app/services/game-card.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { of } from 'rxjs';
 
 describe('GameCardComponent', () => {
     let component: GameCardComponent;
     let fixture: ComponentFixture<GameCardComponent>;
+    let communicationSpy: jasmine.SpyObj<CommunicationService>;
+    let gameCardServiceSpy: jasmine.SpyObj<GameCardService>;
+    let dialogSpy: jasmine.SpyObj<MatDialog>;
+    let waitingRoomServiceSpy: jasmine.SpyObj<WaitingRoomService>;
 
     beforeEach(async () => {
+        dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+        communicationSpy = jasmine.createSpyObj('CommunicationService', ['getGameAvailability']);
+        gameCardServiceSpy = jasmine.createSpyObj('GameCardService', ['addPlayer', 'getPlayers']);
+        component = new GameCardComponent(dialogSpy, communicationSpy, waitingRoomServiceSpy, gameCardServiceSpy);
         await TestBed.configureTestingModule({
             imports: [MatDialogModule, HttpClientModule],
-            providers: [HttpClient],
             declarations: [GameCardComponent],
+            providers: [
+                { provide: MatDialog, useValue: dialogSpy },
+                { provide: CommunicationService, useValue: communicationSpy },
+            ],
         }).compileComponents();
 
         fixture = TestBed.createComponent(GameCardComponent);
@@ -53,12 +68,6 @@ describe('GameCardComponent', () => {
         expect(topThreeBest1vs1Times.length).toBe(3);
     });
 
-    it('should open the settings name window', () => {
-        spyOn(component.dialog, 'open');
-        component.openSettings();
-        expect(component.dialog.open).toHaveBeenCalled();
-    });
-
     it('should save the user name, game title, and difficulty', () => {
         const storageSpy = spyOn(localStorage, 'setItem');
         component.userName = 'John Doe';
@@ -80,4 +89,25 @@ describe('GameCardComponent', () => {
         expect(storageSpy).toHaveBeenCalledWith('gameTitle', 'Checkers');
         expect(storageSpy).toHaveBeenCalledWith('difficulty', 'Facile');
     });
+
+    it('should open the namePopupTemplate dialog if the game is available', fakeAsync(() => {
+        communicationSpy.getGameAvailability.and.returnValue(of(true));
+        component.openSettings();
+        tick();
+        expect(dialogSpy.open).toHaveBeenCalledWith(component.namePopupTemplate, { width: '400px' });
+    }));
+
+    it('should open the notAvailableTemplate dialog and reload the page if the game is not available', fakeAsync(() => {
+        communicationSpy.getGameAvailability.and.returnValue(of(false));
+        const dialogRef = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        dialogRef.afterClosed.and.returnValue(of(undefined));
+        dialogSpy.open.and.returnValue(dialogRef);
+
+        spyOn(component, 'reloadPage');
+
+        component.openSettings();
+        tick();
+        expect(dialogSpy.open).toHaveBeenCalledWith(component.notAvailableTemplate, { width: '400px' });
+        expect(component.reloadPage).toHaveBeenCalled();
+    }));
 });

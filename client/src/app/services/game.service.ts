@@ -7,6 +7,7 @@ import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/components/play-area/play-ar
 import { GameDiffData } from '@app/interfaces/gameDiffData';
 import { CommunicationService } from './communication.service';
 import { CounterService } from './counter.service';
+import { WaitingRoomService } from './waiting-room.service';
 
 const BIGTIMEOUT = 2000;
 const SMALLTIMOUT = 1000;
@@ -24,20 +25,44 @@ export class GameService {
     private gameName: string = '';
     private isCheatEnabled = false;
     private cheatTimeout: any;
+    private playAreaCtx: CanvasRenderingContext2D[] = [];
 
-    constructor(private communicationService: CommunicationService, private counterService: CounterService) {}
+    constructor(
+        private communicationService: CommunicationService,
+        private counterService: CounterService,
+        private waitingRoomService: WaitingRoomService,
+    ) {
+        this.waitingRoomService.socket.on('update-difference', (response: ClickResponse) => {
+            this.updateDifferences(response);
+        });
+    }
+
+    getContexts(ctx: CanvasRenderingContext2D) {
+        if (ctx) {
+            this.playAreaCtx.push(ctx);
+        }
+    }
+
+    updateDifferences(response: ClickResponse) {
+        this.differenceFound.push(response.differenceNumber);
+        this.flashDifferences(response.coords, this.playAreaCtx);
+        setTimeout(() => {
+            //context?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+            this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
+        }, BIGTIMEOUT);
+    }
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
-        ctxs[2].fillStyle = 'blue';
-        ctxs[3].fillStyle = 'blue';
+        ctxs[0].fillStyle = 'blue';
+        ctxs[1].fillStyle = 'blue';
         const flash = setInterval(() => {
             for (const coordinate of coords) {
-                ctxs[2].fillRect(coordinate.x, coordinate.y, 1, 1);
-                ctxs[3].fillRect(coordinate.x, coordinate.y, 1, 1);
+                ctxs[0].fillRect(coordinate.x, coordinate.y, 1, 1);
+                ctxs[1].fillRect(coordinate.x, coordinate.y, 1, 1);
             }
             setTimeout(() => {
-                ctxs[2].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-                ctxs[3].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                ctxs[0].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                ctxs[1].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
             }, 100);
         }, 200);
 
@@ -107,20 +132,20 @@ export class GameService {
 
             this.communicationService.sendPosition(this.gameName, mousePosition).subscribe((response: ClickResponse) => {
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
-                    this.differenceFound.push(response.differenceNumber);
                     this.successMessage.emit('Trouvé');
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.successSound.currentTime = 0;
                     const player1: boolean =
                         (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false;
+                    this.waitingRoomService.sendDifferenceFound(response);
                     this.counterService.incrementCounter(player1);
                     this.successSound.play();
-                    this.flashDifferences(response.coords, ctxs);
-                    setTimeout(() => {
-                        context?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
-                        this.updateImages(response.coords, ctxs[0], ctxs[1]);
-                    }, BIGTIMEOUT);
+                    // this.flashDifferences(response.coords, ctxs);
+                    // setTimeout(() => {
+                    //     context?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+                    //     this.updateImages(response.coords, ctxs[0], ctxs[1]);
+                    // }, BIGTIMEOUT);
                 } else {
                     // le code pour que ca envoit un message de systeme pour dire que c'est pas la bonne difference dans chat-box
                     this.errorMessage.emit('Erreur par le joueur');
@@ -136,6 +161,10 @@ export class GameService {
                 }
             });
         }
+    }
+
+    clearContexts(): void {
+        this.playAreaCtx = [];
     }
 
     clearDifferenceArray() {
