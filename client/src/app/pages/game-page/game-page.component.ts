@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { GameCardService } from '@app/services/game-card.service';
+import { WaitingRoomService } from '@app/services/waiting-room.service';
 
 @Component({
     selector: 'app-game-page',
@@ -6,23 +8,26 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./game-page.component.scss'],
 })
 export class GamePageComponent implements OnInit {
-    showPopup = false;
-    allDifferencesFound = false;
-    solo = true;
+    gameTitle: string;
+    userName: string;
 
-    findAllDifferences() {
-        this.allDifferencesFound = true;
-        this.showPopup = true;
-    }
+    showPopup = false;
+
+    constructor(private gameCardService: GameCardService, public waitingRoomService: WaitingRoomService) {}
 
     returnToMainMenu() {
+        this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
         this.showPopup = false;
     }
 
     ngOnInit() {
-        // Game logic to detect if all differences have been found
-        if (this.allDifferencesFound) {
+        this.gameTitle = sessionStorage.getItem('gameTitle') as string;
+        this.waitingRoomService.soloGame();
+    }
+
+    ngAfterViewInit() {
+        this.waitingRoomService.socket.on('send-victorious-player', (player1: boolean) => {
             this.showPopup = true;
-        }
+        });
     }
 }

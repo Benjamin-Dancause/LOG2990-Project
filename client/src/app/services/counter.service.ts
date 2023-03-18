@@ -1,34 +1,67 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Socket } from 'socket.io-client';
-//import { environment } from 'src/environments/environment';
+import { Injectable, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { CommunicationService } from './communication.service';
+import { WaitingRoomService } from './waiting-room.service';
 
 @Injectable({
     providedIn: 'root',
 })
-export class CounterService {
-    //private readonly baseUrl: string = environment.webSocketUrl;
-    private socket: Socket;
-    //private _counter: number = 0;
+export class CounterService implements OnInit {
+    counter: number = 0;
+    counter2: number = 0;
+    winCondition: number = 1000;
+    gameMode: string;
+    allDiffsSubscription: Subscription;
 
-    constructor() {}
-    
-    initializeSocket(): Observable<number> {
-        //const uniqueId = Math.random().toString(36).substring(7)
-        /*this.socket = io(this.baseUrl, { query: {clientId: uniqueId, counter: this._counter}});*/
-        return new Observable<number>( observer => {
-        this.socket.on('counterUpdate', (counter: number) => {
-            //this._counter = counter;
-            observer.next(counter);
-        })
-       });
+    constructor(public waitingRoomService: WaitingRoomService, private communicationService: CommunicationService) {}
+
+    ngOnInit(): void {}
+
+    initializeCounter(): void {
+        const gameTitle: string = sessionStorage.getItem('gameTitle') as string;
+        this.gameMode = sessionStorage.getItem('gameMode') as string;
+        this.setWinCondition(this.gameMode, gameTitle);
+        console.log('This is my WinCon: ' + this.winCondition);
+        console.log('This is my Counter1: ' + this.counter);
+        console.log('This is my Counter2: ' + this.counter2);
+        this.waitingRoomService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
+            const playerName: string = sessionStorage.getItem('userName') as string;
+            const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
+            const isPlayer1: boolean = gameMaster === playerName;
+            console.log('VALUE RECEIVED : ' + counterInfo.player1 + ' ================= VALUE isPlayer1 : ' + isPlayer1);
+            if (!(this.gameMode === 'solo') && isPlayer1 !== counterInfo.player1) {
+                this.counter2 = counterInfo.counter;
+            } else {
+                this.counter = counterInfo.counter;
+            }
+
+            if (this.counter === this.winCondition || this.counter2 === this.winCondition) {
+                this.waitingRoomService.sendVictoriousPlayer(counterInfo.player1);
+            }
+        });
     }
 
-    incrementCounter() {
-        this.socket.emit('incrementCounter');
+    incrementCounter(player1: boolean) {
+        this.waitingRoomService.socket.emit('increment-counter', player1);
     }
 
-    resetCounter() {
-        this.socket.emit('resetCounter');
+    resetCounter(player1: boolean) {
+        this.counter = 0;
+        this.counter2 = 0;
+        this.waitingRoomService.socket.emit('reset-counter', player1);
+    }
+
+    setWinCondition(gameMode: string, gameTitle: string) {
+        this.allDiffsSubscription = this.communicationService.getDiffAmount(gameTitle).subscribe((totalDiff: number) => {
+            if (gameMode !== 'solo') {
+                this.winCondition = Math.ceil(totalDiff / 2);
+            } else {
+                this.winCondition = totalDiff;
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.allDiffsSubscription.unsubscribe();
     }
 }

@@ -1,20 +1,27 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CounterService } from '@app/services/counter.service';
 
 @Component({
     selector: 'app-top-bar',
     templateUrl: './top-bar.component.html',
     styleUrls: ['./top-bar.component.scss'],
-    providers: [CounterService],
 })
 export class TopBarComponent implements OnInit {
     @Input() name: string;
     @Input() single: boolean;
     userName: string;
+    opponent: string = '';
 
     ngOnInit() {
-        const storedUserName = localStorage.getItem('userName');
+        const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
-        this.name = (localStorage.getItem('gameTitle') as string) || '';
+        this.name = (sessionStorage.getItem('gameTitle') as string) || '';
+
+        if (!this.single) {
+            if (this.userName === (sessionStorage.getItem('gameMaster') as string)) {
+                this.opponent = sessionStorage.getItem('joiningPlayer') as string;
+            } else {
+                this.opponent = sessionStorage.getItem('gameMaster') as string;
+            }
+        }
     }
 }

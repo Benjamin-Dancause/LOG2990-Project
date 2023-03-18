@@ -5,7 +5,7 @@ export interface Coords {
     x: number;
     y: number;
 }
-interface GameDiffData {
+export interface GameDiffData {
     id: number;
     count: number;
     differences: Coords[][];
@@ -40,5 +40,14 @@ export class GameManager {
             }
         }
         return { isDifference: false, differenceNumber: 0, coords: [] };
+    }
+
+    async getAllDifferences(name : string): Promise<GameDiffData> {
+        const infoPath = `assets/data/gamesData.json`;
+        const gamesContent = await fs.readFile(infoPath, 'utf-8').then((data) => JSON.parse(data));
+        
+        const game = await gamesContent.find((game) => game.name === name);
+        
+        return { id: game.id, count: game.count, differences: game.differences };
     }
 }

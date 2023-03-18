@@ -1,11 +1,13 @@
 /* eslint-disable prefer-const */
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/components/play-area/play-area.component';
+import { GameDiffData } from '@app/interfaces/gameDiffData';
 import { CommunicationService } from './communication.service';
 import { CounterService } from './counter.service';
+import { WaitingRoomService } from './waiting-room.service';
 
 const BIGTIMEOUT = 2000;
 const SMALLTIMOUT = 1000;
@@ -16,116 +18,100 @@ const SMALLTIMOUT = 1000;
 export class GameService {
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
+    errorMessage = new EventEmitter<string>();
+    successMessage = new EventEmitter<string>();
     private isClickDisabled = false;
     private differenceFound: number[] = [];
     private gameName: string = '';
+    private isCheatEnabled = false;
+    private cheatTimeout: any;
+    private playAreaCtx: CanvasRenderingContext2D[] = [];
 
-    constructor(private communicationService: CommunicationService) {
-        this.gameName = (localStorage.getItem('gameTitle') as string) || '';
-    }
-
-    flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
-        ctxs[2].fillStyle = 'blue';
-        ctxs[3].fillStyle = 'blue';
-        const flash = setInterval(() => {
-            for (const coordinate of coords) {
-                ctxs[2].fillRect(coordinate.x, coordinate.y, 1, 1);
-                ctxs[3].fillRect(coordinate.x, coordinate.y, 1, 1);
-            }
-            setTimeout(() => {
-                ctxs[2].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-                ctxs[3].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-            }, 100);
-        }, 200);
-
-        setTimeout(() => {
-            clearInterval(flash);
-        }, 1000);
-    }
-
-    /*
-    flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
-        const fillStyleBackup: (string | CanvasGradient | CanvasPattern)[] = [];
-        for (const ctx of ctxs) {
-            fillStyleBackup.push(ctx.fillStyle);
-            ctx.fillStyle = 'blue';
-        }
-        const flash = setInterval(() => {
-            for (const coordinate of coords) {
-                for (const ctx of ctxs) {
-                    ctx.fillRect(coordinate.x, coordinate.y, 1, 1);
-                }
-            }
-            setTimeout(() => {
-                for (const ctx of ctxs) {
-                    ctx.clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-                    ctx.fillStyle = fillStyleBackup.shift() as string;
-                }
-            }, 100);
-        }, 200);
-
-        setTimeout(() => {
-            clearInterval(flash);
-        }, 1000);
-    }
-    */
-    /*
-    flashAllPoints(ctxs: CanvasRenderingContext2D[]) {
-        const flash = setInterval(() => {
-            for (const ctx of ctxs) {
-                ctx.fillStyle = 'blue';
-                ctx.fillRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-                setTimeout(() => {
-                    ctx.clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-                }, 100);
-            }
-        }, 200);
-
-        setTimeout(() => {
-            clearInterval(flash);
-        }, 1000);
-    }
-    
-
-    flashDifferences2(coords: Coords[], ctxs: CanvasRenderingContext2D[], isDifference: boolean, differenceNumber: number) {
-        let flashIntervalId: number;
-        const flashDuration = 1000;
-        const flashDelay = 200;
-
-        if (!isDifference || this.differenceFound.includes(differenceNumber)) {
-            return;
-        }
-
-        const coordinatesToFlash = coords.filter((coordinate) => {
-            const pixelData = ctxs[0].getImageData(coordinate.x, coordinate.y, 1, 1).data;
-            const isPixelDifferent = pixelData.some((channelValue) => channelValue !== pixelData[0]);
-            return isPixelDifferent;
+    constructor(
+        private communicationService: CommunicationService,
+        private counterService: CounterService,
+        private waitingRoomService: WaitingRoomService,
+    ) {
+        this.waitingRoomService.socket.on('update-difference', (response: ClickResponse) => {
+            this.updateDifferences(response);
         });
+    }
 
-        if (coordinatesToFlash.length === 0) {
-            return;
+    getContexts(ctx: CanvasRenderingContext2D) {
+        if (ctx) {
+            this.playAreaCtx.push(ctx);
         }
+    }
 
-        let isFlashOn = false;
-        flashIntervalId = setInterval(() => {
-            isFlashOn = !isFlashOn;
-            ctxs[2].fillStyle = isFlashOn ? 'blue' : 'white';
-            ctxs[3].fillStyle = isFlashOn ? 'blue' : 'white';
-            for (const coordinate of coordinatesToFlash) {
-                ctxs[2].fillRect(coordinate.x, coordinate.y, 1, 1);
-                ctxs[3].fillRect(coordinate.x, coordinate.y, 1, 1);
+    updateDifferences(response: ClickResponse) {
+        this.differenceFound.push(response.differenceNumber);
+        this.flashDifferences(response.coords, this.playAreaCtx);
+        setTimeout(() => {
+            //context?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+            this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
+        }, BIGTIMEOUT);
+    }
+
+    flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
+        ctxs[0].fillStyle = 'blue';
+        ctxs[1].fillStyle = 'blue';
+        const flash = setInterval(() => {
+            for (const coordinate of coords) {
+                ctxs[0].fillRect(coordinate.x, coordinate.y, 1, 1);
+                ctxs[1].fillRect(coordinate.x, coordinate.y, 1, 1);
             }
-        }, flashDelay);
+            setTimeout(() => {
+                ctxs[0].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                ctxs[1].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+            }, 100);
+        }, 200);
 
         setTimeout(() => {
-            clearInterval(flashIntervalId);
-            for (const coordinate of coordinatesToFlash) {
-                ctxs[2].clearRect(coordinate.x, coordinate.y, 1, 1);
-                ctxs[3].clearRect(coordinate.x, coordinate.y, 1, 1);
-            }
-        }, flashDuration);
+            clearInterval(flash);
+        }, 1000);
     }
-    */
+
+    cheatMode(ctxs: CanvasRenderingContext2D[]) {
+        this.isCheatEnabled = !this.isCheatEnabled;
+        if (!this.isCheatEnabled) {
+            clearInterval(this.cheatTimeout);
+            return;
+        }
+        this.flashAllDifferences(ctxs);
+        this.cheatTimeout = setInterval(() => {
+            this.flashAllDifferences(ctxs);
+        }, SMALLTIMOUT);
+    }
+
+    flashAllDifferences(ctxs: CanvasRenderingContext2D[]) {
+        this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
+            ctxs[2].fillStyle = 'blue';
+            ctxs[3].fillStyle = 'blue';
+            let i = 0;
+            const flash = setInterval(() => {
+                for (const coordinate of gameData.differences) {
+                    if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
+                        for (const coord of coordinate) {
+                            ctxs[2].fillRect(coord.x, coord.y, 1, 1);
+                            ctxs[3].fillRect(coord.x, coord.y, 1, 1);
+                        }
+                    }
+                }
+                i++;
+                setTimeout(() => {
+                    ctxs[2].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                    ctxs[3].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                }, 100);
+                if (i === 4) {
+                    clearInterval(flash);
+                }
+            }, 200);
+        });
+    }
+
+    setGameName() {
+        this.gameName = (sessionStorage.getItem('gameTitle') as string) || '';
+    }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
         for (let i = 0; i < coords.length; i++) {
@@ -145,20 +131,24 @@ export class GameService {
             const mousePosition = { x: event.offsetX, y: event.offsetY };
 
             this.communicationService.sendPosition(this.gameName, mousePosition).subscribe((response: ClickResponse) => {
-                console.log(response);
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
-                    this.differenceFound.push(response.differenceNumber);
+                    this.successMessage.emit('Trouvé');
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.successSound.currentTime = 0;
-                    // this.counterService.incrementCounter().subscribe();
+                    const player1: boolean =
+                        (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false;
+                    this.waitingRoomService.sendDifferenceFound(response);
+                    this.counterService.incrementCounter(player1);
                     this.successSound.play();
-                    this.flashDifferences(response.coords, ctxs);
-                    setTimeout(() => {
-                        context?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
-                        this.updateImages(response.coords, ctxs[0], ctxs[1]);
-                    }, BIGTIMEOUT);
+                    // this.flashDifferences(response.coords, ctxs);
+                    // setTimeout(() => {
+                    //     context?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+                    //     this.updateImages(response.coords, ctxs[0], ctxs[1]);
+                    // }, BIGTIMEOUT);
                 } else {
+                    // le code pour que ca envoit un message de systeme pour dire que c'est pas la bonne difference dans chat-box
+                    this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
                     this.errorSound.currentTime = 0;
@@ -173,7 +163,12 @@ export class GameService {
         }
     }
 
+    clearContexts(): void {
+        this.playAreaCtx = [];
+    }
+
     clearDifferenceArray() {
         this.differenceFound = [];
+        this.isCheatEnabled = false;
     }
 }

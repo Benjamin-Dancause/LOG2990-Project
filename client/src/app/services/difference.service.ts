@@ -33,10 +33,14 @@ export class DifferenceService {
         ctx.stroke();
     }
 
-    findDifference(ctx1: CanvasRenderingContext2D, ctx2: CanvasRenderingContext2D, radius: number): HTMLCanvasElement {
-        const pixels1 = ctx1.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT) as ImageData;
-        const pixels2 = ctx2.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT) as ImageData;
-        const diff = ctx1.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT) as ImageData;
+    findDifference(image1: ImageData, image2: ImageData, radius: number): HTMLCanvasElement {
+        const pixels1 = image1;
+        const pixels2 = image2;
+        const temp = document.createElement('canvas') as HTMLCanvasElement;
+        temp.width = CANVAS_WIDTH;
+        temp.height = CANVAS_HEIGHT;
+        const ctxTemp = temp.getContext('2d') as CanvasRenderingContext2D;
+        const diff = ctxTemp.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT) as ImageData;
 
         for (let i = 0; i < (pixels1.data.length as number); i += ARRAY_OFFSET) {
             if (

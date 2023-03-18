@@ -7,7 +7,7 @@ import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { GameSelectionPageComponent } from '@app/pages/game-selection-page-component/game-selection-page-component.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
-import { SocketPageComponent } from '@app/pages/socket-page/socket-page.component';
+import { WaitingRoomPageComponent } from '@app/pages/waiting-room-page/waiting-room-page.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -18,7 +18,7 @@ const routes: Routes = [
     { path: 'material', component: MaterialPageComponent },
     { path: 'game-selection', component: GameSelectionPageComponent },
     { path: 'config', component: ConfigPageComponent },
-    { path: 'socket', component: SocketPageComponent },
+    { path: 'waitingRoom', component: WaitingRoomPageComponent },
     { path: '**', redirectTo: '/home' },
 ];
 

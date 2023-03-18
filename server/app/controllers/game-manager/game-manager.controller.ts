@@ -19,6 +19,14 @@ export class GameManagerController {
         return await this.gameManager.verifyPos(body.name, body.coords);
     }
 
+    @Post('/findAll')
+    @ApiOkResponse({
+        description: 'Get all differences',
+    })
+    async returnAllDiff(@Body() body: {name: string}) {
+        return await this.gameManager.getAllDifferences(body.name);
+    }
+
     @Post('/diffAmount')
     @ApiOkResponse({
         description: 'New game',

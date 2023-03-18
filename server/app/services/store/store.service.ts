@@ -65,11 +65,6 @@ export class StoreService {
 
     async getAllGames(): Promise<GameSelectionPageData[]> {
         const gamesData: Data[] = await this.extractData();
-        console.log(
-            gamesData.map((game) => {
-                console.log(game.images[0]);
-            }),
-        );
         return gamesData.map((game) => ({
             name: game.name,
             image: game.images[0],
@@ -90,7 +85,7 @@ export class StoreService {
     async getGameDifferenceByName(name: string): Promise<GameDiffData> {
         const gamesData: Data[] = await this.extractData();
         const game = gamesData.find((game) => game.name === name);
-
+        
         if (game) {
             return { id: 0, count: game.count, differences: game.differences };
         }

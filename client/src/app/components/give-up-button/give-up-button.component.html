@@ -1,14 +1,10 @@
-<button 
-    [ngStyle]="{'background-color': color}" 
-    class="button"
-    (click)="giveUpConfirmPrompt()"
->
-{{ text }}
+<button [ngStyle]="{ 'background-color': color }" class="button" (click)="giveUpConfirmPrompt()">
+    {{ text }}
 </button>
 <ng-template #giveUpPromptTemplate>
     <h3>Voulez-vous abandonner la partie ?</h3>
     <mat-dialog-actions>
         <button mat-button class="prompt-button" mat-dialog-close>Continuer</button>
-        <button mat-button class="prompt-button" routerLink="/home" mat-dialog-close>Quitter</button>
+        <button mat-button class="prompt-button" routerLink="/home" mat-dialog-close (click)="removeUser()">Quitter</button>
     </mat-dialog-actions>
 </ng-template>
