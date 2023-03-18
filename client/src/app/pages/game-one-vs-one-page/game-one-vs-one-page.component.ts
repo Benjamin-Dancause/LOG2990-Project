@@ -45,7 +45,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
             }
         });
 
-        this.waitingRoomService.socket.on('player-left', () => {
+        this.waitingRoomService.socket.on('player-quit-game', () => {
             this.isWinner = true;
             this.winningPlayer = sessionStorage.getItem('userName') as string;
             this.showPopup = true;
