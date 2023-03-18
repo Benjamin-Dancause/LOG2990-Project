@@ -54,18 +54,17 @@ export class PlayAreaComponent implements AfterViewInit {
     private keyDownSubscription: Subscription;
     private roomId: string = '';
     private player1: boolean = true;
-    
+
     constructor(
         private counterService: CounterService,
         private communicationService: CommunicationService,
         private input: InputService,
         private game: GameService,
         private waitingRoomService: WaitingRoomService,
-        ) {
-            this.gameName = sessionStorage.getItem('gameTitle') as string;
-            this.game.setGameName();
+    ) {
+        this.gameName = sessionStorage.getItem('gameTitle') as string;
+        this.game.setGameName();
     }
-    
 
     get width(): number {
         return this.canvasSize.x;
@@ -75,7 +74,6 @@ export class PlayAreaComponent implements AfterViewInit {
         return this.canvasSize.y;
     }
 
-    
     async initCanvases() {
         const img1 = new Image();
         img1.src = this.imageLeftStr;
@@ -83,6 +81,8 @@ export class PlayAreaComponent implements AfterViewInit {
         img1.onload = () => {
             this.ctxLeft = this.canvasLeft.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxLeft?.drawImage(img1, 0, 0);
+            this.game.getContexts(this.ctxLeft);
+            console.log('0');
         };
         const img2 = new Image();
         img2.src = this.imageRightStr;
@@ -90,11 +90,17 @@ export class PlayAreaComponent implements AfterViewInit {
         img2.onload = () => {
             this.ctxRight = this.canvasRight.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxRight?.drawImage(img2, 0, 0);
+            this.game.getContexts(this.ctxRight);
+            console.log('1');
         };
         this.ctxLeftTop = this.canvasLeftTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.ctxRightTop = this.canvasRightTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.game.getContexts(this.ctxLeftTop);
+        console.log('2');
+        this.game.getContexts(this.ctxRightTop);
+        console.log('3');
     }
-    
+
     ngAfterViewInit(): void {
         this.waitingRoomService.socket.on('player-info', (gameplayInfo: OneVsOneGameplayInfo) => {
             this.roomId = gameplayInfo.roomId;
@@ -124,16 +130,13 @@ export class PlayAreaComponent implements AfterViewInit {
                 const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
                 this.game.cheatMode(ctxs);
             }
-        }
-        );
-
+        });
     }
-    
+
     ngOnDestroy(): void {
         this.mouseDownSubscription.unsubscribe();
         this.keyDownSubscription.unsubscribe();
+        this.game.clearContexts();
         this.game.clearDifferenceArray();
     }
 }
-
-
