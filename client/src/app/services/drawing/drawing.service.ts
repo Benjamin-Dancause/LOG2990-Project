@@ -1,4 +1,4 @@
-import { ElementRef, Injectable, ViewChildren } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Coords } from '@app/classes/coords';
 
 export interface History {
@@ -9,17 +9,19 @@ export enum Tools {
     PEN = 'pen',
     ERASER = 'eraser',
     RECTANGLE = 'rectangle',
+    PEN_TIP = 'round',
+    BASE_COLOR = '#000000',
+    ERASER_COLOR = '#FFFFFF',
 }
 @Injectable({
     providedIn: 'root',
 })
 export class DrawingService {
-    @ViewChildren('drawingCanvas') canvases: ElementRef<HTMLCanvasElement>;
-    private currentTool: string = 'pen';
-    private isDrawing: boolean = false;
-    private square: boolean = false;
-    private currentColor: string = '#000000';
-    private currentRadius: number;
+    public currentTool: string = Tools.PEN;
+    public isDrawing: boolean = false;
+    public square: boolean = false;
+    public currentColor: string = Tools.BASE_COLOR;
+    public currentRadius: number;
     currentCanvas: HTMLCanvasElement;
     currentCtx: CanvasRenderingContext2D | null;
     canvasRegistry: HTMLCanvasElement[] = [];
@@ -58,8 +60,8 @@ export class DrawingService {
         if (this.currentCtx) {
             this.currentCtx.beginPath();
             this.currentCtx.lineWidth = this.currentRadius;
-            this.currentCtx.lineCap = 'round';
-            this.currentCtx.lineJoin = 'round';
+            this.currentCtx.lineCap = Tools.PEN_TIP;
+            this.currentCtx.lineJoin = Tools.PEN_TIP;
         }
         this.execute(event);
     }
@@ -101,7 +103,7 @@ export class DrawingService {
         if (this.currentCtx) {
             this.currentCtx.moveTo(this.lastPos.x, this.lastPos.y);
             this.currentCtx.lineTo(event.offsetX, event.offsetY);
-            this.currentCtx.strokeStyle = 'white';
+            this.currentCtx.strokeStyle = Tools.ERASER_COLOR;
             this.currentCtx.stroke();
             this.lastPos = { x: event.offsetX, y: event.offsetY };
         }
