@@ -113,6 +113,15 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
     }
 
+    @SubscribeMessage('leave-game')
+    onLeaveGame(client: Socket) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            this.timerManager.deleteTimerData(roomId);
+            this.server.to(roomId).emit('player-left');
+        }
+    }
+
     @SubscribeMessage('handle-lobby')
     onHandleLobby(client: Socket, lobby: Lobby) {
         let roomId = '';

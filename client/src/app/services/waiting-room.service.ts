@@ -67,6 +67,10 @@ export class WaitingRoomService {
         this.socket.emit('send-difference-found', response);
     }
 
+    leaveGame() {
+        this.socket.emit('leave-game');
+    }
+
     sendVictoriousPlayer(player1: boolean) {
         this.socket.emit('on-victory-sequence', player1);
     }
