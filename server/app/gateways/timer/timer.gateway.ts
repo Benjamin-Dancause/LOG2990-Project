@@ -164,10 +164,10 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @SubscribeMessage('send-difference-found')
-    onDIfferenceFound(client: Socket, diffInfo: { canvas: CanvasRenderingContext2D[]; difference: ClickResponse }) {
+    onDIfferenceFound(client: Socket, response: ClickResponse) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            this.server.to(roomId).emit('update-difference', diffInfo);
+            this.server.to(roomId).emit('update-difference', response);
         }
     }
 

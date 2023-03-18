@@ -63,8 +63,8 @@ export class WaitingRoomService {
         this.socket.emit('init-OneVsOne-components', player1);
     }
 
-    sendDifferenceFound(ctxs: CanvasRenderingContext2D[], response: ClickResponse) {
-        this.socket.emit('send-difference-found', { canvas: ctxs, difference: response });
+    sendDifferenceFound(response: ClickResponse) {
+        this.socket.emit('send-difference-found', response);
     }
 
     sendVictoriousPlayer(player1: boolean) {
