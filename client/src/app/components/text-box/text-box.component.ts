@@ -28,32 +28,41 @@ export class TextBoxComponent implements OnInit {
     ngOnInit(): void {
         const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
-        this.setOpponentName();
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
-        this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
-        this.waitingRoomService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
-            if (this.userName === messageInfo.name) {
-                this.addSelfMessage(messageInfo.message);
-            } else {
-                this.addOpponentMessage(messageInfo.message);
-            }
-        });
-        this.waitingRoomService.socket.on('player-quit-game', () => {
-            this.writeQuitMessage();
-        });
-        this.waitingRoomService.socket.on('player-error', (name: string) => {
-            this.writeErrorMessage(name);
-        });
-        this.waitingRoomService.socket.on('player-success', (name: string) => {
-            this.writeSucessMessage(name);
-        });
+        if ((sessionStorage.getItem('gameMode') as string) !== 'solo') {
+            this.setOpponentName();
+            this.addSystemMessage(`${this.getTimestamp()} - L'adversaire a rejoint la partie.`);
+            this.waitingRoomService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
+                if (this.userName === messageInfo.name) {
+                    this.addSelfMessage(messageInfo.message);
+                } else {
+                    this.addOpponentMessage(messageInfo.message);
+                }
+            });
+            this.waitingRoomService.socket.on('player-quit-game', () => {
+                this.writeQuitMessage();
+            });
+            this.waitingRoomService.socket.on('player-error', (name: string) => {
+                this.writeErrorMessage(name);
+            });
+            this.waitingRoomService.socket.on('player-success', (name: string) => {
+                this.writeSucessMessage(name);
+            });
 
-        this.gameService.errorMessage.subscribe(() => {
-            this.waitingRoomService.sendPlayerError(this.userName);
-        });
-        this.gameService.successMessage.subscribe(() => {
-            this.waitingRoomService.sendPlayerSuccess(this.userName);
-        });
+            this.gameService.errorMessage.subscribe(() => {
+                this.waitingRoomService.sendPlayerError(this.userName);
+            });
+            this.gameService.successMessage.subscribe(() => {
+                this.waitingRoomService.sendPlayerSuccess(this.userName);
+            });
+        } else {
+            this.gameService.errorMessage.subscribe(() => {
+                this.writeErrorMessage(this.userName);
+            });
+            this.gameService.successMessage.subscribe(() => {
+                this.writeSucessMessage(this.userName);
+            });
+        }
     }
 
     setOpponentName() {
