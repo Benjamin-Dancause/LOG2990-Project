@@ -1,3 +1,4 @@
+import { ClickResponse } from '@app/classes/click-response';
 import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
@@ -159,6 +160,14 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player2');
                 this.server.to(roomId).emit('counter-update', { counter: counter, player1: player1 });
             }
+        }
+    }
+
+    @SubscribeMessage('send-difference-found')
+    onDIfferenceFound(client: Socket, diffInfo: { canvas: CanvasRenderingContext2D[]; difference: ClickResponse }) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            this.server.to(roomId).emit('update-difference', diffInfo);
         }
     }
 

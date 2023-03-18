@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Injectable, OnInit } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
@@ -7,6 +7,7 @@ import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/components/play-area/play-ar
 import { GameDiffData } from '@app/interfaces/gameDiffData';
 import { CommunicationService } from './communication.service';
 import { CounterService } from './counter.service';
+import { WaitingRoomService } from './waiting-room.service';
 
 const BIGTIMEOUT = 2000;
 const SMALLTIMOUT = 1000;
@@ -14,7 +15,7 @@ const SMALLTIMOUT = 1000;
 @Injectable({
     providedIn: 'root',
 })
-export class GameService {
+export class GameService implements OnInit {
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
     errorMessage = new EventEmitter<string>();
@@ -25,7 +26,19 @@ export class GameService {
     private isCheatEnabled = false;
     private cheatTimeout: any;
 
-    constructor(private communicationService: CommunicationService, private counterService: CounterService) {}
+    constructor(
+        private communicationService: CommunicationService,
+        private counterService: CounterService,
+        private waitingRoomService: WaitingRoomService,
+    ) {
+        this.waitingRoomService.socket.on('update-difference', (diffInfo: { canvas: CanvasRenderingContext2D[]; difference: ClickResponse }) => {
+            //const canvas: CanvasRenderingContext2D[] = diffInfo.canvas;
+            const diffResponse: ClickResponse = diffInfo.difference;
+            this.differenceFound.push(diffResponse.differenceNumber);
+        });
+    }
+
+    ngOnInit(): void {}
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
         ctxs[2].fillStyle = 'blue';
@@ -107,13 +120,13 @@ export class GameService {
 
             this.communicationService.sendPosition(this.gameName, mousePosition).subscribe((response: ClickResponse) => {
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
-                    this.differenceFound.push(response.differenceNumber);
                     this.successMessage.emit('Trouvé');
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.successSound.currentTime = 0;
                     const player1: boolean =
                         (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false;
+                    this.waitingRoomService.sendDifferenceFound(ctxs, response);
                     this.counterService.incrementCounter(player1);
                     this.successSound.play();
                     this.flashDifferences(response.coords, ctxs);
