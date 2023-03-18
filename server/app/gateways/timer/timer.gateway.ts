@@ -188,6 +188,22 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
     }
 
+    @SubscribeMessage('send-player-error')
+    onSendPlayerError(client: Socket, name: string) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            this.server.to(roomId).emit('player-error', name);
+        }
+    }
+
+    @SubscribeMessage('send-player-success')
+    onSendPlayerSuccess(client: Socket, name: string) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            this.server.to(roomId).emit('player-success', name);
+        }
+    }
+
     @SubscribeMessage('reject-player')
     onRejectPlayer(client: Socket, lobby: Lobby) {
         const roomId = this.socketIdToRoomId[client.id];

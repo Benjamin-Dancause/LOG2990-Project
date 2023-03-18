@@ -41,12 +41,18 @@ export class TextBoxComponent implements OnInit {
         this.waitingRoomService.socket.on('player-quit-game', () => {
             this.writeQuitMessage();
         });
-        // this.writeQuitMessage();
+        this.waitingRoomService.socket.on('player-error', (name: string) => {
+            this.writeErrorMessage(name);
+        });
+        this.waitingRoomService.socket.on('player-success', (name: string) => {
+            this.writeSucessMessage(name);
+        });
+
         this.gameService.errorMessage.subscribe(() => {
-            this.writeErrorMessage();
+            this.waitingRoomService.sendPlayerError(this.userName);
         });
         this.gameService.successMessage.subscribe(() => {
-            this.writeSucessMessage();
+            this.waitingRoomService.sendPlayerSuccess(this.userName);
         });
     }
 
@@ -101,13 +107,13 @@ export class TextBoxComponent implements OnInit {
         this.addSystemMessage(systemMessage);
     }
 
-    writeErrorMessage() {
-        const systemMessage = `${this.getTimestamp()} - Erreur par ${this.userName}`;
+    writeErrorMessage(name: string) {
+        const systemMessage = `${this.getTimestamp()} - Erreur par ${name}`;
         this.addSystemMessage(systemMessage);
     }
 
-    writeSucessMessage() {
-        const systemMessage = `${this.getTimestamp()} - Différence trouvée par ${this.userName}`;
+    writeSucessMessage(name: string) {
+        const systemMessage = `${this.getTimestamp()} - Différence trouvée par ${name}`;
         this.addSystemMessage(systemMessage);
     }
 
