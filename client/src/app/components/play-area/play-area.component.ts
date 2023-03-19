@@ -29,7 +29,6 @@ interface OneVsOneGameplayInfo {
     selector: 'app-play-area',
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
-    //providers: [CounterService, DrawService],
 })
 export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvasLeft', { static: false }) private canvasLeft!: ElementRef<HTMLCanvasElement>;
@@ -82,7 +81,6 @@ export class PlayAreaComponent implements AfterViewInit {
             this.ctxLeft = this.canvasLeft.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxLeft?.drawImage(img1, 0, 0);
             this.game.getContexts(this.ctxLeft);
-            console.log('0');
         };
         const img2 = new Image();
         img2.setAttribute('crossOrigin', 'anonymous');
@@ -91,14 +89,11 @@ export class PlayAreaComponent implements AfterViewInit {
             this.ctxRight = this.canvasRight.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxRight?.drawImage(img2, 0, 0);
             this.game.getContexts(this.ctxRight);
-            console.log('1');
         };
         this.ctxLeftTop = this.canvasLeftTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.ctxRightTop = this.canvasRightTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.game.getContexts(this.ctxLeftTop);
-        console.log('2');
         this.game.getContexts(this.ctxRightTop);
-        console.log('3');
     }
 
     ngAfterViewInit(): void {

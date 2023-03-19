@@ -48,7 +48,6 @@ export class GameService {
         this.differenceFound.push(response.differenceNumber);
         this.flashDifferences(response.coords, this.playAreaCtx);
         setTimeout(() => {
-            //context?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
             this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
         }, BIGTIMEOUT);
     }
@@ -142,13 +141,7 @@ export class GameService {
                     this.waitingRoomService.sendDifferenceFound(response);
                     this.counterService.incrementCounter(player1);
                     this.successSound.play();
-                    // this.flashDifferences(response.coords, ctxs);
-                    // setTimeout(() => {
-                    //     context?.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
-                    //     this.updateImages(response.coords, ctxs[0], ctxs[1]);
-                    // }, BIGTIMEOUT);
                 } else {
-                    // le code pour que ca envoit un message de systeme pour dire que c'est pas la bonne difference dans chat-box
                     this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
