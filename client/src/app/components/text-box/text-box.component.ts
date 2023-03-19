@@ -3,7 +3,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@ang
 import { MatDialog } from '@angular/material/dialog';
 import { CounterService } from '@app/services/counter.service';
 import { GameService } from '@app/services/game.service';
-import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { SocketService } from '@app/services/socket.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -27,7 +27,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     successSubscription: Subscription;
     errorSubscription: Subscription;
 
-    constructor(public dialog: MatDialog, private gameService: GameService, private waitingRoomService: WaitingRoomService) {
+    constructor(public dialog: MatDialog, private gameService: GameService, private socketService: SocketService) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
         this.errorSubscription = new Subscription();
@@ -41,28 +41,28 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         if (this.gameMode !== 'solo') {
             this.setOpponentName();
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
-            this.waitingRoomService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
+            this.socketService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
                 if (this.userName === messageInfo.name) {
                     this.addSelfMessage(messageInfo.message);
                 } else {
                     this.addOpponentMessage(messageInfo.message);
                 }
             });
-            this.waitingRoomService.socket.on('player-quit-game', () => {
+            this.socketService.socket.on('player-quit-game', () => {
                 this.writeQuitMessage();
             });
-            this.waitingRoomService.socket.on('player-error', (name: string) => {
+            this.socketService.socket.on('player-error', (name: string) => {
                 this.writeErrorMessage(name);
             });
-            this.waitingRoomService.socket.on('player-success', (name: string) => {
+            this.socketService.socket.on('player-success', (name: string) => {
                 this.writeSuccessMessage(name);
             });
 
             this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
-                this.waitingRoomService.sendPlayerError(this.userName);
+                this.socketService.sendPlayerError(this.userName);
             });
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
-                this.waitingRoomService.sendPlayerSuccess(this.userName);
+                this.socketService.sendPlayerSuccess(this.userName);
             });
         } else {
             this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
@@ -85,7 +85,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
 
     sendMessage() {
         if (this.messageText.trim() === '') return;
-        this.waitingRoomService.sendPlayerMessage(this.userName, this.messageText);
+        this.socketService.sendPlayerMessage(this.userName, this.messageText);
         this.messageText = '';
     }
 

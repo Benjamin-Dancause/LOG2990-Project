@@ -6,7 +6,7 @@ import { MouseButton } from '@app/classes/mouse-button';
 import { GameDiffData } from '@app/interfaces/gameDiffData';
 import { CommunicationService } from './communication.service';
 import { CounterService } from './counter.service';
-import { WaitingRoomService } from './waiting-room.service';
+import { SocketService } from './socket.service';
 
 const BIGTIMEOUT = 2000;
 const SMALLTIMOUT = 1000;
@@ -28,12 +28,8 @@ export class GameService {
     private cheatTimeout: any;
     private playAreaCtx: CanvasRenderingContext2D[] = [];
 
-    constructor(
-        private communicationService: CommunicationService,
-        private counterService: CounterService,
-        private waitingRoomService: WaitingRoomService,
-    ) {
-        this.waitingRoomService.socket.on('update-difference', (response: ClickResponse) => {
+    constructor(private communicationService: CommunicationService, private counterService: CounterService, private socketService: SocketService) {
+        this.socketService.socket.on('update-difference', (response: ClickResponse) => {
             this.updateDifferences(response);
         });
     }
@@ -138,7 +134,7 @@ export class GameService {
                     this.successSound.currentTime = 0;
                     const player1: boolean =
                         (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false;
-                    this.waitingRoomService.sendDifferenceFound(response);
+                    this.socketService.sendDifferenceFound(response);
                     this.counterService.incrementCounter(player1);
                     this.successSound.play();
                 } else {

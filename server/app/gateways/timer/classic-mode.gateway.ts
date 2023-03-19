@@ -15,7 +15,7 @@ interface PlayerSockets {
 }
 
 @WebSocketGateway()
-export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
     socketIdToRoomId: Record<string, string> = {};
     roomIdToPlayerSockets = new Map<string, PlayerSockets>();

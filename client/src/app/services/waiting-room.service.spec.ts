@@ -2,16 +2,16 @@ import { TestBed } from '@angular/core/testing';
 import { ClickResponse } from '@app/classes/click-response';
 import { Socket } from 'socket.io-client';
 
-import { WaitingRoomService } from './waiting-room.service';
+import { SocketService } from './socket.service';
 
-describe('WaitingRoomService', () => {
-    let service: WaitingRoomService;
+describe('socketService', () => {
+    let service: SocketService;
     let socketSpy: jasmine.SpyObj<Socket>;
 
     beforeEach(() => {
         socketSpy = jasmine.createSpyObj('Socket', ['emit', 'connect', 'disconnect']);
         TestBed.configureTestingModule({});
-        service = TestBed.inject(WaitingRoomService);
+        service = TestBed.inject(SocketService);
         service.socket = socketSpy;
     });
 
