@@ -83,6 +83,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     }
 
     openSettingsSolo(): void {
+        sessionStorage.setItem('gameMode', 'solo');
         this.communication.getGameAvailability(this.gameTitle).subscribe((isAvailable) => {
             if (isAvailable) {
                 this.dialog.open(this.namePopupTemplate, {
@@ -100,6 +101,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     }
 
     openSettings1vs1(): void {
+        sessionStorage.setItem('gameMode', '1v1');
         this.communication.getGameAvailability(this.gameTitle).subscribe((isAvailable) => {
             if (isAvailable) {
                 this.dialog.open(this.namePopupTemplate1vs1, {
@@ -115,18 +117,10 @@ export class GameCardComponent implements OnInit, AfterViewInit {
             }
         });
     }
-
-    saveGameName() {
-        this.name = Math.random().toString(36).substring(7);
-        sessionStorage.setItem('userName', this.name);
-        sessionStorage.setItem('gameTitle', this.gameTitle);
-        sessionStorage.setItem('gameMode', '1v1');
-    }
-    // Changer pour session Storage?
     saveUserName() {
         sessionStorage.setItem('userName', this.userName);
         sessionStorage.setItem('gameTitle', this.gameTitle);
-        sessionStorage.setItem('gameMode', 'solo');
+
         if (this.difficulty) {
             sessionStorage.setItem('difficulty', 'Difficile');
         }

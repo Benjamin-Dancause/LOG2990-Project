@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { GameSelectionPageData } from '@common/game-interfaces';
 
 const PAGE_SIZE = 4;
 
