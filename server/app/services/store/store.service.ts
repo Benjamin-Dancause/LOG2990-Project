@@ -1,38 +1,7 @@
+import { Coords, Data, GameDiffData, GameplayData, GameSelectionPageData } from '@common/game-interfaces';
 import { Body, Injectable } from '@nestjs/common';
 import { promises as fs } from 'fs';
 import { promisify } from 'util';
-
-interface Coords {
-    x: number;
-    y: number;
-}
-
-export interface Data {
-    name: string;
-    images: string[];
-    difficulty: boolean;
-    count: number;
-    differences: Coords[][];
-}
-
-export interface GameSelectionPageData {
-    name: string;
-    image: string;
-    difficulty: boolean;
-}
-
-export interface GameplayData {
-    name: string;
-    images: string[];
-    count: number;
-    difficulty: boolean;
-}
-
-export interface GameDiffData {
-    id: number;
-    count: number;
-    differences: Coords[][];
-}
 
 @Injectable()
 export class StoreService {
@@ -85,7 +54,7 @@ export class StoreService {
     async getGameDifferenceByName(name: string): Promise<GameDiffData> {
         const gamesData: Data[] = await this.extractData();
         const game = gamesData.find((game) => game.name === name);
-        
+
         if (game) {
             return { id: 0, count: game.count, differences: game.differences };
         }

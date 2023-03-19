@@ -29,7 +29,6 @@ interface OneVsOneGameplayInfo {
     selector: 'app-play-area',
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
-    //providers: [CounterService, DrawService],
 })
 export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvasLeft', { static: false }) private canvasLeft!: ElementRef<HTMLCanvasElement>;
@@ -52,7 +51,6 @@ export class PlayAreaComponent implements AfterViewInit {
     private gameName: string = '';
     private mouseDownSubscription: Subscription;
     private keyDownSubscription: Subscription;
-    private roomId: string = '';
     private player1: boolean = true;
 
     constructor(
@@ -76,36 +74,31 @@ export class PlayAreaComponent implements AfterViewInit {
 
     async initCanvases() {
         const img1 = new Image();
-        img1.src = this.imageLeftStr;
         img1.setAttribute('crossOrigin', 'anonymous');
+        img1.src = this.imageLeftStr;
         img1.onload = () => {
             this.ctxLeft = this.canvasLeft.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxLeft?.drawImage(img1, 0, 0);
             this.game.getContexts(this.ctxLeft);
-            console.log('0');
         };
         const img2 = new Image();
-        img2.src = this.imageRightStr;
         img2.setAttribute('crossOrigin', 'anonymous');
+        img2.src = this.imageRightStr;
         img2.onload = () => {
             this.ctxRight = this.canvasRight.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxRight?.drawImage(img2, 0, 0);
             this.game.getContexts(this.ctxRight);
-            console.log('1');
         };
         this.ctxLeftTop = this.canvasLeftTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.ctxRightTop = this.canvasRightTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.game.getContexts(this.ctxLeftTop);
-        console.log('2');
         this.game.getContexts(this.ctxRightTop);
-        console.log('3');
     }
 
     ngAfterViewInit(): void {
         this.waitingRoomService.socket.on('player-info', (gameplayInfo: OneVsOneGameplayInfo) => {
-            this.roomId = gameplayInfo.roomId;
+            //this.roomId = gameplayInfo.roomId;
             this.player1 = gameplayInfo.player1;
-            console.log('Game Title: ' + this.gameName + '\n' + 'RoomId: ' + this.roomId + '\n' + 'Player1 ?: ' + this.player1 + '\n');
             this.waitingRoomService.initOneVsOneComponents(this.player1);
         });
 
