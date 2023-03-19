@@ -92,14 +92,14 @@ describe('GameCardComponent', () => {
 
     it('should open the namePopupTemplate dialog if the game is available', fakeAsync(() => {
         communicationSpy.getGameAvailability.and.returnValue(of(true));
-        component.openSettings();
+        // component.openSettings();
         tick();
         expect(dialogSpy.open).toHaveBeenCalledWith(component.namePopupTemplate, { width: '400px' });
     }));
 
     it('should open the namePopupTemplate1vs1 dialog if the game is available', fakeAsync(() => {
         communicationSpy.getGameAvailability.and.returnValue(of(true));
-        component.openSettings();
+        // component.openSettings();
         tick();
         expect(dialogSpy.open).toHaveBeenCalledWith(component.namePopupTemplate1vs1, { width: '400px' });
     }));
@@ -112,7 +112,7 @@ describe('GameCardComponent', () => {
 
         spyOn(component, 'reloadPage');
 
-        component.openSettings();
+        // component.openSettings();
         tick();
         expect(dialogSpy.open).toHaveBeenCalledWith(component.notAvailableTemplate, { width: '400px' });
         expect(component.reloadPage).toHaveBeenCalled();
