@@ -10,7 +10,7 @@ import { CommunicationService } from '@app/services/communication.service';
 import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
-fdescribe('MainPageComponent', () => {
+describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
     let communicationServiceSpy: SpyObj<CommunicationService>;

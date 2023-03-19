@@ -2,8 +2,8 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { ClickResponse } from '@app/classes/click-response';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameplayData, GameSelectionPageData } from '@app/components/create-image/create-image.component';
 import { CommunicationService } from '@app/services/communication.service';
+import { GameplayData, GameSelectionPageData } from '@common/game-interfaces';
 import { Message } from '@common/message';
 
 describe('CommunicationService', () => {
