@@ -139,6 +139,12 @@ describe('socketService', () => {
         expect(socketSpy.emit).toHaveBeenCalledWith('on-victory-sequence', player1);
     });
 
+    it('should emit "reset-timer" when resetTimer() is called', () => {
+        const roomId = '12345';
+        service.resetTimer(roomId);
+        expect(socketSpy.emit).toHaveBeenCalledWith('reset-timer', roomId);
+    });
+
     it('should disconnect socket when disconnectSocket is called', () => {
         service.disconnectSocket();
         expect(socketSpy.disconnect).toHaveBeenCalled();

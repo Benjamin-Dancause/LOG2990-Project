@@ -17,6 +17,6 @@ export class TimerService {
     }
 
     resetTimer(roomId: string) {
-        this.socketService.socket.emit('reset-timer', roomId);
+        this.socketService.resetTimer(roomId);
     }
 }

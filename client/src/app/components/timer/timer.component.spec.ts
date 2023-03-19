@@ -4,7 +4,7 @@ import { TimerService } from '@app/services/timer.service';
 import { of } from 'rxjs';
 import { TimerComponent } from './timer.component';
 
-fdescribe('TimerComponent', () => {
+describe('TimerComponent', () => {
     let component: TimerComponent;
     let fixture: ComponentFixture<TimerComponent>;
     let timerService: jasmine.SpyObj<TimerService>;

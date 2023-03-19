@@ -87,6 +87,10 @@ export class SocketService {
         this.socket.emit('on-victory-sequence', player1);
     }
 
+    resetTimer(roomId: string) {
+        this.socket.emit('reset-timer', roomId);
+    }
+
     disconnectSocket() {
         if (this.socket) {
             this.socket.disconnect();
