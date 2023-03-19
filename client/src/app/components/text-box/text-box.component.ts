@@ -52,11 +52,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
                 this.writeQuitMessage();
             });
             this.waitingRoomService.socket.on('player-error', (name: string) => {
-                console.log(name);
                 this.writeErrorMessage(name);
             });
             this.waitingRoomService.socket.on('player-success', (name: string) => {
-                console.log(name);
                 this.writeSuccessMessage(name);
             });
 

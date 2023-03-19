@@ -21,6 +21,8 @@ export class GameCardComponent implements OnInit, AfterViewInit {
 
     @ViewChild('namePopupTemplate', { static: true })
     namePopupTemplate: TemplateRef<any>;
+    @ViewChild('namePopupTemplate1vs1', { static: true })
+    namePopupTemplate1vs1: TemplateRef<any>;
     @ViewChild('notAvailableTemplate', { static: true })
     notAvailableTemplate: TemplateRef<any>;
 
@@ -84,6 +86,23 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         this.communication.getGameAvailability(this.gameTitle).subscribe((isAvailable) => {
             if (isAvailable) {
                 this.dialog.open(this.namePopupTemplate, {
+                    width: '400px',
+                });
+            } else {
+                const dialogRef = this.dialog.open(this.notAvailableTemplate, {
+                    width: '400px',
+                });
+                dialogRef.afterClosed().subscribe(() => {
+                    this.reloadPage();
+                });
+            }
+        });
+    }
+
+    openSettings1vs1(): void {
+        this.communication.getGameAvailability(this.gameTitle).subscribe((isAvailable) => {
+            if (isAvailable) {
+                this.dialog.open(this.namePopupTemplate1vs1, {
                     width: '400px',
                 });
             } else {

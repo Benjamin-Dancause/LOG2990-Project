@@ -19,20 +19,17 @@ import { CreateImageComponent } from './components/create-image/create-image.com
 import { DrawingToolsComponent } from './components/drawing-tools/drawing-tools.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { GiveUpButtonComponent } from './components/give-up-button/give-up-button.component';
-import { HintButtonComponent } from './components/hint-button/hint-button.component';
 import { HomeButtonComponent } from './components/home-button/home-button.component';
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
 import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
 import { SettingsButtonComponent } from './components/settings-button/settings-button.component';
 import { SliderComponent } from './components/slider/slider.component';
-import { SocketComponent } from './components/socket/socket.component';
 import { TimerComponent } from './components/timer/timer.component';
 import { TopBarComponent } from './components/top-bar/top-bar.component';
 import { ConfigPageComponent } from './pages/config-page-component/config-page-component.component';
 import { CreatePageComponent } from './pages/create-page/create-page.component';
 import { GameOneVsOnePageComponent } from './pages/game-one-vs-one-page/game-one-vs-one-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
-import { SocketPageComponent } from './pages/socket-page/socket-page.component';
 import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room-page.component';
 
 /**
@@ -63,15 +60,12 @@ import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room
         HomeButtonComponent,
         TopBarComponent,
         TimerComponent,
-        HintButtonComponent,
         GiveUpButtonComponent,
         CounterComponent,
         GameOneVsOnePageComponent,
         DrawingComponent,
         DrawingToolsComponent,
         TextBoxComponent,
-        SocketComponent,
-        SocketPageComponent,
         WaitingRoomPageComponent,
     ],
     providers: [],
