@@ -39,7 +39,6 @@ describe('CreateImageComponent', () => {
         communicationSpy = jasmine.createSpyObj(['getGameNames', 'imagesPost']);
         routerSpy = jasmine.createSpyObj(['navigate']);
         drawingSpy = jasmine.createSpyObj(['saveAction', 'getLeftDrawing', 'getRightDrawing', 'base64Left', 'base64Right']);
-        //component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy, drawingSpy);
         await TestBed.configureTestingModule({
             imports: [MatSliderModule],
             declarations: [CreateImageComponent, SliderComponent],
@@ -385,6 +384,20 @@ describe('CreateImageComponent', () => {
         expect(FileReader.prototype.readAsArrayBuffer).toHaveBeenCalledWith(file);
         expect(result).toBe(false);
     });
+    it('show difference ', () => {
+        const diff = document.createElement('canvas');
+        diff.id = 'diff';
+        document.body.appendChild(diff);
+        const coord: Coords[][] = [];
+        spyOn(component, 'showDifference').and.callThrough();
+        spyOn(component, 'createDifference').and.returnValue(canvas);
+        differenceSpy.getDifference.and.returnValue({ count: 10, differences: coord });
+        differenceSpy.isDifficult.and.returnValue(true);
+        component.showDifference();
+
+        expect(component.nbDiff).toEqual(10);
+        expect(component.difficulty).toEqual('Difficile');
+    });
 
     it('should call showSave if diffCount is between 3 and 9', async () => {
         const coord: Coords[][] = [];
@@ -468,6 +481,18 @@ describe('CreateImageComponent', () => {
         differenceSpy.findDifference.and.returnValue(canvas);
         const result = component.createDifference();
         expect(result).toBeDefined();
+    });
+    it('should not create difference', async () => {
+        const slider = document.createElement('input');
+        slider.id = 'slider';
+        slider.innerHTML = '5';
+        document.body.appendChild(slider);
+        const data = ctx?.getImageData(0, 0, 640, 480);
+        drawingSpy.getLeftDrawing.and.returnValue(undefined);
+        drawingSpy.getRightDrawing.and.returnValue(data);
+        differenceSpy.findDifference.and.returnValue(canvas);
+        const result = component.createDifference();
+        expect(result).not.toBeDefined();
     });
     it('should call the callback with true if the game name does not exist in the names list', () => {
         const gameName = 'new game';

@@ -66,9 +66,12 @@ describe('DrawingService', () => {
         expect(service.currentCtx).toBe(ctx);
     });
     it('should start an action on click', () => {
+        service.canvasRegistry = [canvas, otherCanvas];
+        service.backgroundRegistry = [canvas, otherCanvas];
         const event = new MouseEvent('mousedown', { clientX: 100, clientY: 200, button: 0 });
         spyOn(service, 'execute').and.callThrough();
         spyOn(service, 'draw');
+        spyOn(service, 'setBackgroundCtx');
         service.start(event, canvas);
         expect(service.isDrawing).toBeTrue();
         expect(service.lastPos).toEqual({ x: event.offsetX, y: event.offsetY });
@@ -185,15 +188,14 @@ describe('DrawingService', () => {
         expect(service.lastPos.y).toEqual(250);
     });
     it('should erase', () => {
-        service.currentCtx = ctx;
+        service.currentBackgroundCtx = ctx;
         spyOn(service, 'erase').and.callThrough();
-        spyOn(service.currentCtx, 'stroke').and.callThrough();
-        const event = new MouseEvent('mousemove', { clientX: 150, clientY: 250, button: 0 });
+        spyOn(service.currentBackgroundCtx, 'clearRect').and.callThrough();
         service.lastPos = { x: 100, y: 200 };
-        service.currentCtx = ctx;
+        service.currentRadius = 5;
+        const event = new MouseEvent('mousemove', { clientX: 150, clientY: 250, buttons: 1 });
         service.erase(event);
-        expect(service.currentCtx.stroke).toHaveBeenCalled();
-        expect(service.currentCtx.strokeStyle).toEqual('#ffffff');
+        expect(service.currentBackgroundCtx.clearRect).toHaveBeenCalled();
         expect(service.lastPos.x).toEqual(150);
         expect(service.lastPos.y).toEqual(250);
     });
@@ -388,5 +390,21 @@ describe('DrawingService', () => {
         const mockData = mockCanvas1.toDataURL('image/png').split(',')[1];
         const result = await service.convertToBase64(canvas, otherCanvas);
         expect(result).toEqual(mockData);
+    });
+    it('should set the background ctx correctly', () => {
+        service.currentCtx = ctx;
+        service.canvasRegistry = [canvas, otherCanvas];
+        service.backgroundRegistry = [canvas, canvas];
+        spyOn(service, 'setBackgroundCtx').and.callThrough();
+        service.setBackgroundCtx();
+        expect(service.currentBackgroundCtx).toEqual(ctx);
+    });
+    it('should set the other background ctx correctly', () => {
+        service.currentCtx = ctx;
+        service.canvasRegistry = [otherCanvas, canvas];
+        service.backgroundRegistry = [canvas, canvas];
+        spyOn(service, 'setBackgroundCtx').and.callThrough();
+        service.setBackgroundCtx();
+        expect(service.currentBackgroundCtx).toEqual(ctx);
     });
 });

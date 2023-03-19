@@ -10,6 +10,7 @@ export enum Tools {
     ERASER = 'eraser',
     RECTANGLE = 'rectangle',
     PEN_TIP = 'round',
+    ERASER_TIP = 'square',
     BASE_COLOR = '#000000',
     ERASER_COLOR = '#ffffff',
 }
@@ -24,6 +25,7 @@ export class DrawingService {
     public currentRadius: number;
     currentCanvas: HTMLCanvasElement;
     currentCtx: CanvasRenderingContext2D | null;
+    currentBackgroundCtx: CanvasRenderingContext2D | null;
     canvasRegistry: HTMLCanvasElement[] = [];
     backgroundRegistry: HTMLCanvasElement[] = [];
     undo: History[] = [];
@@ -60,9 +62,8 @@ export class DrawingService {
         if (this.currentCtx) {
             this.currentCtx.beginPath();
             this.currentCtx.lineWidth = this.currentRadius;
-            this.currentCtx.lineCap = Tools.PEN_TIP;
-            this.currentCtx.lineJoin = Tools.PEN_TIP;
         }
+        this.setBackgroundCtx();
         this.execute(event);
     }
     end(): void {
@@ -94,17 +95,30 @@ export class DrawingService {
         if (this.currentCtx) {
             this.currentCtx.moveTo(this.lastPos.x, this.lastPos.y);
             this.currentCtx.lineTo(event.offsetX, event.offsetY);
+            this.currentCtx.lineCap = Tools.PEN_TIP;
+            this.currentCtx.lineJoin = Tools.PEN_TIP;
             this.currentCtx.strokeStyle = this.currentColor;
             this.currentCtx.stroke();
             this.lastPos = { x: event.offsetX, y: event.offsetY };
         }
     }
     erase(event: MouseEvent): void {
-        if (this.currentCtx) {
-            this.currentCtx.moveTo(this.lastPos.x, this.lastPos.y);
-            this.currentCtx.lineTo(event.offsetX, event.offsetY);
-            this.currentCtx.strokeStyle = Tools.ERASER_COLOR;
-            this.currentCtx.stroke();
+        if (this.currentBackgroundCtx) {
+            const distance = Math.sqrt((event.offsetX - this.lastPos.x) ** 2 + (event.offsetY - this.lastPos.y) ** 2);
+            const angle = Math.atan2(event.offsetY - this.lastPos.y, event.offsetX - this.lastPos.x);
+            const steps = Math.ceil(distance / this.currentRadius);
+
+            for (let i = 0; i < steps; i++) {
+                const x = this.lastPos.x + (Math.cos(angle) * distance * i) / steps;
+                const y = this.lastPos.y + (Math.sin(angle) * distance * i) / steps;
+
+                this.currentBackgroundCtx.clearRect(
+                    x - this.currentRadius * 0.5,
+                    y - this.currentRadius * 0.5,
+                    this.currentRadius,
+                    this.currentRadius,
+                );
+            }
             this.lastPos = { x: event.offsetX, y: event.offsetY };
         }
     }
@@ -259,5 +273,14 @@ export class DrawingService {
             ctx.drawImage(drawing, 0, 0, canvas.width, canvas.height);
         }
         return canvas.toDataURL('image/png').split(',')[1];
+    }
+    setBackgroundCtx(): void {
+        const ctxDrawingLeft = this.canvasRegistry[0].getContext('2d', { willReadFrequently: true });
+        const ctxDrawingRight = this.canvasRegistry[1].getContext('2d', { willReadFrequently: true });
+        if (this.currentCtx === ctxDrawingLeft) {
+            this.currentBackgroundCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
+        } else if (this.currentCtx === ctxDrawingRight) {
+            this.currentBackgroundCtx = this.backgroundRegistry[1].getContext('2d', { willReadFrequently: true });
+        }
     }
 }
