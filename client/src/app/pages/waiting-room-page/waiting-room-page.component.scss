@@ -9,6 +9,22 @@ $orange-glow: rgb(255, 60, 60);
 $orange-border: #ff9900ff;
 $orange-border-left: rgba(255, 153, 0, 0.774);
 
+
+#roomInfo {
+    color: white; 
+    font-size: 30px; 
+    margin: auto; 
+    width: 30%; 
+    padding: 20px;
+}
+
+#playerInfo {
+    color: cyan; 
+    font-size: 30px;
+    margin-top: 30px;
+    margin-left: 15%;
+}
+
 .popup-overlay {
     position: fixed;
     top: 0;
@@ -17,6 +33,14 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
     height: 100%;
     background-color: rgba(255, 255, 255, 0.1);
     z-index: 9;
+}
+
+.button{
+    margin: auto; 
+    width: 50%; 
+    padding: 10px;
+    margin-top: 20px;
+    margin-left: 25%;
 }
 
 .popup {
@@ -37,8 +61,27 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
 }
 
 .popup button {
-    background-color: $background-color;
+    left: 35%;
+    bottom: 10%;
     position: absolute;
+}
+
+.container{
+    margin: auto; 
+    width: 50%; 
+    padding: 10px;
+}
+
+#leaveButton {
+    margin: auto; 
+    width: 50%; 
+    padding: 10px;
+    bottom: 10%;
+    position: absolute;
+}
+
+button {
+    background-color: $background-color;
     padding: 15px;
     border-radius: 2px;
     color: $cyan-text;
@@ -51,8 +94,6 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
     border: 3px solid $orange-border;
     box-shadow: 0 0 30px 4px $orange-glow;
     border-left: 10px solid $orange-border-left;
-    bottom: 10%;
-    left: 33%;
 
     &:hover {
         background-color: $background-color-hover;
