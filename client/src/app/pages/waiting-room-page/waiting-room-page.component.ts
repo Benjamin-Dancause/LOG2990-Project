@@ -1,13 +1,7 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
-
-interface CompleteGameInfo {
-    gameMaster: string;
-    joiningPlayer: string;
-    gameTitle: string;
-    roomId: string;
-}
+import { CompleteGameInfo } from '@common/game-interfaces';
 
 @Component({
     selector: 'app-waiting-room-page',

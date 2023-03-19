@@ -2,39 +2,16 @@ import { ClickResponse } from '@app/classes/click-response';
 import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
+import { CompleteGameInfo, GameInfo, Lobby, OneVsOneGameplayInfo } from '@common/game-interfaces';
 import { forwardRef } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators';
 import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
 
-interface Lobby {
-    gameMaster: string;
-    gameTitle: string;
-}
-
-interface GameInfo {
-    gameMaster: string;
-    joiningPlayer: string;
-    gameTitle: string;
-}
-
-interface CompleteGameInfo {
-    gameMaster: string;
-    joiningPlayer: string;
-    gameTitle: string;
-    roomId: string;
-}
-
 interface PlayerSockets {
     masterSocket: Socket;
     joiningSocket?: Socket;
-}
-
-interface OneVsOneGameplayInfo {
-    gameTitle: string;
-    roomId: string;
-    player1: boolean;
 }
 
 @WebSocketGateway()
@@ -77,7 +54,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('reset-timer')
     onReset(client: Socket, roomId: string) {
         this.timerManager.resetTimer(roomId);
-        console.log('INFO FOR TIMER HAS BEEN CALLED');
         client.disconnect();
     }
 
@@ -90,7 +66,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('init-OneVsOne-components')
     onInitOneVsOneComponents(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
-        console.log(roomId + ' ================= ITS OFF DA PERK');
         if (roomId) {
             if (player1) {
                 this.timerManager.startTimer(roomId);
@@ -105,7 +80,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     onSoloGame(client: Socket) {
         const roomId = randomUUID();
         this.socketIdToRoomId[client.id] = roomId;
-        console.log(roomId);
         if (roomId) {
             client.join(roomId);
             this.timerManager.startTimer(roomId);
@@ -135,7 +109,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 this.waitingRoomManager.initializeGameInfo(lobby.gameTitle, lobby.gameMaster);
                 const incompleteSocketIds: PlayerSockets = { masterSocket: client };
                 this.roomIdToPlayerSockets.set(roomId, incompleteSocketIds);
-                console.log('Room Creator: ' + roomId);
                 this.server.sockets.emit('awaiting-lobby', lobby.gameTitle);
             }
         } else {
@@ -180,6 +153,30 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
     }
 
+    @SubscribeMessage('send-player-message')
+    onSendPlayerMessage(client: Socket, messageInfo: { name: string; message: string }) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            this.server.to(roomId).emit('incoming-player-message', messageInfo);
+        }
+    }
+
+    @SubscribeMessage('send-player-error')
+    onSendPlayerError(client: Socket, name: string) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            this.server.to(roomId).emit('player-error', name);
+        }
+    }
+
+    @SubscribeMessage('send-player-success')
+    onSendPlayerSuccess(client: Socket, name: string) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            this.server.to(roomId).emit('player-success', name);
+        }
+    }
+
     @SubscribeMessage('reject-player')
     onRejectPlayer(client: Socket, lobby: Lobby) {
         const roomId = this.socketIdToRoomId[client.id];
@@ -206,7 +203,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     onHandleOneVsOneInfo(client: Socket, gameTitle: string) {
         const socketRoom = [...client.rooms][1];
         const roomId = this.socketIdToRoomId[client.id];
-        console.log('LINE 187 ONE VS ONE INFO ROOMID :' + roomId);
         if (socketRoom === roomId) {
             const gameInfo = this.waitingRoomManager.getGameplayInfo(gameTitle);
             const gameplayInfo: OneVsOneGameplayInfo = {
@@ -214,7 +210,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 roomId: socketRoom,
                 player1: true,
             };
-            console.log(gameplayInfo, client.id);
             this.server.to(client.id).emit('player-info', gameplayInfo);
         } else {
             const gameInfo = this.waitingRoomManager.getGameplayInfo(gameTitle);
@@ -223,7 +218,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 roomId: socketRoom,
                 player1: false,
             };
-            console.log(gameplayInfo, client.id);
             this.server.to(client.id).emit('player-info', gameplayInfo);
         }
     }
@@ -258,7 +252,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     handleResetCounter(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            console.log('INFO FOR COUNTER HAS BEEN CALLER');
             if (player1) {
                 const counter = this.counterManager.resetCounter(roomId + '_player1');
                 this.server.to(roomId).emit('counter-update', { counter: counter, player1: player1 });
@@ -272,7 +265,6 @@ export class TimerGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('on-victory-sequence')
     handleVictorySequence(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
-        console.log('IS THE ROOMID OK OR NOT ===========' + roomId);
         if (roomId) {
             this.timerManager.deleteTimerData(roomId);
             this.server.to(roomId).emit('send-victorious-player', player1);

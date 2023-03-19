@@ -1,11 +1,5 @@
-import { CourseController } from '@app/controllers/course/course.controller';
-import { DateController } from '@app/controllers/date/date.controller';
-import { ExampleController } from '@app/controllers/example/example.controller';
 import { ChatGateway } from '@app/gateways/chat/chat.gateway';
 import { Course, courseSchema } from '@app/model/database/course';
-import { CourseService } from '@app/services/course/course.service';
-import { DateService } from '@app/services/date/date.service';
-import { ExampleService } from '@app/services/example/example.service';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -14,12 +8,9 @@ import { GameManagerController } from './controllers/game-manager/game-manager.c
 import { GameController } from './controllers/game/game.controller';
 import { GamecardsController } from './controllers/gamecards/gamecards.controller';
 import { StoreController } from './controllers/store/store.controller';
-import { CounterGateway } from './gateways/counter/counter.gateway';
-import { SocketManagerGateway } from './gateways/socket-manager/socket-manager.gateway';
 import { TimerGateway } from './gateways/timer/timer.gateway';
 import { CounterManagerService } from './services/counter-manager/counter-manager.service';
 import { GameManager } from './services/game-manager/game-manager.service';
-import { SocketManagerService } from './services/socket-manager/socket-manager.service';
 import { StoreService } from './services/store/store.service';
 import { TimerManagerService } from './services/timer-manager/timer-manager.service';
 import { WaitingRoomManagerService } from './services/waiting-room-manager/waiting-room-manager.service';
@@ -36,20 +27,14 @@ import { WaitingRoomManagerService } from './services/waiting-room-manager/waiti
         }),
         MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
     ],
-    controllers: [CourseController, DateController, ExampleController, GamecardsController, GameManagerController, StoreController, GameController],
+    controllers: [GamecardsController, GameManagerController, StoreController, GameController],
     providers: [
         ChatGateway,
-        CourseService,
-        DateService,
-        ExampleService,
         Logger,
         StoreService,
         GameManager,
-        SocketManagerService,
         http.Server,
-        SocketManagerGateway,
         TimerGateway,
-        CounterGateway,
         TimerManagerService,
         CounterManagerService,
         WaitingRoomManagerService,

@@ -4,11 +4,6 @@ import { GameSelectionPageData } from '@app/components/create-image/create-image
 import { CommunicationService } from '@app/services/communication.service';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
 
-interface Lobby {
-    gameMaster: string;
-    gameTitle: string;
-}
-
 const PAGE_SIZE = 4;
 
 @Component({
@@ -39,11 +34,7 @@ export class GameSelectionPageComponent implements OnInit, AfterViewInit {
         this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
     }
 
-    ngAfterViewInit(): void {
-        this.waitingRoomService.socket.on('lobby-created', (lobby: Lobby) => {
-            console.log(lobby.gameMaster + ' has created a lobby for: ' + lobby.gameTitle);
-        });
-    }
+    ngAfterViewInit(): void {}
 
     disconnectSocket() {
         this.waitingRoomService.disconnectSocket();

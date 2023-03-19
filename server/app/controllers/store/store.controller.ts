@@ -1,12 +1,8 @@
 import { StoreService } from '@app/services/store/store.service';
+import { Coords } from '@common/game-interfaces';
 import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-
-interface Coords {
-    x: number;
-    y: number;
-}
 
 @Controller('games')
 export class StoreController {

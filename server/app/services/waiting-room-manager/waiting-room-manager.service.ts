@@ -1,11 +1,6 @@
 import { TimerGateway } from '@app/gateways/timer/timer.gateway';
+import { GameInfo } from '@common/game-interfaces';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-
-interface GameInfo {
-    gameMaster: string;
-    joiningPlayer: string;
-    gameTitle: string;
-}
 
 @Injectable()
 export class WaitingRoomManagerService {
@@ -55,7 +50,6 @@ export class WaitingRoomManagerService {
     deleteLobbyInfo(roomId: string) {
         this.openLobbies.delete(roomId);
         this.lobbyGameInfo.delete(roomId);
-        console.log("INFO FOR LOBBY HAS BEEN WIPED : WAITING_ROOM_MANAGER");
     }
 
     getGameplayInfo(gameTitle: string): GameInfo {
