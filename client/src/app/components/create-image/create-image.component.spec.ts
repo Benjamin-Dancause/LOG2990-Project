@@ -14,7 +14,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { of } from 'rxjs';
 import { CreateImageComponent } from './create-image.component';
 
-fdescribe('CreateImageComponent', () => {
+describe('CreateImageComponent', () => {
     let component: CreateImageComponent;
     let fixture: ComponentFixture<CreateImageComponent>;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
@@ -39,7 +39,6 @@ fdescribe('CreateImageComponent', () => {
         communicationSpy = jasmine.createSpyObj(['getGameNames', 'imagesPost']);
         routerSpy = jasmine.createSpyObj(['navigate']);
         drawingSpy = jasmine.createSpyObj(['saveAction', 'getLeftDrawing', 'getRightDrawing', 'base64Left', 'base64Right']);
-        //component = new CreateImageComponent(dialogSpy, differenceSpy, communicationSpy, routerSpy, drawingSpy);
         await TestBed.configureTestingModule({
             imports: [MatSliderModule],
             declarations: [CreateImageComponent, SliderComponent],

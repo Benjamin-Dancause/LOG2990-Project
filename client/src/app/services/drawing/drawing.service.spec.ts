@@ -3,7 +3,7 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 
 import { DrawingService } from './drawing.service';
 
-fdescribe('DrawingService', () => {
+describe('DrawingService', () => {
     let service: DrawingService;
     let canvas: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D;
