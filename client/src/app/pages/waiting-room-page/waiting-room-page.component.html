@@ -7,3 +7,21 @@
 <div style="margin: auto; width: 50%; padding: 10px">
     <button style="margin: auto; width: 50%; padding: 10px" (click)="leaveLobby()">CLICK HERE TO LEAVE LOBBY</button>
 </div>
+
+<div class="popup-overlay" [style.display]="showPopupLeave ? 'block' : 'none'">
+    <div class="popup" [style.display]="showPopupLeave ? 'block' : 'none'">
+        <div class="popup-content">
+            <h2>La salle est fermée car le créateur a quitté.</h2>
+            <button id="returnBtn" routerLink="/game-selection">Retour</button>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" [style.display]="showPopupKick ? 'block' : 'none'">
+    <div class="popup" [style.display]="showPopupKick ? 'block' : 'none'">
+        <div class="popup-content">
+            <h2>Vous avez été retiré du lobby.</h2>
+            <button id="returnBtn" routerLink="/game-selection">Retour</button>
+        </div>
+    </div>
+</div>
