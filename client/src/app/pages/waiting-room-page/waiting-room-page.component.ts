@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
 import { CompleteGameInfo } from '@common/game-interfaces';
@@ -8,13 +8,15 @@ import { CompleteGameInfo } from '@common/game-interfaces';
     templateUrl: './waiting-room-page.component.html',
     styleUrls: ['./waiting-room-page.component.scss'],
 })
-export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
+export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestroy {
     public inputName: string = '';
     public gameMaster: string = '';
     public joiningPlayer: string = '';
     public gameTitle: string = '';
     protected awaitingPlayer: boolean = false;
     protected roomId: string = '';
+    showPopupKick: boolean = false;
+    showPopupLeave: boolean = false;
 
     constructor(public waitingRoomService: WaitingRoomService, private router: Router) {}
 
@@ -24,6 +26,11 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
         this.waitingRoomService.handleLobby(this.inputName, this.gameTitle);
     }
 
+    ngOnDestroy(): void {
+        this.showPopupKick = false;
+        this.showPopupLeave = false;
+    }
+    
     ngAfterViewInit(): void {
         this.waitingRoomService.socket.on('lobby-created', (gameInfo: CompleteGameInfo) => {
             console.log(
@@ -50,8 +57,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
 
         this.waitingRoomService.socket.on('rejection', (url) => {
             console.log('You have been kicked by player');
-            //Afficher le popup
-            this.router.navigate([url]);
+            this.showPopupKick = true;
         });
 
         this.waitingRoomService.socket.on('player-left', () => {
@@ -60,7 +66,12 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
         });
 
         this.waitingRoomService.socket.on('lobby-closed', (url) => {
-            this.router.navigate([url]);
+            if(this.inputName == this.joiningPlayer) {
+                this.showPopupLeave = true;
+            }
+            else {
+                this.router.navigate([url]);
+            }
         });
     }
 
