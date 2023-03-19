@@ -6,19 +6,6 @@ import { CommunicationService } from '@app/services/communication.service';
 import { DifferenceService } from '@app/services/difference.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-export interface GameSelectionPageData {
-    name: string;
-    image: string;
-    difficulty: boolean;
-}
-
-export interface GameplayData {
-    name: string;
-    images: string[];
-    count: number;
-    difficulty: boolean;
-}
-
 const SCREEN_WIDTH = 640;
 const SCREEN_HEIGHT = 480;
 const BMP_MIN = 66;
