@@ -33,7 +33,7 @@
 
         <div class="button-container">
             <button *ngIf="!configuration" id="settings" (click)="openSettingsSolo()">Jouer en solo</button>
-            <div *ngIf="!configuration" id="settings" (click)="saveGameName()" (click)="openSettings1vs1()">
+            <div *ngIf="!configuration" id="settings" (click)="openSettings1vs1()">
                 <button *ngIf="createButton">Créer une partie 1vs1</button>
                 <button *ngIf="!createButton">Joindre une partie 1vs1</button>
             </div>
