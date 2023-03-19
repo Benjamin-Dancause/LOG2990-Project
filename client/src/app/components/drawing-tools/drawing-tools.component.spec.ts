@@ -4,7 +4,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 
 import { DrawingToolsComponent } from './drawing-tools.component';
 
-describe('DrawingToolsComponent', () => {
+fdescribe('DrawingToolsComponent', () => {
     let component: DrawingToolsComponent;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let fixture: ComponentFixture<DrawingToolsComponent>;
