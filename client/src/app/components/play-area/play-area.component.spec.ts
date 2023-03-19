@@ -5,7 +5,7 @@ import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
 import { GameService } from '@app/services/game.service';
 import { InputService } from '@app/services/input.service';
-import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { SocketService } from '@app/services/socket.service';
 
 describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
@@ -15,7 +15,7 @@ describe('PlayAreaComponent', () => {
     let communicationService: CommunicationService;
     let inputService: InputService;
     let gameService: GameService;
-    let waitingRoomSpy: WaitingRoomService;
+    let waitingRoomSpy: SocketService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({

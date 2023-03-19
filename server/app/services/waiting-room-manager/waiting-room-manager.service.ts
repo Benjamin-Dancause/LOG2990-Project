@@ -1,10 +1,10 @@
-import { TimerGateway } from '@app/gateways/timer/timer.gateway';
+import { ClassicModeGateway } from '@app/gateways/timer/classic-mode.gateway';
 import { GameInfo } from '@common/game-interfaces';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class WaitingRoomManagerService {
-    constructor(@Inject(forwardRef(() => TimerGateway)) private readonly timerGateway: TimerGateway) {}
+    constructor(@Inject(forwardRef(() => ClassicModeGateway)) private readonly classicModeGateway: ClassicModeGateway) {}
 
     private openLobbies = new Map<string, string>();
     private lobbyGameInfo = new Map<string, GameInfo>();

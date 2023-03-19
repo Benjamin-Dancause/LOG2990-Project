@@ -3,7 +3,7 @@ import { CommunicationService } from '@app/services/communication.service';
 import { CounterService } from '@app/services/counter.service';
 import { GameService } from '@app/services/game.service';
 import { InputService } from '@app/services/input.service';
-import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { SocketService } from '@app/services/socket.service';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -58,7 +58,7 @@ export class PlayAreaComponent implements AfterViewInit {
         private communicationService: CommunicationService,
         private input: InputService,
         private game: GameService,
-        private waitingRoomService: WaitingRoomService,
+        private socketService: SocketService,
     ) {
         this.gameName = sessionStorage.getItem('gameTitle') as string;
         this.game.setGameName();
@@ -96,14 +96,14 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.waitingRoomService.socket.on('player-info', (gameplayInfo: OneVsOneGameplayInfo) => {
+        this.socketService.socket.on('player-info', (gameplayInfo: OneVsOneGameplayInfo) => {
             //this.roomId = gameplayInfo.roomId;
             this.player1 = gameplayInfo.player1;
-            this.waitingRoomService.initOneVsOneComponents(this.player1);
+            this.socketService.initOneVsOneComponents(this.player1);
         });
 
         if ((sessionStorage.getItem('gameMode') as string) === '1v1') {
-            this.waitingRoomService.assignPlayerInfo(this.gameName);
+            this.socketService.assignPlayerInfo(this.gameName);
         }
 
         this.communicationService.getGameByName(this.gameName).subscribe((game) => {

@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
     providedIn: 'root',
 })
-export class WaitingRoomService {
+export class SocketService {
     private readonly baseUrl: string = environment.webSocketUrl;
     public socket: Socket;
 

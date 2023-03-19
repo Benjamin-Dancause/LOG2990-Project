@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { CommunicationService } from '@app/services/communication.service';
-import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { SocketService } from '@app/services/socket.service';
 import { GameSelectionPageData } from '@common/game-interfaces';
 
 const PAGE_SIZE = 4;
@@ -18,7 +18,7 @@ export class GameSelectionPageComponent implements OnInit, AfterViewInit {
     pageSize = PAGE_SIZE;
     lastPage = 0;
 
-    constructor(protected communication: CommunicationService, public waitingRoomService: WaitingRoomService) {
+    constructor(protected communication: CommunicationService, public socketService: SocketService) {
         communication.getAllGames().subscribe((gamecards: GameSelectionPageData[]) => {
             this.games = gamecards;
             this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
@@ -30,14 +30,14 @@ export class GameSelectionPageComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.waitingRoomService.initializeSocket();
+        this.socketService.initializeSocket();
         this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
     }
 
     ngAfterViewInit(): void {}
 
     disconnectSocket() {
-        this.waitingRoomService.disconnectSocket();
+        this.socketService.disconnectSocket();
     }
 
     onBack() {

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { SocketService } from '@app/services/socket.service';
 import { CompleteGameInfo } from '@common/game-interfaces';
 
 @Component({
@@ -18,12 +18,12 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
     showPopupKick: boolean = false;
     showPopupLeave: boolean = false;
 
-    constructor(public waitingRoomService: WaitingRoomService, public router: Router) {}
+    constructor(public socketService: SocketService, public router: Router) {}
 
     ngOnInit(): void {
         this.inputName = sessionStorage.getItem('userName') as string;
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
-        this.waitingRoomService.handleLobby(this.inputName, this.gameTitle);
+        this.socketService.handleLobby(this.inputName, this.gameTitle);
     }
 
     ngOnDestroy(): void {
@@ -32,7 +32,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     ngAfterViewInit(): void {
-        this.waitingRoomService.socket.on('lobby-created', (gameInfo: CompleteGameInfo) => {
+        this.socketService.socket.on('lobby-created', (gameInfo: CompleteGameInfo) => {
             console.log(
                 'Info for the room, GameMaster: ' +
                     gameInfo.gameMaster +
@@ -51,21 +51,21 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
             this.awaitingPlayer = true;
         });
 
-        this.waitingRoomService.socket.on('redirectToGame', (url) => {
+        this.socketService.socket.on('redirectToGame', (url) => {
             this.router.navigate([url]);
         });
 
-        this.waitingRoomService.socket.on('rejection', (url) => {
+        this.socketService.socket.on('rejection', (url) => {
             console.log('You have been kicked by player');
             this.showPopupKick = true;
         });
 
-        this.waitingRoomService.socket.on('player-left', () => {
-            this.waitingRoomService.resetLobby(this.gameMaster, this.gameTitle);
+        this.socketService.socket.on('player-left', () => {
+            this.socketService.resetLobby(this.gameMaster, this.gameTitle);
             this.awaitingPlayer = false;
         });
 
-        this.waitingRoomService.socket.on('lobby-closed', (url) => {
+        this.socketService.socket.on('lobby-closed', (url) => {
             if (this.inputName == this.joiningPlayer) {
                 this.showPopupLeave = true;
             } else {
@@ -79,7 +79,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     rejectPlayer() {
-        this.waitingRoomService.rejectPlayer(this.inputName, this.gameTitle);
+        this.socketService.rejectPlayer(this.inputName, this.gameTitle);
         this.router.navigate([this.router.url]);
         this.awaitingPlayer = false;
     }
@@ -90,14 +90,14 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
 
     leaveLobby() {
         if (this.inputName !== this.joiningPlayer) {
-            this.waitingRoomService.closeLobby(this.gameTitle);
+            this.socketService.closeLobby(this.gameTitle);
         } else {
-            this.waitingRoomService.leaveLobby();
+            this.socketService.leaveLobby();
             this.router.navigate(['/game-selection']);
         }
     }
 
     startOneVsOneGame() {
-        this.waitingRoomService.startOneVsOneGame();
+        this.socketService.startOneVsOneGame();
     }
 }

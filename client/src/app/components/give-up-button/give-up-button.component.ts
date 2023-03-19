@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TextBoxComponent } from '@app/components/text-box/text-box.component';
 // eslint-disable-next-line import/no-unresolved
 import { GameCardService } from '@app/services/game-card.service';
-import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-give-up-button',
@@ -23,7 +23,7 @@ export class GiveUpButtonComponent implements OnInit {
         public dialog: MatDialog,
         public textBoxComponent: TextBoxComponent,
         private gameCardService: GameCardService,
-        private waitingRoomService: WaitingRoomService,
+        private socketService: SocketService,
     ) {}
 
     giveUpConfirmPrompt(): void {
@@ -36,7 +36,7 @@ export class GiveUpButtonComponent implements OnInit {
     }
 
     removeUser(): void {
-        this.waitingRoomService.leaveGame();
+        this.socketService.leaveGame();
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
     }
 
