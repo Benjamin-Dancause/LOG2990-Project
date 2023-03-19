@@ -76,8 +76,8 @@ export class PlayAreaComponent implements AfterViewInit {
 
     async initCanvases() {
         const img1 = new Image();
-        img1.src = this.imageLeftStr;
         img1.setAttribute('crossOrigin', 'anonymous');
+        img1.src = this.imageLeftStr;
         img1.onload = () => {
             this.ctxLeft = this.canvasLeft.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxLeft?.drawImage(img1, 0, 0);
@@ -85,8 +85,8 @@ export class PlayAreaComponent implements AfterViewInit {
             console.log('0');
         };
         const img2 = new Image();
-        img2.src = this.imageRightStr;
         img2.setAttribute('crossOrigin', 'anonymous');
+        img2.src = this.imageRightStr;
         img2.onload = () => {
             this.ctxRight = this.canvasRight.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxRight?.drawImage(img2, 0, 0);
