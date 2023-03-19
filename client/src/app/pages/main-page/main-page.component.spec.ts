@@ -10,7 +10,7 @@ import { CommunicationService } from '@app/services/communication.service';
 import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
-describe('MainPageComponent', () => {
+fdescribe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
     let communicationServiceSpy: SpyObj<CommunicationService>;
@@ -49,6 +49,7 @@ describe('MainPageComponent', () => {
     ));
 
     it("should have as title 'Le Jeu Des Différences'", () => {
+        expect(typeof component.title).toEqual('string');
         expect(component.title).toEqual('Le Jeu Des Différences');
     });
 });
