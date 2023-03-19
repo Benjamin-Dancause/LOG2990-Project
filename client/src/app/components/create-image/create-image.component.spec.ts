@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
@@ -42,6 +43,7 @@ describe('CreateImageComponent', () => {
         await TestBed.configureTestingModule({
             imports: [MatSliderModule],
             declarations: [CreateImageComponent, SliderComponent],
+            schemas: [NO_ERRORS_SCHEMA],
             providers: [
                 { provide: MatDialog, useValue: dialogSpy },
                 { provide: DifferenceService, useValue: differenceSpy },
@@ -233,8 +235,6 @@ describe('CreateImageComponent', () => {
         spyOn(component, 'verifyBMP').and.returnValue(Promise.resolve(true));
         spyOn(component, 'convertImage').and.returnValue(Promise.resolve({ width: 640, height: 480 } as ImageBitmap));
 
-        // eslint-disable-next-line no-console
-        console.log('testing');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeDiff(fileEvent as any);
         expect(component.modifiableImage).toBeDefined();
@@ -351,19 +351,19 @@ describe('CreateImageComponent', () => {
         expect(component.ctxModifiable?.drawImage).toHaveBeenCalled();
     });
     it('should delete original canvas', async () => {
-        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['clearRect']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['fillRect']);
         component.ctxOriginal = ctxOriginalStub;
         component.deleteOriginal();
-        expect(component.ctxOriginal?.clearRect).toHaveBeenCalled();
+        expect(component.ctxOriginal?.fillRect).toHaveBeenCalled();
     });
     it('should delete both canvases', async () => {
-        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['clearRect']);
-        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['clearRect']);
+        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['fillRect']);
+        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['fillRect']);
         component.ctxOriginal = ctxOriginalStub;
         component.ctxModifiable = ctxModifiableStub;
         component.deleteBoth();
-        expect(component.ctxOriginal?.clearRect).toHaveBeenCalled();
-        expect(component.ctxModifiable?.clearRect).toHaveBeenCalled();
+        expect(component.ctxOriginal?.fillRect).toHaveBeenCalled();
+        expect(component.ctxModifiable?.fillRect).toHaveBeenCalled();
     });
     it('should be a BMP', async () => {
         const blobHeader = new Uint8Array(54);
@@ -458,17 +458,16 @@ describe('CreateImageComponent', () => {
         expect(component.showError).toHaveBeenCalled();
     });
     it('should create difference', async () => {
-        const ctxOriginalStub = jasmine.createSpyObj('ctxOriginal', ['drawImage']);
-        const ctxModifiableStub = jasmine.createSpyObj('ctxModifiable', ['drawImage']);
         const slider = document.createElement('input');
         slider.id = 'slider';
         slider.innerHTML = '5';
         document.body.appendChild(slider);
-        component.ctxOriginal = ctxOriginalStub;
-        component.ctxModifiable = ctxModifiableStub;
-        differenceSpy.findDifference.and.returnValues(canvas);
-        component.createDifference();
-        expect(component.diffCanvas).toBeTruthy();
+        const data = ctx?.getImageData(0, 0, 640, 480);
+        drawingSpy.getLeftDrawing.and.returnValue(data);
+        drawingSpy.getRightDrawing.and.returnValue(data);
+        differenceSpy.findDifference.and.returnValue(canvas);
+        const result = component.createDifference();
+        expect(result).toBeDefined();
     });
     it('should call the callback with true if the game name does not exist in the names list', () => {
         const gameName = 'new game';
