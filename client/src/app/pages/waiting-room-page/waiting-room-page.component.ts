@@ -1,13 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
-
-interface CompleteGameInfo {
-    gameMaster: string;
-    joiningPlayer: string;
-    gameTitle: string;
-    roomId: string;
-}
+import { CompleteGameInfo } from '@common/game-interfaces';
 
 @Component({
     selector: 'app-waiting-room-page',
@@ -56,6 +50,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit {
 
         this.waitingRoomService.socket.on('rejection', (url) => {
             console.log('You have been kicked by player');
+            //Afficher le popup
             this.router.navigate([url]);
         });
 

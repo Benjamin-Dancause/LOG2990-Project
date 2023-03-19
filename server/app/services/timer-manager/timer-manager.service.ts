@@ -9,15 +9,13 @@ export class TimerManagerService {
     constructor(@Inject(forwardRef(() => TimerGateway)) private readonly timerGateway: TimerGateway) {}
 
     startTimer(roomId: string) {
-        if(!this.timers.has(roomId)) {
+        if (!this.timers.has(roomId)) {
             const time: number = this.getTimeFromRoom(roomId);
-            console.log('Line 13 ' + roomId);
             this.timers.set(roomId, time);
             const intervalId = setInterval(() => {
                 this.updateTimer(roomId);
             }, 1000);
             this.intervals.set(roomId, intervalId);
-            console.log("LINE 20 ============== " + this.intervals.get(roomId));
         }
     }
 
@@ -31,18 +29,14 @@ export class TimerManagerService {
     }
 
     deleteTimerData(roomId: string) {
-        //console.log(this.intervals.get(roomId));
         clearInterval(this.intervals.get(roomId));
         this.intervals.delete(roomId);
         this.timers.delete(roomId);
-        console.log("INFO FOR TIMER HAS BEEN WIPED : TIMER_MANAGER");
     }
 
     resetTimer(roomId: string) {
         const time = 0;
         this.timers.set(roomId, time);
         this.deleteTimerData(roomId);
-        console.log("TIMER HAS BEEN RESET : TIMER_MANAGER");
-        
     }
 }
