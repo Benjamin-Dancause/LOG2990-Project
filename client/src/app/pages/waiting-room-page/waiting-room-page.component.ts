@@ -13,12 +13,12 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
     public gameMaster: string = '';
     public joiningPlayer: string = '';
     public gameTitle: string = '';
-    protected awaitingPlayer: boolean = false;
+    public awaitingPlayer: boolean = false;
     protected roomId: string = '';
     showPopupKick: boolean = false;
     showPopupLeave: boolean = false;
 
-    constructor(public waitingRoomService: WaitingRoomService, private router: Router) {}
+    constructor(public waitingRoomService: WaitingRoomService, public router: Router) {}
 
     ngOnInit(): void {
         this.inputName = sessionStorage.getItem('userName') as string;
@@ -30,7 +30,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
         this.showPopupKick = false;
         this.showPopupLeave = false;
     }
-    
+
     ngAfterViewInit(): void {
         this.waitingRoomService.socket.on('lobby-created', (gameInfo: CompleteGameInfo) => {
             console.log(
@@ -66,10 +66,9 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         this.waitingRoomService.socket.on('lobby-closed', (url) => {
-            if(this.inputName == this.joiningPlayer) {
+            if (this.inputName == this.joiningPlayer) {
                 this.showPopupLeave = true;
-            }
-            else {
+            } else {
                 this.router.navigate([url]);
             }
         });
