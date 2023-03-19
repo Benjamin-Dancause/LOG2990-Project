@@ -88,11 +88,6 @@ fdescribe('WaitingRoomPageComponent', () => {
         expect(component.isPlayerJoin()).toBeFalse();
     });
 
-    it('should call waitingRoomService.startOneVsOneGame() when startOneVsOneGame is called', () => {
-        component.startOneVsOneGame();
-        expect(mockWaitingRoomService.startOneVsOneGame).toHaveBeenCalled();
-    });
-
     it('should call rejectPlayer() when rejectPlayer() is called', () => {
         component.inputName = 'test1';
         component.gameTitle = 'testGameTitle1';
@@ -109,5 +104,48 @@ fdescribe('WaitingRoomPageComponent', () => {
     it('should set awaitingPlayer to false when rejectPlayer() is called', () => {
         component.rejectPlayer();
         expect(component.awaitingPlayer).toBeFalse();
+    });
+
+    it('incomingPlayer() should return true if awaitingPlayer is true and inputName is same as gameMaster', () => {
+        component.awaitingPlayer = true;
+        component.gameMaster = 'test1';
+        component.inputName = 'test1';
+        expect(component.incomingPlayer()).toBeTrue();
+    });
+
+    it('incomingPlayer() should return false if awaitingPlayer is true but inputName is different than gameMaster', () => {
+        component.awaitingPlayer = true;
+        component.gameMaster = 'test2';
+        component.inputName = 'test1';
+        expect(component.incomingPlayer()).toBeFalse();
+    });
+
+    it('incomingPlayer() should return true if awaitingPlayer is false', () => {
+        component.awaitingPlayer = false;
+        component.gameMaster = 'test1';
+        component.inputName = 'test1';
+        expect(component.incomingPlayer()).toBeFalse();
+    });
+
+    it('should call waitingRoomService.closeLobby() with gameTitle when leaveLobby is called by gameMaster', () => {
+        component.inputName = 'test1';
+        component.joiningPlayer = 'test2';
+        component.gameTitle = 'gameTitleTest';
+        component.leaveLobby();
+        expect(mockWaitingRoomService.closeLobby).toHaveBeenCalledWith('gameTitleTest');
+    });
+
+    it('should call waitingRoomService.leaveLobby() and navigate to "/game-selection" when leaveLobby is called by joiningPlayer', () => {
+        spyOn(component.router, 'navigate');
+        component.inputName = 'test1';
+        component.joiningPlayer = 'test1';
+        component.leaveLobby();
+        expect(mockWaitingRoomService.leaveLobby).toHaveBeenCalled();
+        expect(component.router.navigate).toHaveBeenCalledWith(['/game-selection']);
+    });
+
+    it('should call waitingRoomService.startOneVsOneGame() when startOneVsOneGame is called', () => {
+        component.startOneVsOneGame();
+        expect(mockWaitingRoomService.startOneVsOneGame).toHaveBeenCalled();
     });
 });
