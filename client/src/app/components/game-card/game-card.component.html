@@ -32,8 +32,8 @@
         </div>
 
         <div class="button-container">
-            <button *ngIf="!configuration" id="settings" (click)="openSettings()">Jouer en solo</button>
-            <div *ngIf="!configuration" id="settings" (click)="saveGameName()" routerLink="/waitingRoom">
+            <button *ngIf="!configuration" id="settings" (click)="openSettingsSolo()">Jouer en solo</button>
+            <div *ngIf="!configuration" id="settings" (click)="saveGameName()"routerLink="/waitingRoom">
                 <button *ngIf="createButton">Créer une partie 1vs1</button>
                 <button *ngIf="!createButton">Joindre une partie 1vs1</button>
             </div>
@@ -71,6 +71,7 @@
                 </button>
             </mat-dialog-actions>
         </ng-template>
+
         <ng-template #notAvailableTemplate>
             <h2 mat-dialog-title>Le jeu que vous voulez accèder a été supprimé récemment</h2>
             <mat-dialog-content>

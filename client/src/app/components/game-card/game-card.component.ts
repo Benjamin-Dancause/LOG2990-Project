@@ -80,7 +80,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         }
     }
 
-    openSettings(): void {
+    openSettingsSolo(): void {
         this.communication.getGameAvailability(this.gameTitle).subscribe((isAvailable) => {
             if (isAvailable) {
                 this.dialog.open(this.namePopupTemplate, {
