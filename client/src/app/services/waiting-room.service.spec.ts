@@ -4,7 +4,7 @@ import { Socket } from 'socket.io-client';
 
 import { WaitingRoomService } from './waiting-room.service';
 
-fdescribe('WaitingRoomService', () => {
+describe('WaitingRoomService', () => {
     let service: WaitingRoomService;
     let socketSpy: jasmine.SpyObj<Socket>;
 
