@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -25,6 +26,7 @@ describe('DrawingToolsComponent', () => {
         ]);
         await TestBed.configureTestingModule({
             declarations: [DrawingToolsComponent],
+            schemas: [NO_ERRORS_SCHEMA],
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
         }).compileComponents();
 

@@ -11,7 +11,7 @@ export enum Tools {
     RECTANGLE = 'rectangle',
     PEN_TIP = 'round',
     BASE_COLOR = '#000000',
-    ERASER_COLOR = '#FFFFFF',
+    ERASER_COLOR = '#ffffff',
 }
 @Injectable({
     providedIn: 'root',
@@ -26,8 +26,8 @@ export class DrawingService {
     currentCtx: CanvasRenderingContext2D | null;
     canvasRegistry: HTMLCanvasElement[] = [];
     backgroundRegistry: HTMLCanvasElement[] = [];
-    undo: History[];
-    redo: History[];
+    undo: History[] = [];
+    redo: History[] = [];
     lastPos: Coords;
     constructor() {}
 
@@ -68,7 +68,7 @@ export class DrawingService {
     end(): void {
         this.isDrawing = false;
         this.printDrawing();
-        this.currentCtx?.clearRect(0, 0, 640, 480);
+        this.currentCtx?.clearRect(0, 0, this.currentCanvas.width, this.currentCanvas.height);
         this.saveAction();
     }
     execute(event: MouseEvent): void {
@@ -132,9 +132,8 @@ export class DrawingService {
         const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
         const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d', { willReadFrequently: true });
         if (backgroundFirstCtx && backgroundSecondCtx) {
-            const image1 = backgroundFirstCtx.getImageData(0, 0, 640, 480);
-            const image2 = backgroundSecondCtx.getImageData(0, 0, 640, 480);
-
+            const image1 = backgroundFirstCtx.getImageData(0, 0, this.backgroundRegistry[0].width, this.backgroundRegistry[0].height);
+            const image2 = backgroundSecondCtx.getImageData(0, 0, this.backgroundRegistry[1].width, this.backgroundRegistry[1].height);
             backgroundFirstCtx.putImageData(image2, 0, 0);
             backgroundSecondCtx.putImageData(image1, 0, 0);
         }
@@ -144,8 +143,8 @@ export class DrawingService {
         const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
         const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d', { willReadFrequently: true });
         if (backgroundFirstCtx && backgroundSecondCtx) {
-            const image = backgroundFirstCtx.getImageData(0, 0, 640, 480);
-            backgroundSecondCtx.clearRect(0, 0, 640, 480);
+            const image = backgroundFirstCtx.getImageData(0, 0, this.backgroundRegistry[0].width, this.backgroundRegistry[0].height);
+            backgroundSecondCtx.clearRect(0, 0, this.backgroundRegistry[1].width, this.backgroundRegistry[1].height);
             backgroundSecondCtx.putImageData(image, 0, 0);
         }
         this.saveAction();
@@ -154,8 +153,8 @@ export class DrawingService {
         const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
         const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d', { willReadFrequently: true });
         if (backgroundFirstCtx && backgroundSecondCtx) {
-            const image = backgroundSecondCtx.getImageData(0, 0, 640, 480);
-            backgroundFirstCtx.clearRect(0, 0, 640, 480);
+            const image = backgroundSecondCtx.getImageData(0, 0, this.backgroundRegistry[1].width, this.backgroundRegistry[1].height);
+            backgroundFirstCtx.clearRect(0, 0, this.backgroundRegistry[0].width, this.backgroundRegistry[0].height);
             backgroundFirstCtx.putImageData(image, 0, 0);
         }
         this.saveAction();
@@ -170,13 +169,13 @@ export class DrawingService {
     }
     clearDrawing(canvas: HTMLCanvasElement): void {
         this.setActiveCanvas(canvas);
-        this.currentCtx?.clearRect(0, 0, 640, 480);
+        this.currentCtx?.clearRect(0, 0, canvas.width, canvas.height);
     }
     saveAction(): void {
         const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
         const backgroundSecondCtx = this.backgroundRegistry[1].getContext('2d', { willReadFrequently: true });
-        const left = backgroundFirstCtx?.getImageData(0, 0, 640, 480);
-        const right = backgroundSecondCtx?.getImageData(0, 0, 640, 480);
+        const left = backgroundFirstCtx?.getImageData(0, 0, this.backgroundRegistry[0].width, this.backgroundRegistry[0].height);
+        const right = backgroundSecondCtx?.getImageData(0, 0, this.backgroundRegistry[1].width, this.backgroundRegistry[1].height);
         if (left && right) {
             this.undo.push({
                 left: left,
@@ -187,8 +186,6 @@ export class DrawingService {
     undoAction(): void {
         if (this.undo.length > 1) {
             const undo = this.undo.pop();
-            console.log('undo', undo);
-            console.log('stack', this.undo);
             if (undo) {
                 this.redo.push(undo);
                 const backgroundFirstCtx = this.backgroundRegistry[0].getContext('2d', { willReadFrequently: true });
@@ -237,14 +234,14 @@ export class DrawingService {
     }
     sync(background: HTMLCanvasElement, drawing: HTMLCanvasElement): ImageData | undefined {
         const canvas = document.createElement('canvas');
-        canvas.width = 640;
-        canvas.height = 480;
+        canvas.width = drawing.width;
+        canvas.height = drawing.height;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-            ctx.drawImage(background, 0, 0, 640, 480);
-            ctx.drawImage(drawing, 0, 0, 640, 480);
+            ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(drawing, 0, 0, canvas.width, canvas.height);
         }
-        return ctx?.getImageData(0, 0, 640, 480);
+        return ctx?.getImageData(0, 0, canvas.width, canvas.height);
     }
     base64Left(image: HTMLCanvasElement): Promise<string> {
         return this.convertToBase64(image, this.backgroundRegistry[0]);
@@ -254,14 +251,13 @@ export class DrawingService {
     }
     async convertToBase64(image: HTMLCanvasElement, drawing: HTMLCanvasElement): Promise<string> {
         const canvas = document.createElement('canvas');
-        canvas.width = 640;
-        canvas.height = 480;
+        canvas.width = drawing.width;
+        canvas.height = drawing.height;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-            ctx.drawImage(image, 0, 0, 640, 480);
-            ctx.drawImage(drawing, 0, 0, 640, 480);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(drawing, 0, 0, canvas.width, canvas.height);
         }
         return canvas.toDataURL('image/png').split(',')[1];
     }
-    test(): void {}
 }

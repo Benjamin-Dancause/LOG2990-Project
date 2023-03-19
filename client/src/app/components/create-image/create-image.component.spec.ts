@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
@@ -42,6 +43,7 @@ describe('CreateImageComponent', () => {
         await TestBed.configureTestingModule({
             imports: [MatSliderModule],
             declarations: [CreateImageComponent, SliderComponent],
+            schemas: [NO_ERRORS_SCHEMA],
             providers: [
                 { provide: MatDialog, useValue: dialogSpy },
                 { provide: DifferenceService, useValue: differenceSpy },

@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -12,6 +13,7 @@ describe('DrawingComponent', () => {
         drawingServiceSpy = jasmine.createSpyObj(['register', 'registerBackground', 'start', 'execute', 'end', 'unregister']);
         await TestBed.configureTestingModule({
             declarations: [DrawingComponent],
+            schemas: [NO_ERRORS_SCHEMA],
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
         }).compileComponents();
 
