@@ -1,7 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CommunicationService } from './communication.service';
-import { WaitingRoomService } from './waiting-room.service';
+import { SocketService } from './socket.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,7 +13,7 @@ export class CounterService implements OnInit {
     gameMode: string;
     allDiffsSubscription: Subscription;
 
-    constructor(public waitingRoomService: WaitingRoomService, private communicationService: CommunicationService) {}
+    constructor(public socketService: SocketService, private communicationService: CommunicationService) {}
 
     ngOnInit(): void {}
 
@@ -21,7 +21,7 @@ export class CounterService implements OnInit {
         const gameTitle: string = sessionStorage.getItem('gameTitle') as string;
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.setWinCondition(this.gameMode, gameTitle);
-        this.waitingRoomService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
+        this.socketService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
             const playerName: string = sessionStorage.getItem('userName') as string;
             const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
             const isPlayer1: boolean = gameMaster === playerName;
@@ -32,19 +32,19 @@ export class CounterService implements OnInit {
             }
 
             if (this.counter === this.winCondition || this.counter2 === this.winCondition) {
-                this.waitingRoomService.sendVictoriousPlayer(counterInfo.player1);
+                this.socketService.sendVictoriousPlayer(counterInfo.player1);
             }
         });
     }
 
     incrementCounter(player1: boolean) {
-        this.waitingRoomService.socket.emit('increment-counter', player1);
+        this.socketService.socket.emit('increment-counter', player1);
     }
 
     resetCounter(player1: boolean) {
         this.counter = 0;
         this.counter2 = 0;
-        this.waitingRoomService.socket.emit('reset-counter', player1);
+        this.socketService.socket.emit('reset-counter', player1);
     }
 
     setWinCondition(gameMode: string, gameTitle: string) {

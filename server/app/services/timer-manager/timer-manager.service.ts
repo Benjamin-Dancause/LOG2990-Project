@@ -1,4 +1,4 @@
-import { TimerGateway } from '@app/gateways/timer/timer.gateway';
+import { ClassicModeGateway } from '@app/gateways/timer/classic-mode.gateway';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -6,7 +6,7 @@ export class TimerManagerService {
     private timers = new Map<string, number>();
     private intervals = new Map<string, NodeJS.Timeout>();
 
-    constructor(@Inject(forwardRef(() => TimerGateway)) private readonly timerGateway: TimerGateway) {}
+    constructor(@Inject(forwardRef(() => ClassicModeGateway)) private readonly classicModeGateway: ClassicModeGateway) {}
 
     startTimer(roomId: string) {
         if (!this.timers.has(roomId)) {
@@ -21,7 +21,7 @@ export class TimerManagerService {
 
     updateTimer(roomId: string) {
         this.timers.set(roomId, this.timers.get(roomId) + 1);
-        this.timerGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
+        this.classicModeGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
     }
 
     getTimeFromRoom(roomId: string): number {

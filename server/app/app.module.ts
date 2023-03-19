@@ -8,7 +8,7 @@ import { GameManagerController } from './controllers/game-manager/game-manager.c
 import { GameController } from './controllers/game/game.controller';
 import { GamecardsController } from './controllers/gamecards/gamecards.controller';
 import { StoreController } from './controllers/store/store.controller';
-import { TimerGateway } from './gateways/timer/timer.gateway';
+import { ClassicModeGateway } from './gateways/timer/classic-mode.gateway';
 import { CounterManagerService } from './services/counter-manager/counter-manager.service';
 import { GameManager } from './services/game-manager/game-manager.service';
 import { StoreService } from './services/store/store.service';
@@ -34,7 +34,7 @@ import { WaitingRoomManagerService } from './services/waiting-room-manager/waiti
         StoreService,
         GameManager,
         http.Server,
-        TimerGateway,
+        ClassicModeGateway,
         TimerManagerService,
         CounterManagerService,
         WaitingRoomManagerService,

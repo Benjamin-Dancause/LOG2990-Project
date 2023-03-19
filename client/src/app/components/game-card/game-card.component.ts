@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameCardService } from '@app/services/game-card.service';
-import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { SocketService } from '@app/services/socket.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -50,7 +50,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     constructor(
         public dialog: MatDialog,
         private communication: CommunicationService,
-        private waitingRoomService: WaitingRoomService,
+        private socketService: SocketService,
         private gameCardService: GameCardService,
     ) {}
 
@@ -130,12 +130,12 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     }
 
     buttonUpdating() {
-        this.waitingRoomService.socket.on('awaiting-lobby', (gameTitle: string) => {
+        this.socketService.socket.on('awaiting-lobby', (gameTitle: string) => {
             if (gameTitle === this.gameTitle) {
                 this.createButton = false;
             }
         });
-        this.waitingRoomService.socket.on('completed-lobby', (gameTitle: string) => {
+        this.socketService.socket.on('completed-lobby', (gameTitle: string) => {
             if (gameTitle === this.gameTitle) {
                 this.createButton = true;
             }

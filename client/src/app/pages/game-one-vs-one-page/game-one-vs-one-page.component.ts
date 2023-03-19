@@ -1,7 +1,7 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { CounterService } from '@app/services/counter.service';
 import { GameCardService } from '@app/services/game-card.service';
-import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-game-one-vs-one-page',
@@ -16,7 +16,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
     isWinner: boolean = false;
     showPopup = false;
 
-    constructor(private gameCardService: GameCardService, public waitingRoomService: WaitingRoomService, private counterService: CounterService) {}
+    constructor(private gameCardService: GameCardService, public socketService: SocketService, private counterService: CounterService) {}
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
@@ -29,7 +29,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.waitingRoomService.socket.on('send-victorious-player', (player1: boolean) => {
+        this.socketService.socket.on('send-victorious-player', (player1: boolean) => {
             if (this.counterService.counter > this.counterService.counter2) {
                 this.isWinner = true;
                 this.winningPlayer = sessionStorage.getItem('userName') as string;
@@ -45,7 +45,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
             }
         });
 
-        this.waitingRoomService.socket.on('player-quit-game', () => {
+        this.socketService.socket.on('player-quit-game', () => {
             this.isWinner = true;
             this.winningPlayer = sessionStorage.getItem('userName') as string;
             this.showPopup = true;

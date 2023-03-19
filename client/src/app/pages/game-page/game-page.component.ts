@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GameCardService } from '@app/services/game-card.service';
-import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-game-page',
@@ -13,7 +13,7 @@ export class GamePageComponent implements OnInit {
 
     showPopup = false;
 
-    constructor(private gameCardService: GameCardService, public waitingRoomService: WaitingRoomService) {}
+    constructor(private gameCardService: GameCardService, public socketService: SocketService) {}
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
@@ -22,11 +22,11 @@ export class GamePageComponent implements OnInit {
 
     ngOnInit() {
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
-        this.waitingRoomService.soloGame();
+        this.socketService.soloGame();
     }
 
     ngAfterViewInit() {
-        this.waitingRoomService.socket.on('send-victorious-player', (player1: boolean) => {
+        this.socketService.socket.on('send-victorious-player', (player1: boolean) => {
             this.showPopup = true;
         });
     }

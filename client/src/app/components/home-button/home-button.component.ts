@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-home-button',
@@ -9,9 +9,9 @@ import { WaitingRoomService } from '@app/services/waiting-room.service';
 export class HomeButtonComponent {
     @Input() text: string;
 
-    constructor(public waitingRoomService: WaitingRoomService) {}
+    constructor(public socketService: SocketService) {}
 
     disconnectSocket() {
-        this.waitingRoomService.disconnectSocket();
+        this.socketService.disconnectSocket();
     }
 }
