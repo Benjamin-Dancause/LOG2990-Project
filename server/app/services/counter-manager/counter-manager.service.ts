@@ -11,7 +11,6 @@ export class CounterManagerService {
 
     deleteCounterData(roomId: string) {
         this.counters.delete(roomId);
-        console.log("INFO FOR COUNTER HAS BEEN WIPED : COUNTER_MANAGER");
     }
 
     getCounterFromRoom(roomId: string): number {
@@ -27,7 +26,6 @@ export class CounterManagerService {
     resetCounter(roomId: string): number {
         this.counters.set(roomId, 0);
         const counter = this.counters.get(roomId);
-        console.log("COUNTER HAS BEEN RESET : COUNTER_MANAGER");
         return counter;
     }
 }

@@ -1,9 +1,10 @@
 // eslint-disable-next-line max-classes-per-file
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CounterService } from '@app/services/counter.service';
 import { GameService } from '@app/services/game.service';
 import { WaitingRoomService } from '@app/services/waiting-room.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-text-box',
@@ -11,7 +12,7 @@ import { WaitingRoomService } from '@app/services/waiting-room.service';
     styleUrls: ['./text-box.component.scss'],
     providers: [CounterService],
 })
-export class TextBoxComponent implements OnInit {
+export class TextBoxComponent implements OnInit, OnDestroy {
     @Input() single: boolean = true;
     @Input() solo: boolean;
     //@Input() opponentName: string = '';
@@ -23,14 +24,20 @@ export class TextBoxComponent implements OnInit {
     message = '';
     opponentName: string = '';
     gameMode: string = '';
+    successSubscription: Subscription;
+    errorSubscription: Subscription;
 
-    constructor(public dialog: MatDialog, private gameService: GameService, private waitingRoomService: WaitingRoomService) {}
+    constructor(public dialog: MatDialog, private gameService: GameService, private waitingRoomService: WaitingRoomService) {
+        this.gameMode = sessionStorage.getItem('gameMode') as string;
+        this.errorSubscription = new Subscription();
+        this.errorSubscription = new Subscription();
+    }
 
     ngOnInit(): void {
         const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
-        this.gameMode = sessionStorage.getItem('gameMode') as string;
+
         if (this.gameMode !== 'solo') {
             this.setOpponentName();
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
@@ -48,21 +55,21 @@ export class TextBoxComponent implements OnInit {
                 this.writeErrorMessage(name);
             });
             this.waitingRoomService.socket.on('player-success', (name: string) => {
-                this.writeSucessMessage(name);
+                this.writeSuccessMessage(name);
             });
 
-            this.gameService.errorMessage.subscribe(() => {
+            this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
                 this.waitingRoomService.sendPlayerError(this.userName);
             });
-            this.gameService.successMessage.subscribe(() => {
+            this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.waitingRoomService.sendPlayerSuccess(this.userName);
             });
         } else {
-            this.gameService.errorMessage.subscribe(() => {
+            this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
                 this.writeErrorMessage(this.userName);
             });
-            this.gameService.successMessage.subscribe(() => {
-                this.writeSucessMessage(this.userName);
+            this.successSubscription = this.gameService.successMessage.subscribe(() => {
+                this.writeSuccessMessage(this.userName);
             });
         }
     }
@@ -125,7 +132,7 @@ export class TextBoxComponent implements OnInit {
         this.addSystemMessage(systemMessage);
     }
 
-    writeSucessMessage(name: string) {
+    writeSuccessMessage(name: string) {
         let systemMessage = `${this.getTimestamp()} - Différence trouvée`;
         if (this.gameMode !== 'solo') {
             systemMessage += ` par ${name}`;
@@ -146,6 +153,16 @@ export class TextBoxComponent implements OnInit {
             const messageAreaEl = this.messageArea.nativeElement as HTMLElement;
             messageAreaEl.scrollTop = messageAreaEl.scrollHeight;
         }, 0);
+    }
+
+    ngOnDestroy(): void {
+        if (this.errorSubscription) {
+            this.errorSubscription.unsubscribe();
+        }
+        if (this.successSubscription) {
+            this.successSubscription.unsubscribe();
+        }
+        sessionStorage.clear();
     }
 }
 

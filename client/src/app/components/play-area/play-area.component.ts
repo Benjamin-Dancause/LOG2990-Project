@@ -51,7 +51,6 @@ export class PlayAreaComponent implements AfterViewInit {
     private gameName: string = '';
     private mouseDownSubscription: Subscription;
     private keyDownSubscription: Subscription;
-    private roomId: string = '';
     private player1: boolean = true;
 
     constructor(
@@ -98,9 +97,8 @@ export class PlayAreaComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.waitingRoomService.socket.on('player-info', (gameplayInfo: OneVsOneGameplayInfo) => {
-            this.roomId = gameplayInfo.roomId;
+            //this.roomId = gameplayInfo.roomId;
             this.player1 = gameplayInfo.player1;
-            console.log('Game Title: ' + this.gameName + '\n' + 'RoomId: ' + this.roomId + '\n' + 'Player1 ?: ' + this.player1 + '\n');
             this.waitingRoomService.initOneVsOneComponents(this.player1);
         });
 

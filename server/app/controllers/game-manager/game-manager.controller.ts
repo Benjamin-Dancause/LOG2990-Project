@@ -1,12 +1,8 @@
 import { GameManager } from '@app/services/game-manager/game-manager.service';
 import { StoreService } from '@app/services/store/store.service';
+import { Coords } from '@common/game-interfaces';
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
-
-interface Coords {
-    x: number;
-    y: number;
-}
 
 @Controller('gaming')
 export class GameManagerController {
@@ -23,7 +19,7 @@ export class GameManagerController {
     @ApiOkResponse({
         description: 'Get all differences',
     })
-    async returnAllDiff(@Body() body: {name: string}) {
+    async returnAllDiff(@Body() body: { name: string }) {
         return await this.gameManager.getAllDifferences(body.name);
     }
 

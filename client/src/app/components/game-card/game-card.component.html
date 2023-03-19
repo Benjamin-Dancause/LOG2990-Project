@@ -32,8 +32,8 @@
         </div>
 
         <div class="button-container">
-            <button *ngIf="!configuration" id="settings" (click)="openSettings()">Jouer en solo</button>
-            <div *ngIf="!configuration" id="settings" (click)="saveGameName()" routerLink="/waitingRoom">
+            <button *ngIf="!configuration" id="settings" (click)="openSettingsSolo()">Jouer en solo</button>
+            <div *ngIf="!configuration" id="settings" (click)="saveGameName()" (click)="openSettings1vs1()">
                 <button *ngIf="createButton">Créer une partie 1vs1</button>
                 <button *ngIf="!createButton">Joindre une partie 1vs1</button>
             </div>
@@ -71,6 +71,38 @@
                 </button>
             </mat-dialog-actions>
         </ng-template>
+
+        <ng-template #namePopupTemplate1vs1>
+            <h2 mat-dialog-title>Paramètres de jeu - Mode 1vs1</h2>
+            <mat-dialog-content>
+                <div class="container">
+                    <mat-form-field>
+                        <mat-label>Nom d'utilisateur</mat-label>
+                        <input matInput type="text" [(ngModel)]="userName" [minlength]="4" maxlength="15" #inputRef="ngModel" required />
+                        <mat-error *ngIf="inputRef.invalid && (inputRef.dirty || inputRef.touched)">
+                            Le nom d'utilisateur doit comporter au moins 4 caractères
+                        </mat-error>
+                        <mat-hint>min. 4 et max. 15 caractères</mat-hint>
+                    </mat-form-field>
+                    <div id="char-count">
+                        <mat-hint *ngIf="userName">{{ userName.length }} caractères entrés</mat-hint>
+                    </div>
+                </div>
+            </mat-dialog-content>
+            <mat-dialog-actions>
+                <button mat-button mat-dialog-close>Annuler</button>
+                <button
+                    mat-button
+                    (click)="saveUserName()"
+                    [disabled]="!inputRef.valid"
+                    [mat-dialog-close]="true"
+                    [routerLink]="inputRef.valid ? ['/waitingRoom'] : []"
+                >
+                    Sauvegarder
+                </button>
+            </mat-dialog-actions>
+        </ng-template>
+
         <ng-template #notAvailableTemplate>
             <h2 mat-dialog-title>Le jeu que vous voulez accèder a été supprimé récemment</h2>
             <mat-dialog-content>

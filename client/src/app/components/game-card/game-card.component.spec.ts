@@ -97,6 +97,13 @@ describe('GameCardComponent', () => {
         expect(dialogSpy.open).toHaveBeenCalledWith(component.namePopupTemplate, { width: '400px' });
     }));
 
+    it('should open the namePopupTemplate1vs1 dialog if the game is available', fakeAsync(() => {
+        communicationSpy.getGameAvailability.and.returnValue(of(true));
+        component.openSettings();
+        tick();
+        expect(dialogSpy.open).toHaveBeenCalledWith(component.namePopupTemplate1vs1, { width: '400px' });
+    }));
+
     it('should open the notAvailableTemplate dialog and reload the page if the game is not available', fakeAsync(() => {
         communicationSpy.getGameAvailability.and.returnValue(of(false));
         const dialogRef = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
