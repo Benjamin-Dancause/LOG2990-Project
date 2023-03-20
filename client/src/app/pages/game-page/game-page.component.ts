@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { GameCardService } from '@app/services/game-card.service';
-import { SocketService } from '@app/services/socket.service';
+import { GameCardService } from '@app/services/game-card/game-card.service';
+import { SocketService } from '@app/services/socket/socket.service';
 
 @Component({
     selector: 'app-game-page',

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { SocketService } from '@app/services/socket.service';
+import { SocketService } from '@app/services/socket/socket.service';
 
 @Component({
     selector: 'app-home-button',

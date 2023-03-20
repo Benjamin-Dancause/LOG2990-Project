@@ -2,8 +2,8 @@
 import { AfterViewInit, Component, ElementRef, Input, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { CommunicationService } from '@app/services/communication.service';
-import { DifferenceService } from '@app/services/difference.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { DifferenceService } from '@app/services/difference/difference.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 const SCREEN_WIDTH = 640;

@@ -2,9 +2,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { GameCardComponent } from '@app/components/game-card/game-card.component';
-import { CommunicationService } from '@app/services/communication.service';
-import { GameCardService } from '@app/services/game-card.service';
-import { SocketService } from '@app/services/socket.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { GameCardService } from '@app/services/game-card/game-card.service';
+import { SocketService } from '@app/services/socket/socket.service';
 import { of } from 'rxjs';
 
 describe('GameCardComponent', () => {

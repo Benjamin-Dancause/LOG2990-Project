@@ -1,7 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { CommunicationService } from './communication.service';
-import { SocketService } from './socket.service';
+import { CommunicationService } from '../communication/communication.service';
+import { SocketService } from '../socket/socket.service';
 
 @Injectable({
     providedIn: 'root',
