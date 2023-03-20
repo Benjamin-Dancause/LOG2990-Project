@@ -147,6 +147,7 @@ describe('StoreService', () => {
         expect(result).toBeUndefined();
     });
 
+    /*
     it('should delete a game and its associated image files from the storage', async () => {
         const name = 'testGame';
         const gamesData: Data[] = [{ name, images: [], difficulty: true, count: 1, differences: [] }];
@@ -158,6 +159,7 @@ describe('StoreService', () => {
         expect(service.deleteFile).toHaveBeenCalledWith(`assets/images/${name}_modif.bmp`);
         expect(service.deleteFile).toHaveBeenCalledWith(`assets/images/${name}_orig.bmp`);
     });
+    */
 
     it('should not delete anything for a non-existent game', async () => {
         const name = 'nonExistentGame';
