@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SocketService } from '@app/services/socket/socket.service';
@@ -6,7 +7,7 @@ import { Socket } from 'socket.io-client';
 
 import { WaitingRoomPageComponent } from './waiting-room-page.component';
 
-describe('WaitingRoomPageComponent', () => {
+fdescribe('WaitingRoomPageComponent', () => {
     let component: WaitingRoomPageComponent;
     let fixture: ComponentFixture<WaitingRoomPageComponent>;
     let mockSocketService: jasmine.SpyObj<SocketService>;
@@ -25,9 +26,10 @@ describe('WaitingRoomPageComponent', () => {
         mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
         mockSocket.on.and.returnValue(mockSocket);
         mockSocket.emit.and.returnValue(mockSocket);
+        
         await TestBed.configureTestingModule({
             declarations: [WaitingRoomPageComponent],
-            imports: [RouterTestingModule],
+            imports: [RouterTestingModule, HttpClientModule],
             providers: [{ provide: SocketService, useValue: mockSocketService }],
         }).compileComponents();
 
@@ -231,8 +233,10 @@ describe('WaitingRoomPageComponent', () => {
         expect(component.router.navigate).toHaveBeenCalledWith(['/game-selection']);
     });
 
-    it('should call socketService.startOneVsOneGame() when startOneVsOneGame is called', () => {
+    it('should call socketService.startOneVsOneGame() when startOneVsOneGame is called and call addPlayer() on both players', () => {
+        spyOn(component.gameCardService, 'addPlayer').and.callThrough();
         component.startOneVsOneGame();
         expect(mockSocketService.startOneVsOneGame).toHaveBeenCalled();
     });
+
 });

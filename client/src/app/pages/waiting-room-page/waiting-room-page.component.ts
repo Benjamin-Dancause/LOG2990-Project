@@ -20,7 +20,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
     showPopupKick: boolean = false;
     showPopupLeave: boolean = false;
 
-    constructor(public socketService: SocketService, public router: Router, private gameCardService: GameCardService) {}
+    constructor(public socketService: SocketService, public router: Router, public gameCardService: GameCardService) {}
 
     ngOnInit(): void {
         this.inputName = sessionStorage.getItem('userName') as string;
