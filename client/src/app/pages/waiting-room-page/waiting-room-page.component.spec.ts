@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SocketService } from '@app/services/socket/socket.service';
+import { CompleteGameInfo } from '@common/game-interfaces';
 import { Socket } from 'socket.io-client';
 
 import { WaitingRoomPageComponent } from './waiting-room-page.component';
@@ -8,17 +9,26 @@ import { WaitingRoomPageComponent } from './waiting-room-page.component';
 describe('WaitingRoomPageComponent', () => {
     let component: WaitingRoomPageComponent;
     let fixture: ComponentFixture<WaitingRoomPageComponent>;
-    let mocksocketService: jasmine.SpyObj<SocketService>;
+    let mockSocketService: jasmine.SpyObj<SocketService>;
     let mockSessionStorage: any = {};
     let mockSocket: jasmine.SpyObj<Socket>;
 
     beforeEach(async () => {
-        mocksocketService = jasmine.createSpyObj<SocketService>(['handleLobby', 'rejectPlayer', 'closeLobby', 'leaveLobby', 'startOneVsOneGame']);
-        mockSocket = jasmine.createSpyObj<Socket>(['on']);
+        mockSocketService = jasmine.createSpyObj<SocketService>([
+            'handleLobby',
+            'rejectPlayer',
+            'closeLobby',
+            'leaveLobby',
+            'startOneVsOneGame',
+            'resetLobby',
+        ]);
+        mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
+        mockSocket.on.and.returnValue(mockSocket);
+        mockSocket.emit.and.returnValue(mockSocket);
         await TestBed.configureTestingModule({
             declarations: [WaitingRoomPageComponent],
             imports: [RouterTestingModule],
-            providers: [{ provide: SocketService, useValue: mocksocketService }],
+            providers: [{ provide: SocketService, useValue: mockSocketService }],
         }).compileComponents();
 
         mockSessionStorage = {};
@@ -33,7 +43,7 @@ describe('WaitingRoomPageComponent', () => {
 
         fixture = TestBed.createComponent(WaitingRoomPageComponent);
         component = fixture.componentInstance;
-        mocksocketService.socket = mockSocket;
+        mockSocketService.socket = mockSocket;
         fixture.detectChanges();
     });
 
@@ -46,7 +56,7 @@ describe('WaitingRoomPageComponent', () => {
         mockSessionStorage['gameTitle'] = 'gameTitle1';
 
         component.ngOnInit();
-        expect(mocksocketService.handleLobby).toHaveBeenCalledWith('playerName1', 'gameTitle1');
+        expect(mockSocketService.handleLobby).toHaveBeenCalledWith('playerName1', 'gameTitle1');
     });
 
     it('should set showPopupKick and showPopupLeave to false when ngOnDestroy is called', () => {
@@ -55,18 +65,101 @@ describe('WaitingRoomPageComponent', () => {
         expect(component.showPopupLeave).toBeFalse();
     });
 
-    // it('should set lobby info in afterViewInit when "lobby-created is called"', () => {
-    //     const gameInfo: CompleteGameInfo = {
-    //         gameMaster: 'testGameMaster',
-    //         joiningPlayer: 'testPlayer',
-    //         gameTitle: 'testGameTitle',
-    //         roomId: '1234',
-    //     };
+    it('should set lobby info in afterViewInit when "lobby-created is called"', () => {
+        const gameInfo: CompleteGameInfo = {
+            gameMaster: 'testGameMaster',
+            joiningPlayer: 'testPlayer',
+            gameTitle: 'testGameTitle',
+            roomId: '1234',
+        };
 
-    //     const SocketOnSpy = spyOn(mockSocket, 'on').and.callFake((eventName: string, callback: (gameInfo: CompleteGameInfo) => void) =>{
+        mockSocket.on.withArgs('lobby-created', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback(gameInfo);
+            return mockSocket;
+        });
 
-    //     })
-    // });
+        component.ngAfterViewInit();
+        mockSocket.emit('lobby-created', gameInfo);
+
+        expect(component.gameMaster).toBe(gameInfo.gameMaster);
+        expect(component.joiningPlayer).toBe(gameInfo.joiningPlayer);
+        expect(component.roomId).toBe(gameInfo.roomId);
+    });
+
+    it('should navigate to game URL when "redirectToGame" event is emitted', () => {
+        spyOn(component.router, 'navigate');
+        const url = component.router.url;
+
+        mockSocket.on.withArgs('redirectToGame', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback(url);
+            return mockSocket;
+        });
+
+        component.ngAfterViewInit();
+        mockSocket.emit('redirectToGame', url);
+        expect(component.router.navigate).toHaveBeenCalledWith([url]);
+    });
+
+    it('should set popUpRejection to true when "rejection" is called', () => {
+        const url = '/game-selection';
+        mockSocket.on.withArgs('rejection', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback(url);
+            return mockSocket;
+        });
+
+        component.ngAfterViewInit();
+        mockSocket.emit('rejection', url);
+        expect(component.showPopupKick).toBeTrue();
+    });
+
+    it('should call socketService.resetLobby() and set awaitingPlayer to false when "player-left" event is emitted', () => {
+        component.gameMaster = 'testGameMaster';
+        component.gameTitle = 'testGameTitle';
+        mockSocket.on.withArgs('player-left', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback();
+            return mockSocket;
+        });
+
+        component.ngAfterViewInit();
+        mockSocket.emit('player-left');
+        expect(component.awaitingPlayer).toBeFalse();
+        expect(mockSocketService.resetLobby).toHaveBeenCalledWith('testGameMaster', 'testGameTitle');
+    });
+
+    it('should set popUpLeave to true when "lobby-closed" event is emitted and player is joiningPlayer', () => {
+        component.inputName = 'testPlayer1';
+        component.joiningPlayer = 'testPlayer1';
+        mockSocket.on.withArgs('lobby-closed', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback();
+            return mockSocket;
+        });
+
+        component.ngAfterViewInit();
+        mockSocket.emit('lobby-closed');
+        expect(component.showPopupLeave).toBeTrue();
+    });
+
+    it('should set popUpLeave to true when "lobby-closed" event is emitted and player is joiningPlayer', () => {
+        spyOn(component.router, 'navigate');
+        const url = component.router.url;
+        component.inputName = 'testPlayer1';
+        component.joiningPlayer = 'testPlayer2';
+        mockSocket.on.withArgs('lobby-closed', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback(url);
+            return mockSocket;
+        });
+
+        component.ngAfterViewInit();
+        mockSocket.emit('lobby-closed');
+        expect(component.router.navigate).toHaveBeenCalledWith([url]);
+    });
+
+    it('isPlayerJoin() should returnTrue if inputName is same as gameMaster', () => {
+        component.inputName = 'test1';
+        component.gameMaster = 'test1';
+
+        expect(component.isPlayerJoin()).toBeTrue();
+    });
 
     it('isPlayerJoin() should returnTrue if inputName is same as gameMaster', () => {
         component.inputName = 'test1';
@@ -86,7 +179,7 @@ describe('WaitingRoomPageComponent', () => {
         component.inputName = 'test1';
         component.gameTitle = 'testGameTitle1';
         component.rejectPlayer();
-        expect(mocksocketService.rejectPlayer).toHaveBeenCalledWith('test1', 'testGameTitle1');
+        expect(mockSocketService.rejectPlayer).toHaveBeenCalledWith('test1', 'testGameTitle1');
     });
 
     it('should navigate to current url when rejectPlayer() is called', () => {
@@ -126,7 +219,7 @@ describe('WaitingRoomPageComponent', () => {
         component.joiningPlayer = 'test2';
         component.gameTitle = 'gameTitleTest';
         component.leaveLobby();
-        expect(mocksocketService.closeLobby).toHaveBeenCalledWith('gameTitleTest');
+        expect(mockSocketService.closeLobby).toHaveBeenCalledWith('gameTitleTest');
     });
 
     it('should call socketService.leaveLobby() and navigate to "/game-selection" when leaveLobby is called by joiningPlayer', () => {
@@ -134,12 +227,12 @@ describe('WaitingRoomPageComponent', () => {
         component.inputName = 'test1';
         component.joiningPlayer = 'test1';
         component.leaveLobby();
-        expect(mocksocketService.leaveLobby).toHaveBeenCalled();
+        expect(mockSocketService.leaveLobby).toHaveBeenCalled();
         expect(component.router.navigate).toHaveBeenCalledWith(['/game-selection']);
     });
 
     it('should call socketService.startOneVsOneGame() when startOneVsOneGame is called', () => {
         component.startOneVsOneGame();
-        expect(mocksocketService.startOneVsOneGame).toHaveBeenCalled();
+        expect(mockSocketService.startOneVsOneGame).toHaveBeenCalled();
     });
 });
