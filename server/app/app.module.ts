@@ -1,5 +1,4 @@
 import { ChatGateway } from '@app/gateways/chat/chat.gateway';
-import { Course, courseSchema } from '@app/model/database/course';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -25,7 +24,6 @@ import { WaitingRoomManagerService } from './services/waiting-room-manager/waiti
                 uri: config.get<string>('DATABASE_CONNECTION_STRING'), // Loaded from .env
             }),
         }),
-        MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
     ],
     controllers: [GamecardsController, GameManagerController, StoreController, GameController],
     providers: [
