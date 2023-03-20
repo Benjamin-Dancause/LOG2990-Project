@@ -14,7 +14,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
     public joiningPlayer: string = '';
     public gameTitle: string = '';
     public awaitingPlayer: boolean = false;
-    protected roomId: string = '';
+    public roomId: string = '';
     showPopupKick: boolean = false;
     showPopupLeave: boolean = false;
 
@@ -33,15 +33,6 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
 
     ngAfterViewInit(): void {
         this.socketService.socket.on('lobby-created', (gameInfo: CompleteGameInfo) => {
-            console.log(
-                'Info for the room, GameMaster: ' +
-                    gameInfo.gameMaster +
-                    ', joiningPlayer: ' +
-                    gameInfo.joiningPlayer +
-                    ', gameTitle: ' +
-                    gameInfo.gameTitle,
-            );
-
             this.gameMaster = gameInfo.gameMaster;
             sessionStorage.setItem('gameMaster', this.gameMaster);
             this.joiningPlayer = gameInfo.joiningPlayer;
@@ -56,7 +47,6 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         this.socketService.socket.on('rejection', (url) => {
-            console.log('You have been kicked by player');
             this.showPopupKick = true;
         });
 
@@ -66,7 +56,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         this.socketService.socket.on('lobby-closed', (url) => {
-            if (this.inputName == this.joiningPlayer) {
+            if (this.inputName === this.joiningPlayer) {
                 this.showPopupLeave = true;
             } else {
                 this.router.navigate([url]);
