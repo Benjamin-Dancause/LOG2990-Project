@@ -8,9 +8,13 @@ describe('InputService', () => {
     let canvas: HTMLCanvasElement;
 
     beforeEach(() => {
+        service = new InputService();
         canvas = CanvasTestHelper.createCanvas(1, 1);
         TestBed.configureTestingModule({});
         service = TestBed.inject(InputService);
+    });
+    afterEach(() => {
+        service.destroy();
     });
 
     it('should be created', () => {

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class InputService {
+    private subscriptions: Subscription[] = [];
     private keyDownSubject = new Subject<string>();
     private keyUpSubject = new Subject<string>();
     private mouseDownSubject = new Subject<MouseEvent>();
@@ -16,6 +17,11 @@ export class InputService {
     public mouseUp$ = this.mouseUpSubject.asObservable();
 
     constructor() {
+        this.subscriptions.push(this.keyDown$.subscribe());
+        this.subscriptions.push(this.keyUp$.subscribe());
+        this.subscriptions.push(this.mouseDown$.subscribe());
+        this.subscriptions.push(this.mouseUp$.subscribe());
+
         document.addEventListener('keydown', (event) => {
             this.keyDownSubject.next(event.key);
         });
@@ -33,5 +39,9 @@ export class InputService {
         document.addEventListener('mouseup', (event) => {
             this.mouseUpSubject.next(event);
         });
+    }
+
+    destroy() {
+        this.subscriptions.forEach((subscription) => subscription.unsubscribe());
     }
 }
