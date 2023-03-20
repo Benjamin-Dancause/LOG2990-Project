@@ -141,6 +141,7 @@ describe('CreateImageComponent', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeOriginal(fileEvent as any);
         expect(component.originalImage).toBeDefined();
+        input.remove();
     });
     it('should not store original image if not bmp', async () => {
         const input = document.createElement('input');
@@ -164,6 +165,8 @@ describe('CreateImageComponent', () => {
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.showError).toHaveBeenCalled();
         expect(component.originalImage).toBeUndefined();
+        input.remove();
+
     });
     it('should return if there is no selected file', async () => {
         const input = document.createElement('input');
@@ -186,6 +189,8 @@ describe('CreateImageComponent', () => {
         expect(component.verifyBMP).not.toHaveBeenCalled();
         expect(component.showError).toHaveBeenCalled();
         expect(component.originalImage).toBeUndefined();
+        input.remove();
+
     });
     // here
     it('should return if the event target is not an HTMLInputElement', async () => {
@@ -237,6 +242,8 @@ describe('CreateImageComponent', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.storeDiff(fileEvent as any);
         expect(component.modifiableImage).toBeDefined();
+        input.remove();
+
     });
     it('should not store original image if not bmp', async () => {
         const input = document.createElement('input');
@@ -260,6 +267,8 @@ describe('CreateImageComponent', () => {
         expect(component.convertImage).not.toHaveBeenCalled();
         expect(component.showError).toHaveBeenCalled();
         expect(component.originalImage).toBeUndefined();
+        input.remove();
+
     });
     it('should return if there is no selected file', async () => {
         const input = document.createElement('input');
@@ -282,6 +291,8 @@ describe('CreateImageComponent', () => {
         expect(component.verifyBMP).not.toHaveBeenCalled();
         expect(component.showError).toHaveBeenCalled();
         expect(component.originalImage).toBeUndefined();
+        input.remove();
+
     });
     it('should draw images on original and modifiable canvases if both images and contexts are present', async () => {
         component.originalImage = await createImageBitmap(canvas);
@@ -397,6 +408,7 @@ describe('CreateImageComponent', () => {
 
         expect(component.nbDiff).toEqual(10);
         expect(component.difficulty).toEqual('Difficile');
+        diff.remove();
     });
 
     it('should call showSave if diffCount is between 3 and 9', async () => {
@@ -481,6 +493,8 @@ describe('CreateImageComponent', () => {
         differenceSpy.findDifference.and.returnValue(canvas);
         const result = component.createDifference();
         expect(result).toBeDefined();
+        slider.remove();
+
     });
     it('should not create difference', async () => {
         const slider = document.createElement('input');
@@ -493,6 +507,7 @@ describe('CreateImageComponent', () => {
         differenceSpy.findDifference.and.returnValue(canvas);
         const result = component.createDifference();
         expect(result).not.toBeDefined();
+        slider.remove();
     });
     it('should call the callback with true if the game name does not exist in the names list', () => {
         const gameName = 'new game';
