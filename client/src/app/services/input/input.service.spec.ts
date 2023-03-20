@@ -3,7 +3,7 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 
 import { InputService } from './input.service';
 
-fdescribe('InputService', () => {
+describe('InputService', () => {
     let service: InputService;
     let canvas: HTMLCanvasElement;
 
@@ -17,11 +17,6 @@ fdescribe('InputService', () => {
         expect(service).toBeTruthy();
     });
 
-    // it('should use the keyDownSubject on keydown', () => {
-    // });
-    // it('should use the keyUpSubject on keyup', () => {});
-    // it('should use the mouseDownSubject on mouse down', () => {});
-    // it('should use the mouseUpSubject on mouse up', () => {});
     it('should emit key down events', (done) => {
         const testKey = 'a';
 
