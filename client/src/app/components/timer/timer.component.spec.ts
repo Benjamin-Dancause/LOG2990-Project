@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TimerService } from '@app/services/timer.service';
+import { TimerService } from '@app/services/timer/timer.service';
 import { of } from 'rxjs';
 import { TimerComponent } from './timer.component';
 
@@ -13,7 +13,7 @@ describe('TimerComponent', () => {
         timerService = jasmine.createSpyObj('TimerService', ['getTime', 'resetTimer']);
         await TestBed.configureTestingModule({
             declarations: [TimerComponent],
-            providers: [{provide: TimerService, useValue: timerService}],
+            providers: [{ provide: TimerService, useValue: timerService }],
         }).compileComponents();
 
         fixture = TestBed.createComponent(TimerComponent);
@@ -25,7 +25,7 @@ describe('TimerComponent', () => {
         fixture.detectChanges();
         expect(component).toBeTruthy();
     });
-    
+
     it('should reset the timer on destroy', () => {
         const roomId = 'test-room';
         spyOn(sessionStorage, 'getItem').and.returnValue(roomId);
@@ -50,6 +50,4 @@ describe('TimerComponent', () => {
         const result = component.pad(10);
         expect(result).toEqual('10');
     });
-
-
 });

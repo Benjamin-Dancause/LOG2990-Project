@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { CommunicationService } from '@app/services/communication.service';
-import { CounterService } from '@app/services/counter.service';
-import { GameService } from '@app/services/game.service';
-import { InputService } from '@app/services/input.service';
-import { SocketService } from '@app/services/socket.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { CounterService } from '@app/services/counter/counter.service';
+import { GameService } from '@app/services/game/game.service';
+import { InputService } from '@app/services/input/input.service';
+import { SocketService } from '@app/services/socket/socket.service';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 

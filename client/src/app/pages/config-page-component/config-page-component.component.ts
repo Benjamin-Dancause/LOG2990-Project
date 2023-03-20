@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommunicationService } from '@app/services/communication.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
 import { GameSelectionPageData } from '@common/game-interfaces';
 
 const PAGE_SIZE = 4;

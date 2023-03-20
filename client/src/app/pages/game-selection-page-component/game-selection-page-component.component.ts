@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { CommunicationService } from '@app/services/communication.service';
-import { SocketService } from '@app/services/socket.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { SocketService } from '@app/services/socket/socket.service';
 import { GameSelectionPageData } from '@common/game-interfaces';
 
 const PAGE_SIZE = 4;

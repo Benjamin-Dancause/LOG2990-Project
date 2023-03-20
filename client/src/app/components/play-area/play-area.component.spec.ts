@@ -1,11 +1,11 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
-import { CommunicationService } from '@app/services/communication.service';
-import { CounterService } from '@app/services/counter.service';
-import { GameService } from '@app/services/game.service';
-import { InputService } from '@app/services/input.service';
-import { SocketService } from '@app/services/socket.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { CounterService } from '@app/services/counter/counter.service';
+import { GameService } from '@app/services/game/game.service';
+import { InputService } from '@app/services/input/input.service';
+import { SocketService } from '@app/services/socket/socket.service';
 
 describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;

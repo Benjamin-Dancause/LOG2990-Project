@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { TimerService } from '@app/services/timer.service';
+import { TimerService } from '@app/services/timer/timer.service';
 
 @Component({
     selector: 'app-timer',

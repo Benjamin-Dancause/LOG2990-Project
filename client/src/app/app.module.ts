@@ -12,7 +12,6 @@ import { AppMaterialModule } from '@app/modules/material.module';
 import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { ButtonComponent } from './components/button/button.component';
 import { CounterComponent } from './components/counter/counter.component';
 import { CreateImageComponent } from './components/create-image/create-image.component';
@@ -43,7 +42,6 @@ import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room
         AppComponent,
         GamePageComponent,
         MainPageComponent,
-        MaterialPageComponent,
         PlayAreaComponent,
         SidebarComponent,
         ButtonComponent,

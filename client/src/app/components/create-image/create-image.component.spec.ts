@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
 import { Coords } from '@app/classes/coords';
 
 import { SliderComponent } from '@app/components/slider/slider.component';
-import { CommunicationService } from '@app/services/communication.service';
-import { DifferenceService } from '@app/services/difference.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { DifferenceService } from '@app/services/difference/difference.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { of } from 'rxjs';
 import { CreateImageComponent } from './create-image.component';

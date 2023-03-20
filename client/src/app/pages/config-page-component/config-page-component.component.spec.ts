@@ -7,7 +7,7 @@ import { GameCardComponent } from '@app/components/game-card/game-card.component
 import { HomeButtonComponent } from '@app/components/home-button/home-button.component';
 import { PreviousNextButtonComponent } from '@app/components/previous-next-button/previous-next-button.component';
 import { SettingsButtonComponent } from '@app/components/settings-button/settings-button.component';
-import { CommunicationService } from '@app/services/communication.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
 import { of } from 'rxjs';
 import { ConfigPageComponent } from './config-page-component.component';
 

@@ -6,7 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MainPageButtonComponent } from '@app/components/main-page-button/main-page-button.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { CommunicationService } from '@app/services/communication.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
 import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 

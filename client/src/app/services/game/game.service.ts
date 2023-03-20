@@ -4,9 +4,9 @@ import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { GameDiffData } from '@app/interfaces/gameDiffData';
-import { CommunicationService } from './communication.service';
-import { CounterService } from './counter.service';
-import { SocketService } from './socket.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { CounterService } from '../counter/counter.service';
+import { SocketService } from '../socket/socket.service';
 
 const BIGTIMEOUT = 2000;
 const SMALLTIMOUT = 1000;

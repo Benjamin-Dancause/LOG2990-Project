@@ -1,9 +1,9 @@
 // eslint-disable-next-line max-classes-per-file
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { CounterService } from '@app/services/counter.service';
-import { GameService } from '@app/services/game.service';
-import { SocketService } from '@app/services/socket.service';
+import { CounterService } from '@app/services/counter/counter.service';
+import { GameService } from '@app/services/game/game.service';
+import { SocketService } from '@app/services/socket/socket.service';
 import { Subscription } from 'rxjs';
 
 @Component({
