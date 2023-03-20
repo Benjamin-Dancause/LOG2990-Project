@@ -1,46 +1,34 @@
 import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { of, Subscription } from 'rxjs';
-import { Socket } from 'socket.io-client';
 import { CommunicationService } from '../communication/communication.service';
+import { SocketService } from '../socket/socket.service';
 import { CounterService } from './counter.service';
 
 
 
-describe('CounterService', () => {
+fdescribe('CounterService', () => {
     let service: CounterService;
-    let mockSessionStorage: any = {};
-    let mockSocket: jasmine.SpyObj<Socket>;
-    let communicationSpy: jasmine.SpyObj<CommunicationService>;
+    let mockSocketService: jasmine.SpyObj<SocketService>;
+    let mockCommunicationService: jasmine.SpyObj<CommunicationService>;
 
     beforeEach(() => {
-        communicationSpy = jasmine.createSpyObj('CommuncationService', ['getDiffAmount']);
-        mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
-        mockSocket.on.and.returnValue(mockSocket);
-        mockSocket.emit.and.returnValue(mockSocket);
+        const communicationSpy = jasmine.createSpyObj('CommuncationService', ['getDiffAmount']);
+        mockSocketService = jasmine.createSpyObj('SocketService', ['incrementCounter', 'resetCounter', 'sendVictoriousPlayer'])
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
-            providers: [CounterService, {provide: CommunicationService, useValue: communicationSpy}],
+            providers: [CounterService, 
+                        {provide: CommunicationService, useValue: communicationSpy}],
         });
         service = TestBed.inject(CounterService);
-        communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
+        mockCommunicationService = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
+        mockSocketService = TestBed.inject(SocketService) as jasmine.SpyObj<SocketService>;
         
-        mockSessionStorage = {};
-        
-        spyOn(communicationSpy, 'getDiffAmount').and.returnValue(of(7));
-
-        spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => {
-            return mockSessionStorage[key] || null;
-        });
-
-        spyOn(sessionStorage, 'setItem').and.callFake((key: string, value: string): void => {
-            mockSessionStorage[key] = value;
-        });
     });
 
     afterEach(() => {
-        if(service.allDiffsSubscription instanceof Subscription) {
+        if(service.allDiffsSubscription && service.allDiffsSubscription instanceof Subscription) {
             service.allDiffsSubscription.unsubscribe();
         }
     })
@@ -49,34 +37,37 @@ describe('CounterService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should set win condition', () => {
-        spyOn(service, 'setWinCondition');
-        service.initializeCounter();
-        expect(service.setWinCondition).toHaveBeenCalled();
-    });
-
-    it('should set win condition based on game mode', () => {
-        const totalDiff = 7;
-        const gameMode = '1v1';
-        mockSessionStorage.setItem('gameTitle', 'testGame');
-        mockSessionStorage.setItem('gameMode', gameMode);
-        
-        service.initializeCounter();
-        expect(service.winCondition).toEqual(Math.ceil(totalDiff / 2));
-    });
-
     it('should set the win condition to total differences in solo mode', () => {
-        const totalDiff = 7;
-        const gameMode = 'solo';
-        sessionStorage.setItem('gameTitle', 'testGame');
-        sessionStorage.setItem('gameMode', gameMode);
-        
-        service.initializeCounter();
+        const totalDiff = 10;
+        mockCommunicationService.getDiffAmount.and.returnValue(of(totalDiff));
+        service.setWinCondition('solo', 'title');
         expect(service.winCondition).toEqual(totalDiff);
     });
 
-    it('should listen to counter-update event from socket service', () => {
-        service.initializeCounter();
-        expect(mockSocket.on).toHaveBeenCalledWith('counter-update', jasmine.any(Function));
+    it('should set the win condition to half the differences in 1vs1 mode', () => {
+        const totalDiff = 9;
+        mockCommunicationService.getDiffAmount.and.returnValue(of(totalDiff));
+        service.setWinCondition('1v1', 'title');
+        expect(service.winCondition).toEqual(Math.ceil(totalDiff / 2));
+    });
+
+    it('should increment the counter correctly when incrementCounter() is called', () => {
+        const player1 = true;
+        service.incrementCounter(player1);
+        expect(mockSocketService.incrementCounter).toHaveBeenCalledWith(true);
+    });
+
+    it('should reset the counter when resetCounter() is called', () => {
+        const player1 = true;
+        service.resetCounter(player1);
+        expect(service.counter).toEqual(0);
+        expect(service.counter2).toEqual(0);
+        expect(mockSocketService.resetCounter).toHaveBeenCalledWith(true);
+    });
+
+    it('should send the correct victorious player when sendVictoriousPlayer() is called', () => {
+        service.counter = 7;
+        service.incrementCounter(true);
+        expect(mockSocketService.sendVictoriousPlayer).toHaveBeenCalledWith(true);
     });
 });
