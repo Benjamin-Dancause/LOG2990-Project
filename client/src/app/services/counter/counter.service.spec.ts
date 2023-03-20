@@ -7,7 +7,7 @@ import { CounterService } from './counter.service';
 
 
 
-fdescribe('CounterService', () => {
+describe('CounterService', () => {
     let service: CounterService;
     let mockSocketService: jasmine.SpyObj<SocketService>;
     let mockCommunicationService: jasmine.SpyObj<CommunicationService>;
