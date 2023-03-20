@@ -4,7 +4,7 @@ import { Socket } from 'socket.io-client';
 
 import { SocketService } from './socket.service';
 
-fdescribe('socketService', () => {
+describe('socketService', () => {
     let service: SocketService;
     let socketSpy: jasmine.SpyObj<Socket>;
 

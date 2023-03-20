@@ -6,6 +6,7 @@ import { GameCardComponent } from '@app/components/game-card/game-card.component
 import { HomeButtonComponent } from '@app/components/home-button/home-button.component';
 import { PreviousNextButtonComponent } from '@app/components/previous-next-button/previous-next-button.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
+import { SocketService } from '@app/services/socket/socket.service';
 import { of } from 'rxjs';
 import { GameSelectionPageComponent } from './game-selection-page-component.component';
 
@@ -28,10 +29,16 @@ describe('GameSelectionPageComponent', () => {
         { name: 'Game 11', image: 'image11', difficulty: false, configuration: true },
     ];
 
-    const communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAllGames']);
+    let communicationService: jasmine.SpyObj<CommunicationService>;
+    let socketService: jasmine.SpyObj<SocketService>;
 
     beforeEach(async () => {
+        communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAllGames']);
+        socketService = jasmine.createSpyObj('SocketService', ['disconnectSocket']);
+
         communicationService.getAllGames.and.returnValue(of(gamecards));
+        socketService.disconnectSocket.and.callFake(() => {});
+
 
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, MatDialogModule],
@@ -39,6 +46,7 @@ describe('GameSelectionPageComponent', () => {
             providers: [{ provide: CommunicationService, useValue: communicationService }],
         }).compileComponents();
 
+        socketService = TestBed.inject(SocketService) as jasmine.SpyObj<SocketService>;
         fixture = TestBed.createComponent(GameSelectionPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
@@ -72,5 +80,11 @@ describe('GameSelectionPageComponent', () => {
     it('should change currentPage on next', () => {
         component.onNext();
         expect(component.currentPage).toEqual(1);
+    });
+
+    it('should disconnect socket when disconnectSocket is called', () => {
+        spyOn(component.socketService, 'disconnectSocket');
+        component.disconnectSocket();
+        expect(component.socketService.disconnectSocket).toHaveBeenCalled();
     });
 });

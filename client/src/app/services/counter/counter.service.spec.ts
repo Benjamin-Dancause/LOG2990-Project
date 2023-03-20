@@ -1,13 +1,13 @@
 import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { Socket } from 'socket.io-client';
 import { CommunicationService } from '../communication/communication.service';
 import { CounterService } from './counter.service';
 
 
 
-fdescribe('CounterService', () => {
+describe('CounterService', () => {
     let service: CounterService;
     let mockSessionStorage: any = {};
     let mockSocket: jasmine.SpyObj<Socket>;
@@ -28,6 +28,8 @@ fdescribe('CounterService', () => {
         
         mockSessionStorage = {};
         
+        spyOn(communicationSpy, 'getDiffAmount').and.returnValue(of(7));
+
         spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => {
             return mockSessionStorage[key] || null;
         });
