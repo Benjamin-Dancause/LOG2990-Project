@@ -1,54 +1,80 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-//import { environment } from 'src/environments/environment';
-
+import { Subscription } from 'rxjs';
+import { Socket } from 'socket.io-client';
+import { CommunicationService } from '../communication/communication.service';
 import { CounterService } from './counter.service';
 
-describe('CounterService', () => {
+
+
+fdescribe('CounterService', () => {
     let service: CounterService;
-    //let httpClient: HttpClient;
-    //const baseUrl: string = environment.serverUrl;
+    let mockSessionStorage: any = {};
+    let mockSocket: jasmine.SpyObj<Socket>;
+    let communicationSpy: jasmine.SpyObj<CommunicationService>;
 
     beforeEach(() => {
+        communicationSpy = jasmine.createSpyObj('CommuncationService', ['getDiffAmount']);
+        mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
+        mockSocket.on.and.returnValue(mockSocket);
+        mockSocket.emit.and.returnValue(mockSocket);
+
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
-            providers: [CounterService, HttpClient],
+            providers: [CounterService, {provide: CommunicationService, useValue: communicationSpy}],
         });
         service = TestBed.inject(CounterService);
-        //httpClient = TestBed.inject(HttpClient);
+        communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
+        
+        mockSessionStorage = {};
+        
+        spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => {
+            return mockSessionStorage[key] || null;
+        });
+
+        spyOn(sessionStorage, 'setItem').and.callFake((key: string, value: string): void => {
+            mockSessionStorage[key] = value;
+        });
     });
+
+    afterEach(() => {
+        if(service.allDiffsSubscription instanceof Subscription) {
+            service.allDiffsSubscription.unsubscribe();
+        }
+    })
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
-    /*
-    it('should return counter value', () => {
-        const mockResponse = 0;
-        spyOn(httpClient, 'get').and.returnValue(of(mockResponse));
 
-        service.getCounter().subscribe((result) => {
-            expect(httpClient.get).toHaveBeenCalledWith(`${baseUrl}/counter`);
-            expect(result).toEqual(mockResponse);
-        });
+    it('should set win condition', () => {
+        spyOn(service, 'setWinCondition');
+        service.initializeCounter();
+        expect(service.setWinCondition).toHaveBeenCalled();
     });
 
-    it('should increment the counter and return it', () => {
-        const mockResponse = 1;
-        spyOn(httpClient, 'post').and.returnValue(of(mockResponse));
-
-        service.incrementCounter().subscribe((result) => {
-            expect(httpClient.post).toHaveBeenCalledWith(`${baseUrl}/counter/increment`, {});
-            expect(result).toEqual(mockResponse);
-        });
+    it('should set win condition based on game mode', () => {
+        const totalDiff = 7;
+        const gameMode = '1v1';
+        mockSessionStorage.setItem('gameTitle', 'testGame');
+        mockSessionStorage.setItem('gameMode', gameMode);
+        
+        service.initializeCounter();
+        expect(service.winCondition).toEqual(Math.ceil(totalDiff / 2));
     });
 
-    it('should make a POST request to the API to reset the counter', () => {
-        const mockResponse = 0;
-        spyOn(httpClient, 'post').and.returnValue(of(mockResponse));
+    it('should set the win condition to total differences in solo mode', () => {
+        const totalDiff = 7;
+        const gameMode = 'solo';
+        sessionStorage.setItem('gameTitle', 'testGame');
+        sessionStorage.setItem('gameMode', gameMode);
+        
+        service.initializeCounter();
+        expect(service.winCondition).toEqual(totalDiff);
+    });
 
-        service.resetCounter().subscribe((result) => {
-            expect(httpClient.post).toHaveBeenCalledWith(`${baseUrl}/counter/reset`, {});
-            expect(result).toEqual(mockResponse);
-        });
-    });*/
+    it('should listen to counter-update event from socket service', () => {
+        service.initializeCounter();
+        expect(mockSocket.on).toHaveBeenCalledWith('counter-update', jasmine.any(Function));
+    });
 });

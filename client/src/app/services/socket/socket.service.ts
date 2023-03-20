@@ -91,6 +91,14 @@ export class SocketService {
         this.socket.emit('reset-timer', roomId);
     }
 
+    incrementCounter(player1: boolean) {
+        this.socket.emit('increment-counter', player1);
+    }
+
+    resetCounter(player1: boolean) {
+        this.socket.emit('reset-counter', player1);
+    }
+
     disconnectSocket() {
         if (this.socket) {
             this.socket.disconnect();
