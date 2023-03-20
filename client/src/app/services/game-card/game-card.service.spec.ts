@@ -10,6 +10,7 @@ describe('GameCardService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
+            imports: [HttpClientTestingModule],
             providers: [GameCardService],
         });
         service = TestBed.inject(GameCardService);
