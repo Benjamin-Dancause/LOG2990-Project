@@ -38,13 +38,13 @@ export class CounterService implements OnInit {
     }
 
     incrementCounter(player1: boolean) {
-        this.socketService.socket.emit('increment-counter', player1);
+        this.socketService.incrementCounter(player1);
     }
 
     resetCounter(player1: boolean) {
         this.counter = 0;
         this.counter2 = 0;
-        this.socketService.socket.emit('reset-counter', player1);
+        this.socketService.resetCounter(player1);
     }
 
     setWinCondition(gameMode: string, gameTitle: string) {

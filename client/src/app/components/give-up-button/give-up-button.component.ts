@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 // eslint-disable-next-line no-restricted-imports
-import { TextBoxComponent } from '@app/components/text-box/text-box.component';
 // eslint-disable-next-line import/no-unresolved
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
@@ -10,7 +9,6 @@ import { SocketService } from '@app/services/socket/socket.service';
     selector: 'app-give-up-button',
     templateUrl: './give-up-button.component.html',
     styleUrls: ['./give-up-button.component.scss'],
-    providers: [TextBoxComponent],
 })
 export class GiveUpButtonComponent implements OnInit {
     @Input() text: string;
@@ -21,14 +19,11 @@ export class GiveUpButtonComponent implements OnInit {
 
     constructor(
         public dialog: MatDialog,
-        public textBoxComponent: TextBoxComponent,
-        private gameCardService: GameCardService,
-        private socketService: SocketService,
+        public gameCardService: GameCardService,
+        public socketService: SocketService,
     ) {}
 
     giveUpConfirmPrompt(): void {
-        this.textBoxComponent.writeQuitMessage();
-        this.textBoxComponent.addSystemMessage(`${this.textBoxComponent.getTimestamp()} - ${this.textBoxComponent.userName} a abandonné la partie.`);
         this.dialog.open(this.giveUpPromptTemplate, {
             width: '500px',
             height: '250px',
