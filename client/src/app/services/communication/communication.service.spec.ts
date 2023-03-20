@@ -2,8 +2,9 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { ClickResponse } from '@app/classes/click-response';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameplayData, GameSelectionPageData } from '@common/game-interfaces';
+import { GameDiffData, GameplayData, GameSelectionPageData } from '@common/game-interfaces';
 import { Message } from '@common/message';
+import { Observable } from 'rxjs';
 import { CommunicationService } from './communication.service';
 
 describe('CommunicationService', () => {
@@ -201,5 +202,43 @@ describe('CommunicationService', () => {
         expect(req.request.body).toEqual({ name });
 
         req.flush(differenceNumber);
+    });
+
+    it('should get all differences', () => {
+        const name = 'test-game';
+        const expectedData: GameDiffData = {
+            id: 1,
+            count: 4,
+            differences: [],
+        };
+
+        service.getAllDiffs(name).subscribe((data) => {
+            expect(data).toEqual(expectedData);
+        });
+
+        const req = httpMock.expectOne(`${service['baseUrl']}/gaming/findAll`);
+        expect(req.request.method).toBe('POST');
+        expect(req.request.body).toEqual({ name });
+
+        req.flush(expectedData);
+    });
+    it('should delete a game with a name', () => {
+        const name = 'test-game';
+        service.deleteGame(name).subscribe((response) => {
+            expect(response).toBeInstanceOf(Observable);
+        });
+
+        const req = httpMock.expectOne(`${service['baseUrl']}/games/test-game`);
+        expect(req.request.method).toBe('DELETE');
+        expect(req.request.body).toEqual({ name });
+    });
+    it('should return true if game exists when getting game availaility', () => {
+        const name = 'test-game';
+        service.getGameAvailability(name).subscribe((response) => {
+            expect(response).toBeTruthy();
+        });
+        const req = httpMock.expectOne(`${service['baseUrl']}/games/${name}`);
+        expect(req.request.method).toBe('GET');
+        expect(req.request.body).toEqual({ name });
     });
 });

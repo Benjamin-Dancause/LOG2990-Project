@@ -1,14 +1,21 @@
 import { promises as fs } from 'fs';
+// eslint-disable-next-line no-restricted-imports
 import { StoreService } from '../store/store.service';
-import { DifferenceInterface, GameManager } from './game-manager.service';
+import { GameManager } from './game-manager.service';
 
 describe('GameManager', () => {
     let gameManager: GameManager;
-    let storeService: StoreService;
 
     beforeEach(() => {
-        storeService = new StoreService();
+        const storeService = new StoreService();
         gameManager = new GameManager(storeService);
+    });
+
+    describe('createGame', () => {
+        it('should return the count from the gameData object', () => {
+            const gameData = { id: 1, count: 5, differences: [] };
+            expect(gameManager.createGame(gameData)).toBe(5);
+        });
     });
 
     describe('verifyPos', () => {
@@ -31,16 +38,18 @@ describe('GameManager', () => {
             };
             const gamesContent = [{ name: gameName, differences: gameData.differences }];
             jest.spyOn(fs, 'readFile').mockImplementation(async () => Promise.resolve(JSON.stringify(gamesContent)));
-            const expected: DifferenceInterface = {
-                isDifference: true,
-                differenceNumber: 1,
-                coords: [
-                    { x: 1, y: 2 },
-                    { x: 3, y: 4 },
-                ],
-            };
-            const result = await gameManager.verifyPos(gameName, clickCoord);
-            expect(result).toEqual(expected);
+
+            const expectedDifference = { isDifference: true, differenceNumber: 1, coords: [{ x: 10, y: 20 }] };
+            const differenceInterface = await gameManager.verifyPos(gameName, clickCoord);
+            expect(differenceInterface).toEqual(expectedDifference);
+        });
+
+        it('should return isDifference: false if the coordinates do not match', async () => {
+            const name = 'game1';
+            const clickCoord = { x: 5, y: 5 };
+            const expectedDifference = { isDifference: false, differenceNumber: 0, coords: [] };
+            const differenceInterface = await gameManager.verifyPos(name, clickCoord);
+            expect(differenceInterface).toEqual(expectedDifference);
         });
 
         it('should return an object indicating that no difference was found if the click is not on a difference', async () => {
@@ -62,13 +71,9 @@ describe('GameManager', () => {
             const gamesContent = [{ name: gameName, differences: gameData.differences }];
             jest.spyOn(fs, 'readFile').mockImplementation(async () => Promise.resolve(JSON.stringify(gamesContent)));
 
-            const expected: DifferenceInterface = {
-                isDifference: false,
-                differenceNumber: 0,
-                coords: [],
-            };
-            const result = await gameManager.verifyPos(gameName, clickCoord);
-            expect(result).toEqual(expected);
+            const expectedDifference = { isDifference: false, differenceNumber: 0, coords: [] };
+            const differenceInterface = await gameManager.verifyPos(gameName, clickCoord);
+            expect(differenceInterface).toEqual(expectedDifference);
         });
     });
 
@@ -94,9 +99,23 @@ describe('GameManager', () => {
         });
     });
 
-    /*
     afterEach(() => {
         jest.restoreAllMocks();
     });
-    */
+
+    describe('getAllDifferences', () => {
+        it('should return the game data object for the specified name', async () => {
+            const name = 'game1';
+            const expectedGameData = {
+                id: 1,
+                count: 5,
+                differences: [
+                    { x: 10, y: 20 },
+                    { x: 30, y: 40 },
+                ],
+            };
+            const gameData = await gameManager.getAllDifferences(name);
+            expect(gameData).toEqual(expectedGameData);
+        });
+    });
 });
