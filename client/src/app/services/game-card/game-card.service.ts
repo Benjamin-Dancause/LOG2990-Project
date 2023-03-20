@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
     providedIn: 'root',
 })
 export class GameCardService {
-    private readonly baseUrl: string = environment.serverUrl;
+    readonly baseUrl: string = environment.serverUrl;
 
     constructor(private http: HttpClient) {}
 
