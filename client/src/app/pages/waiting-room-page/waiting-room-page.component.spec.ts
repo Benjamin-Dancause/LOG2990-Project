@@ -7,7 +7,7 @@ import { Socket } from 'socket.io-client';
 
 import { WaitingRoomPageComponent } from './waiting-room-page.component';
 
-fdescribe('WaitingRoomPageComponent', () => {
+describe('WaitingRoomPageComponent', () => {
     let component: WaitingRoomPageComponent;
     let fixture: ComponentFixture<WaitingRoomPageComponent>;
     let mockSocketService: jasmine.SpyObj<SocketService>;
