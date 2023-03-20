@@ -16,7 +16,7 @@ class MockCounterComponent {
     @Input() playerSide: boolean;
 }
 
-fdescribe('TopBarComponent', () => {
+describe('TopBarComponent', () => {
     let component: TopBarComponent;
     let fixture: ComponentFixture<TopBarComponent>;
     let mockSessionStorage: any = {};
