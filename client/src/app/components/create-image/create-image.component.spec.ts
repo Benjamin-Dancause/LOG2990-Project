@@ -166,7 +166,6 @@ describe('CreateImageComponent', () => {
         expect(component.showError).toHaveBeenCalled();
         expect(component.originalImage).toBeUndefined();
         input.remove();
-
     });
     it('should return if there is no selected file', async () => {
         const input = document.createElement('input');
@@ -190,7 +189,6 @@ describe('CreateImageComponent', () => {
         expect(component.showError).toHaveBeenCalled();
         expect(component.originalImage).toBeUndefined();
         input.remove();
-
     });
     // here
     it('should return if the event target is not an HTMLInputElement', async () => {
@@ -243,7 +241,6 @@ describe('CreateImageComponent', () => {
         await component.storeDiff(fileEvent as any);
         expect(component.modifiableImage).toBeDefined();
         input.remove();
-
     });
     it('should not store original image if not bmp', async () => {
         const input = document.createElement('input');
@@ -268,7 +265,6 @@ describe('CreateImageComponent', () => {
         expect(component.showError).toHaveBeenCalled();
         expect(component.originalImage).toBeUndefined();
         input.remove();
-
     });
     it('should return if there is no selected file', async () => {
         const input = document.createElement('input');
@@ -292,7 +288,6 @@ describe('CreateImageComponent', () => {
         expect(component.showError).toHaveBeenCalled();
         expect(component.originalImage).toBeUndefined();
         input.remove();
-
     });
     it('should draw images on original and modifiable canvases if both images and contexts are present', async () => {
         component.originalImage = await createImageBitmap(canvas);
@@ -494,7 +489,6 @@ describe('CreateImageComponent', () => {
         const result = component.createDifference();
         expect(result).toBeDefined();
         slider.remove();
-
     });
     it('should not create difference', async () => {
         const slider = document.createElement('input');

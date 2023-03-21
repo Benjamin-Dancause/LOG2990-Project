@@ -5,18 +5,7 @@ import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DifferenceService } from '@app/services/difference/difference.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
-const SCREEN_WIDTH = 640;
-const SCREEN_HEIGHT = 480;
-const BMP_MIN = 66;
-const BMP_MAX = 77;
-const BIT_DEPTH = 24;
-const DIFFCOUNT_MAX = 9;
-const DIFFCOUNT_MIN = 3;
-const DIFFERROR_MSG = 'Vous devez avoir entre 3 et 9 différences';
-const FORMATERROR_MSG = 'Le format des images est invalide';
-const NAMEERROR_MSG = 'Ce nom est déjà pris ou est vide';
-//const NOIMAGE_MSG = 'Aucune images détectées';
+import { CANVAS, DIFFERENCE, DRAWING, ERROR_MESSAGES } from '@common/constants';
 
 @Component({
     selector: 'app-create-image',
@@ -52,8 +41,6 @@ export class CreateImageComponent implements AfterViewInit {
 
     diffCanvas: HTMLCanvasElement;
     canvasImages: File[] = [];
-    width: number = SCREEN_WIDTH;
-    height: number = SCREEN_HEIGHT;
 
     gameName: string = '';
 
@@ -70,23 +57,23 @@ export class CreateImageComponent implements AfterViewInit {
         this.ctxOriginal = this.originalCanvas.nativeElement.getContext('2d');
         this.ctxModifiable = this.modifiableCanvas.nativeElement.getContext('2d');
         if (this.ctxOriginal && this.ctxModifiable) {
-            this.ctxOriginal.fillStyle = 'white';
-            this.ctxModifiable.fillStyle = 'white';
-            this.ctxOriginal.fillRect(0, 0, this.width, this.height);
-            this.ctxModifiable.fillRect(0, 0, this.width, this.height);
+            this.ctxOriginal.fillStyle = DRAWING.WHITE;
+            this.ctxModifiable.fillStyle = DRAWING.WHITE;
+            this.ctxOriginal.fillRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+            this.ctxModifiable.fillRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
             this.drawingService.saveAction();
         }
     }
 
     showInputDifferent(): void {
-        this.canvasImages.length = 0;
+        this.canvasImages.length = CANVAS.RESET;
         this.dialog.open(this.inputDifferentTemplate, {
             width: '500px',
             height: '250px',
         });
     }
     showInputSame(): void {
-        this.canvasImages.length = 0;
+        this.canvasImages.length = CANVAS.RESET;
         this.dialog.open(this.inputSameTemplate, {
             width: '450px',
             height: '200px',
@@ -115,67 +102,67 @@ export class CreateImageComponent implements AfterViewInit {
 
         const diff = this.createDifference();
         if (this.ctxDiff) {
-            this.ctxDiff.clearRect(0, 0, this.width, this.height);
-            this.ctxDiff.drawImage(diff, 0, 0, this.width, this.height);
+            this.ctxDiff.clearRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+            this.ctxDiff.drawImage(diff, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
         }
         this.nbDiff = this.difference.getDifference(this.diffCanvas).count;
-        this.difficulty = this.difference.isDifficult(this.diffCanvas) ? 'Difficile' : 'Facile';
+        this.difficulty = this.difference.isDifficult(this.diffCanvas) ? DIFFERENCE.DIFFICULT : DIFFERENCE.EASY;
     }
     async storeOriginal(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
-            this.showError(FORMATERROR_MSG);
+            this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
             return;
         }
         const selectedFile = fileEvent.target.files[0];
         if (!selectedFile) {
-            this.showError(FORMATERROR_MSG);
+            this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
             return;
         }
         if (await this.verifyBMP(selectedFile)) {
             const image = await this.convertImage(selectedFile);
-            if (image.width === this.width || image.height === this.height) {
+            if (image.width === CANVAS.WIDTH || image.height === CANVAS.HEIGHT) {
                 this.originalImage = image;
                 return;
             }
         }
         fileEvent.target.value = '';
-        this.showError(FORMATERROR_MSG);
+        this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
     }
     async storeDiff(fileEvent: Event): Promise<void> {
         if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
-            this.showError(FORMATERROR_MSG);
+            this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
             return;
         }
         const selectedFile = fileEvent.target.files[0];
         if (selectedFile) {
             if (await this.verifyBMP(selectedFile)) {
                 const image = await this.convertImage(selectedFile);
-                if (image.width === this.width || image.height === this.height) {
+                if (image.width === CANVAS.WIDTH || image.height === CANVAS.HEIGHT) {
                     this.modifiableImage = image;
                     return;
                 }
             }
         }
 
-        this.showError(FORMATERROR_MSG);
+        this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
     }
     createDiffCanvas(): void {
         if (this.originalImage && this.modifiableImage) {
-            this.ctxOriginal?.drawImage(this.originalImage, 0, 0, this.width, this.height);
-            this.ctxModifiable?.drawImage(this.modifiableImage, 0, 0, this.width, this.height);
+            this.ctxOriginal?.drawImage(this.originalImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+            this.ctxModifiable?.drawImage(this.modifiableImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
         }
     }
     async createSameCanvas(): Promise<void> {
         if (this.originalImage) {
-            this.ctxOriginal?.drawImage(this.originalImage, 0, 0, this.width, this.height);
-            this.ctxModifiable?.drawImage(this.originalImage, 0, 0, this.width, this.height);
+            this.ctxOriginal?.drawImage(this.originalImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+            this.ctxModifiable?.drawImage(this.originalImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
         }
     }
     deleteOriginal(): void {
-        this.ctxOriginal?.fillRect(0, 0, this.width, this.height);
+        this.ctxOriginal?.fillRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
     }
     deleteModifiable(): void {
-        this.ctxModifiable?.fillRect(0, 0, this.width, this.height);
+        this.ctxModifiable?.fillRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
     }
     deleteBoth(): void {
         this.deleteOriginal();
@@ -196,7 +183,7 @@ export class CreateImageComponent implements AfterViewInit {
             const reader = new FileReader();
             reader.onload = () => {
                 const imageData = new Uint8Array(reader.result as ArrayBuffer);
-                resolve(imageData[0] === BMP_MIN && imageData[1] === BMP_MAX && imageData[28] === BIT_DEPTH);
+                resolve(imageData[0] === CANVAS.BMP_MIN && imageData[1] === CANVAS.BMP_MIN && imageData[28] === CANVAS.BIT_DEPTH);
             };
             reader.readAsArrayBuffer(file);
         });
@@ -208,11 +195,11 @@ export class CreateImageComponent implements AfterViewInit {
     inputName(): void {
         const diff = this.createDifference();
         const diffCount = this.difference.getDifference(diff).count;
-        if (diffCount >= DIFFCOUNT_MIN && diffCount <= DIFFCOUNT_MAX) {
+        if (diffCount >= DIFFERENCE.DIFFCOUNT_MIN && diffCount <= DIFFERENCE.DIFFCOUNT_MAX) {
             this.showSave();
             return;
         }
-        this.showError(DIFFERROR_MSG);
+        this.showError(ERROR_MESSAGES.DIFFERROR_MSG);
     }
 
     async saveGameCard(): Promise<void> {
@@ -237,7 +224,7 @@ export class CreateImageComponent implements AfterViewInit {
                         this.router.navigate(['config']);
                     });
                 } else {
-                    this.showError(NAMEERROR_MSG);
+                    this.showError(ERROR_MESSAGES.NAMEERROR_MSG);
                     this.gameName = '';
                 }
             });
