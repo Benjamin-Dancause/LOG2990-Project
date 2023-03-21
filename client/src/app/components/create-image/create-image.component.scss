@@ -22,17 +22,14 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
 .canvas-wrap {
     display: flex;
     flex-direction: column;
-    margin: 30px;
+    margin: 30px 12px 30px 12px;
     //width: 30%;
     position: relative;
 }
-.canvas-wrap .delete {
-    justify-self: flex-end;
-    align-self: flex-end;
-    position: absolute;
-    top: 40px;
-    right: 10px;
-    z-index: 100;
+
+.canvas-area > .delete-btn{
+    padding: 6px;
+    width: 60px;
 }
 .btn {
     background-color: $background-color;
@@ -94,10 +91,9 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
     padding: 65px;
 }
 .delete-btn {
-    border-left: 5px solid $orange-border-left;
+    border-left: 3px solid $orange-border-left;
     vertical-align: middle;
-    height: 3%;
-    width: 3%;
+    width: 9%;
     align-self: flex-end;
     &:hover {
         background-color: $background-color-hover;

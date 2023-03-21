@@ -72,7 +72,6 @@ export class PlayAreaComponent implements AfterViewInit {
         img1.setAttribute('crossOrigin', 'anonymous');
         img1.src = this.imageLeftStr;
         img1.onload = () => {
-            console.log('does it test');
             this.ctxLeft = this.canvasLeft.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxLeft?.drawImage(img1, 0, 0);
             this.game.getContexts(this.ctxLeft);
@@ -81,7 +80,6 @@ export class PlayAreaComponent implements AfterViewInit {
         img2.setAttribute('crossOrigin', 'anonymous');
         img2.src = this.imageRightStr;
         img2.onload = () => {
-            console.log('does it test : ');
             this.ctxRight = this.canvasRight.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxRight?.drawImage(img2, 0, 0);
             this.game.getContexts(this.ctxRight);
