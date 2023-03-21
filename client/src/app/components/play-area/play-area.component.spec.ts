@@ -29,7 +29,7 @@ describe('PlayAreaComponent', () => {
         mockSocket.on.and.returnValue(mockSocket);
         mockSocket.emit.and.returnValue(mockSocket);
         mockCommunicationService.getGameByName.and.returnValue(
-            of({ images: ['image1.jpg', 'image2.jpg'], name: 'name1', count: 3, difficulty: true }),
+            of({ images: ['image1.png', 'image1.png'], name: 'name1', count: 3, difficulty: true }),
         );
         await TestBed.configureTestingModule({
             declarations: [PlayAreaComponent],
@@ -68,7 +68,7 @@ describe('PlayAreaComponent', () => {
 
     it('should listen to player-info event and set player1 and call initOneVsOneComponents', () => {
         const gameplayInfo: OneVsOneGameplayInfo = {
-            gameTitle: 'piss',
+            gameTitle: 'game',
             roomId: '1234',
             player1: false,
         };
@@ -93,4 +93,6 @@ describe('PlayAreaComponent', () => {
 
         expect(component.socketService.assignPlayerInfo).toHaveBeenCalledWith('game1');
     });
+
+    it('should check the mouse click', () => {});
 });
