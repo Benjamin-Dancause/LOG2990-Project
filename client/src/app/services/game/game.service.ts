@@ -5,13 +5,11 @@ import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { GameDiffData } from '@app/interfaces/gameDiffData';
 import { CommunicationService } from '@app/services/communication/communication.service';
+import { CANVAS, DELAY } from '@common/constants';
 import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
 
-const BIGTIMEOUT = 2000;
-export const SMALLTIMOUT = 1000;
-const DEFAULT_HEIGHT = 480;
-const DEFAULT_WIDTH = 640;
+
 
 @Injectable({
     providedIn: 'root',
@@ -45,7 +43,7 @@ export class GameService {
         this.flashDifferences(response.coords, this.playAreaCtx);
         setTimeout(() => {
             this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
-        }, BIGTIMEOUT);
+        }, DELAY.BIGTIMEOUT);
     }
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
@@ -57,8 +55,8 @@ export class GameService {
                 ctxs[1].fillRect(coordinate.x, coordinate.y, 1, 1);
             }
             setTimeout(() => {
-                ctxs[0].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-                ctxs[1].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                ctxs[0].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+                ctxs[1].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
             }, 100);
         }, 200);
 
@@ -76,7 +74,7 @@ export class GameService {
         this.flashAllDifferences(ctxs);
         this.cheatTimeout = setInterval(() => {
             this.flashAllDifferences(ctxs);
-        }, SMALLTIMOUT);
+        }, DELAY.SMALLTIMEOUT);
     }
 
     flashAllDifferences(ctxs: CanvasRenderingContext2D[]) {
@@ -95,8 +93,8 @@ export class GameService {
                 }
                 i++;
                 setTimeout(() => {
-                    ctxs[2].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-                    ctxs[3].clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                    ctxs[2].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+                    ctxs[3].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
                 }, 100);
                 if (i === 4) {
                     clearInterval(flash);
@@ -147,7 +145,7 @@ export class GameService {
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                         this.isClickDisabled = false;
-                    }, SMALLTIMOUT);
+                    }, DELAY.SMALLTIMEOUT);
                 }
             });
         }

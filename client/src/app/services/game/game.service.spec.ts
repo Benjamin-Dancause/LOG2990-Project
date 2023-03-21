@@ -2,12 +2,13 @@ import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ClickResponse } from '@app/classes/click-response';
+import { DELAY } from '@common/constants';
 import { Coords, GameDiffData } from '@common/game-interfaces';
 import { of } from 'rxjs';
 import { CommunicationService } from '../communication/communication.service';
 import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
-import { GameService, SMALLTIMOUT } from './game.service';
+import { GameService } from './game.service';
 
 describe('GameService', () => {
   let gameService: GameService;
@@ -93,7 +94,7 @@ describe('GameService', () => {
     const fillRectSpy = spyOn(mockCtx, 'fillRect').and.callThrough();
     const clearRectSpy = spyOn(mockCtx, 'clearRect').and.callThrough();
     gameService.flashAllDifferences(mockCtxs);
-    tick(SMALLTIMOUT);
+    tick(DELAY.SMALLTIMEOUT);
     expect(fillRectSpy).toHaveBeenCalledTimes(8);
     expect(clearRectSpy).toHaveBeenCalledTimes(8);
   }));
@@ -105,7 +106,7 @@ describe('GameService', () => {
     const fillRectSpy = spyOn(mockCtx, 'fillRect').and.callThrough();
     const clearRectSpy = spyOn(mockCtx, 'clearRect').and.callThrough();
     gameService.flashDifferences(mockCoords, mockCtxs);
-    tick(SMALLTIMOUT);
+    tick(DELAY.SMALLTIMEOUT);
     expect(fillRectSpy).toHaveBeenCalledTimes(8);
     expect(clearRectSpy).toHaveBeenCalledTimes(8);
   }));
