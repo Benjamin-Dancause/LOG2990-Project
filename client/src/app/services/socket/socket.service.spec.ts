@@ -71,6 +71,12 @@ describe('socketService', () => {
         expect(socketSpy.emit).toHaveBeenCalledWith('leave-lobby');
     });
 
+    it('should emit "delete-game" when deleteGame() is called', () => {
+        const gameTitle = 'testGame1';
+        service.deleteGame(gameTitle);
+        expect(socketSpy.emit).toHaveBeenCalledWith('delete-game', gameTitle);
+    });
+
     it('should emit "reset-lobby" with gameMaster name and gameTitle when resetLobby() is called', () => {
         const name = 'player1';
         const gameTitle = 'game1';
