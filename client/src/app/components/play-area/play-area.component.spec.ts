@@ -117,6 +117,22 @@ describe('PlayAreaComponent', () => {
         component.onMouseDown(event);
         expect(component.game.checkClick).toHaveBeenCalled();
     });
+    it('should check the mouse click and return if not canvas', () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        const eventArgs = {
+            clientX: 100,
+            clientY: 200,
+            target: null,
+        };
+        const event = eventArgs as any as MouseEvent;
+        component.onMouseDown(event);
+        expect(component.game.checkClick).not.toHaveBeenCalled();
+    });
     it('should call game.cheatMode when "t" key is pressed', () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
