@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import { StoreService } from '@app/services/store/store.service';
 import { Coords, Data } from '@common/game-interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -7,12 +6,12 @@ import * as path from 'path';
 
 describe('StoreService', () => {
     let service: StoreService;
+    let service2: StoreService;
     let deleteMock: jest.Mock;
     let extractDataMock: jest.Mock;
-    let tempImagePath: string;
-    let consoleErrorMock: jest.Mock;
-    let readFileMock: jest.Mock;
-    let service2: StoreService;
+    // let tempImagePath: string;
+    // let consoleErrorMock: jest.Mock;
+    // let readFileMock: jest.Mock;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -21,7 +20,7 @@ describe('StoreService', () => {
 
         deleteMock = jest.fn();
         extractDataMock = jest.fn();
-        readFileMock = jest.fn();
+        // readFileMock = jest.fn();
         service = module.get<StoreService>(StoreService);
         service.extractData = extractDataMock;
         service2 = new StoreService();
@@ -169,6 +168,7 @@ describe('StoreService', () => {
         expect(result).toBeUndefined();
     });
 
+    // marche pour la couverture, mais delete réellement les fichiers
     /*
     it('should delete a game and its associated image files from the storage', async () => {
         const name = 'testGame';
