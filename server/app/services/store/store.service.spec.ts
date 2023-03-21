@@ -11,6 +11,7 @@ describe('StoreService', () => {
     let extractDataMock: jest.Mock;
     let tempImagePath: string;
     let consoleErrorMock: jest.Mock;
+    let readFileMock: jest.Mock;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -19,8 +20,8 @@ describe('StoreService', () => {
 
         deleteMock = jest.fn();
         extractDataMock = jest.fn();
+        readFileMock = jest.fn();
         service = module.get<StoreService>(StoreService);
-        service.deleteGame = deleteMock;
         service.extractData = extractDataMock;
     });
 
@@ -52,15 +53,6 @@ describe('StoreService', () => {
         expect(gamesData[0].count).toBe(count);
         expect(gamesData[0].differences).toEqual(differences);
     });
-    /*
-    it('should store image', async () => {
-        const name = 'image1';
-        const image = 'data:image/bmp;base64,Qk06AAAAAAAAAAAAA';
-        const filePath = `assets/images/${name}.bmp`;
-        const result = await service.storeImage(name, image);
-        expect(result).toBe(filePath);
-    });
-    */
 
     it('should store image', async () => {
         const name = 'image1';
@@ -229,6 +221,14 @@ describe('StoreService', () => {
             const filePath = 'test/file/path.txt';
             await service.deleteFile(filePath);
             expect(deleteMock).toHaveBeenCalledWith(filePath);
+        });
+    });
+
+    describe('deleteGAme', () => {
+        it('should call promisify(fs.unlink) with the correct path', async () => {
+            const infoPath = 'assets/data/gamesData.json';
+            await service.deleteGame(infoPath);
+            expect(deleteMock).toHaveBeenCalledWith(infoPath);
         });
     });
 });
