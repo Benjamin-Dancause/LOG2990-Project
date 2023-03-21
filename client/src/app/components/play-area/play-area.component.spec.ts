@@ -23,13 +23,20 @@ describe('PlayAreaComponent', () => {
     beforeEach(async () => {
         mockSocketService = jasmine.createSpyObj<SocketService>(['sendDifferenceFound', 'initOneVsOneComponents', 'assignPlayerInfo']);
         mockCommunicationService = jasmine.createSpyObj<CommunicationService>(['getGameByName']);
-        mockGameService = jasmine.createSpyObj<GameService>(['setGameName', 'getContexts', 'cheatMode', 'clearContexts', 'clearDifferenceArray']);
+        mockGameService = jasmine.createSpyObj<GameService>([
+            'setGameName',
+            'getContexts',
+            'cheatMode',
+            'clearContexts',
+            'clearDifferenceArray',
+            'checkClick',
+        ]);
         mockCounterService = jasmine.createSpyObj<CounterService>(['incrementCounter']);
         mockSocket = jasmine.createSpyObj<Socket>(['emit', 'on']);
         mockSocket.on.and.returnValue(mockSocket);
         mockSocket.emit.and.returnValue(mockSocket);
         mockCommunicationService.getGameByName.and.returnValue(
-            of({ images: ['image1.jpg', 'image2.jpg'], name: 'name1', count: 3, difficulty: true }),
+            of({ images: ['image1.png', 'image1.png'], name: 'name1', count: 3, difficulty: true }),
         );
         await TestBed.configureTestingModule({
             declarations: [PlayAreaComponent],
@@ -68,7 +75,7 @@ describe('PlayAreaComponent', () => {
 
     it('should listen to player-info event and set player1 and call initOneVsOneComponents', () => {
         const gameplayInfo: OneVsOneGameplayInfo = {
-            gameTitle: 'piss',
+            gameTitle: 'game',
             roomId: '1234',
             player1: false,
         };
@@ -92,5 +99,75 @@ describe('PlayAreaComponent', () => {
         component.ngAfterViewInit();
 
         expect(component.socketService.assignPlayerInfo).toHaveBeenCalledWith('game1');
+    });
+
+    it('should check the mouse click', () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        const eventArgs = {
+            clientX: 100,
+            clientY: 200,
+            target: canvas,
+        };
+        const event = eventArgs as any as MouseEvent;
+        component.onMouseDown(event);
+        expect(component.game.checkClick).toHaveBeenCalled();
+    });
+    it('should check the mouse click and return if not canvas', () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        const eventArgs = {
+            clientX: 100,
+            clientY: 200,
+            target: null,
+        };
+        const event = eventArgs as any as MouseEvent;
+        component.onMouseDown(event);
+        expect(component.game.checkClick).not.toHaveBeenCalled();
+    });
+    it('should call game.cheatMode when "t" key is pressed', () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        const event = new KeyboardEvent('keydown', {
+            key: 't',
+        });
+        component.onKeyDown(event);
+        expect(component.game.cheatMode).toHaveBeenCalled();
+    });
+    it('should not call game.cheatMode when "t" key is pressed in chat', () => {
+        const canvas = document.createElement('canvas');
+        const input = document.createElement('input');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        const eventArgs = {
+            key: 't',
+            target: input,
+        };
+        const event = eventArgs as any as KeyboardEvent;
+        component.onKeyDown(event);
+        expect(component.game.cheatMode).not.toHaveBeenCalled();
+    });
+
+    it('should clear canvases on destroy', () => {
+        mockGameService.clearContexts.and.returnValue();
+        mockGameService.clearDifferenceArray.and.returnValue();
+        component.ngOnDestroy();
+        expect(mockGameService.clearContexts).toHaveBeenCalled();
+        expect(mockGameService.clearDifferenceArray).toHaveBeenCalled();
     });
 });

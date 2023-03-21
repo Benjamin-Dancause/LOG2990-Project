@@ -15,8 +15,8 @@ import { SocketService } from '../socket/socket.service';
     providedIn: 'root',
 })
 export class GameService {
-    errorSound = new Audio('../../assets/erreur.mp3');
-    successSound = new Audio('../../assets/success.mp3');
+    errorSound = new Audio('./assets/erreur.mp3');
+    successSound = new Audio('./assets/success.mp3');
     errorMessage = new EventEmitter<string>();
     successMessage = new EventEmitter<string>();
     private isClickDisabled = false;

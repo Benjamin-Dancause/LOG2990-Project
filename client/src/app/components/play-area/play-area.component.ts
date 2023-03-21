@@ -1,10 +1,8 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameService } from '@app/services/game/game.service';
-import { InputService } from '@app/services/input/input.service';
 import { SocketService } from '@app/services/socket/socket.service';
-import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 // TODO : Avoir un fichier séparé pour les constantes!
@@ -31,10 +29,10 @@ interface OneVsOneGameplayInfo {
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent implements AfterViewInit {
-    @ViewChild('gridCanvasLeft', { static: false }) private canvasLeft!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvasRight', { static: false }) private canvasRight!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvasLeftTop', { static: false }) private canvasLeftTop!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvasRightTop', { static: false }) private canvasRightTop!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLeft', { static: false }) public canvasLeft!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasRight', { static: false }) public canvasRight!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLeftTop', { static: false }) public canvasLeftTop!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasRightTop', { static: false }) public canvasRightTop!: ElementRef<HTMLCanvasElement>;
 
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
@@ -42,21 +40,18 @@ export class PlayAreaComponent implements AfterViewInit {
 
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    private imageLeftStr: string = '';
-    private imageRightStr: string = '';
-    private ctxLeft: CanvasRenderingContext2D | null = null;
-    private ctxRight: CanvasRenderingContext2D | null = null;
-    private ctxLeftTop: CanvasRenderingContext2D | null = null;
-    private ctxRightTop: CanvasRenderingContext2D | null = null;
+    public imageLeftStr: string = '';
+    public imageRightStr: string = '';
+    public ctxLeft: CanvasRenderingContext2D | null = null;
+    public ctxRight: CanvasRenderingContext2D | null = null;
+    public ctxLeftTop: CanvasRenderingContext2D | null = null;
+    public ctxRightTop: CanvasRenderingContext2D | null = null;
     public gameName: string = '';
-    private mouseDownSubscription: Subscription;
-    private keyDownSubscription: Subscription;
     public player1: boolean = true;
 
     constructor(
         public counterService: CounterService,
         public communicationService: CommunicationService,
-        private input: InputService,
         public game: GameService,
         public socketService: SocketService,
     ) {
@@ -97,7 +92,6 @@ export class PlayAreaComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.socketService.socket.on('player-info', (gameplayInfo: OneVsOneGameplayInfo) => {
-            //this.roomId = gameplayInfo.roomId;
             this.player1 = gameplayInfo.player1;
             this.socketService.initOneVsOneComponents(this.player1);
         });
@@ -111,24 +105,25 @@ export class PlayAreaComponent implements AfterViewInit {
             this.imageRightStr = this.serverURL + '/' + game.images[1];
             this.initCanvases();
         });
-
-        this.mouseDownSubscription = this.input.mouseDown$.subscribe((event) => {
+    }
+    @HostListener('mousedown', ['$event'])
+    onMouseDown(event: MouseEvent) {
+        if (event.target instanceof HTMLCanvasElement) {
             const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
             this.game.checkClick(event, this.counterService, ctxs);
-        });
-
-        this.keyDownSubscription = this.input.keyDown$.subscribe((event) => {
-            if (event === 't') {
-                this.isCheatEnabled = !this.isCheatEnabled;
-                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
-                this.game.cheatMode(ctxs);
-            }
-        });
+        }
+    }
+    @HostListener('document:keydown.t', ['$event'])
+    onKeyDown(event: KeyboardEvent) {
+        if (event.target instanceof HTMLInputElement) {
+            return;
+        }
+        this.isCheatEnabled = !this.isCheatEnabled;
+        const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+        this.game.cheatMode(ctxs);
     }
 
     ngOnDestroy(): void {
-        this.mouseDownSubscription.unsubscribe();
-        this.keyDownSubscription.unsubscribe();
         this.game.clearContexts();
         this.game.clearDifferenceArray();
     }
