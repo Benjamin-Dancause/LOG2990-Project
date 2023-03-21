@@ -14,12 +14,10 @@ describe('GiveUpButtonComponent', () => {
     let debugElement: DebugElement;
 
     beforeEach(async () => {
-
         await TestBed.configureTestingModule({
             imports: [BrowserAnimationsModule, MatDialogModule, HttpClientModule],
             declarations: [GiveUpButtonComponent],
         }).compileComponents();
-
 
         fixture = TestBed.createComponent(GiveUpButtonComponent);
         component = fixture.componentInstance;
@@ -46,13 +44,10 @@ describe('GiveUpButtonComponent', () => {
 
     it('should disconnect socket when disconnectSocket is called', () => {
         spyOn(component.socketService, 'leaveGame');
-        spyOn(component.gameCardService, 'removePlayer').and.callThrough();
+        spyOn(component.gameCardService, 'removePlayer').and.callFake((gameTitle: string, userName: string) => {});
 
         component.removeUser();
         expect(component.socketService.leaveGame).toHaveBeenCalled();
-        expect(component.gameCardService.removePlayer).toHaveBeenCalledWith(
-            component.gameTitle,
-            component.userName
-        );
+        expect(component.gameCardService.removePlayer).toHaveBeenCalledWith(component.gameTitle, component.userName);
     });
 });

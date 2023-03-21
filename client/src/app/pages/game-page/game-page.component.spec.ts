@@ -7,7 +7,6 @@ import { of } from 'rxjs';
 import { Socket } from 'socket.io-client';
 import { GamePageComponent } from './game-page.component';
 
-
 describe('GamePageComponent', () => {
     let component: GamePageComponent;
     let fixture: ComponentFixture<GamePageComponent>;
@@ -27,8 +26,10 @@ describe('GamePageComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [GamePageComponent],
             imports: [HttpClientModule, MatDialogModule],
-            providers: [{ provide: SocketService, useValue: mockSocketService },
-                        { provide: GameCardService, useValue: gameCardService }]
+            providers: [
+                { provide: SocketService, useValue: mockSocketService },
+                { provide: GameCardService, useValue: gameCardService },
+            ],
         }).compileComponents();
 
         mockSessionStorage = {};
@@ -36,7 +37,6 @@ describe('GamePageComponent', () => {
         spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => {
             return mockSessionStorage[key] || null;
         });
-
     });
 
     beforeEach(() => {
@@ -62,13 +62,13 @@ describe('GamePageComponent', () => {
     it('should set showPopup to false', () => {
         component.showPopup = true;
         gameCardService.removePlayer.and.returnValue(of(null));
-  
+
         component.returnToMainMenu();
         expect(component.showPopup).toBeFalse();
     });
 
     it('should set showPopup to true when socket emits "send-victorious-player"', () => {
-        const player1 = true
+        const player1 = true;
         mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
             callback(player1);
             return mockSocket;
@@ -78,5 +78,4 @@ describe('GamePageComponent', () => {
         mockSocket.emit('send-victorious-player', player1);
         expect(component.showPopup).toBeTrue();
     });
-
 });
