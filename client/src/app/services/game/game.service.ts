@@ -9,7 +9,7 @@ import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
 
 const BIGTIMEOUT = 2000;
-const SMALLTIMOUT = 1000;
+export const SMALLTIMOUT = 1000;
 const DEFAULT_HEIGHT = 480;
 const DEFAULT_WIDTH = 640;
 
