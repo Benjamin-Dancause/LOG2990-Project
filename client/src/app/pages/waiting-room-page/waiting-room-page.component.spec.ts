@@ -26,7 +26,7 @@ describe('WaitingRoomPageComponent', () => {
         mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
         mockSocket.on.and.returnValue(mockSocket);
         mockSocket.emit.and.returnValue(mockSocket);
-        
+
         await TestBed.configureTestingModule({
             declarations: [WaitingRoomPageComponent],
             imports: [RouterTestingModule, HttpClientModule],
@@ -112,6 +112,18 @@ describe('WaitingRoomPageComponent', () => {
         component.ngAfterViewInit();
         mockSocket.emit('rejection', url);
         expect(component.showPopupKick).toBeTrue();
+    });
+
+    it('should set popUpDeleted to true when "game-deleted" is called and player is in the deleted game lobby', () => {
+        const gameTitle = 'game1';
+        component.gameTitle = 'game1';
+        mockSocket.on.withArgs('game-deleted', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback(gameTitle);
+            return mockSocket;
+        });
+        component.ngAfterViewInit();
+        mockSocket.emit('game-deleted', gameTitle);
+        expect(component.showPopupDeleted).toBeTrue();
     });
 
     it('should call socketService.resetLobby() and set awaitingPlayer to false when "player-left" event is emitted', () => {
@@ -238,5 +250,4 @@ describe('WaitingRoomPageComponent', () => {
         component.startOneVsOneGame();
         expect(mockSocketService.startOneVsOneGame).toHaveBeenCalled();
     });
-
 });
