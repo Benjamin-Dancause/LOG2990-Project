@@ -29,10 +29,10 @@ interface OneVsOneGameplayInfo {
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent implements AfterViewInit {
-    @ViewChild('gridCanvasLeft', { static: false }) private canvasLeft!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvasRight', { static: false }) private canvasRight!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvasLeftTop', { static: false }) private canvasLeftTop!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvasRightTop', { static: false }) private canvasRightTop!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLeft', { static: false }) public canvasLeft!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasRight', { static: false }) public canvasRight!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLeftTop', { static: false }) public canvasLeftTop!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasRightTop', { static: false }) public canvasRightTop!: ElementRef<HTMLCanvasElement>;
 
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
@@ -71,7 +71,6 @@ export class PlayAreaComponent implements AfterViewInit {
         const img1 = new Image();
         img1.setAttribute('crossOrigin', 'anonymous');
         img1.src = this.imageLeftStr;
-        console.log('does it test : ' + this.imageLeftStr);
         img1.onload = () => {
             console.log('does it test');
             this.ctxLeft = this.canvasLeft.nativeElement.getContext('2d') as CanvasRenderingContext2D;

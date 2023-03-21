@@ -146,4 +146,12 @@ describe('PlayAreaComponent', () => {
         component.onKeyDown(event);
         expect(component.game.cheatMode).not.toHaveBeenCalled();
     });
+
+    it('should clear canvases on destroy', () => {
+        mockGameService.clearContexts.and.returnValue();
+        mockGameService.clearDifferenceArray.and.returnValue();
+        component.ngOnDestroy();
+        expect(mockGameService.clearContexts).toHaveBeenCalled();
+        expect(mockGameService.clearDifferenceArray).toHaveBeenCalled();
+    });
 });
