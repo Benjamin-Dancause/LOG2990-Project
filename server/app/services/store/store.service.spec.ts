@@ -10,6 +10,7 @@ describe('StoreService', () => {
     let deleteMock: jest.Mock;
     let extractDataMock: jest.Mock;
     let tempImagePath: string;
+    let consoleErrorMock: jest.Mock;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -160,6 +161,16 @@ describe('StoreService', () => {
         jest.spyOn(service, 'extractData').mockResolvedValue(gamesData);
 
         const result = await service.getGameDifferenceByName(name);
+
+        expect(result).toBeUndefined();
+    });
+
+    it('should return undefined for a non-existent game name', async () => {
+        const name = 'nonExistentGame';
+        const gamesData: Data[] = [];
+        jest.spyOn(service, 'extractData').mockResolvedValue(gamesData);
+
+        const result = await service.getGameByName({ name });
 
         expect(result).toBeUndefined();
     });
