@@ -1,37 +1,43 @@
-import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { GameCardComponent } from '@app/components/game-card/game-card.component';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { of } from 'rxjs';
+import { GameCardComponent } from './game-card.component';
 
-describe('GameCardComponent', () => {
+fdescribe('GameCardComponent', () => {
     let component: GameCardComponent;
     let fixture: ComponentFixture<GameCardComponent>;
-    let communicationSpy: jasmine.SpyObj<CommunicationService>;
-    let gameCardServiceSpy: jasmine.SpyObj<GameCardService>;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
-    let socketServiceSpy: jasmine.SpyObj<SocketService>;
+    let communicationSpy: jasmine.SpyObj<CommunicationService>;
+    // let socketServiceSpy: jasmine.SpyObj<SocketService>;
 
     beforeEach(async () => {
-        dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-        communicationSpy = jasmine.createSpyObj('CommunicationService', ['getGameAvailability']);
-        gameCardServiceSpy = jasmine.createSpyObj('GameCardService', ['addPlayer', 'getPlayers']);
-        component = new GameCardComponent(dialogSpy, communicationSpy, socketServiceSpy, gameCardServiceSpy);
+        const dialogSpyObj = jasmine.createSpyObj('MatDialog', ['open']);
+        const communicationSpyObj = jasmine.createSpyObj('CommunicationService', ['getGameAvailability', 'deleteGame']);
+        const gameCardServiceSpyObj = jasmine.createSpyObj('GameCardService', ['getPlayers']);
+        const socketServiceSpyObj = jasmine.createSpyObj('SocketService', ['on']);
+
         await TestBed.configureTestingModule({
-            imports: [MatDialogModule, HttpClientModule],
             declarations: [GameCardComponent],
             providers: [
-                { provide: MatDialog, useValue: dialogSpy },
-                { provide: CommunicationService, useValue: communicationSpy },
+                { provide: MatDialog, useValue: dialogSpyObj },
+                { provide: CommunicationService, useValue: communicationSpyObj },
+                { provide: SocketService, useValue: socketServiceSpyObj },
+                { provide: GameCardService, useValue: gameCardServiceSpyObj },
             ],
         }).compileComponents();
 
+        dialogSpy = TestBed.inject(MatDialog) as jasmine.SpyObj<MatDialog>;
+        communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
+        // socketServiceSpy = TestBed.inject(SocketService) as jasmine.SpyObj<SocketService>;
+        // gameCardServiceSpy = TestBed.inject(GameCardService) as jasmine.SpyObj<GameCardService>;
+
         fixture = TestBed.createComponent(GameCardComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
+        component.gameTitle = 'game1';
     });
 
     it('should create', () => {
@@ -69,7 +75,7 @@ describe('GameCardComponent', () => {
     });
 
     it('should save the user name, game title, and difficulty', () => {
-        const storageSpy = spyOn(localStorage, 'setItem');
+        const storageSpy = spyOn(sessionStorage, 'setItem');
         component.userName = 'John Doe';
         component.gameTitle = 'Tic Tac Toe';
         component.difficulty = true;
@@ -80,7 +86,7 @@ describe('GameCardComponent', () => {
     });
 
     it('should save the user name and game title without difficulty', () => {
-        const storageSpy = spyOn(localStorage, 'setItem');
+        const storageSpy = spyOn(sessionStorage, 'setItem');
         component.userName = 'Jane Doe';
         component.gameTitle = 'Checkers';
         component.difficulty = false;
@@ -90,31 +96,83 @@ describe('GameCardComponent', () => {
         expect(storageSpy).toHaveBeenCalledWith('difficulty', 'Facile');
     });
 
-    it('should open the namePopupTemplate dialog if the game is available', fakeAsync(() => {
-        communicationSpy.getGameAvailability.and.returnValue(of(true));
-        // component.openSettings();
-        tick();
-        expect(dialogSpy.open).toHaveBeenCalledWith(component.namePopupTemplate, { width: '400px' });
-    }));
+    describe('openSettingsSolo', () => {
+        it('should open the namePopupTemplate if the game is available', () => {
+            communicationSpy.getGameAvailability.and.returnValue(of(true));
 
-    it('should open the namePopupTemplate1vs1 dialog if the game is available', fakeAsync(() => {
-        communicationSpy.getGameAvailability.and.returnValue(of(true));
-        // component.openSettings();
-        tick();
-        expect(dialogSpy.open).toHaveBeenCalledWith(component.namePopupTemplate1vs1, { width: '400px' });
-    }));
+            component.openSettingsSolo();
 
-    it('should open the notAvailableTemplate dialog and reload the page if the game is not available', fakeAsync(() => {
-        communicationSpy.getGameAvailability.and.returnValue(of(false));
-        const dialogRef = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
-        dialogRef.afterClosed.and.returnValue(of(undefined));
-        dialogSpy.open.and.returnValue(dialogRef);
+            expect(sessionStorage.getItem('gameMode')).toBe('solo');
+            expect(dialogSpy.open).toHaveBeenCalledWith(component.namePopupTemplate, {
+                width: '400px',
+            });
+        });
 
-        spyOn(component, 'reloadPage');
+        it('should open the notAvailableTemplate if the game is not available', () => {
+            communicationSpy.getGameAvailability.and.returnValue(of(false));
 
-        // component.openSettings();
-        tick();
-        expect(dialogSpy.open).toHaveBeenCalledWith(component.notAvailableTemplate, { width: '400px' });
-        expect(component.reloadPage).toHaveBeenCalled();
-    }));
+            component.openSettingsSolo();
+
+            expect(sessionStorage.getItem('gameMode')).toBe('solo');
+            expect(dialogSpy.open).toHaveBeenCalledWith(component.notAvailableTemplate, {
+                width: '400px',
+            });
+        });
+    });
+
+    describe('openSettings1vs1', () => {
+        it('should open the namePopupTemplate1vs1 if the game is available', () => {
+            communicationSpy.getGameAvailability.and.returnValue(of(true));
+
+            component.openSettings1vs1();
+
+            expect(sessionStorage.getItem('gameMode')).toBe('1v1');
+            expect(dialogSpy.open).toHaveBeenCalledWith(component.namePopupTemplate1vs1, {
+                width: '400px',
+            });
+        });
+
+        it('should open the notAvailableTemplate if the game is not available', () => {
+            communicationSpy.getGameAvailability.and.returnValue(of(false));
+
+            component.openSettings1vs1();
+
+            expect(sessionStorage.getItem('gameMode')).toBe('1v1');
+            expect(dialogSpy.open).toHaveBeenCalledWith(component.notAvailableTemplate, {
+                width: '400px',
+            });
+        });
+    });
+
+    describe('ngOnInit', () => {
+        it('should call buttonUpdating if configuration is not set', () => {
+            spyOn(component, 'buttonUpdating');
+            component.configuration = false;
+            component.ngOnInit();
+            expect(component.buttonUpdating).toHaveBeenCalled();
+        });
+
+        it('should not call buttonUpdating if configuration is set', () => {
+            spyOn(component, 'buttonUpdating');
+            component.configuration = true;
+            component.ngOnInit();
+            expect(component.buttonUpdating).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('ngAfterViewInit', () => {
+        it('should call buttonUpdating if configuration is not set', () => {
+            spyOn(component, 'buttonUpdating');
+            component.configuration = false;
+            component.ngAfterViewInit();
+            expect(component.buttonUpdating).toHaveBeenCalled();
+        });
+
+        it('should not call buttonUpdating if configuration is set', () => {
+            spyOn(component, 'buttonUpdating');
+            component.configuration = true;
+            component.ngAfterViewInit();
+            expect(component.buttonUpdating).not.toHaveBeenCalled();
+        });
+    });
 });

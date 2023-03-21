@@ -90,11 +90,8 @@ export class GameCardComponent implements OnInit, AfterViewInit {
                     width: '400px',
                 });
             } else {
-                const dialogRef = this.dialog.open(this.notAvailableTemplate, {
+                this.dialog.open(this.notAvailableTemplate, {
                     width: '400px',
-                });
-                dialogRef.afterClosed().subscribe(() => {
-                    this.reloadPage();
                 });
             }
         });
@@ -108,11 +105,8 @@ export class GameCardComponent implements OnInit, AfterViewInit {
                     width: '400px',
                 });
             } else {
-                const dialogRef = this.dialog.open(this.notAvailableTemplate, {
+                this.dialog.open(this.notAvailableTemplate, {
                     width: '400px',
-                });
-                dialogRef.afterClosed().subscribe(() => {
-                    this.reloadPage();
                 });
             }
         });
@@ -130,16 +124,18 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     }
 
     buttonUpdating() {
-        this.socketService.socket.on('awaiting-lobby', (gameTitle: string) => {
-            if (gameTitle === this.gameTitle) {
-                this.createButton = false;
-            }
-        });
-        this.socketService.socket.on('completed-lobby', (gameTitle: string) => {
-            if (gameTitle === this.gameTitle) {
-                this.createButton = true;
-            }
-        });
+        if (this.socketService && this.socketService.socket) {
+            this.socketService.socket.on('awaiting-lobby', (gameTitle: string) => {
+                if (gameTitle === this.gameTitle) {
+                    this.createButton = false;
+                }
+            });
+            this.socketService.socket.on('completed-lobby', (gameTitle: string) => {
+                if (gameTitle === this.gameTitle) {
+                    this.createButton = true;
+                }
+            });
+        }
     }
 
     deleteGame(gameTitle: string) {
