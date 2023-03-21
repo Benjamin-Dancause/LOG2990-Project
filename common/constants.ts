@@ -32,6 +32,11 @@ export enum DRAWING {
     MIDDLE_OFFSET = 0.5,
 }
 
+export enum DELAY {
+    BIGTIMEOUT = 2000,
+    SMALLTIMEOUT = 1000,
+}
+
 export enum DIFFERENCE {
     DIFFICULT = 'Difficile',
     EASY = 'Facile',

@@ -13,9 +13,6 @@ describe('InputService', () => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(InputService);
     });
-    afterEach(() => {
-        service.destroy();
-    });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
@@ -24,9 +21,10 @@ describe('InputService', () => {
     it('should emit key down events', (done) => {
         const testKey = 'a';
 
-        service.keyDown$.subscribe((key) => {
+        const subscription = service.keyDown$.subscribe((key) => {
             expect(key).toEqual(testKey);
             done();
+            subscription.unsubscribe();
         });
 
         const keyDownEvent = new KeyboardEvent('keydown', { key: testKey });
@@ -36,9 +34,10 @@ describe('InputService', () => {
     it('should emit key up events', (done) => {
         const testKey = 'a';
 
-        service.keyUp$.subscribe((key) => {
+        const subscription = service.keyUp$.subscribe((key) => {
             expect(key).toEqual(testKey);
             done();
+            subscription.unsubscribe();
         });
 
         const keyUpEvent = new KeyboardEvent('keyup', { key: testKey });
@@ -57,9 +56,10 @@ describe('InputService', () => {
         const testEvent = new MouseEvent('mousedown', eventArgs);
         Object.defineProperty(testEvent, 'target', { value: canvas });
 
-        service.mouseDown$.subscribe((event) => {
+        const subscription = service.mouseDown$.subscribe((event) => {
             expect(event).toEqual(testEvent);
             done();
+            subscription.unsubscribe();
         });
 
         document.dispatchEvent(testEvent);
@@ -68,9 +68,10 @@ describe('InputService', () => {
     it('should emit mouse up events', (done) => {
         const testEvent = new MouseEvent('mouseup');
 
-        service.mouseUp$.subscribe((event) => {
+        const subscription = service.mouseUp$.subscribe((event) => {
             expect(event).toEqual(testEvent);
             done();
+            subscription.unsubscribe();
         });
 
         document.dispatchEvent(testEvent);

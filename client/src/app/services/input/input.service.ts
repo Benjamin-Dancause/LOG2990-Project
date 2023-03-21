@@ -40,8 +40,5 @@ export class InputService {
             this.mouseUpSubject.next(event);
         });
     }
-
-    destroy() {
-        this.subscriptions.forEach((subscription) => subscription.unsubscribe());
-    }
+    
 }
