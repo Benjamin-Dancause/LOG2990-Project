@@ -5,7 +5,7 @@ import { GameService } from '@app/services/game/game.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { Socket } from 'socket.io-client';
 
-fdescribe('TextBoxComponent', () => {
+describe('TextBoxComponent', () => {
     let component: TextBoxComponent;
     let fixture: ComponentFixture<TextBoxComponent>;
     let mockSocketService: jasmine.SpyObj<SocketService>;
@@ -28,6 +28,8 @@ fdescribe('TextBoxComponent', () => {
                 { provide: GameService, useValue: mockGameService },
             ],
         }).compileComponents();
+
+        //mockSessionStorage = {};
 
         spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => {
             return mockSessionStorage[key] || null;
@@ -73,8 +75,9 @@ fdescribe('TextBoxComponent', () => {
     });
 
     it('should call addSelfMessage if name emitted by "incoming-player-message" is same as userName', () => {
+        mockSessionStorage['userName'] = 'player1';
+        component.userName = 'player1';
         component.gameMode = '1v1';
-        sessionStorage['userName'] = 'player1';
         let messageInfo = { name: 'player1', message: 'Hello World' };
         mockSocket.on.withArgs('incoming-player-message', jasmine.any(Function)).and.callFake((eventName, callback) => {
             callback(messageInfo);
@@ -82,25 +85,10 @@ fdescribe('TextBoxComponent', () => {
         });
         let addSelfMessageSpy = spyOn(component, 'addSelfMessage');
         component.ngOnInit();
-        component.userName = 'player1';
-        component.gameMode = '1v1';
-        mockSocket.emit('incoming-player-message', messageInfo);
+        mockGameService.successMessage.next('incoming-player-message');
+        mockSocket.emit('incoming-player-message');
         expect(addSelfMessageSpy).toHaveBeenCalledWith(messageInfo.message);
     });
-
-    // it('should call addOpponentMessage if name emitted by "incoming-player-message" is different than userName', () => {
-    //     component.gameMode = '1v1';
-    //     sessionStorage['userName'] = 'player2';
-    //     let messageInfo = { name: 'player1', message: 'Hello World' };
-    //     mockSocket.on.withArgs('incoming-player-message', jasmine.any(Function)).and.callFake((eventName, callback) => {
-    //         callback(messageInfo);
-    //         return mockSocket;
-    //     });
-    //     let addOpponentMessageSpy = spyOn(component, 'addOpponentMessage');
-    //     component.ngOnInit();
-    //     mockSocket.emit('incoming-player-message');
-    //     expect(addOpponentMessageSpy).toHaveBeenCalledWith(messageInfo.message);
-    // });
 
     it('should call writeQuitMessage() when gameMode is not solo and "player-quit-game" event is emitted', () => {
         component.gameMode = '1v1';
@@ -127,7 +115,7 @@ fdescribe('TextBoxComponent', () => {
         expect(writeErrorMessageSpy).toHaveBeenCalledWith('player1');
     });
 
-    it('should call writeErrorMessage() when gameMode is not solo and "player-error" event is emitted', () => {
+    it('should call writeSuccessMessage() when gameMode is not solo and "player-success" event is emitted', () => {
         component.gameMode = '1v1';
         let name = 'player1';
         mockSocket.on.withArgs('player-success', jasmine.any(Function)).and.callFake((eventName, callback) => {
