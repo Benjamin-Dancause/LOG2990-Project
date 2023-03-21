@@ -24,7 +24,6 @@ const NAMEERROR_MSG = 'Ce nom est déjà pris ou est vide';
     styleUrls: ['./create-image.component.scss'],
 })
 export class CreateImageComponent implements AfterViewInit {
-    @ViewChild('myCanvas') canvasRef: ElementRef;
     @ViewChild('inputDifferentTemplate', { static: true })
     inputDifferentTemplate: TemplateRef<unknown>;
     @ViewChild('inputSameTemplate', { static: true })
@@ -39,23 +38,24 @@ export class CreateImageComponent implements AfterViewInit {
     negativeTemplate: TemplateRef<unknown>;
     @ViewChild('saveTemplate', { static: true })
     saveTemplate: TemplateRef<unknown>;
+
     @Input() errorMessage: string;
+    @Input() nbDiff: number;
+    @Input() difficulty: string;
+
     ctxOriginal: CanvasRenderingContext2D | null;
     ctxModifiable: CanvasRenderingContext2D | null;
+    ctxDiff: CanvasRenderingContext2D | null;
+
+    originalImage: ImageBitmap;
+    modifiableImage: ImageBitmap;
+
+    diffCanvas: HTMLCanvasElement;
     canvasImages: File[] = [];
     width: number = SCREEN_WIDTH;
     height: number = SCREEN_HEIGHT;
-    originalImage: ImageBitmap;
-    modifiableImage: ImageBitmap;
-    gameName: string = '';
-    htmlInputElement = window.HTMLInputElement;
-    diffCanvas: HTMLCanvasElement;
 
-    @ViewChild('differenceCanvas', { static: true })
-    differenceCanvas: ElementRef<HTMLCanvasElement>;
-    ctxDiff: CanvasRenderingContext2D | null;
-    @Input() nbDiff: number;
-    @Input() difficulty: string;
+    gameName: string = '';
 
     // eslint-disable-next-line max-params
     constructor(
