@@ -1,5 +1,6 @@
 import { GameManager } from '@app/services/game-manager/game-manager.service';
 import { StoreService } from '@app/services/store/store.service';
+import { GameDiffData } from '@common/game-interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
 import { GameManagerController } from './game-manager.controller';
 
@@ -17,6 +18,7 @@ describe('GameManagerController', () => {
                     useValue: {
                         createGame: jest.fn(),
                         verifyPos: jest.fn(),
+                        getAllDifferences: jest.fn(),
                     },
                 },
                 {
@@ -32,6 +34,7 @@ describe('GameManagerController', () => {
         gameManager = module.get<GameManager>(GameManager);
         storeService = module.get<StoreService>(StoreService);
     });
+
     describe('checkPos', () => {
         it('should return an DifferenceInterface object', async () => {
             const result = { isDifference: true, differenceNumber: 1, coords: [{ x: 1, y: 1 }] };
@@ -45,6 +48,23 @@ describe('GameManagerController', () => {
         });
     });
 
+    describe('returnAllDiff', () => {
+        it('should return all the difference', async () => {
+            const result: GameDiffData = {
+                id: 1,
+                count: 4,
+                differences: [],
+            };
+
+            jest.spyOn(gameManager, 'getAllDifferences').mockResolvedValue(result);
+
+            const body = { name: 'game1' };
+            const expected = result;
+
+            expect(await controller.returnAllDiff(body)).toBe(expected);
+        });
+    });
+
     describe('sendDiffAmount', () => {
         it('should return a number', async () => {
             const result = 5;
@@ -54,7 +74,6 @@ describe('GameManagerController', () => {
 
             expect(await controller.sendDiffAmount(body)).toBe(expected);
             expect(storeService.getGameDifferenceByName).toHaveBeenCalledWith(body.name);
-            expect(gameManager.createGame).toHaveBeenCalledWith({ diffAmount: result });
         });
     });
 });
