@@ -7,7 +7,7 @@ import { SocketService } from '@app/services/socket/socket.service';
 import { of } from 'rxjs';
 import { GameCardComponent } from './game-card.component';
 
-fdescribe('GameCardComponent', () => {
+describe('GameCardComponent', () => {
     let component: GameCardComponent;
     let fixture: ComponentFixture<GameCardComponent>;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
