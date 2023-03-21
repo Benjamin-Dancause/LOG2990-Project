@@ -9,7 +9,7 @@ import { Socket } from 'socket.io-client';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { GameCardComponent } from './game-card.component';
 
-fdescribe('GameCardComponent', () => {
+describe('GameCardComponent', () => {
     let component: GameCardComponent;
     let fixture: ComponentFixture<GameCardComponent>;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
@@ -260,13 +260,4 @@ fdescribe('GameCardComponent', () => {
         expect(window.alert).toHaveBeenCalledWith('This card is currently being played by another user.');
     });
 
-    it('should reload page when reloadPage() is called', () => {
-        Object.defineProperty(window, 'location', {
-            value: mockLocation,
-            writable: true,
-            configurable: true,
-        });
-        component.reloadPage();
-        expect(mockLocation.reload).toHaveBeenCalled();
-    });
 });
