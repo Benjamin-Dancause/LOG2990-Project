@@ -89,4 +89,20 @@ describe('StoreController', () => {
         await controller.getGameByName(body);
         expect(storeService.getGameByName).toHaveBeenCalledWith(body);
     });
+
+    it('deleteGame should call storeService.deleteGame()', async () => {
+        const body = 'testGame';
+        jest.spyOn(storeService, 'deleteGame').mockImplementation();
+
+        await controller.deleteGame(body);
+        expect(storeService.deleteGame).toHaveBeenCalledWith(body);
+    });
+
+    it('getGameAvailability should call storeService.getGameAvailability()', async () => {
+        const body = 'testGame';
+        jest.spyOn(storeService, 'getGameAvailability').mockImplementation();
+
+        await controller.getGameAvailability(body);
+        expect(storeService.getGameAvailability).toHaveBeenCalledWith(body);
+    });
 });

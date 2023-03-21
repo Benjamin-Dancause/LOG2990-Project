@@ -23,9 +23,8 @@ describe('GameController', () => {
     });
 
     describe('getPlayers', () => {
-        it('should return an empty array if there are no players in the specified game', () => {
-            const gameTitle = 'Test Game';
-
+        it('should return an empty array if no players in game', () => {
+            const gameTitle = 'test game';
             expect(gameController.getPlayers(gameTitle)).toEqual([]);
         });
 
@@ -49,6 +48,12 @@ describe('GameController', () => {
             gameController.addPlayer(gameTitle, userName);
             gameController.removePlayer(gameTitle, userName);
             expect(gameController.getPlayers(gameTitle)).not.toContain(userName);
+        });
+        it('should remove a player from an empty game', () => {
+            const gameTitle = 'emptyGame';
+            const userName = 'user1';
+            gameController.removePlayer(gameTitle, userName);
+            expect(gameController.getPlayers(gameTitle)).toEqual([]);
         });
     });
 });

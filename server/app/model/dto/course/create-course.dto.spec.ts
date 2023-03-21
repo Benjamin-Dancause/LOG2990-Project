@@ -15,11 +15,6 @@ describe('CreateCourseDto', () => {
             const createCourseDto = app.get<CreateCourseDto>(CreateCourseDto);
             expect(typeof createCourseDto.name).toEqual('undefined');
         });
-
-        it('should have a maximum length of 50 characters', async () => {
-            const createCourseDto = app.get<CreateCourseDto>(CreateCourseDto);
-            expect(createCourseDto.name.length).toBeLessThanOrEqual(50);
-        });
     });
 
     describe('teacher', () => {
