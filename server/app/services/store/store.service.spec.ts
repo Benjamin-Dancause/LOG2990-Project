@@ -219,8 +219,8 @@ describe('StoreService', () => {
     });
 
     describe('deleteFile', () => {
-        it('should call promisify(fs.unlink) with the correct path', async () => {
-            const filePath = 'test/file/path.txt';
+        it('should call promisify(fs.unlink) with the incorrect path', async () => {
+            const filePath = '';
             await service.deleteFile(filePath);
             expect(deleteMock).toHaveBeenCalledWith(filePath);
         });
