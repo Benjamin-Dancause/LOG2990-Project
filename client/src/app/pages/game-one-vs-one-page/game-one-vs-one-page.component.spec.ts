@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { Socket } from 'socket.io-client';
 import { GameOneVsOnePageComponent } from './game-one-vs-one-page.component';
 
-fdescribe('GamePageOneVsOneComponent', () => {
+describe('GamePageOneVsOneComponent', () => {
     let component: GameOneVsOnePageComponent;
     let fixture: ComponentFixture<GameOneVsOnePageComponent>;
     let gameCardService: jasmine.SpyObj<GameCardService>;
