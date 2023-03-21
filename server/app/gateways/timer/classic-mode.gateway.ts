@@ -96,6 +96,11 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         }
     }
 
+    @SubscribeMessage('delete-game')
+    onDeleteGame(client: Socket, gameTitle: string) {
+        this.server.sockets.emit('game-deleted', gameTitle);
+    }
+
     @SubscribeMessage('handle-lobby')
     onHandleLobby(client: Socket, lobby: Lobby) {
         let roomId = '';

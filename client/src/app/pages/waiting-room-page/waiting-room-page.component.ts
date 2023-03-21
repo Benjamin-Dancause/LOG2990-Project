@@ -19,6 +19,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
     isAvailable: boolean = true;
     showPopupKick: boolean = false;
     showPopupLeave: boolean = false;
+    showPopupDeleted: boolean = false;
 
     constructor(public socketService: SocketService, public router: Router, public gameCardService: GameCardService) {}
 
@@ -31,6 +32,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
     ngOnDestroy(): void {
         this.showPopupKick = false;
         this.showPopupLeave = false;
+        this.showPopupDeleted = false;
     }
 
     ngAfterViewInit(): void {
@@ -62,6 +64,12 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
                 this.showPopupLeave = true;
             } else {
                 this.router.navigate([url]);
+            }
+        });
+
+        this.socketService.socket.on('game-deleted', (gameTitle: string) => {
+            if (this.gameTitle === gameTitle) {
+                this.showPopupDeleted = true;
             }
         });
     }

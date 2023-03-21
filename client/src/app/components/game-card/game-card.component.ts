@@ -153,6 +153,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
                 dialogRef.afterClosed().subscribe((result) => {
                     if (result === 'yes') {
                         this.communication.deleteGame(gameTitle).subscribe(() => {
+                            this.socketService.deleteGame(gameTitle);
                             this.reloadPage();
                         });
                     }

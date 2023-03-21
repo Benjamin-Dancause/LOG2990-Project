@@ -25,3 +25,12 @@
         </div>
     </div>
 </div>
+
+<div class="popup-overlay" [style.display]="showPopupDeleted ? 'block' : 'none'">
+    <div class="popup" [style.display]="showPopupDeleted? 'block' : 'none'">
+        <div class="popup-content">
+            <h2>La carte de jeu a été supprimée</h2>
+            <button routerLink="/game-selection">Retour</button>
+        </div>
+    </div>
+</div>

@@ -55,6 +55,10 @@ export class SocketService {
         this.socket.emit('get-gameTitle', roomId);
     }
 
+    deleteGame(gameTitle: string) {
+        this.socket.emit('delete-game', gameTitle);
+    }
+
     assignPlayerInfo(gameTitle: string) {
         this.socket.emit('get-OneVsOne-info', gameTitle);
     }
