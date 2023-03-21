@@ -53,12 +53,7 @@ describe('DrawingComponent', () => {
     });
     it('should stop drawing when the mouse is not clicked', () => {
         spyOn(component, 'onMouseUp').and.callThrough();
-        const position = 100;
-        const mockClick = new MouseEvent('mouseup', {
-            clientX: position,
-            clientY: position,
-        });
-        component.onMouseUp(mockClick);
+        component.onMouseUp();
         expect(drawingServiceSpy.end).toHaveBeenCalled();
     });
     it('should unregister on destroy', () => {
