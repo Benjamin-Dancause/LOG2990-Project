@@ -12,6 +12,7 @@ describe('StoreService', () => {
     let tempImagePath: string;
     let consoleErrorMock: jest.Mock;
     let readFileMock: jest.Mock;
+    let service2: StoreService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -23,6 +24,7 @@ describe('StoreService', () => {
         readFileMock = jest.fn();
         service = module.get<StoreService>(StoreService);
         service.extractData = extractDataMock;
+        service2 = new StoreService();
     });
 
     it('should be defined', () => {
@@ -229,6 +231,22 @@ describe('StoreService', () => {
             const infoPath = 'assets/data/gamesData.json';
             await service.deleteGame(infoPath);
             expect(deleteMock).toHaveBeenCalledWith(infoPath);
+        });
+    });
+
+    describe('extractData', () => {
+        it('should extract games data from the JSON file', async () => {
+            const gamesData: Data[] = [
+                { name: 'game1', images: [], difficulty: true, count: 1, differences: [] },
+                { name: 'game2', images: [], difficulty: false, count: 1, differences: [] },
+            ];
+            const expectedContent = JSON.stringify(gamesData, null, 4);
+            jest.spyOn(fs, 'readFile').mockResolvedValue(expectedContent);
+
+            const result = await service2.extractData();
+
+            expect(fs.readFile).toHaveBeenCalledWith('assets/data/gamesData.json', 'utf-8');
+            expect(result).toEqual(gamesData);
         });
     });
 });
