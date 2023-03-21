@@ -48,17 +48,17 @@ export class PlayAreaComponent implements AfterViewInit {
     private ctxRight: CanvasRenderingContext2D | null = null;
     private ctxLeftTop: CanvasRenderingContext2D | null = null;
     private ctxRightTop: CanvasRenderingContext2D | null = null;
-    private gameName: string = '';
+    public gameName: string = '';
     private mouseDownSubscription: Subscription;
     private keyDownSubscription: Subscription;
-    private player1: boolean = true;
+    public player1: boolean = true;
 
     constructor(
-        private counterService: CounterService,
-        private communicationService: CommunicationService,
+        public counterService: CounterService,
+        public communicationService: CommunicationService,
         private input: InputService,
-        private game: GameService,
-        private socketService: SocketService,
+        public game: GameService,
+        public socketService: SocketService,
     ) {
         this.gameName = sessionStorage.getItem('gameTitle') as string;
         this.game.setGameName();
