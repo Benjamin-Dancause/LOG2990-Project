@@ -15,10 +15,21 @@ export enum CANVAS {
     BMP_MAX = 77,
     BIT_DEPTH = 24,
     RESET = 0,
+    LEFT = 0,
+    RIGHT = 1,
 }
 
 export enum DRAWING {
     WHITE = '#ffffff',
+    PEN = 'pen',
+    ERASER = 'eraser',
+    RECTANGLE = 'rectangle',
+    PEN_TIP = 'round',
+    ERASER_TIP = 'square',
+    BASE_COLOR = '#000000',
+    ERASER_COLOR = '#ffffff',
+    SQUARED = 2,
+    MIDDLE_OFFSET = 0.5,
 }
 
 export enum DIFFERENCE {

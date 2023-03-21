@@ -183,7 +183,7 @@ export class CreateImageComponent implements AfterViewInit {
             const reader = new FileReader();
             reader.onload = () => {
                 const imageData = new Uint8Array(reader.result as ArrayBuffer);
-                resolve(imageData[0] === CANVAS.BMP_MIN && imageData[1] === CANVAS.BMP_MIN && imageData[28] === CANVAS.BIT_DEPTH);
+                resolve(imageData[0] === 66 && imageData[1] === 77 && imageData[28] === 24);
             };
             reader.readAsArrayBuffer(file);
         });

@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { DrawingService, Tools } from '@app/services/drawing/drawing.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { DRAWING } from '@common/constants';
 
 @Component({
     selector: 'app-drawing-tools',
@@ -7,10 +8,11 @@ import { DrawingService, Tools } from '@app/services/drawing/drawing.service';
     styleUrls: ['./drawing-tools.component.scss'],
 })
 export class DrawingToolsComponent implements OnInit {
-    constructor(private drawingService: DrawingService /*private drawingCanvasDirective: DrawingCanvasDirective*/) {}
     color: string;
     radius: number;
-    activeButton: string = Tools.PEN;
+    activeButton: string = DRAWING.PEN;
+
+    constructor(private drawingService: DrawingService) {}
 
     ngOnInit(): void {
         this.radius = 5;
@@ -19,16 +21,16 @@ export class DrawingToolsComponent implements OnInit {
     }
 
     selectPen(): void {
-        this.activeButton = Tools.PEN;
-        this.drawingService.setTool(Tools.PEN);
+        this.activeButton = DRAWING.PEN;
+        this.drawingService.setTool(DRAWING.PEN);
     }
     selectEraser(): void {
-        this.activeButton = Tools.ERASER;
-        this.drawingService.setTool(Tools.ERASER);
+        this.activeButton = DRAWING.ERASER;
+        this.drawingService.setTool(DRAWING.ERASER);
     }
     selectRectangle(): void {
-        this.activeButton = Tools.RECTANGLE;
-        this.drawingService.setTool(Tools.RECTANGLE);
+        this.activeButton = DRAWING.RECTANGLE;
+        this.drawingService.setTool(DRAWING.RECTANGLE);
     }
     setColor(): void {
         this.drawingService.setColor(this.color);
