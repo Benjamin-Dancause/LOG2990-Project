@@ -13,7 +13,7 @@ export class GamePageComponent implements OnInit {
 
     showPopup = false;
 
-    constructor(private gameCardService: GameCardService, public socketService: SocketService) {}
+    constructor(public gameCardService: GameCardService, public socketService: SocketService) {}
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();

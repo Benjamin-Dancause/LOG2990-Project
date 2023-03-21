@@ -16,7 +16,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
     isWinner: boolean = false;
     showPopup = false;
 
-    constructor(private gameCardService: GameCardService, public socketService: SocketService, private counterService: CounterService) {}
+    constructor(public gameCardService: GameCardService, public socketService: SocketService, public counterService: CounterService) {}
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
@@ -56,6 +56,4 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
     isPlayer1(): boolean {
         return sessionStorage.getItem('gameMaster') === sessionStorage.getItem('userName') ? true : false;
     }
-
-    isWinningPlayer() {}
 }
