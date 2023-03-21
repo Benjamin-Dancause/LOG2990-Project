@@ -240,6 +240,7 @@ describe('StoreService', () => {
                 { name: 'game1', images: [], difficulty: true, count: 1, differences: [] },
                 { name: 'game2', images: [], difficulty: false, count: 1, differences: [] },
             ];
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             const expectedContent = JSON.stringify(gamesData, null, 4);
             jest.spyOn(fs, 'readFile').mockResolvedValue(expectedContent);
 

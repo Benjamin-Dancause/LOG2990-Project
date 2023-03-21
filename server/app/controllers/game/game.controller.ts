@@ -15,6 +15,7 @@ export class GameController {
     removePlayer(@Param('gameTitle') gameTitle: string, @Param('userName') userName: string): void {
         const players = this.games.get(gameTitle) || [];
         const index = players.findIndex((player) => player === userName);
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         if (index !== -1) {
             players.splice(index, 1);
             this.games.set(gameTitle, players);
