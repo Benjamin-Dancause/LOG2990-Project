@@ -23,7 +23,14 @@ describe('PlayAreaComponent', () => {
     beforeEach(async () => {
         mockSocketService = jasmine.createSpyObj<SocketService>(['sendDifferenceFound', 'initOneVsOneComponents', 'assignPlayerInfo']);
         mockCommunicationService = jasmine.createSpyObj<CommunicationService>(['getGameByName']);
-        mockGameService = jasmine.createSpyObj<GameService>(['setGameName', 'getContexts', 'cheatMode', 'clearContexts', 'clearDifferenceArray']);
+        mockGameService = jasmine.createSpyObj<GameService>([
+            'setGameName',
+            'getContexts',
+            'cheatMode',
+            'clearContexts',
+            'clearDifferenceArray',
+            'checkClick',
+        ]);
         mockCounterService = jasmine.createSpyObj<CounterService>(['incrementCounter']);
         mockSocket = jasmine.createSpyObj<Socket>(['emit', 'on']);
         mockSocket.on.and.returnValue(mockSocket);
@@ -94,5 +101,49 @@ describe('PlayAreaComponent', () => {
         expect(component.socketService.assignPlayerInfo).toHaveBeenCalledWith('game1');
     });
 
-    it('should check the mouse click', () => {});
+    it('should check the mouse click', () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        const eventArgs = {
+            clientX: 100,
+            clientY: 200,
+            target: canvas,
+        };
+        const event = eventArgs as any as MouseEvent;
+        component.onMouseDown(event);
+        expect(component.game.checkClick).toHaveBeenCalled();
+    });
+    it('should call game.cheatMode when "t" key is pressed', () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        const event = new KeyboardEvent('keydown', {
+            key: 't',
+        });
+        component.onKeyDown(event);
+        expect(component.game.cheatMode).toHaveBeenCalled();
+    });
+    it('should not call game.cheatMode when "t" key is pressed in chat', () => {
+        const canvas = document.createElement('canvas');
+        const input = document.createElement('input');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        const eventArgs = {
+            key: 't',
+            target: input,
+        };
+        const event = eventArgs as any as KeyboardEvent;
+        component.onKeyDown(event);
+        expect(component.game.cheatMode).not.toHaveBeenCalled();
+    });
 });
