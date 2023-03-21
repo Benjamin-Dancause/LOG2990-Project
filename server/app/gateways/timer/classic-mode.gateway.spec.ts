@@ -1,7 +1,6 @@
 import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
-import { Lobby } from '@common/game-interfaces';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { createStubInstance, SinonStubbedInstance } from 'sinon';
@@ -11,17 +10,18 @@ import { ClassicModeGateway } from './classic-mode.gateway';
 import { match, stub } from 'sinon';
 import { BroadcastOperator } from 'socket.io';
 import { ChatEvents } from './chat.gateway.events';
+import { Lobby } from '@common/game-interfaces';
 */
 
 describe('ClassicModeGateway', () => {
     let gateway: ClassicModeGateway;
     let service: CounterManagerService;
-    let timer: TimerManagerService;
+    // let timer: TimerManagerService;
     let logger: SinonStubbedInstance<Logger>;
     let socket: SinonStubbedInstance<Socket>;
-    let lobby: SinonStubbedInstance<Lobby>;
+    // let lobby: SinonStubbedInstance<Lobby>;
     let server: SinonStubbedInstance<Server>;
-    let waiting: WaitingRoomManagerService;
+    // let waiting: WaitingRoomManagerService;
 
     beforeEach(async () => {
         logger = createStubInstance(Logger);
@@ -43,10 +43,10 @@ describe('ClassicModeGateway', () => {
 
         // service = module.get<CounterManagerService>(CounterManagerService);
         service = new CounterManagerService();
-        waiting = module.get<WaitingRoomManagerService>(WaitingRoomManagerService);
+        // waiting = module.get<WaitingRoomManagerService>(WaitingRoomManagerService);
         gateway = module.get<ClassicModeGateway>(ClassicModeGateway);
         gateway['server'] = server;
-        timer = module.get<TimerManagerService>(TimerManagerService);
+        // timer = module.get<TimerManagerService>(TimerManagerService);
     });
 
     it('should be defined', () => {
