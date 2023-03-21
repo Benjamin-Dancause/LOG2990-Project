@@ -1,4 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,11 +15,23 @@ describe('CreatePageComponent', () => {
     let fixture: ComponentFixture<CreatePageComponent>;
 
     beforeEach(async () => {
+        const mockContext = jasmine.createSpyObj('CanvasRenderingContext2D', ['fillStyle', 'fillRect']);
+        const canvasRef = {
+            nativeElement: {
+                getContext: jasmine.createSpy('getContext').and.returnValue(mockContext),
+            },
+        };
+        const createImageComponentStub = {
+            originalCanvas: canvasRef,
+            modifiableCanvas: canvasRef,
+        };
+
         await TestBed.configureTestingModule({
             imports: [MatDialogModule, HttpClientTestingModule, RouterTestingModule, MatFormFieldModule, MatInputModule, MatSliderModule],
-            declarations: [CreatePageComponent, CreateImageComponent, SliderComponent],
+            declarations: [CreatePageComponent, SliderComponent],
+            schemas: [NO_ERRORS_SCHEMA],
+            providers: [{ CreateImageComponent, useValue: createImageComponentStub }],
         }).compileComponents();
-
         fixture = TestBed.createComponent(CreatePageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

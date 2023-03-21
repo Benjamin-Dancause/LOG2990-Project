@@ -121,6 +121,9 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         if (!this.difficulty) {
             sessionStorage.setItem('difficulty', 'Facile');
         }
+        if (sessionStorage.getItem('gameMode') === 'solo') {
+            this.gameCardService.addPlayer(this.gameTitle, this.userName).subscribe();
+        }
     }
 
     buttonUpdating() {
@@ -140,6 +143,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
 
     deleteGame(gameTitle: string) {
         this.gameCardService.getPlayers(this.gameTitle).subscribe((players) => {
+            console.log(players);
             if (players.length === 0) {
                 const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
                     data: {

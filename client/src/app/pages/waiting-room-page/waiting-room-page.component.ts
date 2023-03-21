@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { CompleteGameInfo } from '@common/game-interfaces';
 
@@ -9,16 +10,17 @@ import { CompleteGameInfo } from '@common/game-interfaces';
     styleUrls: ['./waiting-room-page.component.scss'],
 })
 export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestroy {
-    public inputName: string = '';
-    public gameMaster: string = '';
-    public joiningPlayer: string = '';
-    public gameTitle: string = '';
-    public awaitingPlayer: boolean = false;
-    public roomId: string = '';
+    inputName: string = '';
+    gameMaster: string = '';
+    joiningPlayer: string = '';
+    gameTitle: string = '';
+    awaitingPlayer: boolean = false;
+    roomId: string = '';
+    isAvailable: boolean = true;
     showPopupKick: boolean = false;
     showPopupLeave: boolean = false;
 
-    constructor(public socketService: SocketService, public router: Router) {}
+    constructor(public socketService: SocketService, public router: Router, public gameCardService: GameCardService) {}
 
     ngOnInit(): void {
         this.inputName = sessionStorage.getItem('userName') as string;
@@ -88,6 +90,8 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     startOneVsOneGame() {
+        this.gameCardService.addPlayer(this.gameTitle, this.gameMaster).subscribe();
+        this.gameCardService.addPlayer(this.gameTitle, this.joiningPlayer).subscribe();
         this.socketService.startOneVsOneGame();
     }
 }

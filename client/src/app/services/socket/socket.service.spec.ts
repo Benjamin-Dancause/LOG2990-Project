@@ -145,6 +145,18 @@ describe('socketService', () => {
         expect(socketSpy.emit).toHaveBeenCalledWith('reset-timer', roomId);
     });
 
+    it('should emit "increment-counter" with player1 boolean when incrementCounter() is called', () => {
+        const player1 = false;
+        service.incrementCounter(player1);
+        expect(socketSpy.emit).toHaveBeenCalledWith('increment-counter', player1);
+    });
+
+    it('should emit "reset-counter" with player1 boolean when resetCounter() is called', () => {
+        const player1 = false;
+        service.resetCounter(player1);
+        expect(socketSpy.emit).toHaveBeenCalledWith('reset-counter', player1);
+    });
+
     it('should disconnect socket when disconnectSocket is called', () => {
         service.disconnectSocket();
         expect(socketSpy.disconnect).toHaveBeenCalled();

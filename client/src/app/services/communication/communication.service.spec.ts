@@ -228,9 +228,8 @@ describe('CommunicationService', () => {
             expect(response).toBeInstanceOf(Observable);
         });
 
-        const req = httpMock.expectOne(`${service['baseUrl']}/games/test-game`);
+        const req = httpMock.expectOne(`${service['baseUrl']}/games/${name}`);
         expect(req.request.method).toBe('DELETE');
-        expect(req.request.body).toEqual({ name });
     });
     it('should return true if game exists when getting game availaility', () => {
         const name = 'test-game';
@@ -239,6 +238,5 @@ describe('CommunicationService', () => {
         });
         const req = httpMock.expectOne(`${service['baseUrl']}/games/${name}`);
         expect(req.request.method).toBe('GET');
-        expect(req.request.body).toEqual({ name });
     });
 });

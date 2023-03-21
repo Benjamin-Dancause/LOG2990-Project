@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CommunicationService } from '../communication/communication.service';
 import { SocketService } from '../socket/socket.service';
@@ -6,7 +6,7 @@ import { SocketService } from '../socket/socket.service';
 @Injectable({
     providedIn: 'root',
 })
-export class CounterService implements OnInit {
+export class CounterService {
     counter: number = 0;
     counter2: number = 0;
     winCondition: number = 1000;
@@ -14,8 +14,6 @@ export class CounterService implements OnInit {
     allDiffsSubscription: Subscription;
 
     constructor(public socketService: SocketService, private communicationService: CommunicationService) {}
-
-    ngOnInit(): void {}
 
     initializeCounter(): void {
         const gameTitle: string = sessionStorage.getItem('gameTitle') as string;
@@ -38,13 +36,13 @@ export class CounterService implements OnInit {
     }
 
     incrementCounter(player1: boolean) {
-        this.socketService.socket.emit('increment-counter', player1);
+        this.socketService.incrementCounter(player1);
     }
 
     resetCounter(player1: boolean) {
         this.counter = 0;
         this.counter2 = 0;
-        this.socketService.socket.emit('reset-counter', player1);
+        this.socketService.resetCounter(player1);
     }
 
     setWinCondition(gameMode: string, gameTitle: string) {
@@ -58,6 +56,8 @@ export class CounterService implements OnInit {
     }
 
     ngOnDestroy() {
-        this.allDiffsSubscription.unsubscribe();
+        if(this.allDiffsSubscription) {
+            this.allDiffsSubscription.unsubscribe();
+        }
     }
 }
