@@ -10,6 +10,7 @@ import { SocketService } from '../socket/socket.service';
 export class CounterService {
     counter: number = 0;
     counter2: number = 0;
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     winCondition: number = 1000;
     gameMode: string;
     allDiffsSubscription: Subscription;

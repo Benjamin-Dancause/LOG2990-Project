@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable no-restricted-imports */
 /* eslint-disable prefer-const */
 import { EventEmitter, Injectable } from '@angular/core';
@@ -112,6 +113,7 @@ export class GameService {
     }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < coords.length; i++) {
             const dataLeft = ctxLeft?.getImageData(coords[i].x, coords[i].y, 1, 1) as ImageData;
             if (dataLeft) {
@@ -138,6 +140,7 @@ export class GameService {
         this.successSound.play();
     }
 
+    // eslint-disable-next-line no-unused-vars
     async checkClick(event: MouseEvent, counter: CounterService, ctxs: CanvasRenderingContext2D[]) {
         if (!this.isClickDisabled && event?.button === MouseButton.Left) {
             const clickedCanvas = event.target as HTMLCanvasElement;

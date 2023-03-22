@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -11,15 +12,16 @@ class MockTimerComponent {
 }
 @Component({})
 class MockCounterComponent {
+    @Input() playerSide: boolean;
     count: number;
     player1: boolean;
-    @Input() playerSide: boolean;
 }
 
 describe('TopBarComponent', () => {
     let component: TopBarComponent;
     let fixture: ComponentFixture<TopBarComponent>;
-    let mockSessionStorage: any = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockSessionStorage: any = {};
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
