@@ -3,9 +3,9 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
-import { GameDiffData } from '@app/interfaces/gameDiffData';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
+import { GameDiffData } from '@common/game-interfaces';
 import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
 
@@ -79,28 +79,32 @@ export class GameService {
 
     flashAllDifferences(ctxs: CanvasRenderingContext2D[]) {
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
-            ctxs[2].fillStyle = 'blue';
-            ctxs[3].fillStyle = 'blue';
-            let i = 0;
-            const flash = setInterval(() => {
-                for (const coordinate of gameData.differences) {
-                    if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
-                        for (const coord of coordinate) {
-                            ctxs[2].fillRect(coord.x, coord.y, 1, 1);
-                            ctxs[3].fillRect(coord.x, coord.y, 1, 1);
-                        }
+            this.blinkAllDifferences(ctxs, gameData);
+        });
+    }
+
+    blinkAllDifferences(ctxs: CanvasRenderingContext2D[], gameData: GameDiffData) {
+        ctxs[2].fillStyle = 'blue';
+        ctxs[3].fillStyle = 'blue';
+        let i = 0;
+        const flash = setInterval(() => {
+            for (const coordinate of gameData.differences) {
+                if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
+                    for (const coord of coordinate) {
+                        ctxs[2].fillRect(coord.x, coord.y, 1, 1);
+                        ctxs[3].fillRect(coord.x, coord.y, 1, 1);
                     }
                 }
-                i++;
-                setTimeout(() => {
-                    ctxs[2].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-                    ctxs[3].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-                }, 100);
-                if (i === 4) {
-                    clearInterval(flash);
-                }
-            }, 200);
-        });
+            }
+            i++;
+            setTimeout(() => {
+                ctxs[2].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+                ctxs[3].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+            }, 100);
+            if (i === 4) {
+                clearInterval(flash);
+            }
+        }, 200);
     }
 
     setGameName() {
@@ -116,6 +120,23 @@ export class GameService {
         }
     }
 
+    incrementCounter() {
+        this.counterService.incrementCounter(
+            (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false);
+    }
+
+    playErrorSound() {
+        this.errorSound.currentTime = 0;
+        this.errorSound.play();
+    }
+
+    playSuccessSound() {
+        this.successSound.currentTime = 0;
+        this.successSound.play();
+    }
+
+
+
     async checkClick(event: MouseEvent, counter: CounterService, ctxs: CanvasRenderingContext2D[]) {
         if (!this.isClickDisabled && event?.button === MouseButton.Left) {
             const clickedCanvas = event.target as HTMLCanvasElement;
@@ -129,18 +150,14 @@ export class GameService {
                     this.successMessage.emit('Trouvé');
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
-                    this.successSound.currentTime = 0;
-                    const player1: boolean =
-                        (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false;
                     this.socketService.sendDifferenceFound(response);
-                    this.counterService.incrementCounter(player1);
-                    this.successSound.play();
+                    this.incrementCounter();
+                    this.playSuccessSound();
                 } else {
                     this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
-                    this.errorSound.currentTime = 0;
-                    this.errorSound.play();
+                    this.playErrorSound();
                     this.isClickDisabled = true;
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);

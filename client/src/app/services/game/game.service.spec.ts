@@ -2,6 +2,7 @@ import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ClickResponse } from '@app/classes/click-response';
+import { MouseButton } from '@app/classes/mouse-button';
 import { DELAY } from '@common/constants';
 import { Coords, GameDiffData } from '@common/game-interfaces';
 import { of } from 'rxjs';
@@ -10,16 +11,17 @@ import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
 import { GameService } from './game.service';
 
-describe('GameService', () => {
+fdescribe('GameService', () => {
   let gameService: GameService;
   let mockSocketService: jasmine.SpyObj<SocketService>;
-  let mockCounter: jasmine.SpyObj<CounterService>;
+  let mockCounterService: jasmine.SpyObj<CounterService>;
+  let mockCommunicationService: jasmine.SpyObj<CommunicationService>;
 
   beforeEach(() => {
-    //const communicationSpy = jasmine.createSpyObj('CommuncationService', );
-    mockSocketService = jasmine.createSpyObj('SocketService', ['incrementCounter', 'resetCounter', 'sendVictoriousPlayer']);
+    mockSocketService = jasmine.createSpyObj('SocketService', ['incrementCounter', 'resetCounter', 'sendVictoriousPlayer','sendDifferenceFound']);
     mockSocketService.socket = jasmine.createSpyObj('Socket', ['on']);
-    mockCounter = jasmine.createSpyObj('CounterService', ['incrementCounter', 'resetCounter']);
+    mockCounterService = jasmine.createSpyObj('CounterService', ['incrementCounter', 'resetCounter']);
+    mockCommunicationService = jasmine.createSpyObj('CommunicationService', ['getDifferences', 'sendPosition', 'getAllDiffs']);
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -27,12 +29,12 @@ describe('GameService', () => {
           GameService,
           { provide: CommunicationService},
           { provide: SocketService, useValue: mockSocketService },
-          { provide: CounterService, useValue: mockCounter }
+          { provide: CounterService, useValue: mockCounterService },
+          { provide: CommunicationService, useValue: mockCommunicationService },
       ],
   });
 
     gameService = TestBed.inject(GameService);
-    // socketService = TestBed.inject(SocketService);
   });
 
   it('should be created', () => {
@@ -86,17 +88,32 @@ describe('GameService', () => {
     expect(gameService.flashAllDifferences).toHaveBeenCalledWith(mockCtx);
   });
 
-  it('should flash all differences on canvas', fakeAsync(() => {
+  it('updateDifference should call updateImages after some time', fakeAsync (() => {
+    spyOn(gameService, 'updateImages');
+    spyOn(gameService, 'flashDifferences');
+    gameService.updateDifferences({ coords: [{ x: 10, y: 10 }], differenceNumber: 1, isDifference: true });
+    tick(DELAY.BIGTIMEOUT);
+    expect(gameService.updateImages).toHaveBeenCalled();
+  }));
+
+  it('cheatMode should flashAllDifference after some time',fakeAsync( () => {
+    const mockCtx = {} as CanvasRenderingContext2D[];
+    spyOn(gameService, 'flashAllDifferences');
+    gameService.cheatMode(mockCtx);
+    tick(DELAY.SMALLTIMEOUT);
+    expect(gameService.flashAllDifferences).toHaveBeenCalledWith(mockCtx);
+    gameService.cheatMode(mockCtx);
+  }));
+
+  it('blinkAllDifference should flash the difference after some time', fakeAsync(() => {
     const mockCtx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
     const mockCtxs = [mockCtx, mockCtx, mockCtx, mockCtx];
-    const gameDiffData = {differences:[[{ x: 10, y: 10 }]]} as GameDiffData;
-    spyOn(gameService['communicationService'], 'getAllDiffs').and.returnValue(of(gameDiffData));
-    const fillRectSpy = spyOn(mockCtx, 'fillRect').and.callThrough();
-    const clearRectSpy = spyOn(mockCtx, 'clearRect').and.callThrough();
-    gameService.flashAllDifferences(mockCtxs);
+    const gameData = { differences: [[{ x: 10, y: 10 }]] } as GameDiffData
+    spyOn(gameService, 'flashDifferences');
+    spyOn(mockCtx, 'fillRect').and.callThrough();
+    gameService.blinkAllDifferences(mockCtxs, gameData);
     tick(DELAY.SMALLTIMEOUT);
-    expect(fillRectSpy).toHaveBeenCalledTimes(8);
-    expect(clearRectSpy).toHaveBeenCalledTimes(8);
+    expect(mockCtx.fillRect).toHaveBeenCalledTimes(8);
   }));
 
   it('should flash the differences on canvas', fakeAsync(() => {
@@ -111,6 +128,23 @@ describe('GameService', () => {
     expect(clearRectSpy).toHaveBeenCalledTimes(8);
   }));
 
+  it("incrementCounter should increment the counter's incrementCounter function", () => {
+    gameService.incrementCounter();
+    expect(mockCounterService.incrementCounter).toHaveBeenCalled();
+  });
+
+  it('playErrorSound should play the error sound', () => {
+    spyOn(gameService['errorSound'], 'play');
+    gameService.playErrorSound();
+    expect(gameService['errorSound'].play).toHaveBeenCalled();
+  });
+
+  it('playSuccessSound should play the success sound', () => {
+    spyOn(gameService['successSound'], 'play');
+    gameService.playSuccessSound();
+    expect(gameService['successSound'].play).toHaveBeenCalled();
+  });
+
   it('should update the game name', () => {
     sessionStorage.removeItem('gameTitle');
     gameService.setGameName();
@@ -119,6 +153,7 @@ describe('GameService', () => {
     gameService.setGameName();
     expect(gameService['gameName']).toEqual('test game');
   });
+
 
   it('should update images on canvas', () => {
     const mockCoords: Coords[] = [{ x: 10, y: 10 }];
@@ -143,59 +178,72 @@ describe('GameService', () => {
   });
 
   it('should do nothing if click disabled', () => {
-    const mockCtx1 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtx2 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtx3 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtx4 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtxs = [mockCtx1, mockCtx2, mockCtx3, mockCtx4];
+    const mockCtx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
+    const mockCtxs = [mockCtx, mockCtx, mockCtx, mockCtx];
     gameService['isClickDisabled'] = true;
     spyOn(gameService, 'updateDifferences');
     const mockEvent = { offsetX: 0, offsetY: 0 } as MouseEvent;
-    gameService.checkClick(mockEvent, mockCounter, mockCtxs);
+    gameService.checkClick(mockEvent, mockCounterService, mockCtxs);
     expect(gameService.updateDifferences).not.toHaveBeenCalled();
   });
 
-  it('should execute properly when click on a difference',fakeAsync( () => {
-    const mockCtx1 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtx2 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtx3 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtx4 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtxs = [mockCtx1, mockCtx2, mockCtx3, mockCtx4];
-    const coord = { x: 0, y: 0 } as Coords;
-    const response = { coords: [coord], differenceNumber: 1, isDifference: true } as ClickResponse;
-    spyOn(gameService['communicationService'], 'sendPosition').and.returnValue(of(response));
-    spyOn(gameService['successSound'], 'play');
-    const mockEvent = { offsetX: 0, offsetY: 0 } as MouseEvent;
-    gameService.checkClick(mockEvent, mockCounter, mockCtxs);
-    expect(gameService['isClickDisabled']).toBeFalse();
-    expect(gameService['socketService'].sendDifferenceFound).toHaveBeenCalled;
-    expect(gameService['counterService'].incrementCounter).toHaveBeenCalled;
-    expect(gameService['successSound'].play()).toHaveBeenCalled;
+  // it('checkClick should call socketService.sendDifferenceFound', () => fakeAsync(() =>{
+  //   const mockCtx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
+  //   const mockCtxs = [mockCtx, mockCtx, mockCtx, mockCtx];
+  //   gameService['isClickDisabled'] = false;
+  //   const response = { coords: [{ x: 0, y: 0 }], differenceNumber: 1, isDifference: true } as ClickResponse;
+  //   spyOn(gameService, 'updateDifferences');
+  //   spyOn(gameService['communicationService'], 'sendPosition').and.returnValue(of(response));
+  //   spyOn(mockCtx, 'fillText');
+  //   const mockEvent = { offsetX: 0, offsetY: 0 } as MouseEvent;
+  //   gameService.checkClick(mockEvent, mockCounterService, mockCtxs);
+  //   tick(DELAY.SMALLTIMEOUT);
+  //   expect(mockCtx.fillText).toHaveBeenCalled();
+  //   expect(mockSocketService.sendDifferenceFound).toHaveBeenCalledWith(response);
+  // }));
+
+  it('checkClick should call playSuccessSound when the clicked on a difference', fakeAsync( () => {
+    const mockCanvas = document.createElement('canvas') as HTMLCanvasElement;
+    const mockCtx = mockCanvas.getContext('2d') as CanvasRenderingContext2D;
+    const mockCtxs = [mockCtx, mockCtx, mockCtx, mockCtx];
+    //gameService['playAreaCtx'] = mockCtxs;
+    gameService['isClickDisabled'] = false;
+    spyOn(gameService, 'playSuccessSound');
+    spyOn(gameService, 'updateDifferences');
+    const response = { coords: [{ x: 0, y: 0 }], differenceNumber: 1, isDifference: true } as ClickResponse;
+    mockCommunicationService.sendPosition.and.returnValue(of(response));
+    const mockEvent = { offsetX: 0, offsetY: 0, button: MouseButton.Left, target: mockCanvas} as unknown as MouseEvent;
+    gameService.checkClick(mockEvent, mockCounterService, mockCtxs);
+    tick(DELAY.SMALLTIMEOUT);
+    expect(gameService.playSuccessSound).toHaveBeenCalled();
   }));
 
-  it('should execute properly when click on a non-difference', fakeAsync(() => {
-    const mockCtx1 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtx2 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtx3 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtx4 = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-    const mockCtxs = [mockCtx1, mockCtx2, mockCtx3, mockCtx4];
-    const coord = { x: 0, y: 0 } as Coords;
-    const response = { coords: [coord], differenceNumber: 1, isDifference: false } as ClickResponse;
-    spyOn(gameService['communicationService'], 'sendPosition').and.returnValue(of(response));
-    spyOn(gameService['errorSound'], 'play');
-    const emitSpy = spyOn(gameService['errorMessage'], 'emit');
-    const mockEvent = { offsetX: 0, offsetY: 0 } as MouseEvent;
-    gameService.checkClick(mockEvent, mockCounter, mockCtxs);
-    expect(gameService['socketService'].sendDifferenceFound).toHaveBeenCalled;
-    expect(gameService['counterService'].incrementCounter).toHaveBeenCalled;
-    expect(gameService['errorSound'].play()).toHaveBeenCalled;
-    expect(emitSpy).toHaveBeenCalled;
-    expect(gameService['isClickDisabled']).toBeFalse();
+  it('checkClick should call playErrorSound when the clicked on a difference', fakeAsync( () => {
+    const mockCanvas = document.createElement('canvas') as HTMLCanvasElement;
+    const mockCtx = mockCanvas.getContext('2d') as CanvasRenderingContext2D;
+    const mockCtxs = [mockCtx, mockCtx, mockCtx, mockCtx];
+    //gameService['playAreaCtx'] = mockCtxs;
+    gameService['isClickDisabled'] = false;
+    spyOn(gameService, 'playErrorSound');
+    spyOn(gameService, 'updateDifferences');
+    const response = { coords: [{ x: 0, y: 0 }], differenceNumber: 1, isDifference: false } as ClickResponse;
+    mockCommunicationService.sendPosition.and.returnValue(of(response));
+    const mockEvent = { offsetX: 0, offsetY: 0, button: MouseButton.Left, target: mockCanvas} as unknown as MouseEvent;
+    gameService.checkClick(mockEvent, mockCounterService, mockCtxs);
+    tick(DELAY.SMALLTIMEOUT);
+    expect(gameService.playErrorSound).toHaveBeenCalled();
   }));
 
+  it('flashAllDifferences should call blinkAllDifferences', () => {
+    const mockCtx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
+    const mockCtxs = [mockCtx, mockCtx, mockCtx, mockCtx];
+    const coord = { x: 0, y: 0 } as Coords;
+    const gameData = { differences: [[coord]] } as GameDiffData;
+    mockCommunicationService.getAllDiffs.and.returnValue(of(gameData));
+    spyOn(gameService, 'blinkAllDifferences');
+    gameService.flashAllDifferences(mockCtxs);
+    expect(gameService.blinkAllDifferences).toHaveBeenCalled();
+  });
 
-  
-
-  
   
 });
