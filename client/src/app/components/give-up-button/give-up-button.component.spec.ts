@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
 
 import { GiveUpButtonComponent } from './give-up-button.component';
 
@@ -44,7 +45,7 @@ describe('GiveUpButtonComponent', () => {
 
     it('should disconnect socket when disconnectSocket is called', () => {
         spyOn(component.socketService, 'leaveGame');
-        spyOn(component.gameCardService, 'removePlayer').and.callFake((gameTitle: string, userName: string) => {});
+        spyOn(component.gameCardService, 'removePlayer').and.returnValue(of(null));
 
         component.removeUser();
         expect(component.socketService.leaveGame).toHaveBeenCalled();
