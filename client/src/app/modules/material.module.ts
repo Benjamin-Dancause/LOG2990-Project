@@ -18,6 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 // import { MatProgressBarModule } from '@angular/material/progress-bar';
 // import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSliderModule } from '@angular/material/slider';
 // import { MatSelectModule } from '@angular/material/select';
 // import { MatSidenavModule } from '@angular/material/sidenav';
 // import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -27,7 +28,7 @@ import { MatRadioModule } from '@angular/material/radio';
 // import { MatStepperModule } from '@angular/material/stepper';
 // import { MatTableModule } from '@angular/material/table';
 // import { MatTabsModule } from '@angular/material/tabs';
-import { MatSliderModule } from '@angular/material/slider';
+
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -54,7 +55,7 @@ const modules = [
     MatRadioModule,
     // MatSelectModule,
     // MatSidenavModule,
-    // MatSliderModule,
+    MatSliderModule,
     // MatSlideToggleModule,
     // MatSnackBarModule,
     // MatSortModule,
@@ -63,7 +64,6 @@ const modules = [
     // MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    MatSliderModule,
 ];
 
 /**

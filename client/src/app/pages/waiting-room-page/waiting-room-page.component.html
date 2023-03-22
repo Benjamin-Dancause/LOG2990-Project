@@ -1,0 +1,36 @@
+<p id="roomInfo">En attente d'un joueur pour le jeu {{gameTitle}}</p>
+<div class="container" *ngIf="incomingPlayer()">
+    <p id="playerInfo">Joueur {{joiningPlayer}} veut rejoindre la partie. Accepter ?</p>
+    <button class="button" (click)="startOneVsOneGame()">Accepter</button>
+    <button class="button" (click)="rejectPlayer()">Refuser</button>
+</div>
+<div class="container">
+    <button id="leaveButton" (click)="leaveLobby()">Quitter le lobby</button>
+</div>
+
+<div class="popup-overlay" [style.display]="showPopupLeave ? 'block' : 'none'">
+    <div class="popup" [style.display]="showPopupLeave ? 'block' : 'none'">
+        <div class="popup-content">
+            <h2>La salle est fermée car le créateur a quitté.</h2>
+            <button routerLink="/game-selection">Retour</button>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" [style.display]="showPopupKick ? 'block' : 'none'">
+    <div class="popup" [style.display]="showPopupKick ? 'block' : 'none'">
+        <div class="popup-content">
+            <h2>Vous avez été retiré du lobby.</h2>
+            <button routerLink="/game-selection">Retour</button>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" [style.display]="showPopupDeleted ? 'block' : 'none'">
+    <div class="popup" [style.display]="showPopupDeleted? 'block' : 'none'">
+        <div class="popup-content">
+            <h2>La carte de jeu a été supprimée</h2>
+            <button routerLink="/game-selection">Retour</button>
+        </div>
+    </div>
+</div>

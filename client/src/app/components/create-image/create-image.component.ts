@@ -1,15 +1,18 @@
-import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
+/* eslint-disable no-console */
+import { AfterViewInit, Component, ElementRef, Input, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DifferenceService } from '@app/services/difference.service';
-import { UploadService } from '@app/services/upload.service';
+import { Router } from '@angular/router';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { DifferenceService } from '@app/services/difference/difference.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { CANVAS, DIFFERENCE, DRAWING, ERROR_MESSAGES } from '@common/constants';
 
 @Component({
     selector: 'app-create-image',
     templateUrl: './create-image.component.html',
     styleUrls: ['./create-image.component.scss'],
 })
-export class CreateImageComponent implements OnInit {
-    @ViewChild('myCanvas') canvasRef: ElementRef;
+export class CreateImageComponent implements AfterViewInit {
     @ViewChild('inputDifferentTemplate', { static: true })
     inputDifferentTemplate: TemplateRef<unknown>;
     @ViewChild('inputSameTemplate', { static: true })
@@ -22,155 +25,221 @@ export class CreateImageComponent implements OnInit {
     modifiableCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('negativeTemplate', { static: true })
     negativeTemplate: TemplateRef<unknown>;
-    reader = new FileReader();
+    @ViewChild('saveTemplate', { static: true })
+    saveTemplate: TemplateRef<unknown>;
+
+    @Input() errorMessage: string;
+    @Input() nbDiff: number;
+    @Input() difficulty: string;
+
     ctxOriginal: CanvasRenderingContext2D | null;
     ctxModifiable: CanvasRenderingContext2D | null;
+    ctxDiff: CanvasRenderingContext2D | null;
+
+    originalImage: ImageBitmap;
+    modifiableImage: ImageBitmap;
+
+    diffCanvas: HTMLCanvasElement;
     canvasImages: File[] = [];
-    imageOriginal = new Image();
-    imageModifiable = new Image();
-    width: number = 640;
-    height: number = 480;
 
-    constructor(public dialog: MatDialog, private uploadService: UploadService, protected difference: DifferenceService) {}
+    gameName: string = '';
 
-    ngOnInit(): void {
+    // eslint-disable-next-line max-params
+    constructor(
+        public dialog: MatDialog,
+        public difference: DifferenceService,
+        private communication: CommunicationService,
+        private router: Router,
+        private drawingService: DrawingService,
+    ) {}
+
+    ngAfterViewInit(): void {
         this.ctxOriginal = this.originalCanvas.nativeElement.getContext('2d');
         this.ctxModifiable = this.modifiableCanvas.nativeElement.getContext('2d');
+        if (this.ctxOriginal && this.ctxModifiable) {
+            this.ctxOriginal.fillStyle = DRAWING.WHITE;
+            this.ctxModifiable.fillStyle = DRAWING.WHITE;
+            this.ctxOriginal.fillRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+            this.ctxModifiable.fillRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+            this.drawingService.saveAction();
+        }
     }
 
     showInputDifferent(): void {
-        this.canvasImages.length = 0;
+        this.canvasImages.length = CANVAS.RESET;
         this.dialog.open(this.inputDifferentTemplate, {
             width: '500px',
             height: '250px',
         });
     }
     showInputSame(): void {
-        this.canvasImages.length = 0;
+        this.canvasImages.length = CANVAS.RESET;
         this.dialog.open(this.inputSameTemplate, {
             width: '450px',
             height: '200px',
         });
     }
-    showError(): void {
+    showError(errorMessage: string): void {
+        this.errorMessage = errorMessage;
         this.dialog.open(this.errorTemplate, {
-            width: '200px',
+            width: '250px',
+            height: '250px',
+        });
+    }
+    showSave(): void {
+        this.dialog.open(this.saveTemplate, {
+            width: '250px',
             height: '200px',
         });
     }
-    storeOriginal(fileEvent: Event): void {
-        if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
-            return;
-        }
-        const selectedFile = fileEvent.target.files[0];
-        if (!selectedFile) {
-            return;
-        }
-        this.reader.onload = () => {
-            if (this.reader.result) {
-                this.imageOriginal.src = this.reader.result.toString();
-                this.canvasImages.push(selectedFile);
-            }
-        };
-        this.reader.readAsDataURL(selectedFile);
-    }
-    storeDiff(fileEvent: Event): void {
-        if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
-            return;
-        }
-        const selectedFile = fileEvent.target.files[0];
-        if (!selectedFile) {
-            return;
-        }
-        this.reader.onload = () => {
-            if (this.reader.result) {
-                this.imageModifiable.src = this.reader.result.toString();
-                this.canvasImages.push(selectedFile);
-            }
-        };
-        this.reader.readAsDataURL(selectedFile);
-    }
+    showDifference(): void {
+        this.dialog.open(this.negativeTemplate, {
+            width: '700px',
+            height: '650px',
+        });
+        this.diffCanvas = document.getElementById('diff') as HTMLCanvasElement;
+        this.ctxDiff = this.diffCanvas.getContext('2d', { willReadFrequently: true });
 
-    async createDiffCanvas(): Promise<void> {
-        if (await this.uploadService.validate(this.canvasImages)) {
-            this.dialog.closeAll();
-            if (this.imageOriginal.complete) {
-                if (this.ctxOriginal) {
-                    this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
-                    console.log('test');
-                }
-            } else {
-                this.imageOriginal.onload = () => {
-                    console.log(this.ctxOriginal + 'here');
-                    if (this.ctxOriginal) {
-                        this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
-                    }
-                };
+        const diff = this.createDifference();
+        if (this.ctxDiff) {
+            this.ctxDiff.clearRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+            this.ctxDiff.drawImage(diff, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+        }
+        this.nbDiff = this.difference.getDifference(this.diffCanvas).count;
+        this.difficulty = this.difference.isDifficult(this.diffCanvas) ? DIFFERENCE.DIFFICULT : DIFFERENCE.EASY;
+    }
+    async storeOriginal(fileEvent: Event): Promise<void> {
+        if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
+            this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
+            return;
+        }
+        const selectedFile = fileEvent.target.files[0];
+        if (!selectedFile) {
+            this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
+            return;
+        }
+        if (await this.verifyBMP(selectedFile)) {
+            const image = await this.convertImage(selectedFile);
+            if (image.width === CANVAS.WIDTH || image.height === CANVAS.HEIGHT) {
+                this.originalImage = image;
+                return;
             }
-            if (this.imageModifiable.complete) {
-                if (this.ctxModifiable) {
-                    this.ctxModifiable.drawImage(this.imageModifiable, 0, 0, this.width, this.height);
-                    console.log('test');
+        }
+        fileEvent.target.value = '';
+        this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
+    }
+    async storeDiff(fileEvent: Event): Promise<void> {
+        if (!(fileEvent.target instanceof HTMLInputElement) || !fileEvent.target.files) {
+            this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
+            return;
+        }
+        const selectedFile = fileEvent.target.files[0];
+        if (selectedFile) {
+            if (await this.verifyBMP(selectedFile)) {
+                const image = await this.convertImage(selectedFile);
+                if (image.width === CANVAS.WIDTH || image.height === CANVAS.HEIGHT) {
+                    this.modifiableImage = image;
+                    return;
                 }
-            } else {
-                this.imageModifiable.onload = () => {
-                    if (this.ctxModifiable) {
-                        this.ctxModifiable.drawImage(this.imageModifiable, 0, 0, this.width, this.height);
-                    }
-                };
             }
-        } else {
-            this.dialog.closeAll();
-            this.showError();
+        }
+
+        this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
+    }
+    createDiffCanvas(): void {
+        if (this.originalImage && this.modifiableImage) {
+            this.ctxOriginal?.drawImage(this.originalImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+            this.ctxModifiable?.drawImage(this.modifiableImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
         }
     }
     async createSameCanvas(): Promise<void> {
-        if (await this.uploadService.validate(this.canvasImages)) {
-            this.dialog.closeAll();
-            if (this.ctxOriginal) {
-                this.ctxOriginal.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
-            }
-            if (this.ctxModifiable) {
-                this.ctxModifiable.drawImage(this.imageOriginal, 0, 0, this.width, this.height);
-            }
-        } else {
-            this.dialog.closeAll();
-            this.showError();
+        if (this.originalImage) {
+            this.ctxOriginal?.drawImage(this.originalImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+            this.ctxModifiable?.drawImage(this.originalImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
         }
     }
     deleteOriginal(): void {
-        if (this.ctxOriginal) {
-            this.ctxOriginal.clearRect(0, 0, this.width, this.height);
-        }
+        this.ctxOriginal?.fillRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
     }
     deleteModifiable(): void {
-        if (this.ctxModifiable) {
-            this.ctxModifiable.clearRect(0, 0, this.width, this.height);
-        }
+        this.ctxModifiable?.fillRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
     }
-    async createDifference(): Promise<HTMLCanvasElement> {
-        if (this.ctxOriginal && this.ctxModifiable) {
-            const diff = this.difference.findDifference(this.ctxOriginal, this.ctxModifiable, 3);
-            return diff;
-        }
-        return new HTMLCanvasElement();
+    deleteBoth(): void {
+        this.deleteOriginal();
+        this.deleteModifiable();
     }
-
-    showDifference(): void {
-        this.createDifference().then((diff) => {
-            if (diff) {
-                this.dialog.open(this.negativeTemplate, {
-                    width: '700px',
-                    height: '620px',
-                });
-                document.getElementById('neg')?.appendChild(diff);
-                const nbdiff = document.createElement('p');
-                nbdiff.innerHTML = "Nombre d'erreur : ".concat(this.difference.countDifference(diff).toString());
-                document.getElementById('neg')?.appendChild(nbdiff);
-            }
+    createDifference(): HTMLCanvasElement {
+        const slider = document.getElementById('slider') as HTMLInputElement;
+        const radius = slider.innerHTML as unknown as number;
+        const left = this.drawingService.getLeftDrawing(this.originalCanvas.nativeElement);
+        const right = this.drawingService.getRightDrawing(this.modifiableCanvas.nativeElement);
+        if (left && right) {
+            return this.difference.findDifference(left, right, radius);
+        }
+        return this.diffCanvas;
+    }
+    async verifyBMP(file: File): Promise<boolean> {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const imageData = new Uint8Array(reader.result as ArrayBuffer);
+                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+                resolve(imageData[0] === 66 && imageData[1] === 77 && imageData[28] === 24);
+            };
+            reader.readAsArrayBuffer(file);
         });
     }
-}
-export interface HTMLInputEvent extends Event {
-    target: (HTMLInputElement & EventTarget) | null;
+    async convertImage(file: File): Promise<ImageBitmap> {
+        return await createImageBitmap(file);
+    }
+
+    inputName(): void {
+        const diff = this.createDifference();
+        const diffCount = this.difference.getDifference(diff).count;
+        if (diffCount >= DIFFERENCE.DIFFCOUNT_MIN && diffCount <= DIFFERENCE.DIFFCOUNT_MAX) {
+            this.showSave();
+            return;
+        }
+        this.showError(ERROR_MESSAGES.DIFFERROR_MSG);
+    }
+
+    async saveGameCard(): Promise<void> {
+        if (this.ctxOriginal && this.ctxModifiable) {
+            const diff = this.createDifference();
+            const difference = this.difference.getDifference(diff);
+            const difficulty = this.difference.isDifficult(diff);
+            this.verifyName(`${this.gameName}`, async (isVerified) => {
+                if (isVerified) {
+                    const originalCanvasString = await this.drawingService.base64Left(this.originalCanvas.nativeElement);
+                    const modifiableCanvasString = await this.drawingService.base64Right(this.modifiableCanvas.nativeElement);
+
+                    const request = {
+                        name: this.gameName,
+                        originalImage: originalCanvasString,
+                        modifiableImage: modifiableCanvasString,
+                        difficulty,
+                        count: difference.count,
+                        differences: difference.differences,
+                    };
+                    await this.communication.imagesPost(request).subscribe(() => {
+                        this.router.navigate(['config']);
+                    });
+                } else {
+                    this.showError(ERROR_MESSAGES.NAMEERROR_MSG);
+                    this.gameName = '';
+                }
+            });
+        }
+    }
+    verifyName(gameName: string, callback: (isVerified: boolean) => void): void {
+        this.communication.getGameNames().subscribe((names: string[]) => {
+            let isGameNameVerified = true;
+            for (const name of names) {
+                if (gameName === name) {
+                    isGameNameVerified = false;
+                }
+            }
+            callback(isGameNameVerified);
+        });
+    }
 }

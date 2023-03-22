@@ -1,14 +1,18 @@
-import { Logger, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Course, courseSchema } from '@app/model/database/course';
-import { CourseController } from '@app/controllers/course/course.controller';
-import { CourseService } from '@app/services/course/course.service';
-import { DateController } from '@app/controllers/date/date.controller';
-import { DateService } from '@app/services/date/date.service';
 import { ChatGateway } from '@app/gateways/chat/chat.gateway';
-import { ExampleService } from '@app/services/example/example.service';
-import { ExampleController } from '@app/controllers/example/example.controller';
+import { Logger, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import * as http from 'http';
+import { GameManagerController } from './controllers/game-manager/game-manager.controller';
+import { GameController } from './controllers/game/game.controller';
+import { GamecardsController } from './controllers/gamecards/gamecards.controller';
+import { StoreController } from './controllers/store/store.controller';
+import { ClassicModeGateway } from './gateways/timer/classic-mode.gateway';
+import { CounterManagerService } from './services/counter-manager/counter-manager.service';
+import { GameManager } from './services/game-manager/game-manager.service';
+import { StoreService } from './services/store/store.service';
+import { TimerManagerService } from './services/timer-manager/timer-manager.service';
+import { WaitingRoomManagerService } from './services/waiting-room-manager/waiting-room-manager.service';
 
 @Module({
     imports: [
@@ -20,9 +24,18 @@ import { ExampleController } from '@app/controllers/example/example.controller';
                 uri: config.get<string>('DATABASE_CONNECTION_STRING'), // Loaded from .env
             }),
         }),
-        MongooseModule.forFeature([{ name: Course.name, schema: courseSchema }]),
     ],
-    controllers: [CourseController, DateController, ExampleController],
-    providers: [ChatGateway, CourseService, DateService, ExampleService, Logger],
+    controllers: [GamecardsController, GameManagerController, StoreController, GameController],
+    providers: [
+        ChatGateway,
+        Logger,
+        StoreService,
+        GameManager,
+        http.Server,
+        ClassicModeGateway,
+        TimerManagerService,
+        CounterManagerService,
+        WaitingRoomManagerService,
+    ],
 })
 export class AppModule {}

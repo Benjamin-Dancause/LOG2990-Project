@@ -1,23 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SocketService } from '@app/services/socket/socket.service';
 
 import { HomeButtonComponent } from './home-button.component';
 
 describe('HomeButtonComponent', () => {
-  let component: HomeButtonComponent;
-  let fixture: ComponentFixture<HomeButtonComponent>;
+    let component: HomeButtonComponent;
+    let fixture: ComponentFixture<HomeButtonComponent>;
+    let socketService: jasmine.SpyObj<SocketService>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ HomeButtonComponent ]
-    })
-    .compileComponents();
+    beforeEach(async () => {
+        socketService = jasmine.createSpyObj('socketService', ['disconnectSocket']);
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        socketService.disconnectSocket.and.callFake(() => {});
 
-    fixture = TestBed.createComponent(HomeButtonComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+        await TestBed.configureTestingModule({
+            declarations: [HomeButtonComponent],
+        }).compileComponents();
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+        socketService = TestBed.inject(SocketService) as jasmine.SpyObj<SocketService>;
+        fixture = TestBed.createComponent(HomeButtonComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
+
+    it('should disconnect socket when disconnectSocket is called', () => {
+        spyOn(component.socketService, 'disconnectSocket');
+        component.disconnectSocket();
+        expect(component.socketService.disconnectSocket).toHaveBeenCalled();
+    });
 });

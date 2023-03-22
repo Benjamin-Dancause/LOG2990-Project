@@ -1,15 +1,17 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { SocketService } from '@app/services/socket/socket.service';
 
 @Component({
     selector: 'app-home-button',
     templateUrl: './home-button.component.html',
     styleUrls: ['./home-button.component.scss'],
 })
-export class HomeButtonComponent implements OnInit {
-    constructor() {}
+export class HomeButtonComponent {
+    @Input() text: string;
 
-    @Input()
-    text: string;
+    constructor(public socketService: SocketService) {}
 
-    ngOnInit(): void {}
+    disconnectSocket() {
+        this.socketService.disconnectSocket();
+    }
 }

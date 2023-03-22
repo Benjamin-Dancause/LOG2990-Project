@@ -1,17 +1,20 @@
 <div class="container">
     <div class="canvas-area">
+        <button class="btn delete-btn" (click)="deleteOriginal()">
+            <img class="del-icon" src="./assets/delete-icon.png" />
+        </button>
         <div class="canvas-wrap">
-            <button class="btn delete-btn" (click)="deleteOriginal()">
-                <img class="del-icon" src="../../assets/delete-icon.png" />
-            </button>
+            <app-drawing class="drawing"></app-drawing>
             <canvas #originalCanvas class="image-container" width="640" height="480"></canvas>
         </div>
+        <app-drawing-tools id="tools"></app-drawing-tools>
         <div class="canvas-wrap">
-            <button class="btn delete-btn" (click)="deleteModifiable()">
-                <img class="del-icon" src="../../assets/delete-icon.png" />
-            </button>
+            <app-drawing class="drawing"></app-drawing>
             <canvas #modifiableCanvas class="image-container" width="640" height="480"></canvas>
         </div>
+        <button class="btn delete-btn" (click)="deleteModifiable()">
+            <img class="del-icon" src="./assets/delete-icon.png" />
+        </button>
     </div>
     <div class="button-area">
         <div class="add-btn">
@@ -20,8 +23,12 @@
         </div>
         <div class="settings-btn">
             <app-slider></app-slider>
-            <button class="btn" (click)="showDifference()" >Détecter les différences</button>
+            <button class="btn" (click)="showDifference()">Détecter les différences</button>
+            <button class="btn delete-btn" (click)="deleteBoth()">
+                <img class="del-icon" src="./assets/delete-icon.png" />
+            </button>
         </div>
+        <button class="btn" (click)="inputName()">Sauvegarder</button>
     </div>
     <ng-template #inputDifferentTemplate>
         <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
@@ -33,7 +40,7 @@
             <p>Ajouter l'image modifié</p>
             <input type="file" (change)="storeDiff($event)" />
         </div>
-        <button type="button" (click)="createDiffCanvas()">Sauvegarder</button>
+        <button type="button" (click)="createDiffCanvas()" mat-dialog-close>Sauvegarder</button>
     </ng-template>
     <ng-template #inputSameTemplate>
         <h3>Seulement des fichiers de type .bmp et de taille 640x480 sont acceptés</h3>
@@ -41,17 +48,27 @@
             <p>Ajouter les images</p>
             <input type="file" (change)="storeOriginal($event)" />
         </div>
-        <button type="button" (click)="createSameCanvas()">Sauvegarder</button>
+        <button type="button" (click)="createSameCanvas()" mat-dialog-close>Sauvegarder</button>
     </ng-template>
     <ng-template #errorTemplate>
         <div>
-            <h3>Vous avez entrée des images incompatibles</h3>
-            <img src="../../assets/error_icon.png" class="error-icon" />
+            <h3>{{ errorMessage }}</h3>
+            <img src="./assets/error_icon.png" class="error-icon" />
         </div>
     </ng-template>
     <ng-template #negativeTemplate>
         <div id="neg">
             <h3>Voici les différences</h3>
+            <canvas id="diff" width="640" height="480"></canvas>
+            <p>Nombre d'erreur : {{ nbDiff }}</p>
+            <span>Difficulté : {{ difficulty }}</span>
         </div>
+    </ng-template>
+    <ng-template #saveTemplate>
+        <div id="neg">
+            <h3>Nommez votre nouvelle partie !</h3>
+            <input type="text" [(ngModel)]="gameName" />
+        </div>
+        <button type="button" (click)="saveGameCard()" mat-dialog-close>Sauvegarder</button>
     </ng-template>
 </div>

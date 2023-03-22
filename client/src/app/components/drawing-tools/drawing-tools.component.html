@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="button-tools">
+        <div class="drawing-tools">
+            <button class="btn" [ngClass]="{ active: activeButton === 'pen' }" (click)="selectPen()">Crayon</button>
+            <button class="btn" [ngClass]="{ active: activeButton === 'eraser' }" (click)="selectEraser()">Efface</button>
+            <button class="btn" [ngClass]="{ active: activeButton === 'rectangle' }" (click)="selectRectangle()">Rectangle</button>
+            <button class="btn" (click)="copyLeft()">Copier Dessin</button>
+            <button class="btn" (click)="deleteLeft()">Effacer Dessin</button>
+        </div>
+        <div class="drawing-tools">
+            <button class="btn" (click)="undo()">Annuler</button>
+            <button class="btn" (click)="redo()">Refaire</button>
+            <button class="btn" (click)="swapDrawings()">Intervertir</button>
+            <button class="btn" (click)="copyRight()">Copier Dessin</button>
+            <button class="btn" (click)="deleteRight()">Effacer Dessin</button>
+        </div>
+    </div>
+    <div class="input-tools">
+        <input type="color" [(ngModel)]="color" (change)="setColor()" />
+        <input type="range" min="1" max="50" [(ngModel)]="radius" (change)="setRadius()" />
+    </div>
+</div>

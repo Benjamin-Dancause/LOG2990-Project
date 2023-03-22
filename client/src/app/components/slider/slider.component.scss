@@ -30,3 +30,11 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
 .mat-slider-thumb-label {
     background-color: aqua;
 }
+
+.mat-slider + span {
+    color: $cyan-text;
+    font-size: 2rem;
+    font-weight: 700;
+    text-shadow: 0 0 10px $cyan-glow;
+    margin: 5px;
+}

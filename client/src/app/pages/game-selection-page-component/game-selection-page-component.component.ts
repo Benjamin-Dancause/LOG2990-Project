@@ -1,34 +1,41 @@
-import { Component } from '@angular/core';
+/* eslint-disable no-console */
+import { Component, OnInit } from '@angular/core';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { SocketService } from '@app/services/socket/socket.service';
+import { GameSelectionPageData } from '@common/game-interfaces';
+
+const PAGE_SIZE = 4;
 
 @Component({
     selector: 'app-game-selection-page-component',
     templateUrl: './game-selection-page-component.component.html',
     styleUrls: ['./game-selection-page-component.component.scss'],
 })
-export class GameSelectionPageComponent {
-    games = [
-        { title: 'Game 1', image: 'https://i.stack.imgur.com/6umGW.png', level: 'easy', configuration: false },
-        { title: 'Game 2', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: false },
-        { title: 'Game 3', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: false },
-        { title: 'Game 4', image: 'https://i.stack.imgur.com/6umGW.png', level: 'easy', configuration: false },
-        { title: 'Game 5', image: 'https://i.stack.imgur.com/6umGW.png', level: 'easy', configuration: false },
-        { title: 'Game 6', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: false },
-        { title: 'Game 7', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: false },
-        { title: 'Game 8', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: false },
-        { title: 'Game 9', image: 'https://i.stack.imgur.com/6umGW.png', level: 'easy', configuration: false },
-        { title: 'Game 10', image: 'https://i.stack.imgur.com/6umGW.png', level: 'hard', configuration: false },
-        { title: 'Game 11', image: 'https://i.stack.imgur.com/6umGW.png', level: 'easy', configuration: false },
-    ];
+export class GameSelectionPageComponent implements OnInit {
+    games: GameSelectionPageData[] = [];
 
-    startIndex = 0;
-    endIndex = 3;
     currentPage = 0;
-    pageSize = 4;
+    pageSize = PAGE_SIZE;
+    lastPage = 0;
 
-    lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
+    constructor(protected communication: CommunicationService, public socketService: SocketService) {
+        communication.getAllGames().subscribe((gamecards: GameSelectionPageData[]) => {
+            this.games = gamecards;
+            this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
+        });
+    }
 
     get displayedGames() {
         return this.games.slice(this.currentPage * this.pageSize, (this.currentPage + 1) * this.pageSize);
+    }
+
+    ngOnInit(): void {
+        this.socketService.initializeSocket();
+        this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
+    }
+
+    disconnectSocket() {
+        this.socketService.disconnectSocket();
     }
 
     onBack() {

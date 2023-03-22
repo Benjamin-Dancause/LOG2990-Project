@@ -1,0 +1,28 @@
+<div class="message-box">
+    <div class="message-area" #messageArea>
+      <div *ngFor="let message of messages" class="message" [ngClass]="{'event': message.type === 'system', 'opponent': message.type === 'opponent', 'self': message.type === 'self'}">
+        <span class="message-header">{{ message.type === 'system' ? '' : message.type === 'opponent' ? '' : '' }}</span>
+        <span>{{ message.text }}</span>
+      </div>
+      
+    </div>
+    <div *ngIf="!solo" class="input-area">
+      <input type="text" placeholder="Entrez votre message (max. 200 caractères)" [(ngModel)]="messageText" (keydown.enter)="sendMessage()" maxlength="200" #inputBox>
+      <button (click)="sendMessage()">Envoyer</button>
+    </div>
+  </div>
+
+  <!--
+<div class="message-box">
+    <div class="message-area" #messageArea>
+      <div *ngFor="let message of messages" class="message" [ngClass]="{ 'event': message.type === 'event', 'opponent': message.type === 'opponent', 'self': message.type === 'self' }">
+        {{ message.content }}
+      </div>
+    </div>
+    <div class="input-area">
+      <input type="text" [(ngModel)]="newMessage" placeholder="Saisissez votre message ici (max 200 caractères)" maxlength="200" (keyup.enter)="sendMessage()" #inputBox>
+      <button (click)="sendMessage()">Envoyer</button>
+    </div>
+  </div>
+-->
+  

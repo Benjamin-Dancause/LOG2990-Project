@@ -1,0 +1,4 @@
+<div *ngIf="player1 && playerSide">{{ counterService.counter }} différences trouvées!</div>
+<div *ngIf="player1 && !playerSide">{{ counterService.counter2 }} différences trouvées!</div>
+<div *ngIf="!player1 && !playerSide">{{ counterService.counter2 }} différences trouvées!</div>
+<div *ngIf="!player1 && playerSide">{{ counterService.counter }} différences trouvées!</div>

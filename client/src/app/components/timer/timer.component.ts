@@ -1,15 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { TimerService } from '@app/services/timer/timer.service';
 
 @Component({
-  selector: 'app-timer',
-  templateUrl: './timer.component.html',
-  styleUrls: ['./timer.component.scss']
+    selector: 'app-timer',
+    templateUrl: './timer.component.html',
+    styleUrls: ['./timer.component.scss'],
 })
-export class TimerComponent implements OnInit {
+export class TimerComponent implements OnInit, OnDestroy {
+    min = 0;
+    sec = 0;
+    minutes = '00';
+    seconds = '00';
 
-  constructor() { }
+    constructor(private timerService: TimerService) {}
 
-  ngOnInit(): void {
-  }
+    ngOnInit(): void {
+        this.timerService.getTime().subscribe((time) => {
+            this.min = Math.floor(time / 60);
+            this.sec = time % 60;
+            this.minutes = this.pad(this.min);
+            this.seconds = this.pad(this.sec);
+        });
+    }
 
+    ngOnDestroy(): void {
+        const roomId = sessionStorage.getItem('roomId') as string;
+        this.timerService.resetTimer(roomId);
+    }
+
+    pad(value: number) {
+        return value.toString().padStart(2, '0');
+    }
 }

@@ -1,0 +1,76 @@
+$background-color: rgba(0, 0, 0, 0.644);
+$background-color-hover: #2e2e2e;
+$cyan-text: rgb(136, 231, 243);
+$cyan-glow: rgb(123, 226, 252);
+$blue-border: rgb(131, 172, 247);
+$blue-glow: rgb(0, 140, 255);
+$cyan-border: rgb(126, 222, 235);
+$cyan-border-left: rgba(109, 188, 199, 0.774);
+$orange-glow: rgb(255, 60, 60);
+$orange-border: #ff9900ff;
+$orange-border-left: rgba(255, 153, 0, 0.774);
+$purple-glow: rgb(174, 0, 255);
+.container {
+    display: flex;
+    flex-direction: column;
+    top: 50%;
+}
+
+.button-tools {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.button-tools .drawing-tools {
+    margin-right: 5px;
+}
+
+.drawing-tools {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.drawing-tools button {
+    margin-bottom: 10px;
+}
+
+.input-tools {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.btn {
+    background-color: $background-color;
+    position: relative;
+    display: inline-block;
+    padding: 15px;
+    border-radius: 2px;
+    color: $cyan-text;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    margin: 20px;
+    font-family: 'Cyber', sans-serif;
+    border: 3px solid $orange-border;
+    box-shadow: 0 0 30px 4px $orange-glow;
+    border-left: 10px solid $orange-border-left;
+    transition: all 0.1s linear;
+
+    &:hover {
+        background-color: $background-color-hover;
+        border: 3px solid $cyan-border;
+        box-shadow: 0 0 30px 4px $cyan-glow;
+        border-left: 10px solid $cyan-border-left;
+    }
+}
+.active {
+    background-color: $background-color-hover;
+    border: 3px solid $purple-glow;
+    box-shadow: 0 0 30px 4px $purple-glow;
+    border-left: 10px solid $purple-glow;
+}

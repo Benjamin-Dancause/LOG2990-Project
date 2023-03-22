@@ -1,0 +1,17 @@
+<header class="container">
+    <div class="outline">
+        <app-timer></app-timer>
+    </div>
+    <div class="outline">
+        <h1>{{ name }}</h1>
+    </div>
+    <div class="vertical-bar"></div>
+    <div class="outline name">
+        <div>Vous : {{ userName }}</div>
+        <app-counter [playerSide]="true"></app-counter>
+    </div>
+    <div *ngIf="!single" class="outline name">
+        <div>Adversaire : {{opponent}}</div>
+        <app-counter [playerSide]="false"></app-counter>
+    </div>
+</header>

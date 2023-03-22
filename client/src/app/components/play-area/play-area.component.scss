@@ -1,27 +1,65 @@
 .canvas {
-    background-color: white;
+    position: absolute;
+    top: 25%
 }
 
-#canvas-1 {
+#canvas-1, #canvas-3 {
     margin-left: 70px;
-    margin-right: 40px;
-    
+
     border: 1px solid rgb(126, 222, 235);
     border-left: 3px solid rgba(109, 188, 199, 0.774);
     box-shadow: 0 0 30px 4px rgb(123, 226, 252);
+    left: 35%;
 }
 
-#canvas-2 {
+#canvas-2, #canvas-4 {
     margin-right: 70px;
 
     border: 1px solid rgb(126, 222, 235);
     border-left: 3px solid rgba(109, 188, 199, 0.774);
     box-shadow: 0 0 30px 4px rgb(123, 226, 252);
+    left : 3%
 }
 
-#grid-container{
+#grid-container {
     display: flex;
     margin-top: 110px;
     margin-bottom: 30px;
 }
 
+#mouse-position-display {
+    background-color: rgb(126, 222, 235);
+    box-shadow: 0 0 30px 1px rgb(123, 226, 252);
+    height: 65px;
+    width: 80px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#mouse-position-display p {
+    margin: 0;
+}
+
+.canvasContainer {
+    position:relative;
+    width:650px;
+    height:500px;
+}
+
+
+#grid-container .cheat-message {
+    position: absolute;
+    left: 65%;
+    bottom: 20px;
+    height: 40px;
+    background-color: rgba(247, 247, 247, 0.79);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: red;
+    border: 1px solid rgb(126, 222, 235);
+}
