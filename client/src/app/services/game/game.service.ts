@@ -9,8 +9,6 @@ import { GameDiffData } from '@common/game-interfaces';
 import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
 
-
-
 @Injectable({
     providedIn: 'root',
 })
@@ -114,9 +112,11 @@ export class GameService {
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
         for (let i = 0; i < coords.length; i++) {
             const dataLeft = ctxLeft?.getImageData(coords[i].x, coords[i].y, 1, 1) as ImageData;
-            const pixel = dataLeft.data;
-            const imageData = new ImageData(pixel, 1, 1);
-            ctxRight?.putImageData(imageData, coords[i].x, coords[i].y);
+            if (dataLeft) {
+                const pixel = dataLeft.data;
+                const imageData = new ImageData(pixel, 1, 1);
+                ctxRight?.putImageData(imageData, coords[i].x, coords[i].y);
+            }
         }
     }
 
