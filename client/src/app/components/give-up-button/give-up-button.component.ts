@@ -17,11 +17,7 @@ export class GiveUpButtonComponent implements OnInit {
     gameTitle: string;
     userName: string;
 
-    constructor(
-        public dialog: MatDialog,
-        public gameCardService: GameCardService,
-        public socketService: SocketService,
-    ) {}
+    constructor(public dialog: MatDialog, public gameCardService: GameCardService, public socketService: SocketService) {}
 
     giveUpConfirmPrompt(): void {
         this.dialog.open(this.giveUpPromptTemplate, {

@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
+import { DRAWING } from '@common/constants';
 import { DrawingToolsComponent } from './drawing-tools.component';
 
 describe('DrawingToolsComponent', () => {
@@ -43,7 +43,7 @@ describe('DrawingToolsComponent', () => {
         spyOn(component, 'setRadius').and.callThrough();
         spyOn(component, 'selectPen').and.callThrough();
         component.ngOnInit();
-        expect(component.radius).toEqual(5);
+        expect(component.radius).toEqual(DRAWING.RADIUS);
         expect(component.setRadius).toHaveBeenCalled();
         expect(component.selectPen).toHaveBeenCalled();
     });

@@ -30,6 +30,7 @@ describe('CreatePageComponent', () => {
             imports: [MatDialogModule, HttpClientTestingModule, RouterTestingModule, MatFormFieldModule, MatInputModule, MatSliderModule],
             declarations: [CreatePageComponent, SliderComponent],
             schemas: [NO_ERRORS_SCHEMA],
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             providers: [{ CreateImageComponent, useValue: createImageComponentStub }],
         }).compileComponents();
         fixture = TestBed.createComponent(CreatePageComponent);

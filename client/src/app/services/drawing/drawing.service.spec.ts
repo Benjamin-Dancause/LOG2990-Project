@@ -1,6 +1,8 @@
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-
+import { CANVAS } from '@common/constants';
 import { DrawingService } from './drawing.service';
 
 describe('DrawingService', () => {
@@ -184,8 +186,8 @@ describe('DrawingService', () => {
         service.draw(event);
         expect(service.currentCtx.stroke).toHaveBeenCalled();
         expect(service.currentCtx.strokeStyle).toEqual('#ff0000');
-        expect(service.lastPos.x).toEqual(150);
-        expect(service.lastPos.y).toEqual(250);
+        expect(service.lastPos.x).toEqual(CANVAS.LASTPOSX);
+        expect(service.lastPos.y).toEqual(CANVAS.LASTPOSY);
     });
     it('should erase', () => {
         service.currentBackgroundCtx = ctx;
@@ -196,8 +198,8 @@ describe('DrawingService', () => {
         const event = new MouseEvent('mousemove', { clientX: 150, clientY: 250, buttons: 1 });
         service.erase(event);
         expect(service.currentBackgroundCtx.clearRect).toHaveBeenCalled();
-        expect(service.lastPos.x).toEqual(150);
-        expect(service.lastPos.y).toEqual(250);
+        expect(service.lastPos.x).toEqual(CANVAS.LASTPOSX);
+        expect(service.lastPos.y).toEqual(CANVAS.LASTPOSY);
     });
     it('should draw rectangle', () => {
         service.currentCtx = ctx;

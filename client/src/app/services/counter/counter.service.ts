@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CommunicationService } from '../communication/communication.service';
@@ -55,8 +56,9 @@ export class CounterService {
         });
     }
 
+    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy() {
-        if(this.allDiffsSubscription) {
+        if (this.allDiffsSubscription) {
             this.allDiffsSubscription.unsubscribe();
         }
     }

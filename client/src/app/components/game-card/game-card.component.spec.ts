@@ -6,6 +6,7 @@ import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { of } from 'rxjs';
 import { Socket } from 'socket.io-client';
+// eslint-disable-next-line no-restricted-imports
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { GameCardComponent } from './game-card.component';
 
@@ -17,7 +18,7 @@ describe('GameCardComponent', () => {
     let mockSocketService: jasmine.SpyObj<SocketService>;
     let mockGameCardService: jasmine.SpyObj<GameCardService>;
     let mockSocket: jasmine.SpyObj<Socket>;
-    let mockSessionStorage: any = {};
+    const mockSessionStorage: any = {};
     let mockLocation: jasmine.SpyObj<Location>;
 
     beforeEach(async () => {
@@ -62,6 +63,7 @@ describe('GameCardComponent', () => {
         component = fixture.componentInstance;
         component.gameTitle = 'game1';
 
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         spyOn(component, 'reloadPage').and.callFake(() => {});
     });
 

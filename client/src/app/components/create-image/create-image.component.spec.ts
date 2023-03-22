@@ -11,6 +11,7 @@ import { SliderComponent } from '@app/components/slider/slider.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DifferenceService } from '@app/services/difference/difference.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { CANVAS } from '@common/constants';
 import { of } from 'rxjs';
 import { CreateImageComponent } from './create-image.component';
 
@@ -371,6 +372,7 @@ describe('CreateImageComponent', () => {
         expect(component.ctxModifiable?.fillRect).toHaveBeenCalled();
     });
     it('should be a BMP', async () => {
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         const blobHeader = new Uint8Array(54);
         blobHeader[0] = 66;
         blobHeader[1] = 77;
@@ -401,6 +403,7 @@ describe('CreateImageComponent', () => {
         differenceSpy.isDifficult.and.returnValue(true);
         component.showDifference();
 
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         expect(component.nbDiff).toEqual(10);
         expect(component.difficulty).toEqual('Difficile');
         diff.remove();
@@ -429,7 +432,6 @@ describe('CreateImageComponent', () => {
     it('should save game card', async () => {
         const coord: Coords[][] = [];
         spyOn(component, 'createDifference');
-        //spyOn(component, 'convertToBase64');
         spyOn(component, 'showError');
         differenceSpy.getDifference.and.returnValue({ count: 2, differences: coord });
         differenceSpy.isDifficult.and.returnValue(true);
@@ -450,7 +452,6 @@ describe('CreateImageComponent', () => {
     it('should not save game card', async () => {
         const coord: Coords[][] = [];
         spyOn(component, 'createDifference');
-        // spyOn(component, 'convertToBase64');
         spyOn(component, 'showError');
         differenceSpy.getDifference.and.returnValue({ count: 2, differences: coord });
         differenceSpy.isDifficult.and.returnValue(true);
@@ -482,7 +483,7 @@ describe('CreateImageComponent', () => {
         slider.id = 'slider';
         slider.innerHTML = '5';
         document.body.appendChild(slider);
-        const data = ctx?.getImageData(0, 0, 640, 480);
+        const data = ctx?.getImageData(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
         drawingSpy.getLeftDrawing.and.returnValue(data);
         drawingSpy.getRightDrawing.and.returnValue(data);
         differenceSpy.findDifference.and.returnValue(canvas);
@@ -495,7 +496,7 @@ describe('CreateImageComponent', () => {
         slider.id = 'slider';
         slider.innerHTML = '5';
         document.body.appendChild(slider);
-        const data = ctx?.getImageData(0, 0, 640, 480);
+        const data = ctx?.getImageData(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
         drawingSpy.getLeftDrawing.and.returnValue(undefined);
         drawingSpy.getRightDrawing.and.returnValue(data);
         differenceSpy.findDifference.and.returnValue(canvas);

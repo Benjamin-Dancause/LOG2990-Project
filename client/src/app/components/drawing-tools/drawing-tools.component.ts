@@ -14,6 +14,23 @@ export class DrawingToolsComponent implements OnInit {
 
     constructor(private drawingService: DrawingService) {}
 
+    @HostListener('document:keydown.control.z')
+    undo(): void {
+        this.drawingService.undoAction();
+    }
+    @HostListener('document:keydown.control.shift.z')
+    redo(): void {
+        this.drawingService.redoAction();
+    }
+    @HostListener('document:keydown.shift', ['$event'])
+    isSquare(): void {
+        this.drawingService.isSquare();
+    }
+    @HostListener('document:keyup.shift', ['$event'])
+    notSquare(): void {
+        this.drawingService.notSquare();
+    }
+
     ngOnInit(): void {
         this.radius = 5;
         this.setRadius();
@@ -52,21 +69,5 @@ export class DrawingToolsComponent implements OnInit {
     }
     deleteRight(): void {
         this.drawingService.deleteRight();
-    }
-    @HostListener('document:keydown.control.z')
-    undo(): void {
-        this.drawingService.undoAction();
-    }
-    @HostListener('document:keydown.control.shift.z')
-    redo(): void {
-        this.drawingService.redoAction();
-    }
-    @HostListener('document:keydown.shift', ['$event'])
-    isSquare(): void {
-        this.drawingService.isSquare();
-    }
-    @HostListener('document:keyup.shift', ['$event'])
-    notSquare(): void {
-        this.drawingService.notSquare();
     }
 }

@@ -11,7 +11,8 @@ describe('TextBoxComponent', () => {
     let mockSocketService: jasmine.SpyObj<SocketService>;
     let mockGameService: jasmine.SpyObj<GameService>;
     let mockSocket: jasmine.SpyObj<Socket>;
-    let mockSessionStorage: any = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockSessionStorage: any = {};
 
     beforeEach(async () => {
         mockGameService = jasmine.createSpyObj<GameService>(['errorMessage', 'successMessage']);
@@ -28,8 +29,6 @@ describe('TextBoxComponent', () => {
                 { provide: GameService, useValue: mockGameService },
             ],
         }).compileComponents();
-
-        //mockSessionStorage = {};
 
         spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => {
             return mockSessionStorage[key] || null;
@@ -78,12 +77,12 @@ describe('TextBoxComponent', () => {
         mockSessionStorage['userName'] = 'player1';
         component.userName = 'player1';
         component.gameMode = '1v1';
-        let messageInfo = { name: 'player1', message: 'Hello World' };
+        const messageInfo = { name: 'player1', message: 'Hello World' };
         mockSocket.on.withArgs('incoming-player-message', jasmine.any(Function)).and.callFake((eventName, callback) => {
             callback(messageInfo);
             return mockSocket;
         });
-        let addSelfMessageSpy = spyOn(component, 'addSelfMessage');
+        const addSelfMessageSpy = spyOn(component, 'addSelfMessage');
         component.ngOnInit();
         mockGameService.successMessage.next('incoming-player-message');
         mockSocket.emit('incoming-player-message');
@@ -96,7 +95,7 @@ describe('TextBoxComponent', () => {
             callback();
             return mockSocket;
         });
-        let writeQuitMessageSpy = spyOn(component, 'writeQuitMessage');
+        const writeQuitMessageSpy = spyOn(component, 'writeQuitMessage');
         component.ngOnInit();
         mockSocket.emit('player-quit-game');
         expect(writeQuitMessageSpy).toHaveBeenCalled();
@@ -104,12 +103,12 @@ describe('TextBoxComponent', () => {
 
     it('should call writeErrorMessage() when gameMode is not solo and "player-error" event is emitted', () => {
         component.gameMode = '1v1';
-        let name = 'player1';
+        const name = 'player1';
         mockSocket.on.withArgs('player-error', jasmine.any(Function)).and.callFake((eventName, callback) => {
             callback(name);
             return mockSocket;
         });
-        let writeErrorMessageSpy = spyOn(component, 'writeErrorMessage');
+        const writeErrorMessageSpy = spyOn(component, 'writeErrorMessage');
         component.ngOnInit();
         mockSocket.emit('player-error');
         expect(writeErrorMessageSpy).toHaveBeenCalledWith('player1');
@@ -117,12 +116,12 @@ describe('TextBoxComponent', () => {
 
     it('should call writeSuccessMessage() when gameMode is not solo and "player-success" event is emitted', () => {
         component.gameMode = '1v1';
-        let name = 'player1';
+        const name = 'player1';
         mockSocket.on.withArgs('player-success', jasmine.any(Function)).and.callFake((eventName, callback) => {
             callback(name);
             return mockSocket;
         });
-        let writeSuccessMessageSpy = spyOn(component, 'writeSuccessMessage');
+        const writeSuccessMessageSpy = spyOn(component, 'writeSuccessMessage');
         component.ngOnInit();
         mockSocket.emit('player-success');
         expect(writeSuccessMessageSpy).toHaveBeenCalledWith('player1');
@@ -146,7 +145,7 @@ describe('TextBoxComponent', () => {
     it('should call writeErrorMessage() with userName when gameService errorMessage event is emitted in solo mode', () => {
         mockSessionStorage['userName'] = 'player1';
         component.gameMode = 'solo';
-        let writeErrorMessageSpy = spyOn(component, 'writeErrorMessage');
+        const writeErrorMessageSpy = spyOn(component, 'writeErrorMessage');
         component.ngOnInit();
         mockGameService.errorMessage.next('error-message');
         expect(writeErrorMessageSpy).toHaveBeenCalledWith(component.userName);
@@ -155,7 +154,7 @@ describe('TextBoxComponent', () => {
     it('should call writeSuccessMessage() with userName when gameService successMessage event is emitted in solo mode', () => {
         mockSessionStorage['userName'] = 'player1';
         component.gameMode = 'solo';
-        let writeSuccessMessageSpy = spyOn(component, 'writeSuccessMessage');
+        const writeSuccessMessageSpy = spyOn(component, 'writeSuccessMessage');
         component.ngOnInit();
         mockGameService.successMessage.next('success-message');
         expect(writeSuccessMessageSpy).toHaveBeenCalledWith(component.userName);
@@ -213,7 +212,7 @@ describe('TextBoxComponent', () => {
     });
 
     it('should create a system message and call addSystemMessage when writeQuitMessage is called', () => {
-        let addSystemMessageSpy = spyOn(component, 'addSystemMessage');
+        const addSystemMessageSpy = spyOn(component, 'addSystemMessage');
         component.opponentName = 'player1';
         component.writeQuitMessage();
         const timestamp = component.getTimestamp();
@@ -222,7 +221,7 @@ describe('TextBoxComponent', () => {
     });
 
     it('should create a system message with name and call addSystemMessage when writeErrorMessage is called and gameMode is 1v1', () => {
-        let addSystemMessageSpy = spyOn(component, 'addSystemMessage');
+        const addSystemMessageSpy = spyOn(component, 'addSystemMessage');
         component.gameMode = '1v1';
         component.opponentName = 'player1';
         const name = 'player1';
@@ -233,7 +232,7 @@ describe('TextBoxComponent', () => {
     });
 
     it('should create a system message with name and call addSystemMessage when writeSuccessMessage is called and gameMode is 1v1', () => {
-        let addSystemMessageSpy = spyOn(component, 'addSystemMessage');
+        const addSystemMessageSpy = spyOn(component, 'addSystemMessage');
         component.gameMode = '1v1';
         component.opponentName = 'player1';
         const name = 'player1';

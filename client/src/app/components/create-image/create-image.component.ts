@@ -183,6 +183,7 @@ export class CreateImageComponent implements AfterViewInit {
             const reader = new FileReader();
             reader.onload = () => {
                 const imageData = new Uint8Array(reader.result as ArrayBuffer);
+                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
                 resolve(imageData[0] === 66 && imageData[1] === 77 && imageData[28] === 24);
             };
             reader.readAsArrayBuffer(file);
