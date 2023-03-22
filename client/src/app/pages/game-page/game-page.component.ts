@@ -26,8 +26,9 @@ export class GamePageComponent implements OnInit {
         this.socketService.soloGame();
     }
 
+    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngAfterViewInit() {
-        this.socketService.socket.on('send-victorious-player', (player1: boolean) => {
+        this.socketService.socket.on('send-victorious-player', () => {
             this.showPopup = true;
         });
     }

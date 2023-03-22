@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable no-restricted-imports */
 import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
@@ -118,7 +120,7 @@ describe('CounterService', () => {
         const gameMode = '1v1';
         const totalDiff = 10;
         const counterInfo = { counter: 5, player1: false };
-        
+
         spyOn(sessionStorage, 'getItem').and.callFake((key: string) => {
             if (key === 'gameTitle') return gameTitle;
             if (key === 'gameMode') return gameMode;

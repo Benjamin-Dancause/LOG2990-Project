@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { GameSelectionPageData } from '@common/game-interfaces';
@@ -11,7 +11,7 @@ const PAGE_SIZE = 4;
     templateUrl: './game-selection-page-component.component.html',
     styleUrls: ['./game-selection-page-component.component.scss'],
 })
-export class GameSelectionPageComponent implements OnInit, AfterViewInit {
+export class GameSelectionPageComponent implements OnInit {
     games: GameSelectionPageData[] = [];
 
     currentPage = 0;
@@ -33,8 +33,6 @@ export class GameSelectionPageComponent implements OnInit, AfterViewInit {
         this.socketService.initializeSocket();
         this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
     }
-
-    ngAfterViewInit(): void {}
 
     disconnectSocket() {
         this.socketService.disconnectSocket();

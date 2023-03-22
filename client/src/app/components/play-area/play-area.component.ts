@@ -50,6 +50,7 @@ export class PlayAreaComponent implements AfterViewInit {
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
+    // eslint-disable-next-line max-params
     constructor(
         public counterService: CounterService,
         public communicationService: CommunicationService,

@@ -50,7 +50,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
             this.router.navigate([url]);
         });
 
-        this.socketService.socket.on('rejection', (url) => {
+        this.socketService.socket.on('rejection', () => {
             this.showPopupKick = true;
         });
 

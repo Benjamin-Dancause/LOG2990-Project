@@ -12,6 +12,7 @@ describe('WaitingRoomPageComponent', () => {
     let component: WaitingRoomPageComponent;
     let fixture: ComponentFixture<WaitingRoomPageComponent>;
     let mockSocketService: jasmine.SpyObj<SocketService>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockSessionStorage: any = {};
     let mockSocket: jasmine.SpyObj<Socket>;
 

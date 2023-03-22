@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 /* eslint-disable prefer-const */
 import { EventEmitter, Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
@@ -21,6 +22,7 @@ export class GameService {
     private differenceFound: number[] = [];
     private gameName: string = '';
     private isCheatEnabled = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private cheatTimeout: any;
     private playAreaCtx: CanvasRenderingContext2D[] = [];
 
@@ -122,7 +124,8 @@ export class GameService {
 
     incrementCounter() {
         this.counterService.incrementCounter(
-            (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false);
+            (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false,
+        );
     }
 
     playErrorSound() {
@@ -134,8 +137,6 @@ export class GameService {
         this.successSound.currentTime = 0;
         this.successSound.play();
     }
-
-
 
     async checkClick(event: MouseEvent, counter: CounterService, ctxs: CanvasRenderingContext2D[]) {
         if (!this.isClickDisabled && event?.button === MouseButton.Left) {

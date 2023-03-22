@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -66,6 +67,7 @@ describe('GameService', () => {
         spyOn(gameService, 'updateImages');
         gameService.updateDifferences({ coords: mockCoords, differenceNumber: 1, isDifference: true });
         expect(gameService.flashDifferences).toHaveBeenCalledWith(mockCoords, gameService['playAreaCtx']);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         expect(gameService.updateImages).toHaveBeenCalled;
     });
 
