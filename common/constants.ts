@@ -17,6 +17,8 @@ export enum CANVAS {
     RESET = 0,
     LEFT = 0,
     RIGHT = 1,
+    LASTPOSX = 150,
+    LASTPOSY = 250,
 }
 
 export enum DRAWING {
@@ -30,6 +32,8 @@ export enum DRAWING {
     ERASER_COLOR = '#ffffff',
     SQUARED = 2,
     MIDDLE_OFFSET = 0.5,
+    RADIUS = 5,
+
 }
 
 export enum DELAY {
