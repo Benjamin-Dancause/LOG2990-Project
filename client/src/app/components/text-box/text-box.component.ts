@@ -1,6 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameService } from '@app/services/game/game.service';
 import { SocketService } from '@app/services/socket/socket.service';
@@ -15,7 +14,6 @@ import { Subscription } from 'rxjs';
 export class TextBoxComponent implements OnInit, OnDestroy {
     @Input() single: boolean = true;
     @Input() solo: boolean;
-    //@Input() opponentName: string = '';
     @ViewChild('messageArea') messageArea: ElementRef;
 
     messages: Message[] = [];
@@ -27,10 +25,10 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     successSubscription: Subscription;
     errorSubscription: Subscription;
 
-    constructor(public dialog: MatDialog, private gameService: GameService, private socketService: SocketService) {
+    constructor(public gameService: GameService, public socketService: SocketService) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
-        this.errorSubscription = new Subscription();
+        this.successSubscription = new Subscription();
     }
 
     ngOnInit(): void {

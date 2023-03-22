@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SocketService } from '@app/services/socket/socket.service';
 import { CompleteGameInfo } from '@common/game-interfaces';
+import { of } from 'rxjs';
 import { Socket } from 'socket.io-client';
 
 import { WaitingRoomPageComponent } from './waiting-room-page.component';
@@ -197,7 +198,7 @@ describe('WaitingRoomPageComponent', () => {
     });
 
     it('should navigate to current url when rejectPlayer() is called', () => {
-        spyOn(component.router, 'navigate');
+        spyOn(component.router, 'navigate').and.resolveTo();
         component.rejectPlayer();
         expect(component.router.navigate).toHaveBeenCalledOnceWith([component.router.url]);
     });
@@ -246,7 +247,7 @@ describe('WaitingRoomPageComponent', () => {
     });
 
     it('should call socketService.startOneVsOneGame() when startOneVsOneGame is called and call addPlayer() on both players', () => {
-        spyOn(component.gameCardService, 'addPlayer').and.callThrough();
+        spyOn(component.gameCardService, 'addPlayer').and.returnValue(of(null));
         component.startOneVsOneGame();
         expect(mockSocketService.startOneVsOneGame).toHaveBeenCalled();
     });

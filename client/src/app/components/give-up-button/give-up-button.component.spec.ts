@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
 
 import { GiveUpButtonComponent } from './give-up-button.component';
 
@@ -14,12 +15,10 @@ describe('GiveUpButtonComponent', () => {
     let debugElement: DebugElement;
 
     beforeEach(async () => {
-
         await TestBed.configureTestingModule({
             imports: [BrowserAnimationsModule, MatDialogModule, HttpClientModule],
             declarations: [GiveUpButtonComponent],
         }).compileComponents();
-
 
         fixture = TestBed.createComponent(GiveUpButtonComponent);
         component = fixture.componentInstance;
@@ -46,13 +45,10 @@ describe('GiveUpButtonComponent', () => {
 
     it('should disconnect socket when disconnectSocket is called', () => {
         spyOn(component.socketService, 'leaveGame');
-        spyOn(component.gameCardService, 'removePlayer').and.callThrough();
+        spyOn(component.gameCardService, 'removePlayer').and.returnValue(of(null));
 
         component.removeUser();
         expect(component.socketService.leaveGame).toHaveBeenCalled();
-        expect(component.gameCardService.removePlayer).toHaveBeenCalledWith(
-            component.gameTitle,
-            component.userName
-        );
+        expect(component.gameCardService.removePlayer).toHaveBeenCalledWith(component.gameTitle, component.userName);
     });
 });
