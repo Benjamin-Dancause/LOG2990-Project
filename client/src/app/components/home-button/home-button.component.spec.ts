@@ -10,7 +10,8 @@ describe('HomeButtonComponent', () => {
 
     beforeEach(async () => {
         socketService = jasmine.createSpyObj('socketService', ['disconnectSocket']);
-        socketService.disconnectSocket.and.callFake( () => {});
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        socketService.disconnectSocket.and.callFake(() => {});
 
         await TestBed.configureTestingModule({
             declarations: [HomeButtonComponent],

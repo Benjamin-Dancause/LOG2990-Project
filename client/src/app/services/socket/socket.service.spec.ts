@@ -26,6 +26,7 @@ describe('socketService', () => {
     });
 
     it('should create socket if not initialized', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         service.socket = undefined as any;
         service.initializeSocket();
         expect(service.socket).toBeDefined();
@@ -45,7 +46,7 @@ describe('socketService', () => {
         const name = 'player1';
         const gameTitle = 'game1';
         service.handleLobby(name, gameTitle);
-        expect(socketSpy.emit).toHaveBeenCalledWith('handle-lobby', { gameMaster: name, gameTitle: gameTitle });
+        expect(socketSpy.emit).toHaveBeenCalledWith('handle-lobby', { gameMaster: name, gameTitle });
     });
 
     it('should emit "start-OneVsOne" when startOneVsOneGame() is called', () => {
@@ -57,7 +58,7 @@ describe('socketService', () => {
         const name = 'player1';
         const gameTitle = 'game1';
         service.rejectPlayer(name, gameTitle);
-        expect(socketSpy.emit).toHaveBeenCalledWith('reject-player', { gameMaster: name, gameTitle: gameTitle });
+        expect(socketSpy.emit).toHaveBeenCalledWith('reject-player', { gameMaster: name, gameTitle });
     });
 
     it('should emit "close-lobby" with gameTitle when closeLobby() is called', () => {
@@ -81,7 +82,7 @@ describe('socketService', () => {
         const name = 'player1';
         const gameTitle = 'game1';
         service.resetLobby(name, gameTitle);
-        expect(socketSpy.emit).toHaveBeenCalledWith('reset-lobby', { gameMaster: name, gameTitle: gameTitle });
+        expect(socketSpy.emit).toHaveBeenCalledWith('reset-lobby', { gameMaster: name, gameTitle });
     });
 
     it('should emit "get-gameTitle" with roomId when getGameTitle() is called', () => {
@@ -124,7 +125,7 @@ describe('socketService', () => {
         const name = 'player1';
         const message = 'testing message';
         service.sendPlayerMessage(name, message);
-        expect(socketSpy.emit).toHaveBeenCalledWith('send-player-message', { name: name, message: message });
+        expect(socketSpy.emit).toHaveBeenCalledWith('send-player-message', { name, message });
     });
 
     it('should emit "send-player-error" with player name when sendPlayerError() is called', () => {

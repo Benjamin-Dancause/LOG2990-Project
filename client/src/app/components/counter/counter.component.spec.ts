@@ -6,6 +6,7 @@ import SpyObj = jasmine.SpyObj;
 describe('CounterComponent', () => {
     let component: CounterComponent;
     let counterServiceSpy: SpyObj<CounterService>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockSessionStorage: any = {};
     let fixture: ComponentFixture<CounterComponent>;
 
@@ -39,22 +40,22 @@ describe('CounterComponent', () => {
         expect(counterServiceSpy.resetCounter).toHaveBeenCalled();
         expect(counterServiceSpy.initializeCounter).toHaveBeenCalled();
     });
-    
+
     it('should call isPlayer1() and return true', () => {
-        let gameMaster = "master";
-        let userName = "master";
+        const gameMaster = 'master';
+        const userName = 'master';
         sessionStorage.setItem('gameMaster', gameMaster);
         sessionStorage.setItem('userName', userName);
-        let result = component.isPlayer1();
+        const result = component.isPlayer1();
         expect(result).toBeTruthy();
     });
 
     it('should call isPlayer1() and return false', () => {
-        let gameMaster = "master";
-        let userName = "joiner";
+        const gameMaster = 'master';
+        const userName = 'joiner';
         sessionStorage.setItem('gameMaster', gameMaster);
         sessionStorage.setItem('userName', userName);
-        let result = component.isPlayer1();
+        const result = component.isPlayer1();
         expect(result).toBeFalsy();
     });
 });

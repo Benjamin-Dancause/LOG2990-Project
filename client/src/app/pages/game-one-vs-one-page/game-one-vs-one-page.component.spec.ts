@@ -14,6 +14,7 @@ describe('GamePageOneVsOneComponent', () => {
     let gameCardService: jasmine.SpyObj<GameCardService>;
     let counterService: CounterService;
     let mockSocketService: jasmine.SpyObj<SocketService>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockSessionStorage: any = {};
     let mockSocket: jasmine.SpyObj<Socket>;
 
@@ -28,9 +29,11 @@ describe('GamePageOneVsOneComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [GameOneVsOnePageComponent],
             imports: [HttpClientModule, MatDialogModule],
-            providers: [{ provide: SocketService, useValue: mockSocketService },
-                        { provide: GameCardService, useValue: gameCardService },
-                        { provide: CounterService, useValue: {counter: 0, counter2: 0} }]
+            providers: [
+                { provide: SocketService, useValue: mockSocketService },
+                { provide: GameCardService, useValue: gameCardService },
+                { provide: CounterService, useValue: { counter: 0, counter2: 0 } },
+            ],
         }).compileComponents();
 
         mockSessionStorage = {};
@@ -38,7 +41,6 @@ describe('GamePageOneVsOneComponent', () => {
         spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => {
             return mockSessionStorage[key] || null;
         });
-
     });
 
     beforeEach(() => {
@@ -65,7 +67,7 @@ describe('GamePageOneVsOneComponent', () => {
     it('should set showPopup to false', () => {
         component.showPopup = true;
         gameCardService.removePlayer.and.returnValue(of(null));
-  
+
         component.returnToMainMenu();
         expect(component.showPopup).toBeFalse();
     });

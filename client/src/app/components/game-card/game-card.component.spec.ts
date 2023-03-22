@@ -30,6 +30,7 @@ describe('GameCardComponent', () => {
         mockSocketService = jasmine.createSpyObj('SocketService', ['deleteGame']);
         mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
         mockLocation = jasmine.createSpyObj('Location', ['reload']);
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         mockLocation.reload.and.callFake(() => {});
         mockSocket.on.and.returnValue(mockSocket);
         mockSocket.emit.and.returnValue(mockSocket);

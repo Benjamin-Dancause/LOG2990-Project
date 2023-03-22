@@ -11,6 +11,7 @@ describe('ConfirmationDialogComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [ConfirmationDialogComponent],
             providers: [
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 { provide: MatDialogRef, useValue: { close: () => {} } },
                 { provide: MAT_DIALOG_DATA, useValue: {} },
             ],

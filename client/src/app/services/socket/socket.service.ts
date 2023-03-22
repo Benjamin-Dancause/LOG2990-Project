@@ -7,10 +7,9 @@ import { environment } from 'src/environments/environment';
     providedIn: 'root',
 })
 export class SocketService {
+    socket: Socket;
     private readonly baseUrl: string = environment.webSocketUrl;
-    public socket: Socket;
 
-    constructor() {}
     initializeSocket(): void {
         if (this.socket) {
             this.socket.connect();
@@ -28,7 +27,7 @@ export class SocketService {
     }
 
     handleLobby(name: string, gameTitle: string): void {
-        this.socket.emit('handle-lobby', { gameMaster: name, gameTitle: gameTitle });
+        this.socket.emit('handle-lobby', { gameMaster: name, gameTitle });
     }
 
     startOneVsOneGame() {
@@ -36,7 +35,7 @@ export class SocketService {
     }
 
     rejectPlayer(name: string, gameTitle: string) {
-        this.socket.emit('reject-player', { gameMaster: name, gameTitle: gameTitle });
+        this.socket.emit('reject-player', { gameMaster: name, gameTitle });
     }
 
     closeLobby(gameTitle: string) {
@@ -48,10 +47,10 @@ export class SocketService {
     }
 
     resetLobby(gameMaster: string, gameTitle: string) {
-        this.socket.emit('reset-lobby', { gameMaster: gameMaster, gameTitle: gameTitle });
+        this.socket.emit('reset-lobby', { gameMaster, gameTitle });
     }
 
-    getGameTitle(roomId: String) {
+    getGameTitle(roomId: string) {
         this.socket.emit('get-gameTitle', roomId);
     }
 
@@ -76,7 +75,7 @@ export class SocketService {
     }
 
     sendPlayerMessage(name: string, message: string) {
-        this.socket.emit('send-player-message', { name: name, message: message });
+        this.socket.emit('send-player-message', { name, message });
     }
 
     sendPlayerError(name: string) {
