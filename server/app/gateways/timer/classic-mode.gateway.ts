@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ClickResponse } from '@app/classes/click-response';
 import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
@@ -26,30 +27,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         @Inject(CounterManagerService) private readonly counterManager: CounterManagerService,
         @Inject(WaitingRoomManagerService) private readonly waitingRoomManager: WaitingRoomManagerService,
     ) {}
-
-    handleConnection(client: Socket) {
-        this.connectionCounter++;
-        console.log('New connection, total clients connected is now: ' + this.connectionCounter);
-        if (this.connectionCounter > 1) {
-            this.server.sockets.emit('connection-count', 'There is now more than 1 person online');
-        }
-    }
-
-    handleDisconnect(@ConnectedSocket() client: Socket) {
-        this.connectionCounter--;
-        console.log('New disconnection, total clients connected is now: ' + this.connectionCounter);
-        const roomId = this.socketIdToRoomId[client.id];
-        if (roomId) {
-            client.leave(roomId);
-            this.timerManager.deleteTimerData(roomId);
-            this.counterManager.deleteCounterData(roomId);
-            this.waitingRoomManager.deleteLobbyInfo(roomId);
-        }
-    }
-
-    emitTimeToRoom(roomId: string, time: number) {
-        this.server.to(roomId).emit('timer', time);
-    }
 
     @SubscribeMessage('reset-timer')
     onReset(client: Socket, roomId: string) {
@@ -142,10 +119,10 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         if (roomId) {
             if (player1) {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player1');
-                this.server.to(roomId).emit('counter-update', { counter: counter, player1: player1 });
+                this.server.to(roomId).emit('counter-update', { counter, player1 });
             } else {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player2');
-                this.server.to(roomId).emit('counter-update', { counter: counter, player1: player1 });
+                this.server.to(roomId).emit('counter-update', { counter, player1 });
             }
         }
     }
@@ -259,10 +236,10 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         if (roomId) {
             if (player1) {
                 const counter = this.counterManager.resetCounter(roomId + '_player1');
-                this.server.to(roomId).emit('counter-update', { counter: counter, player1: player1 });
+                this.server.to(roomId).emit('counter-update', { counter, player1 });
             } else {
                 const counter = this.counterManager.resetCounter(roomId + '_player2');
-                this.server.to(roomId).emit('counter-update', { counter: counter, player1: player1 });
+                this.server.to(roomId).emit('counter-update', { counter, player1 });
             }
         }
     }
@@ -274,5 +251,30 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
             this.timerManager.deleteTimerData(roomId);
             this.server.to(roomId).emit('send-victorious-player', player1);
         }
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    handleConnection(client: Socket) {
+        this.connectionCounter++;
+        console.log('New connection, total clients connected is now: ' + this.connectionCounter);
+        if (this.connectionCounter > 1) {
+            this.server.sockets.emit('connection-count', 'There is now more than 1 person online');
+        }
+    }
+
+    handleDisconnect(@ConnectedSocket() client: Socket) {
+        this.connectionCounter--;
+        console.log('New disconnection, total clients connected is now: ' + this.connectionCounter);
+        const roomId = this.socketIdToRoomId[client.id];
+        if (roomId) {
+            client.leave(roomId);
+            this.timerManager.deleteTimerData(roomId);
+            this.counterManager.deleteCounterData(roomId);
+            this.waitingRoomManager.deleteLobbyInfo(roomId);
+        }
+    }
+
+    emitTimeToRoom(roomId: string, time: number) {
+        this.server.to(roomId).emit('timer', time);
     }
 }

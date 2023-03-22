@@ -12,8 +12,8 @@ export class GamecardsController {
         const file = readFileSync('./assets/data/gamesData.json');
         const data = JSON.parse(file.toString());
         const dataNoDiff = data.map((game) => {
-             return { name: game.name, image: game.images[0], difficulty: game.difficulty } 
-            });
+            return { name: game.name, image: game.images[0], difficulty: game.difficulty };
+        });
         return dataNoDiff;
     }
 }

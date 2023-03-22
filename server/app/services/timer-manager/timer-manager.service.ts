@@ -1,4 +1,5 @@
 import { ClassicModeGateway } from '@app/gateways/timer/classic-mode.gateway';
+import { DELAY } from '@common/constants';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -14,7 +15,7 @@ export class TimerManagerService {
             this.timers.set(roomId, time);
             const intervalId = setInterval(() => {
                 this.updateTimer(roomId);
-            }, 1000);
+            }, DELAY.SMALLTIMEOUT);
             this.intervals.set(roomId, intervalId);
         }
     }

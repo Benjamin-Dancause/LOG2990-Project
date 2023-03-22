@@ -14,6 +14,7 @@ describe('GameManager', () => {
     describe('createGame', () => {
         it('should return the count from the gameData object', () => {
             const gameData = { id: 1, count: 5, differences: [] };
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             expect(gameManager.createGame(gameData)).toBe(5);
         });
     });
