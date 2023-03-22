@@ -259,6 +259,7 @@ describe('GameCardComponent', () => {
         mockGameCardService.getPlayers.and.returnValue(of(players));
         spyOn(window, 'alert');
         component.deleteGame('game1');
+        tick();
         expect(window.alert).toHaveBeenCalledWith('This card is currently being played by another user.');
     }));
 });
