@@ -51,7 +51,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         public dialog: MatDialog,
         private communication: CommunicationService,
         private socketService: SocketService,
-        private gameCardService: GameCardService,
+        public gameCardService: GameCardService,
     ) {}
 
     get color() {

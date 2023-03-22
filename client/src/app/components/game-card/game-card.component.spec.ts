@@ -24,6 +24,8 @@ describe('GameCardComponent', () => {
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
         mockCommunicationService = jasmine.createSpyObj('CommunicationService', ['getGameAvailability', 'deleteGame']);
         mockGameCardService = jasmine.createSpyObj('GameCardService', ['getPlayers', 'addPlayer']);
+        mockGameCardService.addPlayer.and.returnValue(of(null));
+        mockGameCardService.getPlayers.and.returnValue(of(['null']));
         mockSocketService = jasmine.createSpyObj('SocketService', ['deleteGame']);
         mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
         mockLocation = jasmine.createSpyObj('Location', ['reload']);
@@ -259,5 +261,4 @@ describe('GameCardComponent', () => {
         component.deleteGame('game1');
         expect(window.alert).toHaveBeenCalledWith('This card is currently being played by another user.');
     });
-
 });
