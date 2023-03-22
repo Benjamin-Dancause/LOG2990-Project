@@ -11,7 +11,7 @@ import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
 import { GameService } from './game.service';
 
-fdescribe('GameService', () => {
+describe('GameService', () => {
   let gameService: GameService;
   let mockSocketService: jasmine.SpyObj<SocketService>;
   let mockCounterService: jasmine.SpyObj<CounterService>;
@@ -187,26 +187,11 @@ fdescribe('GameService', () => {
     expect(gameService.updateDifferences).not.toHaveBeenCalled();
   });
 
-  // it('checkClick should call socketService.sendDifferenceFound', () => fakeAsync(() =>{
-  //   const mockCtx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-  //   const mockCtxs = [mockCtx, mockCtx, mockCtx, mockCtx];
-  //   gameService['isClickDisabled'] = false;
-  //   const response = { coords: [{ x: 0, y: 0 }], differenceNumber: 1, isDifference: true } as ClickResponse;
-  //   spyOn(gameService, 'updateDifferences');
-  //   spyOn(gameService['communicationService'], 'sendPosition').and.returnValue(of(response));
-  //   spyOn(mockCtx, 'fillText');
-  //   const mockEvent = { offsetX: 0, offsetY: 0 } as MouseEvent;
-  //   gameService.checkClick(mockEvent, mockCounterService, mockCtxs);
-  //   tick(DELAY.SMALLTIMEOUT);
-  //   expect(mockCtx.fillText).toHaveBeenCalled();
-  //   expect(mockSocketService.sendDifferenceFound).toHaveBeenCalledWith(response);
-  // }));
 
   it('checkClick should call playSuccessSound when the clicked on a difference', fakeAsync( () => {
     const mockCanvas = document.createElement('canvas') as HTMLCanvasElement;
     const mockCtx = mockCanvas.getContext('2d') as CanvasRenderingContext2D;
     const mockCtxs = [mockCtx, mockCtx, mockCtx, mockCtx];
-    //gameService['playAreaCtx'] = mockCtxs;
     gameService['isClickDisabled'] = false;
     spyOn(gameService, 'playSuccessSound');
     spyOn(gameService, 'updateDifferences');
