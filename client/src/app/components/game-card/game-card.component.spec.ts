@@ -254,11 +254,11 @@ describe('GameCardComponent', () => {
         expect(component.reloadPage).toHaveBeenCalled();
     }));
 
-    it('should show alert when trying to delete a game with players', () => {
+    it('should show alert when trying to delete a game with players', fakeAsync(() => {
         const players: string[] = ['player1', 'player2'];
         mockGameCardService.getPlayers.and.returnValue(of(players));
         spyOn(window, 'alert');
         component.deleteGame('game1');
         expect(window.alert).toHaveBeenCalledWith('This card is currently being played by another user.');
-    });
+    }));
 });
