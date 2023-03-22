@@ -1,4 +1,5 @@
 import { ClassicModeGateway } from '@app/gateways/timer/classic-mode.gateway';
+import { DELAY } from '@common/constants';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TimerManagerService } from './timer-manager.service';
@@ -89,7 +90,8 @@ describe('TimerManagerService', () => {
         it('should call updateTimer function every 1000ms', () => {
             const updateTimerSpy = jest.spyOn(service, 'updateTimer');
             service.startTimer('testRoom');
-            jest.advanceTimersByTime(5000);
+            jest.advanceTimersByTime(DELAY.HUGE_TIMEOUT);
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             expect(updateTimerSpy).toHaveBeenCalledTimes(5);
         });
     });

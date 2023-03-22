@@ -4,10 +4,9 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class WaitingRoomManagerService {
-    constructor(@Inject(forwardRef(() => ClassicModeGateway)) private readonly classicModeGateway: ClassicModeGateway) {}
-
     private openLobbies = new Map<string, string>();
     private lobbyGameInfo = new Map<string, GameInfo>();
+    constructor(@Inject(forwardRef(() => ClassicModeGateway)) private readonly classicModeGateway: ClassicModeGateway) {}
 
     isOtherLobby(gameTitle: string): boolean {
         if (!this.openLobbies.get(gameTitle)) {
@@ -28,9 +27,9 @@ export class WaitingRoomManagerService {
 
     initializeGameInfo(gameTitle: string, gameMaster: string): void {
         const gameInfo: GameInfo = {
-            gameMaster: gameMaster,
+            gameMaster,
             joiningPlayer: 'none',
-            gameTitle: gameTitle,
+            gameTitle,
         };
         this.lobbyGameInfo.set(gameTitle, gameInfo);
     }
@@ -40,13 +39,13 @@ export class WaitingRoomManagerService {
             const initialGameInfo: GameInfo = this.lobbyGameInfo.get(gameTitle);
             const completeGameInfo: GameInfo = {
                 gameMaster: initialGameInfo.gameMaster,
-                joiningPlayer: joiningPlayer,
+                joiningPlayer,
                 gameTitle: initialGameInfo.gameTitle,
             };
             return completeGameInfo;
         }
     }
-    //Todo switch roomId for gameTitle
+    // Todo switch roomId for gameTitle
     deleteLobbyInfo(roomId: string) {
         this.openLobbies.delete(roomId);
         this.lobbyGameInfo.delete(roomId);

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Coords, Data, GameDiffData, GameplayData, GameSelectionPageData } from '@common/game-interfaces';
 import { Body, Injectable } from '@nestjs/common';
 import { promises as fs } from 'fs';
@@ -5,6 +7,7 @@ import { promisify } from 'util';
 
 @Injectable()
 export class StoreService {
+    // eslint-disable-next-line max-params
     async storeInfo(name: string, relativePaths: string[], difficulty: boolean, count: number, differences: Coords[][]): Promise<void> {
         const infoPath = 'assets/data/gamesData.json';
         const gamesData: Data[] = await this.extractData();

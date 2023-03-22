@@ -1,5 +1,6 @@
 import { Coords, DifferenceInterface, GameDiffData } from '@common/game-interfaces';
 import { promises as fs } from 'fs';
+// eslint-disable-next-line no-restricted-imports
 import { StoreService } from '../store/store.service';
 
 export class GameManager {
@@ -10,7 +11,7 @@ export class GameManager {
     }
 
     async verifyPos(name: string, clickCoord: Coords): Promise<DifferenceInterface> {
-        const infoPath = `assets/data/gamesData.json`;
+        const infoPath = 'assets/data/gamesData.json';
         const gamesContent = await fs.readFile(infoPath, 'utf-8').then((data) => JSON.parse(data));
 
         const differences = await gamesContent.find((game) => game.name === name).differences;
@@ -21,7 +22,7 @@ export class GameManager {
                     const differenceNumber = differences.indexOf(difference) + 1;
                     const coords = differences[differenceNumber - 1];
                     differences.splice(differenceNumber - 1, 1);
-                    return { isDifference: true, differenceNumber: differenceNumber, coords: coords };
+                    return { isDifference: true, differenceNumber, coords };
                 }
             }
         }
@@ -29,9 +30,10 @@ export class GameManager {
     }
 
     async getAllDifferences(name: string): Promise<GameDiffData> {
-        const infoPath = `assets/data/gamesData.json`;
+        const infoPath = 'assets/data/gamesData.json';
         const gamesContent = await fs.readFile(infoPath, 'utf-8').then((data) => JSON.parse(data));
 
+        // eslint-disable-next-line @typescript-eslint/no-shadow
         const game = await gamesContent.find((game) => game.name === name);
 
         return { id: game.id, count: game.count, differences: game.differences };
