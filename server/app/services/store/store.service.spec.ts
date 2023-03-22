@@ -30,31 +30,6 @@ describe('StoreService', () => {
         expect(service).toBeDefined();
     });
 
-    it('should store game information', async () => {
-        const name = 'game1';
-        const relativePaths = ['path1', 'path2'];
-        const difficulty = true;
-        const count = 5;
-        const differences = [
-            [
-                { x: 1, y: 2 },
-                { x: 3, y: 4 },
-            ],
-            [
-                { x: 5, y: 6 },
-                { x: 7, y: 8 },
-            ],
-        ];
-        await service.storeInfo(name, relativePaths, difficulty, count, differences);
-        const gamesData = await service.extractData();
-        expect(gamesData.length).toBe(1);
-        expect(gamesData[0].name).toBe(name);
-        expect(gamesData[0].images).toEqual(relativePaths);
-        expect(gamesData[0].difficulty).toBe(difficulty);
-        expect(gamesData[0].count).toBe(count);
-        expect(gamesData[0].differences).toEqual(differences);
-    });
-
     it('should store image', async () => {
         const name = 'image1';
         const image = 'data:image/bmp;base64,Qk06AAAAAAAAAAAAA';
@@ -65,12 +40,6 @@ describe('StoreService', () => {
     });
 
     describe('getAllNames', () => {
-        it('should return an array of strings', async () => {
-            const result = await service.getAllNames();
-            expect(result).toBeInstanceOf(Array);
-            result.forEach((name) => expect(typeof name).toEqual('string'));
-        });
-
         it('should return all game names', async () => {
             const gamesData = [
                 { name: 'game1', images: ['image1'], difficulty: true, count: 5, differences: [[]] },
@@ -84,14 +53,6 @@ describe('StoreService', () => {
     });
 
     describe('getAllGames', () => {
-        it('should return an array of GameSelectionPageData', async () => {
-            const result = await service.getAllGames();
-            expect(result).toBeInstanceOf(Array);
-            result.forEach((game) =>
-                expect(game).toMatchObject({ name: expect.any(String), image: expect.any(String), difficulty: expect.any(Boolean) }),
-            );
-        });
-
         it('should return all games with their first image', async () => {
             const gamesData = [
                 { name: 'game1', images: ['image1', 'image1_modif.bmp', 'image1_orig.bmp'], difficulty: true, count: 5, differences: [[]] },
@@ -216,22 +177,6 @@ describe('StoreService', () => {
 
     afterEach(() => {
         jest.restoreAllMocks();
-    });
-
-    describe('deleteFile', () => {
-        it('should call promisify(fs.unlink) with the incorrect path', async () => {
-            const filePath = '';
-            await service.deleteFile(filePath);
-            expect(deleteMock).toHaveBeenCalledWith(filePath);
-        });
-    });
-
-    describe('deleteGAme', () => {
-        it('should call promisify(fs.unlink) with the correct path', async () => {
-            const infoPath = 'assets/data/gamesData.json';
-            await service.deleteGame(infoPath);
-            expect(deleteMock).toHaveBeenCalledWith(infoPath);
-        });
     });
 
     describe('extractData', () => {

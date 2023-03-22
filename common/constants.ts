@@ -33,12 +33,12 @@ export enum DRAWING {
     SQUARED = 2,
     MIDDLE_OFFSET = 0.5,
     RADIUS = 5,
-
 }
 
 export enum DELAY {
     BIGTIMEOUT = 2000,
     SMALLTIMEOUT = 1000,
+    HUGE_TIMEOUT = 5000,
 }
 
 export enum DIFFERENCE {
