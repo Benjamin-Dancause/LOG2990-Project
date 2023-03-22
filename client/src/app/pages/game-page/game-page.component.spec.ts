@@ -12,6 +12,7 @@ describe('GamePageComponent', () => {
     let fixture: ComponentFixture<GamePageComponent>;
     let gameCardService: jasmine.SpyObj<GameCardService>;
     let mockSocketService: jasmine.SpyObj<SocketService>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockSessionStorage: any = {};
     let mockSocket: jasmine.SpyObj<Socket>;
 

@@ -18,20 +18,20 @@ describe('GameCardService', () => {
 
     afterEach(() => {
         httpMock.verify();
-      });
+    });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
     it('should send a POST request to the server when calling addPlayer()', () => {
-        const gameTitle = "test1";
-        const userName = "player";
+        const gameTitle = 'test1';
+        const userName = 'player';
         const url = `${environment.serverUrl}/gameCards/${gameTitle}/players`;
         service.addPlayer(gameTitle, userName).subscribe();
         const req = httpMock.expectOne(url);
         expect(req.request.method).toEqual('POST');
-        expect(req.request.body).toEqual({userName});
+        expect(req.request.body).toEqual({ userName });
         req.flush({});
     });
 
@@ -56,5 +56,4 @@ describe('GameCardService', () => {
         expect(req.request.method).toEqual('GET');
         req.flush(players);
     });
-
 });

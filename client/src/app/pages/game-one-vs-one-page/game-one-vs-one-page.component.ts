@@ -23,6 +23,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
         this.showPopup = false;
     }
 
+    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnInit() {
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
         this.userName = sessionStorage.getItem('userName') as string;
@@ -30,7 +31,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.socketService.socket.on('send-victorious-player', (player1: boolean) => {
+        this.socketService.socket.on('send-victorious-player', () => {
             if (this.counterService.counter > this.counterService.counter2) {
                 this.isWinner = true;
                 this.winningPlayer = sessionStorage.getItem('userName') as string;

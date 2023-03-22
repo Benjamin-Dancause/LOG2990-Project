@@ -37,8 +37,8 @@ describe('GameSelectionPageComponent', () => {
         socketService = jasmine.createSpyObj('SocketService', ['disconnectSocket']);
 
         communicationService.getAllGames.and.returnValue(of(gamecards));
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         socketService.disconnectSocket.and.callFake(() => {});
-
 
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, MatDialogModule],

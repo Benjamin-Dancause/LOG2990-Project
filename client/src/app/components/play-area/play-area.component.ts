@@ -29,25 +29,26 @@ interface OneVsOneGameplayInfo {
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent implements AfterViewInit {
-    @ViewChild('gridCanvasLeft', { static: false }) public canvasLeft!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvasRight', { static: false }) public canvasRight!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvasLeftTop', { static: false }) public canvasLeftTop!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvasRightTop', { static: false }) public canvasRightTop!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLeft', { static: false }) canvasLeft!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasRight', { static: false }) canvasRight!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLeftTop', { static: false }) canvasLeftTop!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasRightTop', { static: false }) canvasRightTop!: ElementRef<HTMLCanvasElement>;
 
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
     isCheatEnabled = false;
 
+    imageLeftStr: string = '';
+    imageRightStr: string = '';
+    ctxLeft: CanvasRenderingContext2D | null = null;
+    ctxRight: CanvasRenderingContext2D | null = null;
+    ctxLeftTop: CanvasRenderingContext2D | null = null;
+    ctxRightTop: CanvasRenderingContext2D | null = null;
+    gameName: string = '';
+    player1: boolean = true;
+
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    public imageLeftStr: string = '';
-    public imageRightStr: string = '';
-    public ctxLeft: CanvasRenderingContext2D | null = null;
-    public ctxRight: CanvasRenderingContext2D | null = null;
-    public ctxLeftTop: CanvasRenderingContext2D | null = null;
-    public ctxRightTop: CanvasRenderingContext2D | null = null;
-    public gameName: string = '';
-    public player1: boolean = true;
 
     constructor(
         public counterService: CounterService,
@@ -65,6 +66,22 @@ export class PlayAreaComponent implements AfterViewInit {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+    @HostListener('mousedown', ['$event'])
+    onMouseDown(event: MouseEvent) {
+        if (event.target instanceof HTMLCanvasElement) {
+            const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+            this.game.checkClick(event, this.counterService, ctxs);
+        }
+    }
+    @HostListener('document:keydown.t', ['$event'])
+    onKeyDown(event: KeyboardEvent) {
+        if (event.target instanceof HTMLInputElement) {
+            return;
+        }
+        this.isCheatEnabled = !this.isCheatEnabled;
+        const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+        this.game.cheatMode(ctxs);
     }
 
     async initCanvases() {
@@ -106,23 +123,8 @@ export class PlayAreaComponent implements AfterViewInit {
             this.initCanvases();
         });
     }
-    @HostListener('mousedown', ['$event'])
-    onMouseDown(event: MouseEvent) {
-        if (event.target instanceof HTMLCanvasElement) {
-            const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
-            this.game.checkClick(event, this.counterService, ctxs);
-        }
-    }
-    @HostListener('document:keydown.t', ['$event'])
-    onKeyDown(event: KeyboardEvent) {
-        if (event.target instanceof HTMLInputElement) {
-            return;
-        }
-        this.isCheatEnabled = !this.isCheatEnabled;
-        const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
-        this.game.cheatMode(ctxs);
-    }
 
+    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy(): void {
         this.game.clearContexts();
         this.game.clearDifferenceArray();

@@ -227,8 +227,8 @@ export class DrawingService {
         );
         if (left && right) {
             this.undo.push({
-                left: left,
-                right: right,
+                left,
+                right,
             });
         }
     }

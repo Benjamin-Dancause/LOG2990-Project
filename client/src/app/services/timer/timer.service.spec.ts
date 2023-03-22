@@ -1,9 +1,14 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-unused-vars */
 import { TestBed } from '@angular/core/testing';
+// eslint-disable-next-line no-restricted-imports
 import { SocketService } from '../socket/socket.service';
 import { TimerService } from './timer.service';
 
 class MockSocketService {
     socket = {
+        // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
         on(eventName: string, callback: Function) {},
     };
 
