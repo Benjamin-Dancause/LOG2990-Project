@@ -1,15 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
-  selector: 'app-hints',
-  templateUrl: './hints.component.html',
-  styleUrls: ['./hints.component.scss']
+    selector: 'app-hints',
+    templateUrl: './hints.component.html',
+    styleUrls: ['./hints.component.scss'],
 })
-export class HintsComponent implements OnInit {
+export class HintsComponent {
+    nbrIndices = 3;
 
-  constructor() { }
+    @HostListener('window:keyup', ['$event'])
+    keyEvent(event: KeyboardEvent): void {
+        if (event.key === 'i') {
+            this.decrementCounter();
+        }
+    }
 
-  ngOnInit(): void {
-  }
-
+    decrementCounter(): void {
+        if (this.nbrIndices > 0) {
+            this.nbrIndices--;
+        }
+    }
 }
