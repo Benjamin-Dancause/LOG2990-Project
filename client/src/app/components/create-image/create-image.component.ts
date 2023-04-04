@@ -36,8 +36,8 @@ export class CreateImageComponent implements AfterViewInit {
     ctxModifiable: CanvasRenderingContext2D | null;
     ctxDiff: CanvasRenderingContext2D | null;
 
-    originalImage: ImageBitmap;
-    modifiableImage: ImageBitmap;
+    originalImage: ImageBitmap | undefined;
+    modifiableImage: ImageBitmap | undefined;
 
     diffCanvas: HTMLCanvasElement;
     canvasImages: File[] = [];
@@ -147,16 +147,21 @@ export class CreateImageComponent implements AfterViewInit {
         this.showError(ERROR_MESSAGES.FORMATERROR_MSG);
     }
     createDiffCanvas(): void {
-        if (this.originalImage && this.modifiableImage) {
+        if (this.originalImage) {
             this.ctxOriginal?.drawImage(this.originalImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
+        }
+        if (this.modifiableImage) {
             this.ctxModifiable?.drawImage(this.modifiableImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
         }
+        this.originalImage = undefined;
+        this.modifiableImage = undefined;
     }
     async createSameCanvas(): Promise<void> {
         if (this.originalImage) {
             this.ctxOriginal?.drawImage(this.originalImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
             this.ctxModifiable?.drawImage(this.originalImage, CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
         }
+        this.originalImage = undefined;
     }
     deleteOriginal(): void {
         this.ctxOriginal?.fillRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);

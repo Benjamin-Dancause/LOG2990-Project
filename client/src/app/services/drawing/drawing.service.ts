@@ -54,6 +54,7 @@ export class DrawingService {
         this.setActiveCanvas(canvas);
         this.isDrawing = true;
         this.lastPos = { x: event.offsetX, y: event.offsetY };
+        console.log(this.lastPos);
         if (this.currentCtx) {
             this.currentCtx.beginPath();
             this.currentCtx.lineWidth = this.currentRadius;
@@ -62,6 +63,7 @@ export class DrawingService {
         this.execute(event);
     }
     end(): void {
+        console.log(this.lastPos);
         this.isDrawing = false;
         this.printDrawing();
         this.currentCtx?.clearRect(CANVAS.CORNER, CANVAS.CORNER, this.currentCanvas.width, this.currentCanvas.height);
@@ -127,8 +129,10 @@ export class DrawingService {
             this.currentCtx.clearRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
             const width = event.offsetX - this.lastPos.x;
             const height = event.offsetY - this.lastPos.y;
-            const size = Math.min(width, height);
-            this.currentCtx.fillRect(this.lastPos.x, this.lastPos.y, size, size);
+            const size = Math.max(Math.abs(width), Math.abs(height));
+            const startX = width >= 0 ? this.lastPos.x : this.lastPos.x - size;
+            const startY = height >= 0 ? this.lastPos.y : this.lastPos.y - size;
+            this.currentCtx.fillRect(startX, startY, size, size);
         }
     }
     isSquare(): void {

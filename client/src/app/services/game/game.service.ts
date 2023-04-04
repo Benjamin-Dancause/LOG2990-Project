@@ -48,8 +48,8 @@ export class GameService {
     }
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
-        ctxs[0].fillStyle = 'blue';
-        ctxs[1].fillStyle = 'blue';
+        ctxs[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
+        ctxs[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
         const flash = setInterval(() => {
             for (const coordinate of coords) {
                 ctxs[0].fillRect(coordinate.x, coordinate.y, 1, 1);
@@ -85,8 +85,8 @@ export class GameService {
     }
 
     blinkAllDifferences(ctxs: CanvasRenderingContext2D[], gameData: GameDiffData) {
-        ctxs[2].fillStyle = 'blue';
-        ctxs[3].fillStyle = 'blue';
+        ctxs[2].fillStyle = 'rgba(255, 0, 255, 0.4)';
+        ctxs[3].fillStyle = 'rgba(255, 0, 255, 0.4)';
         let i = 0;
         const flash = setInterval(() => {
             for (const coordinate of gameData.differences) {
