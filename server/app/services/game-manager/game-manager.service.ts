@@ -22,6 +22,8 @@ export class GameManager {
             games.push(roomGameData);
         }
         this.roomIdToGameDifferences.set(roomId, games);
+
+        console.log(this.roomIdToGameDifferences.get(roomId));
     }
 
     verifyPosition(roomId: string, clickCoord: Coords): DifferenceInterface {
@@ -33,34 +35,36 @@ export class GameManager {
                 if (coord.x === clickCoord.x && coord.y === clickCoord.y) {
                     const differenceNumber = differences.indexOf(difference) + 1;
                     const coords = differences[differenceNumber - 1];
-                    differences.splice(differenceNumber - 1, 1);
-                    console.log('Finds difference');
-                    return { isDifference: true, differenceNumber, coords };
-                }
-            }
-        }
-        console.log('Doesnt find differences');
-        return { isDifference: false, differenceNumber: 0, coords: [] };
-    }
-
-    async verifyPos(name: string, clickCoord: Coords): Promise<DifferenceInterface> {
-        const infoPath = 'assets/data/gamesData.json';
-        const gamesContent = await fs.readFile(infoPath, 'utf-8').then((data) => JSON.parse(data));
-
-        const differences = await gamesContent.find((game) => game.name === name).differences;
-
-        for (const difference of differences) {
-            for (const coord of difference) {
-                if (coord.x === clickCoord.x && coord.y === clickCoord.y) {
-                    const differenceNumber = differences.indexOf(difference) + 1;
-                    const coords = differences[differenceNumber - 1];
-                    differences.splice(differenceNumber - 1, 1);
+                    //differences.splice(differenceNumber - 1, 1);
                     return { isDifference: true, differenceNumber, coords };
                 }
             }
         }
         return { isDifference: false, differenceNumber: 0, coords: [] };
     }
+
+    deleteRoomGameInfo(roomId: string) {
+        this.roomIdToGameDifferences.delete(roomId);
+    }
+
+    // async verifyPos(name: string, clickCoord: Coords): Promise<DifferenceInterface> {
+    //     const infoPath = 'assets/data/gamesData.json';
+    //     const gamesContent = await fs.readFile(infoPath, 'utf-8').then((data) => JSON.parse(data));
+
+    //     const differences = await gamesContent.find((game) => game.name === name).differences;
+
+    //     for (const difference of differences) {
+    //         for (const coord of difference) {
+    //             if (coord.x === clickCoord.x && coord.y === clickCoord.y) {
+    //                 const differenceNumber = differences.indexOf(difference) + 1;
+    //                 const coords = differences[differenceNumber - 1];
+    //                 differences.splice(differenceNumber - 1, 1);
+    //                 return { isDifference: true, differenceNumber, coords };
+    //             }
+    //         }
+    //     }
+    //     return { isDifference: false, differenceNumber: 0, coords: [] };
+    // }
 
     async getAllDifferences(name: string): Promise<GameDiffData> {
         const infoPath = 'assets/data/gamesData.json';

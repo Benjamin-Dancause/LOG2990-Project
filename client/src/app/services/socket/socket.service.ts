@@ -103,12 +103,16 @@ export class SocketService {
         this.socket.emit('reset-counter', player1);
     }
 
-    test(gameTitles: string[]) {
-        this.socket.emit('test', gameTitles);
+    initializeGame(gameTitles: string[]) {
+        this.socket.emit('initialize-game', gameTitles);
     }
 
     sendPosition(mousePosition: Coords) {
         this.socket.emit('verify-position', mousePosition);
+    }
+
+    deleteRoomGameInfo() {
+        this.socket.emit('delete-room-game-info');
     }
 
     disconnectSocket() {

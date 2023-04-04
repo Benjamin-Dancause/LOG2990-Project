@@ -40,6 +40,7 @@ export class GameService {
     }
 
     updateDifferences(response: ClickResponse) {
+        console.log('Difference number: ' + response.differenceNumber);
         this.differenceFound.push(response.differenceNumber);
         this.flashDifferences(response.coords, this.playAreaCtx);
         setTimeout(() => {
@@ -195,6 +196,8 @@ export class GameService {
             // });
         }
     }
+
+    initializeClickResponseListener() {}
 
     clearContexts(): void {
         this.playAreaCtx = [];
