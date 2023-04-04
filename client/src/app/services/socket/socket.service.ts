@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
+import { Coords } from '@common/game-interfaces';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
@@ -100,6 +101,14 @@ export class SocketService {
 
     resetCounter(player1: boolean) {
         this.socket.emit('reset-counter', player1);
+    }
+
+    test(gameTitles: string[]) {
+        this.socket.emit('test', gameTitles);
+    }
+
+    sendPosition(mousePosition: Coords) {
+        this.socket.emit('verify-position', mousePosition);
     }
 
     disconnectSocket() {

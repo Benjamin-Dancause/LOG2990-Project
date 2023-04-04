@@ -54,7 +54,6 @@ export class DrawingService {
         this.setActiveCanvas(canvas);
         this.isDrawing = true;
         this.lastPos = { x: event.offsetX, y: event.offsetY };
-        console.log(this.lastPos);
         if (this.currentCtx) {
             this.currentCtx.beginPath();
             this.currentCtx.lineWidth = this.currentRadius;
@@ -63,7 +62,6 @@ export class DrawingService {
         this.execute(event);
     }
     end(): void {
-        console.log(this.lastPos);
         this.isDrawing = false;
         this.printDrawing();
         this.currentCtx?.clearRect(CANVAS.CORNER, CANVAS.CORNER, this.currentCanvas.width, this.currentCanvas.height);

@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import { ClickResponse } from '@app/classes/click-response';
+import { Coords } from '@app/classes/coords';
 import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
+import { GameManager } from '@app/services/game-manager/game-manager.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
 import { CompleteGameInfo, GameInfo, Lobby, OneVsOneGameplayInfo } from '@common/game-interfaces';
@@ -26,6 +28,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         @Inject(forwardRef(() => TimerManagerService)) private readonly timerManager: TimerManagerService,
         @Inject(CounterManagerService) private readonly counterManager: CounterManagerService,
         @Inject(WaitingRoomManagerService) private readonly waitingRoomManager: WaitingRoomManagerService,
+        @Inject(GameManager) private readonly gameManager: GameManager,
     ) {}
 
     @SubscribeMessage('reset-timer')
@@ -276,5 +279,19 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
 
     emitTimeToRoom(roomId: string, time: number) {
         this.server.to(roomId).emit('timer', time);
+    }
+
+    @SubscribeMessage('test')
+    onTest(client: Socket, gameTitles: string[]) {
+        const roomId = [...client.rooms][1];
+        this.gameManager.loadGame(roomId, gameTitles);
+    }
+
+    @SubscribeMessage('verify-position')
+    onVerifyPosition(client: Socket, clickCoords: Coords) {
+        const roomId = [...client.rooms][1];
+        const clickResponse: ClickResponse = this.gameManager.verifyPosition(roomId, clickCoords);
+        console.log('gateWay verif:' + clickResponse);
+        this.server.to(client.id).emit('click-response', clickResponse);
     }
 }

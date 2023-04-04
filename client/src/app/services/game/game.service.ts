@@ -149,7 +149,10 @@ export class GameService {
 
             const mousePosition = { x: event.offsetX, y: event.offsetY };
 
-            this.communicationService.sendPosition(this.gameName, mousePosition).subscribe((response: ClickResponse) => {
+            this.socketService.socket.off('click-response');
+            this.socketService.sendPosition(mousePosition);
+            this.socketService.socket.on('click-response', (response: ClickResponse) => {
+                console.log('Response:' + response.isDifference);
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.successMessage.emit('Trouvé');
                     context.fillStyle = 'green';
@@ -169,6 +172,27 @@ export class GameService {
                     }, DELAY.SMALLTIMEOUT);
                 }
             });
+
+            // this.communicationService.sendPosition(this.gameName, mousePosition).subscribe((response: ClickResponse) => {
+            //     if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
+            //         this.successMessage.emit('Trouvé');
+            //         context.fillStyle = 'green';
+            //         context.fillText('Trouvé', mousePosition.x, mousePosition.y);
+            //         this.socketService.sendDifferenceFound(response);
+            //         this.incrementCounter();
+            //         this.playSuccessSound();
+            //     } else {
+            //         this.errorMessage.emit('Erreur par le joueur');
+            //         context.fillStyle = 'red';
+            //         context.fillText('Erreur', mousePosition.x, mousePosition.y);
+            //         this.playErrorSound();
+            //         this.isClickDisabled = true;
+            //         setTimeout(() => {
+            //             context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+            //             this.isClickDisabled = false;
+            //         }, DELAY.SMALLTIMEOUT);
+            //     }
+            // });
         }
     }
 

@@ -26,6 +26,10 @@ export class GamePageComponent implements OnInit {
         this.socketService.soloGame();
     }
 
+    test() {
+        this.socketService.test(['Monkey', 'Corporate']);
+    }
+
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngAfterViewInit() {
         this.socketService.socket.on('send-victorious-player', () => {
