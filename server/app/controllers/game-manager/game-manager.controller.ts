@@ -12,7 +12,7 @@ export class GameManagerController {
         description: 'Position of click',
     })
     async checkPos(@Body() body: { name: string; coords: Coords }) {
-        return await this.gameManager.verifyPos(body.name, body.coords);
+        return await this.gameManager.verifyPosition(body.name, body.coords);
     }
 
     @Post('/findAll')
