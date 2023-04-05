@@ -29,6 +29,7 @@ import { ConfigPageComponent } from './pages/config-page-component/config-page-c
 import { CreatePageComponent } from './pages/create-page/create-page.component';
 import { GameOneVsOnePageComponent } from './pages/game-one-vs-one-page/game-one-vs-one-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
+import { WaitingRoomLimitedPageComponent } from './pages/waiting-room-limited-page/waiting-room-limited-page.component';
 import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room-page.component';
 
 /**
@@ -65,6 +66,7 @@ import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room
         DrawingToolsComponent,
         TextBoxComponent,
         WaitingRoomPageComponent,
+        WaitingRoomLimitedPageComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],
