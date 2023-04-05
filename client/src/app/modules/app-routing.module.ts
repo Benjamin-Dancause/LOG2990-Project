@@ -6,6 +6,7 @@ import { GameOneVsOnePageComponent } from '@app/pages/game-one-vs-one-page/game-
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { GameSelectionPageComponent } from '@app/pages/game-selection-page-component/game-selection-page-component.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
+import { WaitingRoomLimitedPageComponent } from '@app/pages/waiting-room-limited-page/waiting-room-limited-page.component';
 import { WaitingRoomPageComponent } from '@app/pages/waiting-room-page/waiting-room-page.component';
 
 const routes: Routes = [
@@ -17,6 +18,7 @@ const routes: Routes = [
     { path: 'game-selection', component: GameSelectionPageComponent },
     { path: 'config', component: ConfigPageComponent },
     { path: 'waitingRoom', component: WaitingRoomPageComponent },
+    { path: 'waitingRoom-limited', component: WaitingRoomLimitedPageComponent },
     { path: '**', redirectTo: '/home' },
 ];
 
