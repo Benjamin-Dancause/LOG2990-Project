@@ -18,7 +18,12 @@ export class GameManager {
         const games: RoomGameData[] = [];
         for (let title of gameTitles) {
             const currentGameData = await allGames.find((game) => game.name === title);
-            const roomGameData: RoomGameData = { name: currentGameData.name, count: currentGameData.count, differences: currentGameData.differences };
+            const roomGameData: RoomGameData = {
+                name: currentGameData.name,
+                count: currentGameData.count,
+                differences: currentGameData.differences,
+                images: currentGameData.images,
+            };
             games.push(roomGameData);
         }
         this.roomIdToGameDifferences.set(roomId, games);
@@ -41,6 +46,21 @@ export class GameManager {
             }
         }
         return { isDifference: false, differenceNumber: 0, coords: [] };
+    }
+    switchGame(roomId: string): string[] {
+        this.switchData(roomId);
+        return this.switchImages(roomId);
+    }
+
+    switchData(roomId: string): void {
+        const currentGames = this.roomIdToGameDifferences.get(roomId);
+        currentGames.splice(0, 1);
+        this.roomIdToGameDifferences.set(roomId, currentGames);
+    }
+
+    switchImages(roomId: string): string[] {
+        const currentGame = this.roomIdToGameDifferences.get(roomId)[0];
+        return currentGame.images;
     }
 
     deleteRoomGameInfo(roomId: string) {
