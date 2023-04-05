@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
+import { Coords } from '@common/game-interfaces';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
@@ -18,8 +19,8 @@ export class SocketService {
         this.socket = io(this.baseUrl);
     }
 
-    soloGame(): void {
-        this.socket.emit('solo-game');
+    soloGame(gameMode: string): void {
+        this.socket.emit('solo-game', gameMode);
     }
 
     oneVsOne(): void {
@@ -62,8 +63,8 @@ export class SocketService {
         this.socket.emit('get-OneVsOne-info', gameTitle);
     }
 
-    initOneVsOneComponents(player1: boolean) {
-        this.socket.emit('init-OneVsOne-components', player1);
+    initOneVsOneComponents(player1: boolean, gameMode: string) {
+        this.socket.emit('init-OneVsOne-components', { player1: player1, gameMode: gameMode });
     }
 
     sendDifferenceFound(response: ClickResponse) {
@@ -100,6 +101,22 @@ export class SocketService {
 
     resetCounter(player1: boolean) {
         this.socket.emit('reset-counter', player1);
+    }
+
+    initializeGame(gameTitles: string[]) {
+        this.socket.emit('initialize-game', gameTitles);
+    }
+
+    sendPosition(mousePosition: Coords) {
+        this.socket.emit('verify-position', mousePosition);
+    }
+
+    deleteRoomGameInfo() {
+        this.socket.emit('delete-room-game-info');
+    }
+
+    addToTimer() {
+        this.socket.emit('add-to-timer', 10);
     }
 
     disconnectSocket() {

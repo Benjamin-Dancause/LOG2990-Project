@@ -28,6 +28,9 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
         this.userName = sessionStorage.getItem('userName') as string;
         this.player1 = this.isPlayer1();
+        if (this.player1) {
+            this.socketService.initializeGame([this.gameTitle]);
+        }
     }
 
     ngAfterViewInit() {
@@ -44,6 +47,9 @@ export class GameOneVsOnePageComponent implements AfterViewInit {
                     this.winningPlayer = sessionStorage.getItem('gameMaster') as string;
                 }
                 this.showPopup = true;
+            }
+            if (this.player1) {
+                this.socketService.deleteRoomGameInfo();
             }
         });
 

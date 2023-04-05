@@ -59,3 +59,9 @@ export interface DifferenceInterface {
     differenceNumber: number;
     coords: Coords[];
 }
+
+export interface RoomGameData {
+    name: string;
+    count: number;
+    differences: Coords[][];
+}

@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import { ClickResponse } from '@app/classes/click-response';
+import { Coords } from '@app/classes/coords';
 import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
+import { GameManager } from '@app/services/game-manager/game-manager.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
 import { CompleteGameInfo, GameInfo, Lobby, OneVsOneGameplayInfo } from '@common/game-interfaces';
@@ -26,6 +28,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         @Inject(forwardRef(() => TimerManagerService)) private readonly timerManager: TimerManagerService,
         @Inject(CounterManagerService) private readonly counterManager: CounterManagerService,
         @Inject(WaitingRoomManagerService) private readonly waitingRoomManager: WaitingRoomManagerService,
+        @Inject(GameManager) private readonly gameManager: GameManager,
     ) {}
 
     @SubscribeMessage('reset-timer')
@@ -41,11 +44,11 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @SubscribeMessage('init-OneVsOne-components')
-    onInitOneVsOneComponents(client: Socket, player1: boolean) {
+    onInitOneVsOneComponents(client: Socket, lobbyInfo: { player1: boolean; gameMode: string }) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            if (player1) {
-                this.timerManager.startTimer(roomId);
+            if (lobbyInfo.player1) {
+                this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
                 this.counterManager.startCounter(roomId + '_player1');
             } else {
                 this.counterManager.startCounter(roomId + '_player2');
@@ -54,13 +57,21 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @SubscribeMessage('solo-game')
-    onSoloGame(client: Socket) {
+    onSoloGame(client: Socket, gameMode: string) {
         const roomId = randomUUID();
         this.socketIdToRoomId[client.id] = roomId;
         if (roomId) {
             client.join(roomId);
-            this.timerManager.startTimer(roomId);
+            this.timerManager.startTimer(roomId, gameMode);
             this.counterManager.startCounter(roomId + '_player1');
+        }
+    }
+
+    @SubscribeMessage('add-to-timer')
+    onAddToTimer(client: Socket, increment: number) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            this.timerManager.addToTimer(roomId, increment);
         }
     }
 
@@ -276,5 +287,25 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
 
     emitTimeToRoom(roomId: string, time: number) {
         this.server.to(roomId).emit('timer', time);
+    }
+
+    @SubscribeMessage('initialize-game')
+    onInitializeGame(client: Socket, gameTitles: string[]) {
+        const roomId = [...client.rooms][1];
+        this.gameManager.loadGame(roomId, gameTitles);
+    }
+
+    @SubscribeMessage('delete-room-game-info')
+    onDeleteRoomGameInfo(client: Socket) {
+        const roomId = [...client.rooms][1];
+        this.gameManager.deleteRoomGameInfo(roomId);
+    }
+
+    @SubscribeMessage('verify-position')
+    onVerifyPosition(client: Socket, clickCoords: Coords) {
+        const roomId = [...client.rooms][1];
+        const clickResponse: ClickResponse = this.gameManager.verifyPosition(roomId, clickCoords);
+        console.log('gateWay verif:' + clickResponse);
+        this.server.to(client.id).emit('click-response', clickResponse);
     }
 }
