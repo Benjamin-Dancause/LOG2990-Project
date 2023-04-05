@@ -26,7 +26,6 @@ export class MainPageComponent {
     saveUserName(): void {
         sessionStorage.setItem('userName', this.userName);
         sessionStorage.setItem('gameMode', 'tl');
-        sessionStorage.setItem('gameTitle', 'Monkey');
         this.socketService.initializeSocket();
     }
 }

@@ -86,6 +86,8 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     async initCanvases() {
+        this.game.clearContexts();
+        console.log(this.game.playAreaCtx.length);
         const img1 = new Image();
         img1.setAttribute('crossOrigin', 'anonymous');
         img1.src = this.imageLeftStr;
@@ -115,20 +117,34 @@ export class PlayAreaComponent implements AfterViewInit {
             this.socketService.initOneVsOneComponents(this.player1, gameMode);
         });
 
+        // this.socketService.socket.on('images', (game) => {
+        //     this.imageLeftStr = this.serverURL + '/' + game.images[0];
+        //     this.imageRightStr = this.serverURL + '/' + game.images[1];
+        //     this.initCanvases();
+        // });
+
+        this.socketService.socket.on('switch-images', (newImages: string[]) => {
+            this.imageLeftStr = this.serverURL + '/' + newImages[0];
+            this.imageRightStr = this.serverURL + '/' + newImages[1];
+            console.log('CALLS INIT CANVASES');
+            this.initCanvases();
+        });
+
         if ((sessionStorage.getItem('gameMode') as string) === '1v1') {
             this.socketService.assignPlayerInfo(this.gameName);
         }
 
-        this.communicationService.getGameByName(this.gameName).subscribe((game) => {
-            this.imageLeftStr = this.serverURL + '/' + game.images[0];
-            this.imageRightStr = this.serverURL + '/' + game.images[1];
-            this.initCanvases();
-        });
+        // this.communicationService.getGameByName(this.gameName).subscribe((game) => {
+        //     this.imageLeftStr = this.serverURL + '/' + game.images[0];
+        //     this.imageRightStr = this.serverURL + '/' + game.images[1];
+        //     this.initCanvases();
+        // });
     }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy(): void {
         this.game.clearContexts();
         this.game.clearDifferenceArray();
+        this.socketService.disconnectSocket();
     }
 }

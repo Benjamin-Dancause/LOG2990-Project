@@ -3,6 +3,7 @@ import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
 import { GameManager } from '@app/services/game-manager/game-manager.service';
+import { StoreService } from '@app/services/store/store.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
 import { CompleteGameInfo, GameInfo, Lobby, OneVsOneGameplayInfo } from '@common/game-interfaces';
@@ -29,6 +30,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         @Inject(CounterManagerService) private readonly counterManager: CounterManagerService,
         @Inject(WaitingRoomManagerService) private readonly waitingRoomManager: WaitingRoomManagerService,
         @Inject(GameManager) private readonly gameManager: GameManager,
+        @Inject(StoreService) private readonly storeService: StoreService,
     ) {}
 
     @SubscribeMessage('reset-timer')
@@ -39,7 +41,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
 
     @SubscribeMessage('start-OneVsOne')
     onStartOneVsOne(client: Socket) {
-        const roomId = this.socketIdToRoomId[client.id];
+        const roomId = [...client.rooms][1];
         this.server.to(roomId).emit('redirectToGame', '/gameOneVsOne');
     }
 
@@ -59,7 +61,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     @SubscribeMessage('solo-game')
     onSoloGame(client: Socket, gameMode: string) {
         const roomId = randomUUID();
-        this.socketIdToRoomId[client.id] = roomId;
         if (roomId) {
             client.join(roomId);
             this.timerManager.startTimer(roomId, gameMode);
@@ -298,15 +299,25 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @SubscribeMessage('initialize-game')
-    onInitializeGame(client: Socket, gameTitles: string[]) {
+    async onInitializeGame(client: Socket, gameTitles: string[]) {
         const roomId = [...client.rooms][1];
-        this.gameManager.loadGame(roomId, gameTitles);
+        const images = await this.gameManager.loadGame(roomId, gameTitles);
+        this.server.to(roomId).emit('switch-images', images);
     }
 
     @SubscribeMessage('delete-room-game-info')
     onDeleteRoomGameInfo(client: Socket) {
         const roomId = [...client.rooms][1];
         this.gameManager.deleteRoomGameInfo(roomId);
+    }
+
+    @SubscribeMessage('switch-game')
+    onSwitchGame(client: Socket) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            const newImages: string[] = this.gameManager.switchGame(roomId);
+            this.server.to(roomId).emit('switch-images', newImages);
+        }
     }
 
     @SubscribeMessage('verify-position')

@@ -12,7 +12,7 @@ export class GameManager {
         return gameData.count;
     }
 
-    async loadGame(roomId: string, gameTitles: string[]): Promise<void> {
+    async loadGame(roomId: string, gameTitles: string[]): Promise<string[]> {
         const infoPath = 'assets/data/gamesData.json';
         const allGames = await fs.readFile(infoPath, 'utf-8').then((data) => JSON.parse(data));
         const games: RoomGameData[] = [];
@@ -29,6 +29,8 @@ export class GameManager {
         this.roomIdToGameDifferences.set(roomId, games);
 
         console.log(this.roomIdToGameDifferences.get(roomId));
+
+        return this.switchImages(roomId);
     }
 
     verifyPosition(roomId: string, clickCoord: Coords): DifferenceInterface {
@@ -92,7 +94,6 @@ export class GameManager {
 
         // eslint-disable-next-line @typescript-eslint/no-shadow
         const game = await gamesContent.find((game) => game.name === name);
-
-        return { id: game.id, count: game.count, differences: game.differences };
+        return { id: 0, count: game.count, differences: game.differences };
     }
 }

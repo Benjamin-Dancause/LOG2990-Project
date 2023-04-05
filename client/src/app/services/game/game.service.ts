@@ -25,7 +25,7 @@ export class GameService {
     private isCheatEnabled = false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private cheatTimeout: any;
-    private playAreaCtx: CanvasRenderingContext2D[] = [];
+    public playAreaCtx: CanvasRenderingContext2D[] = [];
 
     constructor(private communicationService: CommunicationService, private counterService: CounterService, private socketService: SocketService) {
         this.socketService.socket.on('update-difference', (response: ClickResponse) => {
@@ -49,6 +49,7 @@ export class GameService {
     }
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
+        console.log('Contexts length: ' + this.playAreaCtx.length);
         ctxs[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
         ctxs[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
         const flash = setInterval(() => {
@@ -160,10 +161,14 @@ export class GameService {
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.socketService.sendDifferenceFound(response);
                     if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
+                        this.socketService.switchGame();
                         this.socketService.addToTimer();
                     }
                     this.incrementCounter();
                     this.playSuccessSound();
+                    setTimeout(() => {
+                        context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+                    }, DELAY.SMALLTIMEOUT);
                 } else {
                     this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
