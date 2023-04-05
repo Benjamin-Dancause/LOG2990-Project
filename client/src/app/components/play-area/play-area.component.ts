@@ -122,7 +122,7 @@ export class PlayAreaComponent implements AfterViewInit {
         //     this.imageRightStr = this.serverURL + '/' + game.images[1];
         //     this.initCanvases();
         // });
-
+        this.socketService.socket.off('switch-images');
         this.socketService.socket.on('switch-images', (newImages: string[]) => {
             this.imageLeftStr = this.serverURL + '/' + newImages[0];
             this.imageRightStr = this.serverURL + '/' + newImages[1];

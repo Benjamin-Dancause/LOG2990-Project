@@ -19,13 +19,13 @@ export class MainPageComponent {
     constructor(public dialog: MatDialog, public socketService: SocketService) {}
 
     gamemodeSelection(): void {
+        sessionStorage.setItem('gameMode', 'tl');
         this.dialog.open(this.gamemodeSelectionTemplate, {
             width: '410px',
         });
     }
     saveUserName(): void {
         sessionStorage.setItem('userName', this.userName);
-        sessionStorage.setItem('gameMode', 'tl');
         this.socketService.initializeSocket();
     }
 }

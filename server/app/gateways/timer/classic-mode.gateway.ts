@@ -300,6 +300,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
 
     @SubscribeMessage('initialize-game')
     async onInitializeGame(client: Socket, gameTitles: string[]) {
+        console.log('initialize-game');
         const roomId = [...client.rooms][1];
         const images = await this.gameManager.loadGame(roomId, gameTitles);
         this.server.to(roomId).emit('switch-images', images);

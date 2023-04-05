@@ -41,11 +41,15 @@ export class GameService {
 
     updateDifferences(response: ClickResponse) {
         console.log('Difference number: ' + response.differenceNumber);
-        this.differenceFound.push(response.differenceNumber);
         this.flashDifferences(response.coords, this.playAreaCtx);
-        setTimeout(() => {
-            this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
-        }, DELAY.BIGTIMEOUT);
+        if ((sessionStorage.getItem('gameMode') as string) !== 'tl') {
+            this.differenceFound.push(response.differenceNumber);
+            setTimeout(() => {
+                this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
+            }, DELAY.BIGTIMEOUT);
+        } else {
+            this.socketService.addToTimer();
+        }
     }
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
@@ -65,6 +69,9 @@ export class GameService {
 
         setTimeout(() => {
             clearInterval(flash);
+            if ((sessionStorage.getItem('gameMode') as string) === 'tl') {
+                this.socketService.switchGame();
+            }
         }, 1000);
     }
 
@@ -160,10 +167,11 @@ export class GameService {
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.socketService.sendDifferenceFound(response);
-                    if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
-                        this.socketService.switchGame();
-                        this.socketService.addToTimer();
-                    }
+                    // if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
+                    // this.socketService.switchGame();
+                    // this.socketService.addToTimer();
+                    //     console.log('differenceFound: ' + this.differenceFound);
+                    // }
                     this.incrementCounter();
                     this.playSuccessSound();
                     setTimeout(() => {
@@ -211,7 +219,7 @@ export class GameService {
     initializeClickResponseListener() {}
 
     clearContexts(): void {
-        this.playAreaCtx = [];
+        this.playAreaCtx.length = 0;
     }
 
     clearDifferenceArray() {
