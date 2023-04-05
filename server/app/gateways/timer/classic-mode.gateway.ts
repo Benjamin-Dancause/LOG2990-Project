@@ -75,6 +75,14 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         }
     }
 
+    @SubscribeMessage('remove-to-timer')
+    onRemoveToTimer(client: Socket, decrement: number) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            this.timerManager.removeToTimer(roomId, decrement);
+        }
+    }
+
     @SubscribeMessage('leave-game')
     onLeaveGame(client: Socket) {
         const roomId = [...client.rooms][1];
@@ -305,7 +313,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onVerifyPosition(client: Socket, clickCoords: Coords) {
         const roomId = [...client.rooms][1];
         const clickResponse: ClickResponse = this.gameManager.verifyPosition(roomId, clickCoords);
-        console.log('gateWay verif:' + clickResponse);
         this.server.to(client.id).emit('click-response', clickResponse);
     }
 }

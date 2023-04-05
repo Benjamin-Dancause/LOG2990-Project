@@ -159,6 +159,9 @@ export class GameService {
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.socketService.sendDifferenceFound(response);
+                    if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
+                        this.socketService.addToTimer();
+                    }
                     this.incrementCounter();
                     this.playSuccessSound();
                 } else {
@@ -166,6 +169,9 @@ export class GameService {
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
                     this.playErrorSound();
+                    if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
+                        this.socketService.removeToTimer();
+                    }
                     this.isClickDisabled = true;
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);

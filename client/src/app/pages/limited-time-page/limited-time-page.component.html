@@ -1,0 +1,22 @@
+<div class="container">
+    <section class="play-area-container">
+        <app-top-bar name="Nom de la fiche" [single]="true"></app-top-bar>
+        <app-play-area class="play-area" tabindex="0"></app-play-area>
+        <app-give-up-button text="Abandonner"></app-give-up-button>
+    </section>
+    <app-sidebar difficulty="Facile" mode="Classique" total="5" penalty="5" [solo]="true"></app-sidebar>
+</div>
+
+<div class="popup-overlay" [style.display]="showPopup ? 'block' : 'none'">
+    <div id="winningPopup" class="popup" [style.display]="showPopup ? 'block' : 'none'">
+        <div class="popup-content">
+            <h2>La Partie est terminée!</h2>
+            <p>Vous avez trouvé: {{counterService.counter}} différences.</p>
+            <img
+                src="https://img.freepik.com/free-vector/congratulations-lettering-with-balloon-confetti_157027-208.jpg?w=1380&t=st=1675722717~exp=1675723317~hmac=4626b75cdc84caa569fbd63dc464074a456397097df109324a37f8c3c69f5e60"
+                alt="Winner"
+            />
+            <button id="returnBtn" routerLink="/home" (click)="returnToMainMenu()">RETOURNER AU MENU PRINCIPAL</button>
+        </div>
+    </div>
+</div>

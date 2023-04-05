@@ -49,9 +49,9 @@ export class CounterService {
 
     setWinCondition(gameMode: string, gameTitle: string) {
         this.allDiffsSubscription = this.communicationService.getDiffAmount(gameTitle).subscribe((totalDiff: number) => {
-            if (gameMode !== 'solo') {
+            if (gameMode === '1v1') {
                 this.winCondition = Math.ceil(totalDiff / 2);
-            } else {
+            } else if (gameMode === 'solo') {
                 this.winCondition = totalDiff;
             }
         });

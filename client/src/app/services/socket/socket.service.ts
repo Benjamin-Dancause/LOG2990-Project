@@ -119,6 +119,10 @@ export class SocketService {
         this.socket.emit('add-to-timer', 10);
     }
 
+    removeToTimer() {
+        this.socket.emit('remove-to-timer', 5);
+    }
+
     disconnectSocket() {
         if (this.socket) {
             this.socket.disconnect();

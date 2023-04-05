@@ -1,5 +1,6 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { SocketService } from '@app/services/socket/socket.service';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -15,7 +16,7 @@ export class MainPageComponent {
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
     userName: string;
 
-    constructor(public dialog: MatDialog) {}
+    constructor(public dialog: MatDialog, public socketService: SocketService) {}
 
     gamemodeSelection(): void {
         this.dialog.open(this.gamemodeSelectionTemplate, {
@@ -24,5 +25,8 @@ export class MainPageComponent {
     }
     saveUserName(): void {
         sessionStorage.setItem('userName', this.userName);
+        sessionStorage.setItem('gameMode', 'tl');
+        sessionStorage.setItem('gameTitle', 'Monkey');
+        this.socketService.initializeSocket();
     }
 }

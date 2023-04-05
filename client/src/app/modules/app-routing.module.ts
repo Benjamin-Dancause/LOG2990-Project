@@ -5,6 +5,7 @@ import { CreatePageComponent } from '@app/pages/create-page/create-page.componen
 import { GameOneVsOnePageComponent } from '@app/pages/game-one-vs-one-page/game-one-vs-one-page.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { GameSelectionPageComponent } from '@app/pages/game-selection-page-component/game-selection-page-component.component';
+import { LimitedTimePageComponent } from '@app/pages/limited-time-page/limited-time-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { WaitingRoomLimitedPageComponent } from '@app/pages/waiting-room-limited-page/waiting-room-limited-page.component';
 import { WaitingRoomPageComponent } from '@app/pages/waiting-room-page/waiting-room-page.component';
@@ -14,6 +15,7 @@ const routes: Routes = [
     { path: 'home', component: MainPageComponent },
     { path: 'game', component: GamePageComponent },
     { path: 'gameOneVsOne', component: GameOneVsOnePageComponent },
+    { path: 'limited-time', component: LimitedTimePageComponent },
     { path: 'create', component: CreatePageComponent },
     { path: 'game-selection', component: GameSelectionPageComponent },
     { path: 'config', component: ConfigPageComponent },

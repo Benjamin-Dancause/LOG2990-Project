@@ -37,6 +37,14 @@ export class TimerManagerService {
         this.classicModeGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
     }
 
+    removeToTimer(roomId: string, decrement: number) {
+        this.timers.set(roomId, this.timers.get(roomId) - decrement);
+        if (this.timers.get(roomId) <= 0) {
+            this.timers.set(roomId, 0);
+        }
+        this.classicModeGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
+    }
+
     getTimeFromRoom(roomId: string, gameMode: string): number {
         if (gameMode === 'tl') {
             return this.timers.get(roomId) || 60;

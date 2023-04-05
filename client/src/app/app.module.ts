@@ -31,6 +31,7 @@ import { GameOneVsOnePageComponent } from './pages/game-one-vs-one-page/game-one
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
 import { WaitingRoomLimitedPageComponent } from './pages/waiting-room-limited-page/waiting-room-limited-page.component';
 import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room-page.component';
+import { LimitedTimePageComponent } from './pages/limited-time-page/limited-time-page.component';
 
 /**
  * Main module that is used in main.ts.
@@ -67,6 +68,7 @@ import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room
         TextBoxComponent,
         WaitingRoomPageComponent,
         WaitingRoomLimitedPageComponent,
+        LimitedTimePageComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],
