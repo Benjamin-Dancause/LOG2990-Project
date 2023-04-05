@@ -23,7 +23,8 @@ export class GamePageComponent implements OnInit {
     ngOnInit() {
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
         this.userName = sessionStorage.getItem('userName') as string;
-        this.socketService.soloGame();
+        const gameMode = sessionStorage.getItem('gameMode') as string;
+        this.socketService.soloGame(gameMode);
         this.socketService.initializeGame([this.gameTitle]);
     }
 

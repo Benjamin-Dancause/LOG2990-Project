@@ -111,7 +111,8 @@ export class PlayAreaComponent implements AfterViewInit {
     ngAfterViewInit(): void {
         this.socketService.socket.on('player-info', (gameplayInfo: OneVsOneGameplayInfo) => {
             this.player1 = gameplayInfo.player1;
-            this.socketService.initOneVsOneComponents(this.player1);
+            const gameMode = sessionStorage.getItem('gameMode') as string;
+            this.socketService.initOneVsOneComponents(this.player1, gameMode);
         });
 
         if ((sessionStorage.getItem('gameMode') as string) === '1v1') {
