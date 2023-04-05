@@ -44,11 +44,11 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @SubscribeMessage('init-OneVsOne-components')
-    onInitOneVsOneComponents(client: Socket, player1: boolean) {
+    onInitOneVsOneComponents(client: Socket, lobbyInfo: { player1: boolean; gameMode: string }) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            if (player1) {
-                this.timerManager.startTimer(roomId);
+            if (lobbyInfo.player1) {
+                this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
                 this.counterManager.startCounter(roomId + '_player1');
             } else {
                 this.counterManager.startCounter(roomId + '_player2');
@@ -57,13 +57,21 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @SubscribeMessage('solo-game')
-    onSoloGame(client: Socket) {
+    onSoloGame(client: Socket, gameMode: string) {
         const roomId = randomUUID();
         this.socketIdToRoomId[client.id] = roomId;
         if (roomId) {
             client.join(roomId);
-            this.timerManager.startTimer(roomId);
+            this.timerManager.startTimer(roomId, gameMode);
             this.counterManager.startCounter(roomId + '_player1');
+        }
+    }
+
+    @SubscribeMessage('add-to-timer')
+    onAddToTimer(client: Socket, increment: number) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            this.timerManager.addToTimer(roomId, increment);
         }
     }
 
@@ -282,7 +290,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @SubscribeMessage('initialize-game')
-    onTest(client: Socket, gameTitles: string[]) {
+    onInitializeGame(client: Socket, gameTitles: string[]) {
         const roomId = [...client.rooms][1];
         this.gameManager.loadGame(roomId, gameTitles);
     }
