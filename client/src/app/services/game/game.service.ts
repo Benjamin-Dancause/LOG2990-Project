@@ -128,7 +128,45 @@ export class GameService {
                 (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
             );
             if (firstDifference) {
-                this.blinkDifference1(ctxs, firstDifference);
+                const coords = firstDifference;
+                const ctx = ctxs[2];
+                const quarterWidth = Math.round(CANVAS.WIDTH / 4);
+                const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
+                let minX = Number.MAX_VALUE;
+                let minY = Number.MAX_VALUE;
+                let maxX = Number.MIN_VALUE;
+                let maxY = Number.MIN_VALUE;
+                for (const coord of coords) {
+                    if (coord.x < minX) {
+                        minX = coord.x;
+                    }
+                    if (coord.y < minY) {
+                        minY = coord.y;
+                    }
+                    if (coord.x > maxX) {
+                        maxX = coord.x;
+                    }
+                    if (coord.y > maxY) {
+                        maxY = coord.y;
+                    }
+                }
+                const centerX = Math.round((minX + maxX) / 2);
+                const centerY = Math.round((minY + maxY) / 2);
+                const x = centerX <= CANVAS.WIDTH / 2 ? 0 : CANVAS.WIDTH - quarterWidth * 2;
+                const y = centerY <= CANVAS.HEIGHT / 2 ? 0 : CANVAS.HEIGHT - quarterHeight * 2;
+
+                const width = Math.min(quarterWidth * 2, CANVAS.WIDTH - x);
+                const height = Math.min(quarterHeight * 2, CANVAS.HEIGHT - y);
+                ctx.fillStyle = 'yellow';
+                const flash = setInterval(() => {
+                    ctx.fillRect(x, y, width, height);
+                    setTimeout(() => {
+                        ctx.clearRect(x, y, width, height);
+                    }, 100);
+                }, 200);
+                setTimeout(() => {
+                    clearInterval(flash);
+                }, 1000);
             }
         });
     }
