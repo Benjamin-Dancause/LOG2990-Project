@@ -1,5 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { GameOneVsOnePageComponent } from '@app/pages/game-one-vs-one-page/game-one-vs-one-page.component';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameService } from '@app/services/game/game.service';
 import { SocketService } from '@app/services/socket/socket.service';
@@ -24,11 +25,13 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     gameMode: string = '';
     successSubscription: Subscription;
     errorSubscription: Subscription;
+    recordSubscription: Subscription;
 
-    constructor(public gameService: GameService, public socketService: SocketService) {
+    constructor(public gameService: GameService, public socketService: SocketService, public gamePageComponent: GameOneVsOnePageComponent) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
         this.successSubscription = new Subscription();
+        this.recordSubscription = new Subscription();
     }
 
     ngOnInit(): void {
@@ -55,6 +58,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.socketService.socket.on('player-success', (name: string) => {
                 this.writeSuccessMessage(name);
             });
+            this.socketService.socket.on('new-record', (name: string) => {
+                this.writeNewRecordMessage(name);
+            });
 
             this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
                 this.socketService.sendPlayerError(this.userName);
@@ -62,12 +68,18 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.socketService.sendPlayerSuccess(this.userName);
             });
+            this.recordSubscription = this.socketService.recordMessage.subscribe(() => {
+                this.socketService.sendNewRecord(this.userName);
+            });
         } else {
             this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
                 this.writeErrorMessage(this.userName);
             });
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.writeSuccessMessage(this.userName);
+            });
+            this.recordSubscription = this.socketService.recordMessage.subscribe(() => {
+                this.writeNewRecordMessage(this.userName);
             });
         }
     }
@@ -135,6 +147,11 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         if (this.gameMode !== 'solo') {
             systemMessage += ` par ${name}`;
         }
+        this.addSystemMessage(systemMessage);
+    }
+
+    writeNewRecordMessage(name: string) {
+        let systemMessage = `${this.getTimestamp()} - ${name} obtient la POSITION place dans les meilleurs temps du jeu ${name} en ${this.gameMode}`;
         this.addSystemMessage(systemMessage);
     }
 

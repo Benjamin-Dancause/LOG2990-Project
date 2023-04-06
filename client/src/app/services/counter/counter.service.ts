@@ -28,6 +28,7 @@ export class CounterService {
             if (!(this.gameMode === 'solo') && isPlayer1 !== counterInfo.player1) {
                 this.counter2 = counterInfo.counter;
             } else {
+
                 this.counter = counterInfo.counter;
             }
 

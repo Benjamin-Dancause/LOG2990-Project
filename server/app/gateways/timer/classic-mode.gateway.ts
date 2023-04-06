@@ -159,6 +159,17 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         }
     }
 
+    @SubscribeMessage('send-new-record')
+    onNewRecordSet(client: Socket, name: string) {
+        let roomId;
+        for(roomId of this.roomIdToPlayerSockets){
+            //const roomId = [...client.rooms][1];
+            if (roomId) {
+                this.server.to(roomId).emit('new-record', name);
+            }   
+        };
+    }
+
     @SubscribeMessage('reject-player')
     onRejectPlayer(client: Socket, lobby: Lobby) {
         const roomId = this.socketIdToRoomId[client.id];
@@ -271,6 +282,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
             this.timerManager.deleteTimerData(roomId);
             this.counterManager.deleteCounterData(roomId);
             this.waitingRoomManager.deleteLobbyInfo(roomId);
+            this.roomIdToPlayerSockets.delete(roomId);
         }
     }
 
