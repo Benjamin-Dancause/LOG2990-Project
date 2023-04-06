@@ -36,6 +36,7 @@ export class PlayAreaComponent implements AfterViewInit {
 
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
+    isHintModeEnabled = false;
     isCheatEnabled = false;
 
     imageLeftStr: string = '';
@@ -49,6 +50,9 @@ export class PlayAreaComponent implements AfterViewInit {
 
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+
+    private hintModeCount = 0;
+    private hintModeTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
     // eslint-disable-next-line max-params
     constructor(
@@ -83,6 +87,38 @@ export class PlayAreaComponent implements AfterViewInit {
         this.isCheatEnabled = !this.isCheatEnabled;
         const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
         this.game.cheatMode(ctxs);
+    }
+
+    @HostListener('document:keydown.i', ['$event'])
+    onHintKeyDown(event: KeyboardEvent) {
+        if (event.target instanceof HTMLInputElement) {
+            return;
+        }
+
+        if (this.hintModeTimeoutId !== null) {
+            clearTimeout(this.hintModeTimeoutId);
+        }
+
+        switch (this.hintModeCount) {
+            case 0: {
+                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+                this.game.hintMode1(ctxs);
+                this.hintModeCount++;
+                break;
+            }
+            case 1: {
+                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+                this.game.hintMode2(ctxs);
+                this.hintModeCount++;
+                break;
+            }
+            case 2: {
+                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+                this.game.hintMode3(ctxs);
+                this.hintModeCount++;
+                break;
+            }
+        }
     }
 
     async initCanvases() {
