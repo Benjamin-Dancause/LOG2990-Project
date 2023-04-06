@@ -18,6 +18,7 @@ import { CreateImageComponent } from './components/create-image/create-image.com
 import { DrawingToolsComponent } from './components/drawing-tools/drawing-tools.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { GiveUpButtonComponent } from './components/give-up-button/give-up-button.component';
+import { HintsComponent } from './components/hints/hints.component';
 import { HomeButtonComponent } from './components/home-button/home-button.component';
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
 import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
@@ -67,8 +68,12 @@ import { LimitedTimePageComponent } from './pages/limited-time-page/limited-time
         DrawingToolsComponent,
         TextBoxComponent,
         WaitingRoomPageComponent,
+<<<<<<< HEAD
         WaitingRoomLimitedPageComponent,
         LimitedTimePageComponent,
+=======
+        HintsComponent,
+>>>>>>> 1c3af0841eb9b1f0ca37b5e82122fbdcc6480bd7
     ],
     providers: [],
     bootstrap: [AppComponent],

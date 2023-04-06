@@ -9,7 +9,7 @@ export class GameManager {
     private roomIdToGameDifferences = new Map<string, RoomGameData[]>();
 
     createGame(gameData: GameDiffData): number {
-        return gameData.count;
+        return gameData.count || 0;
     }
 
     async loadGame(roomId: string, gameTitles: string[]): Promise<string[]> {
@@ -28,15 +28,12 @@ export class GameManager {
         }
         this.roomIdToGameDifferences.set(roomId, games);
 
-        console.log(this.roomIdToGameDifferences.get(roomId));
-
         return this.switchImages(roomId);
     }
 
     verifyPosition(roomId: string, clickCoord: Coords): DifferenceInterface {
         const games = this.roomIdToGameDifferences.get(roomId);
         const differences = games[0].differences;
-        console.log(clickCoord);
         for (const difference of differences) {
             for (const coord of difference) {
                 if (coord.x === clickCoord.x && coord.y === clickCoord.y) {
@@ -49,15 +46,24 @@ export class GameManager {
         }
         return { isDifference: false, differenceNumber: 0, coords: [] };
     }
-    switchGame(roomId: string): string[] {
-        this.switchData(roomId);
-        return this.switchImages(roomId);
+    switchGame(roomId: string): { length: number; newImages: string[] } {
+        const remainingGames: number = this.switchData(roomId);
+        if (remainingGames > 0) {
+            const newImages: string[] = this.switchImages(roomId);
+            const switchGameInfo = { length: remainingGames, newImages: newImages };
+            return switchGameInfo;
+        } else {
+            return { length: remainingGames, newImages: [] };
+        }
     }
 
-    switchData(roomId: string): void {
+    switchData(roomId: string): number {
         const currentGames = this.roomIdToGameDifferences.get(roomId);
-        currentGames.splice(0, 1);
+        if (currentGames.length > 0) {
+            currentGames.splice(0, 1);
+        }
         this.roomIdToGameDifferences.set(roomId, currentGames);
+        return currentGames.length;
     }
 
     switchImages(roomId: string): string[] {

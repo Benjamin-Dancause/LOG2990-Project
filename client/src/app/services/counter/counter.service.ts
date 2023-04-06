@@ -45,6 +45,7 @@ export class CounterService {
     resetCounter(player1: boolean) {
         this.counter = 0;
         this.counter2 = 0;
+        this.winCondition = 1000;
         this.socketService.resetCounter(player1);
     }
 

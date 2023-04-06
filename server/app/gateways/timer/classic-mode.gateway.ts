@@ -20,7 +20,7 @@ interface PlayerSockets {
 
 @WebSocketGateway()
 export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconnect {
-    @WebSocketServer() server: Server;
+    @WebSocketServer() public server: Server;
     socketIdToRoomId: Record<string, string> = {};
     roomIdToPlayerSockets = new Map<string, PlayerSockets>();
     connectionCounter: number = 0;
@@ -316,8 +316,17 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onSwitchGame(client: Socket) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            const newImages: string[] = this.gameManager.switchGame(roomId);
-            this.server.to(roomId).emit('switch-images', newImages);
+            const newGameInfo = this.gameManager.switchGame(roomId);
+            console.log(newGameInfo.length);
+            if (newGameInfo.length > 0) {
+                console.log('switch-images');
+                const newImages = newGameInfo.newImages;
+                this.server.to(roomId).emit('switch-images', newImages);
+            } else {
+                console.log('send-victorious-player');
+                this.server.to(roomId).emit('send-victorious-player', true);
+                this.timerManager.deleteTimerData(roomId);
+            }
         }
     }
 
