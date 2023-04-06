@@ -124,32 +124,32 @@ export class GameService {
 
     flashOneDifference(ctxs: CanvasRenderingContext2D[]) {
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
-            this.blinkOneDifference(ctxs, gameData);
+            const firstDifference = gameData.differences.find(
+                (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
+            );
+            if (firstDifference) {
+                this.blinkDifference(ctxs, firstDifference);
+            }
         });
     }
 
-    blinkOneDifference(ctxs: CanvasRenderingContext2D[], gameData: GameDiffData) {
-        ctxs[2].fillStyle = 'pink';
-        ctxs[3].fillStyle = 'pink';
-        let i = 0;
+    blinkDifference(ctxs: CanvasRenderingContext2D[], difference: Coords[]) {
+        ctxs[2].fillStyle = 'violet';
+        ctxs[3].fillStyle = 'violet';
         const flash = setInterval(() => {
-            for (const coordinate of gameData.differences) {
-                if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
-                    for (const coord of coordinate) {
-                        ctxs[2].fillRect(coord.x, coord.y, 1, 1);
-                        ctxs[3].fillRect(coord.x, coord.y, 1, 1);
-                    }
-                }
+            for (const coord of difference) {
+                ctxs[2].fillRect(coord.x, coord.y, 1, 1);
+                ctxs[3].fillRect(coord.x, coord.y, 1, 1);
             }
-            i++;
             setTimeout(() => {
                 ctxs[2].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
                 ctxs[3].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
             }, 100);
-            if (i === 4) {
-                clearInterval(flash);
-            }
         }, 200);
+
+        setTimeout(() => {
+            clearInterval(flash);
+        }, 1000);
     }
 
     setGameName() {
