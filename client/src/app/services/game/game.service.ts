@@ -23,6 +23,7 @@ export class GameService {
     private differenceFound: number[] = [];
     private gameName: string = '';
     private isCheatEnabled = false;
+    private isHintModeEnabled = false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private cheatTimeout: any;
     private playAreaCtx: CanvasRenderingContext2D[] = [];
@@ -87,6 +88,48 @@ export class GameService {
     blinkAllDifferences(ctxs: CanvasRenderingContext2D[], gameData: GameDiffData) {
         ctxs[2].fillStyle = 'blue';
         ctxs[3].fillStyle = 'blue';
+        let i = 0;
+        const flash = setInterval(() => {
+            for (const coordinate of gameData.differences) {
+                if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
+                    for (const coord of coordinate) {
+                        ctxs[2].fillRect(coord.x, coord.y, 1, 1);
+                        ctxs[3].fillRect(coord.x, coord.y, 1, 1);
+                    }
+                }
+            }
+            i++;
+            setTimeout(() => {
+                ctxs[2].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+                ctxs[3].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+            }, 100);
+            if (i === 4) {
+                clearInterval(flash);
+            }
+        }, 200);
+    }
+
+    hintMode(ctxs: CanvasRenderingContext2D[]) {
+        this.isHintModeEnabled = !this.isHintModeEnabled;
+        if (!this.isHintModeEnabled) {
+            clearInterval(this.cheatTimeout);
+            return;
+        }
+        this.flashOneDifference(ctxs);
+        this.cheatTimeout = setInterval(() => {
+            this.flashOneDifference(ctxs);
+        }, DELAY.SMALLTIMEOUT);
+    }
+
+    flashOneDifference(ctxs: CanvasRenderingContext2D[]) {
+        this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
+            this.blinkOneDifference(ctxs, gameData);
+        });
+    }
+
+    blinkOneDifference(ctxs: CanvasRenderingContext2D[], gameData: GameDiffData) {
+        ctxs[2].fillStyle = 'pink';
+        ctxs[3].fillStyle = 'pink';
         let i = 0;
         const flash = setInterval(() => {
             for (const coordinate of gameData.differences) {
