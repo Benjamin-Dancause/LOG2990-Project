@@ -64,4 +64,5 @@ export interface RoomGameData {
     name: string;
     count: number;
     differences: Coords[][];
+    images: string[];
 }

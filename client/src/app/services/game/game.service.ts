@@ -27,7 +27,7 @@ export class GameService {
     private isHintModeEnabled = false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private cheatTimeout: any;
-    private playAreaCtx: CanvasRenderingContext2D[] = [];
+    public playAreaCtx: CanvasRenderingContext2D[] = [];
 
     constructor(private communicationService: CommunicationService, private counterService: CounterService, private socketService: SocketService) {
         this.socketService.socket.on('update-difference', (response: ClickResponse) => {
@@ -43,14 +43,19 @@ export class GameService {
 
     updateDifferences(response: ClickResponse) {
         console.log('Difference number: ' + response.differenceNumber);
-        this.differenceFound.push(response.differenceNumber);
         this.flashDifferences(response.coords, this.playAreaCtx);
-        setTimeout(() => {
-            this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
-        }, DELAY.BIGTIMEOUT);
+        if ((sessionStorage.getItem('gameMode') as string) !== 'tl') {
+            this.differenceFound.push(response.differenceNumber);
+            setTimeout(() => {
+                this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
+            }, DELAY.BIGTIMEOUT);
+        } else {
+            this.socketService.addToTimer();
+        }
     }
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
+        console.log('Contexts length: ' + this.playAreaCtx.length);
         ctxs[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
         ctxs[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
         const flash = setInterval(() => {
@@ -66,6 +71,9 @@ export class GameService {
 
         setTimeout(() => {
             clearInterval(flash);
+            if ((sessionStorage.getItem('gameMode') as string) === 'tl') {
+                this.socketService.switchGame();
+            }
         }, 1000);
     }
 
@@ -395,13 +403,24 @@ export class GameService {
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.socketService.sendDifferenceFound(response);
+                    // if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
+                    // this.socketService.switchGame();
+                    // this.socketService.addToTimer();
+                    //     console.log('differenceFound: ' + this.differenceFound);
+                    // }
                     this.incrementCounter();
                     this.playSuccessSound();
+                    setTimeout(() => {
+                        context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+                    }, DELAY.SMALLTIMEOUT);
                 } else {
                     this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
                     this.playErrorSound();
+                    if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
+                        this.socketService.removeToTimer();
+                    }
                     this.isClickDisabled = true;
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
@@ -436,7 +455,7 @@ export class GameService {
     initializeClickResponseListener() {}
 
     clearContexts(): void {
-        this.playAreaCtx = [];
+        this.playAreaCtx.length = 0;
     }
 
     clearDifferenceArray() {

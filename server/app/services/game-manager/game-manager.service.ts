@@ -9,27 +9,31 @@ export class GameManager {
     private roomIdToGameDifferences = new Map<string, RoomGameData[]>();
 
     createGame(gameData: GameDiffData): number {
-        return gameData.count;
+        return gameData.count || 0;
     }
 
-    async loadGame(roomId: string, gameTitles: string[]): Promise<void> {
+    async loadGame(roomId: string, gameTitles: string[]): Promise<string[]> {
         const infoPath = 'assets/data/gamesData.json';
         const allGames = await fs.readFile(infoPath, 'utf-8').then((data) => JSON.parse(data));
         const games: RoomGameData[] = [];
         for (let title of gameTitles) {
             const currentGameData = await allGames.find((game) => game.name === title);
-            const roomGameData: RoomGameData = { name: currentGameData.name, count: currentGameData.count, differences: currentGameData.differences };
+            const roomGameData: RoomGameData = {
+                name: currentGameData.name,
+                count: currentGameData.count,
+                differences: currentGameData.differences,
+                images: currentGameData.images,
+            };
             games.push(roomGameData);
         }
         this.roomIdToGameDifferences.set(roomId, games);
 
-        console.log(this.roomIdToGameDifferences.get(roomId));
+        return this.switchImages(roomId);
     }
 
     verifyPosition(roomId: string, clickCoord: Coords): DifferenceInterface {
         const games = this.roomIdToGameDifferences.get(roomId);
         const differences = games[0].differences;
-        console.log(clickCoord);
         for (const difference of differences) {
             for (const coord of difference) {
                 if (coord.x === clickCoord.x && coord.y === clickCoord.y) {
@@ -41,6 +45,30 @@ export class GameManager {
             }
         }
         return { isDifference: false, differenceNumber: 0, coords: [] };
+    }
+    switchGame(roomId: string): { length: number; newImages: string[] } {
+        const remainingGames: number = this.switchData(roomId);
+        if (remainingGames > 0) {
+            const newImages: string[] = this.switchImages(roomId);
+            const switchGameInfo = { length: remainingGames, newImages: newImages };
+            return switchGameInfo;
+        } else {
+            return { length: remainingGames, newImages: [] };
+        }
+    }
+
+    switchData(roomId: string): number {
+        const currentGames = this.roomIdToGameDifferences.get(roomId);
+        if (currentGames.length > 0) {
+            currentGames.splice(0, 1);
+        }
+        this.roomIdToGameDifferences.set(roomId, currentGames);
+        return currentGames.length;
+    }
+
+    switchImages(roomId: string): string[] {
+        const currentGame = this.roomIdToGameDifferences.get(roomId)[0];
+        return currentGame.images;
     }
 
     deleteRoomGameInfo(roomId: string) {
@@ -72,7 +100,6 @@ export class GameManager {
 
         // eslint-disable-next-line @typescript-eslint/no-shadow
         const game = await gamesContent.find((game) => game.name === name);
-
-        return { id: game.id, count: game.count, differences: game.differences };
+        return { id: 0, count: game.count, differences: game.differences };
     }
 }

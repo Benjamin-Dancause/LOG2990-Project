@@ -36,7 +36,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
 
-        if (this.gameMode !== 'solo') {
+        if (this.gameMode !== 'solo' && this.gameMode !== 'tl') {
             this.setOpponentName();
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
             this.socketService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {

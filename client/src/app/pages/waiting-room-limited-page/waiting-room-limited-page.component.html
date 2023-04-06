@@ -1,0 +1,5 @@
+<p id="roomInfo">En attente d'un joueur pour le mode Temps Limité</p>
+<mat-progress-spinner class="spinner" *ngIf="isLoading" color="primary" mode="indeterminate"></mat-progress-spinner>
+<div class="container">
+    <button id="leaveButton" (click)="leaveLobby()">Quitter le lobby</button>
+</div>
