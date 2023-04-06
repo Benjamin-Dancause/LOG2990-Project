@@ -211,7 +211,72 @@ export class GameService {
                 (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
             );
             if (firstDifference) {
-                this.blinkDifference2(ctxs, firstDifference);
+                const coords = firstDifference;
+                const quarterWidth = Math.round(CANVAS.WIDTH / 4);
+                const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
+                let minX = Number.MAX_VALUE;
+                let minY = Number.MAX_VALUE;
+                let maxX = Number.MIN_VALUE;
+                let maxY = Number.MIN_VALUE;
+                for (const coord of coords) {
+                    if (coord.x < minX) {
+                        minX = coord.x;
+                    }
+                    if (coord.y < minY) {
+                        minY = coord.y;
+                    }
+                    if (coord.x > maxX) {
+                        maxX = coord.x;
+                    }
+                    if (coord.y > maxY) {
+                        maxY = coord.y;
+                    }
+                }
+                const centerX = Math.round((minX + maxX) / 2);
+                const centerY = Math.round((minY + maxY) / 2);
+                let x: number;
+                let y: number;
+                let width: number;
+                let height: number;
+                if (centerX < quarterWidth) {
+                    x = 0;
+                    width = quarterWidth;
+                } else if (centerX < quarterWidth * 2) {
+                    x = quarterWidth;
+                    width = quarterWidth;
+                } else if (centerX < quarterWidth * 3) {
+                    x = quarterWidth * 2;
+                    width = quarterWidth;
+                } else {
+                    x = quarterWidth * 3;
+                    width = quarterWidth;
+                }
+                if (centerY < quarterHeight) {
+                    y = 0;
+                    height = quarterHeight;
+                } else if (centerY < quarterHeight * 2) {
+                    y = quarterHeight;
+                    height = quarterHeight;
+                } else if (centerY < quarterHeight * 3) {
+                    y = quarterHeight * 2;
+                    height = quarterHeight;
+                } else {
+                    y = quarterHeight * 3;
+                    height = quarterHeight;
+                }
+                ctxs[2].fillStyle = 'orange';
+                ctxs[3].fillStyle = 'orange';
+                const flash = setInterval(() => {
+                    ctxs[2].fillRect(x, y, width, height);
+                    ctxs[3].fillRect(x, y, width, height);
+                    setTimeout(() => {
+                        ctxs[2].clearRect(x, y, width, height);
+                        ctxs[3].clearRect(x, y, width, height);
+                    }, 100);
+                }, 200);
+                setTimeout(() => {
+                    clearInterval(flash);
+                }, 1000);
             }
         });
     }
