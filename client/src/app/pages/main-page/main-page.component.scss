@@ -76,3 +76,20 @@ $blue-glow: rgb(85, 131, 218);
     width: 1000px;
     border-radius: 15px 15px 0 0;
 }
+mat-form-field {
+    width: 100%;
+}
+
+.container #namePopupTemplate,
+#namePopupTemplate1vs1 {
+    position: absolute;
+    top: 2%;
+    right: 5%;
+    width: 5%;
+    height: 5%;
+}
+
+#char-count {
+    float: right;
+    font-size: 80%;
+}

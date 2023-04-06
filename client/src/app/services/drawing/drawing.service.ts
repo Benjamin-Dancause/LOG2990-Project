@@ -127,8 +127,10 @@ export class DrawingService {
             this.currentCtx.clearRect(CANVAS.CORNER, CANVAS.CORNER, CANVAS.WIDTH, CANVAS.HEIGHT);
             const width = event.offsetX - this.lastPos.x;
             const height = event.offsetY - this.lastPos.y;
-            const size = Math.min(width, height);
-            this.currentCtx.fillRect(this.lastPos.x, this.lastPos.y, size, size);
+            const size = Math.max(Math.abs(width), Math.abs(height));
+            const startX = width >= 0 ? this.lastPos.x : this.lastPos.x - size;
+            const startY = height >= 0 ? this.lastPos.y : this.lastPos.y - size;
+            this.currentCtx.fillRect(startX, startY, size, size);
         }
     }
     isSquare(): void {

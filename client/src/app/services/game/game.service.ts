@@ -42,6 +42,7 @@ export class GameService {
     }
 
     updateDifferences(response: ClickResponse) {
+        console.log('Difference number: ' + response.differenceNumber);
         this.differenceFound.push(response.differenceNumber);
         this.flashDifferences(response.coords, this.playAreaCtx);
         setTimeout(() => {
@@ -50,8 +51,8 @@ export class GameService {
     }
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
-        ctxs[0].fillStyle = 'blue';
-        ctxs[1].fillStyle = 'blue';
+        ctxs[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
+        ctxs[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
         const flash = setInterval(() => {
             for (const coordinate of coords) {
                 ctxs[0].fillRect(coordinate.x, coordinate.y, 1, 1);
@@ -87,8 +88,8 @@ export class GameService {
     }
 
     blinkAllDifferences(ctxs: CanvasRenderingContext2D[], gameData: GameDiffData) {
-        ctxs[2].fillStyle = 'blue';
-        ctxs[3].fillStyle = 'blue';
+        ctxs[2].fillStyle = 'rgba(255, 0, 255, 0.4)';
+        ctxs[3].fillStyle = 'rgba(255, 0, 255, 0.4)';
         let i = 0;
         const flash = setInterval(() => {
             for (const coordinate of gameData.differences) {
@@ -385,7 +386,10 @@ export class GameService {
 
             const mousePosition = { x: event.offsetX, y: event.offsetY };
 
-            this.communicationService.sendPosition(this.gameName, mousePosition).subscribe((response: ClickResponse) => {
+            this.socketService.socket.off('click-response');
+            this.socketService.sendPosition(mousePosition);
+            this.socketService.socket.on('click-response', (response: ClickResponse) => {
+                console.log('Response:' + response.isDifference);
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.successMessage.emit('Trouvé');
                     context.fillStyle = 'green';
@@ -405,8 +409,31 @@ export class GameService {
                     }, DELAY.SMALLTIMEOUT);
                 }
             });
+
+            // this.communicationService.sendPosition(this.gameName, mousePosition).subscribe((response: ClickResponse) => {
+            //     if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
+            //         this.successMessage.emit('Trouvé');
+            //         context.fillStyle = 'green';
+            //         context.fillText('Trouvé', mousePosition.x, mousePosition.y);
+            //         this.socketService.sendDifferenceFound(response);
+            //         this.incrementCounter();
+            //         this.playSuccessSound();
+            //     } else {
+            //         this.errorMessage.emit('Erreur par le joueur');
+            //         context.fillStyle = 'red';
+            //         context.fillText('Erreur', mousePosition.x, mousePosition.y);
+            //         this.playErrorSound();
+            //         this.isClickDisabled = true;
+            //         setTimeout(() => {
+            //             context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
+            //             this.isClickDisabled = false;
+            //         }, DELAY.SMALLTIMEOUT);
+            //     }
+            // });
         }
     }
+
+    initializeClickResponseListener() {}
 
     clearContexts(): void {
         this.playAreaCtx = [];
