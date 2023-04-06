@@ -129,7 +129,6 @@ export class GameService {
             );
             if (firstDifference) {
                 const coords = firstDifference;
-                const ctx = ctxs[2];
                 const quarterWidth = Math.round(CANVAS.WIDTH / 4);
                 const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
                 let minX = Number.MAX_VALUE;
@@ -157,11 +156,14 @@ export class GameService {
 
                 const width = Math.min(quarterWidth * 2, CANVAS.WIDTH - x);
                 const height = Math.min(quarterHeight * 2, CANVAS.HEIGHT - y);
-                ctx.fillStyle = 'yellow';
+                ctxs[2].fillStyle = 'yellow';
+                ctxs[3].fillStyle = 'yellow';
                 const flash = setInterval(() => {
-                    ctx.fillRect(x, y, width, height);
+                    ctxs[2].fillRect(x, y, width, height);
+                    ctxs[3].fillRect(x, y, width, height);
                     setTimeout(() => {
-                        ctx.clearRect(x, y, width, height);
+                        ctxs[2].clearRect(x, y, width, height);
+                        ctxs[3].clearRect(x, y, width, height);
                     }, 100);
                 }, 200);
                 setTimeout(() => {
