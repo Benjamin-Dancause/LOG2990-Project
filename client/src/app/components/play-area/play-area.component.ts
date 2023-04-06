@@ -51,6 +51,9 @@ export class PlayAreaComponent implements AfterViewInit {
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
+    private hintModeCount = 0;
+    private hintModeTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
     // eslint-disable-next-line max-params
     constructor(
         public counterService: CounterService,
@@ -91,7 +94,16 @@ export class PlayAreaComponent implements AfterViewInit {
         if (event.target instanceof HTMLInputElement) {
             return;
         }
-        this.isHintModeEnabled = !this.isHintModeEnabled;
+
+        if (this.hintModeTimeoutId !== null) {
+            clearTimeout(this.hintModeTimeoutId);
+        }
+
+        if (this.hintModeCount >= 3) {
+            return;
+        }
+
+        this.hintModeCount++;
         const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
         this.game.hintMode(ctxs);
     }
