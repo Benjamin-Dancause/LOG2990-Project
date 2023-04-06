@@ -99,13 +99,26 @@ export class PlayAreaComponent implements AfterViewInit {
             clearTimeout(this.hintModeTimeoutId);
         }
 
-        if (this.hintModeCount >= 3) {
-            return;
+        switch (this.hintModeCount) {
+            case 0: {
+                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+                this.game.hintMode1(ctxs);
+                this.hintModeCount++;
+                break;
+            }
+            case 1: {
+                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+                this.game.hintMode2(ctxs);
+                this.hintModeCount++;
+                break;
+            }
+            case 2: {
+                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+                this.game.hintMode3(ctxs);
+                this.hintModeCount++;
+                break;
+            }
         }
-
-        this.hintModeCount++;
-        const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
-        this.game.hintMode(ctxs);
     }
 
     async initCanvases() {
