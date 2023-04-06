@@ -116,9 +116,10 @@ export class GameService {
             return;
         }
         this.flashOneDifference(ctxs);
-        this.cheatTimeout = setInterval(() => {
-            this.flashOneDifference(ctxs);
-        }, DELAY.SMALLTIMEOUT);
+        this.cheatTimeout = setTimeout(() => {
+            this.isHintModeEnabled = false;
+            clearInterval(this.cheatTimeout);
+        }, 1000);
     }
 
     flashOneDifference(ctxs: CanvasRenderingContext2D[]) {

@@ -36,8 +36,8 @@ export class PlayAreaComponent implements AfterViewInit {
 
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
+    isHintModeEnabled = false;
     isCheatEnabled = false;
-    isHintEnabled = false;
 
     imageLeftStr: string = '';
     imageRightStr: string = '';
@@ -91,7 +91,7 @@ export class PlayAreaComponent implements AfterViewInit {
         if (event.target instanceof HTMLInputElement) {
             return;
         }
-        this.isHintEnabled = !this.isHintEnabled;
+        this.isHintModeEnabled = !this.isHintModeEnabled;
         const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
         this.game.hintMode(ctxs);
     }
