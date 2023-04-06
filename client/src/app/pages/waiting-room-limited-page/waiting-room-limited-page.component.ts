@@ -39,6 +39,8 @@ export class WaitingRoomLimitedPageComponent implements OnInit, AfterViewInit {
         this.socketService.socket.on('redirectToGame', (url) => {
             this.router.navigate([url]);
         });
+
+        console.log('Game title is : ' + this.gameTitle);
     }
     startLimitedTimeGame(): void {}
 
