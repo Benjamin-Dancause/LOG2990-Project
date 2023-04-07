@@ -52,6 +52,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
             if (lobbyInfo.gameMode === 'tl') {
                 if (this.timerManager.isInitializedTimer(roomId) && this.counterManager.isInitializedCounter(roomId)) {
                     this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
+                    console.log('Starting timer for room ' + roomId);
                     this.counterManager.startCounter(roomId + '_player1');
                 }
             } else {
@@ -69,7 +70,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onSoloGame(client: Socket, gameMode: string) {
         const roomId = randomUUID();
         this.socketIdToRoomId[client.id] = roomId;
-        console.log(this.socketIdToRoomId[client.id] + " === " + roomId);
+        console.log(this.socketIdToRoomId[client.id] + ' === ' + roomId);
         if (roomId) {
             client.join(roomId);
             this.timerManager.startTimer(roomId, gameMode);
@@ -197,11 +198,10 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     @SubscribeMessage('send-new-record')
     onNewRecordSet(client: Socket, name: string) {
         const rooms = this.gameManager.getAllRooms();
-        for(let room of rooms) {
-            console.log("RECORD FOR ROOM " + room); 
+        for (let room of rooms) {
+            // console.log("RECORD FOR ROOM " + room);
             this.server.to(room).emit('new-record', name);
         }
-        
     }
 
     @SubscribeMessage('reject-player')
