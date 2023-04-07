@@ -1,5 +1,5 @@
 import { databaseService } from '@app/services/database/database.service';
-import { bestTimes } from '@common/game-interfaces';
+import { bestTimes, playerTime } from '@common/game-interfaces';
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 
@@ -27,8 +27,9 @@ export class DatabaseController {
     @ApiOkResponse({
         description: 'Update the best times for a game',
     })
-    updateTimes(@Param('gameTitle') gameTitle: string, @Body() newBestTime: bestTimes): void{
-        this.databaseService.updateBestTimes(gameTitle, newBestTime);
+    updateTimes(@Param('gameTitle') gameTitle: string, @Body() playerTime : playerTime): void{
+
+        this.databaseService.updateBestTimes(gameTitle, playerTime.isSolo, playerTime.user, playerTime.time);
     }
     
 }

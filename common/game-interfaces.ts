@@ -76,6 +76,7 @@ export interface bestTimes {
 }
 
 export interface playerTime {
-    name: string;
-    time: string;
+    user: string;
+    time: number;
+    isSolo: boolean;
 }
