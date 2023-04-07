@@ -32,7 +32,7 @@ export class CounterService {
                 this.counter = counterInfo.counter;
             }
 
-            if (this.counter === this.winCondition || this.counter2 === this.winCondition) {
+            if (this.counter === this.winCondition) {
                 this.socketService.sendVictoriousPlayer(counterInfo.player1);
             }
         });

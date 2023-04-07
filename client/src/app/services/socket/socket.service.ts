@@ -92,9 +92,7 @@ export class SocketService {
     }
 
     sendVictoriousPlayer(player1: boolean) {
-        if(player1) {
-            this.recordMessage.emit('Nouveau record');
-        }
+        this.recordMessage.emit('Nouveau record');
         this.socket.emit('on-victory-sequence', player1);
     }
     

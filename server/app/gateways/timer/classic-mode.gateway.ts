@@ -57,6 +57,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onSoloGame(client: Socket) {
         const roomId = randomUUID();
         this.socketIdToRoomId[client.id] = roomId;
+        console.log(this.socketIdToRoomId[client.id] + " === " + roomId);
         if (roomId) {
             client.join(roomId);
             this.timerManager.startTimer(roomId);
@@ -161,12 +162,10 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
 
     @SubscribeMessage('send-new-record')
     onNewRecordSet(client: Socket, name: string) {
-        let roomId;
-        for(roomId of this.roomIdToPlayerSockets){
-            //const roomId = [...client.rooms][1];
-            if (roomId) {
-                this.server.to(roomId).emit('new-record', name);
-            }   
+        for(const socketId in this.socketIdToRoomId){
+            const roomId = this.socketIdToRoomId[socketId];
+            console.log(this.socketIdToRoomId[socketId] + " === " + roomId);
+            this.server.to(roomId).emit('new-record', name);
         };
     }
 

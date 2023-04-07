@@ -1,6 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { GameOneVsOnePageComponent } from '@app/pages/game-one-vs-one-page/game-one-vs-one-page.component';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameService } from '@app/services/game/game.service';
 import { SocketService } from '@app/services/socket/socket.service';
@@ -27,7 +26,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     errorSubscription: Subscription;
     recordSubscription: Subscription;
 
-    constructor(public gameService: GameService, public socketService: SocketService, public gamePageComponent: GameOneVsOnePageComponent) {
+    constructor(public gameService: GameService, public socketService: SocketService) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
         this.successSubscription = new Subscription();
