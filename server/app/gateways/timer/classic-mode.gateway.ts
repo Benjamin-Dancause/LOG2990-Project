@@ -183,11 +183,12 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
 
     @SubscribeMessage('send-new-record')
     onNewRecordSet(client: Socket, name: string) {
-        for(const socketId in this.socketIdToRoomId){
-            const roomId = this.socketIdToRoomId[socketId];
-            console.log(this.socketIdToRoomId[socketId] + " === " + roomId);
-            this.server.to(roomId).emit('new-record', name);
-        };
+        const rooms = this.gameManager.getAllRooms();
+        for(let room of rooms) {
+            console.log("RECORD FOR ROOM " + room); 
+            this.server.to(room).emit('new-record', name);
+        }
+        
     }
 
     @SubscribeMessage('reject-player')

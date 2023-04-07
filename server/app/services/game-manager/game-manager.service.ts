@@ -26,7 +26,16 @@ export class GameManager {
             };
             games.push(roomGameData);
         }
+        const rooms = this.getAllRooms();
+        for(let room of rooms){
+            if(room === roomId){
+                console.log("UNIQUE ROOM = " + room);
+                return this.switchImages(roomId);
+            }
+        }
+        console.log("NEW ROOM = " + roomId);
         this.roomIdToGameDifferences.set(roomId, games);
+        console.log("CREATED = " + this.roomIdToGameDifferences.get(roomId));
 
         return this.switchImages(roomId);
     }
@@ -72,7 +81,19 @@ export class GameManager {
     }
 
     deleteRoomGameInfo(roomId: string) {
+        console.log(roomId);
+        console.log("ROOM IS = " + this.roomIdToGameDifferences[roomId]);
         this.roomIdToGameDifferences.delete(roomId);
+        console.log("DELETED = " + this.roomIdToGameDifferences[roomId]);
+    }
+
+    getAllRooms() : IterableIterator<string> {
+        const keys: IterableIterator<string> = this.roomIdToGameDifferences.keys();
+
+        /*for(let key of keys) {
+            console.log("KEY = " + key);
+        }*/
+        return keys;
     }
 
     // async verifyPos(name: string, clickCoord: Coords): Promise<DifferenceInterface> {

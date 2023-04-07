@@ -14,6 +14,7 @@ export class CounterService {
     winCondition: number = 1000;
     gameMode: string;
     allDiffsSubscription: Subscription;
+    victorySent: boolean = true;
 
     constructor(public socketService: SocketService, private communicationService: CommunicationService) {}
 
@@ -23,6 +24,7 @@ export class CounterService {
         this.setWinCondition(this.gameMode, gameTitle);
         console.log('Win condition is: ' + this.winCondition);
         this.socketService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
+            console.log("JE SUIS UN IMPOSTEUR");
             const playerName: string = sessionStorage.getItem('userName') as string;
             const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
             const isPlayer1: boolean = gameMaster === playerName;
@@ -33,8 +35,9 @@ export class CounterService {
                 this.counter = counterInfo.counter;
             }
 
-            if (this.counter === this.winCondition) {
+            if (this.counter === this.winCondition && this.victorySent) {
                 this.socketService.sendVictoriousPlayer(counterInfo.player1);
+                this.victorySent = false;
             }
         });
     }
