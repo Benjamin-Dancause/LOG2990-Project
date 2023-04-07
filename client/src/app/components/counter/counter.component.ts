@@ -15,7 +15,7 @@ export class CounterComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.player1 = this.isPlayer1();
-        //this.counterService.resetCounter(this.player1);
+        this.counterService.resetCounter(this.player1);
         this.counterService.initializeCounter();
     }
 
