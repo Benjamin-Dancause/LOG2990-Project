@@ -28,4 +28,8 @@ export class CounterManagerService {
         const counter = this.counters.get(roomId);
         return counter;
     }
+
+    isInitializedCounter(roomId: string): boolean {
+        return this.counters.has(roomId);
+    }
 }

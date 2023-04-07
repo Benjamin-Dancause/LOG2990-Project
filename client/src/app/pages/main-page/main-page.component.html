@@ -58,10 +58,10 @@
         </button>
         <button
             mat-button
-            (click)="saveUserName()"
+            (click)="saveUserNameDuo()"
             [disabled]="!inputRef.valid"
             [mat-dialog-close]="true"
-            [routerLink]="inputRef.valid ? ['/limited-time'] : []"
+            [routerLink]="inputRef.valid ? ['waitingRoom-limited'] : []"
         >
             Coopératif
         </button>

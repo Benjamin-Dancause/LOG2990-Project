@@ -49,11 +49,18 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onInitOneVsOneComponents(client: Socket, lobbyInfo: { player1: boolean; gameMode: string }) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            if (lobbyInfo.player1) {
-                this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
-                this.counterManager.startCounter(roomId + '_player1');
+            if (lobbyInfo.gameMode === 'tl') {
+                if (this.timerManager.isInitializedTimer(roomId) && this.counterManager.isInitializedCounter(roomId)) {
+                    this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
+                    this.counterManager.startCounter(roomId + '_player1');
+                }
             } else {
-                this.counterManager.startCounter(roomId + '_player2');
+                if (lobbyInfo.player1) {
+                    this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
+                    this.counterManager.startCounter(roomId + '_player1');
+                } else {
+                    this.counterManager.startCounter(roomId + '_player2');
+                }
             }
         }
     }
@@ -74,6 +81,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onAddToTimer(client: Socket, increment: number) {
         const roomId = [...client.rooms][1];
         if (roomId) {
+            console.log('add to timer on gateway');
             this.timerManager.addToTimer(roomId, increment);
         }
     }
@@ -131,6 +139,9 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
                 this.roomIdToPlayerSockets.set(roomToJoin, socketInfo);
                 this.server.to(roomToJoin).emit('lobby-created', completeGameInfo);
                 this.server.sockets.emit('completed-lobby', lobby.gameTitle);
+                if (lobby.gameTitle === 'Temps Limité') {
+                    this.server.to(roomToJoin).emit('redirectToGame', '/limited-time');
+                }
             }
         }
     }
@@ -141,9 +152,11 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         if (roomId) {
             if (player1) {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player1');
+                console.log('Counter info: ' + counter);
                 this.server.to(roomId).emit('counter-update', { counter, player1 });
             } else {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player2');
+                console.log('Counter info: ' + counter);
                 this.server.to(roomId).emit('counter-update', { counter, player1 });
             }
         }
@@ -280,6 +293,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     handleVictorySequence(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
         if (roomId) {
+            console.log('Victory sequence received');
             this.timerManager.deleteTimerData(roomId);
             this.server.to(roomId).emit('send-victorious-player', player1);
         }
@@ -332,7 +346,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
             const newGameInfo = this.gameManager.switchGame(roomId);
             console.log(newGameInfo.length);
             if (newGameInfo.length > 0) {
-                console.log('switch-images');
                 const newImages = newGameInfo.newImages;
                 this.server.to(roomId).emit('switch-images', newImages);
             } else {

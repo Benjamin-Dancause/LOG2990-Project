@@ -23,6 +23,7 @@ export class GameService {
     private isClickDisabled = false;
     private differenceFound: number[] = [];
     private gameName: string = '';
+    private player1: boolean;
     private isCheatEnabled = false;
     private isHintModeEnabled = false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,6 +51,7 @@ export class GameService {
                 this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
             }, DELAY.BIGTIMEOUT);
         } else {
+            console.log('Adds to timer in game service');
             this.socketService.addToTimer();
         }
     }
@@ -71,7 +73,10 @@ export class GameService {
 
         setTimeout(() => {
             clearInterval(flash);
-            if ((sessionStorage.getItem('gameMode') as string) === 'tl') {
+            if (
+                (sessionStorage.getItem('gameMode') as string) === 'tl' &&
+                (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string)
+            ) {
                 this.socketService.switchGame();
             }
         }, 1000);
@@ -355,6 +360,11 @@ export class GameService {
 
     setGameName() {
         this.gameName = (sessionStorage.getItem('gameTitle') as string) || '';
+        if ((sessionStorage.getItem('gameMode') as string) === 'tl') {
+            this.player1 = true;
+        } else {
+            this.player1 = (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false;
+        }
     }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
@@ -370,9 +380,7 @@ export class GameService {
     }
 
     incrementCounter() {
-        this.counterService.incrementCounter(
-            (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false,
-        );
+        this.counterService.incrementCounter(this.player1);
     }
 
     playErrorSound() {
