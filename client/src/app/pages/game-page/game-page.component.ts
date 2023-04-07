@@ -23,13 +23,16 @@ export class GamePageComponent implements OnInit {
     ngOnInit() {
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
         this.userName = sessionStorage.getItem('userName') as string;
-        this.socketService.soloGame();
+        const gameMode = sessionStorage.getItem('gameMode') as string;
+        this.socketService.soloGame(gameMode);
+        this.socketService.initializeGame([this.gameTitle]);
     }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngAfterViewInit() {
         this.socketService.socket.on('send-victorious-player', () => {
             this.showPopup = true;
+            this.socketService.deleteRoomGameInfo();
         });
     }
 }

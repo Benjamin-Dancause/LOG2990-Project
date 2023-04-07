@@ -18,6 +18,7 @@ import { CreateImageComponent } from './components/create-image/create-image.com
 import { DrawingToolsComponent } from './components/drawing-tools/drawing-tools.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { GiveUpButtonComponent } from './components/give-up-button/give-up-button.component';
+import { HintsComponent } from './components/hints/hints.component';
 import { HomeButtonComponent } from './components/home-button/home-button.component';
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
 import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
@@ -29,6 +30,8 @@ import { ConfigPageComponent } from './pages/config-page-component/config-page-c
 import { CreatePageComponent } from './pages/create-page/create-page.component';
 import { GameOneVsOnePageComponent } from './pages/game-one-vs-one-page/game-one-vs-one-page.component';
 import { GameSelectionPageComponent } from './pages/game-selection-page-component/game-selection-page-component.component';
+import { LimitedTimePageComponent } from './pages/limited-time-page/limited-time-page.component';
+import { WaitingRoomLimitedPageComponent } from './pages/waiting-room-limited-page/waiting-room-limited-page.component';
 import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room-page.component';
 
 /**
@@ -65,6 +68,9 @@ import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room
         DrawingToolsComponent,
         TextBoxComponent,
         WaitingRoomPageComponent,
+        WaitingRoomLimitedPageComponent,
+        LimitedTimePageComponent,
+        HintsComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],

@@ -10,7 +10,7 @@
             ></app-main-page-button>
             <span class="mid-row">
                 <img src="./assets/projet2 logo.png" class="img-sidespacing" />
-                <app-main-page-button id="btn-TempsLimite" class="button" text="Temps Limité" class="btn-sidespacing" routerLink="/socket"></app-main-page-button>
+                <app-main-page-button id="btn-TempsLimite" class="button" (click)="gamemodeSelection()" text="Temps Limité" class="btn-sidespacing" routerLink="/socket"></app-main-page-button>
             </span>
             <app-main-page-button
                 id="btn-Configuration"
@@ -28,3 +28,42 @@
         </p>
     </footer>
 </div>
+<ng-template #gamemodeSelectionTemplate>
+    <h2 mat-dialog-title>Paramètres de jeu - Mode Temps Limité</h2>
+    <mat-dialog-content>
+        <div class="template-container">
+            <mat-form-field>
+                <mat-label>Nom d'utilisateur</mat-label>
+                <input matInput type="text" [(ngModel)]="userName" [minlength]="4" maxlength="15" #inputRef="ngModel" required />
+                <mat-error *ngIf="inputRef.invalid && (inputRef.dirty || inputRef.touched)">
+                    Le nom d'utilisateur doit comporter au moins 4 caractères petit coquin
+                </mat-error>
+                <mat-hint>min. 4 et max. 15 caractères</mat-hint>
+            </mat-form-field>
+            <div id="char-count">
+                <mat-hint *ngIf="userName">{{ userName.length }} caractères entrés</mat-hint>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Annuler</button>
+        <button
+            mat-button
+            (click)="saveUserName()"
+            [disabled]="!inputRef.valid"
+            [mat-dialog-close]="true"
+            [routerLink]="inputRef.valid ? ['/limited-time'] : []"
+        >
+            Seul
+        </button>
+        <button
+            mat-button
+            (click)="saveUserName()"
+            [disabled]="!inputRef.valid"
+            [mat-dialog-close]="true"
+            [routerLink]="inputRef.valid ? ['/limited-time'] : []"
+        >
+            Coopératif
+        </button>
+    </mat-dialog-actions>
+</ng-template>

@@ -143,24 +143,24 @@ export class GameCardComponent implements OnInit, AfterViewInit {
 
     deleteGame(gameTitle: string) {
         this.gameCardService.getPlayers(this.gameTitle).subscribe((players) => {
-            if (players.length === 0) {
-                const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-                    data: {
-                        title: 'Confirmation',
-                        message: 'Êtes-vous sûr de vouloir supprimer cette partie ?',
-                    },
-                });
-                dialogRef.afterClosed().subscribe((result) => {
-                    if (result === 'yes') {
-                        this.communication.deleteGame(gameTitle).subscribe(() => {
-                            this.socketService.deleteGame(gameTitle);
-                            this.reloadPage();
-                        });
-                    }
-                });
-            } else {
-                alert('This card is currently being played by another user.');
-            }
+            // if (players.length === 0) {
+            const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+                data: {
+                    title: 'Confirmation',
+                    message: 'Êtes-vous sûr de vouloir supprimer cette partie ?',
+                },
+            });
+            dialogRef.afterClosed().subscribe((result) => {
+                if (result === 'yes') {
+                    this.communication.deleteGame(gameTitle).subscribe(() => {
+                        this.socketService.deleteGame(gameTitle);
+                        this.reloadPage();
+                    });
+                }
+            });
+            // } else {
+            //     alert('This card is currently being played by another user.');
+            // }
         });
     }
 

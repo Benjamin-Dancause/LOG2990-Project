@@ -9,23 +9,46 @@ export class TimerManagerService {
 
     constructor(@Inject(forwardRef(() => ClassicModeGateway)) private readonly classicModeGateway: ClassicModeGateway) {}
 
-    startTimer(roomId: string) {
+    startTimer(roomId: string, gameMode: string) {
         if (!this.timers.has(roomId)) {
-            const time: number = this.getTimeFromRoom(roomId);
+            const time: number = this.getTimeFromRoom(roomId, gameMode);
             this.timers.set(roomId, time);
             const intervalId = setInterval(() => {
-                this.updateTimer(roomId);
+                this.updateTimer(roomId, gameMode);
             }, DELAY.SMALLTIMEOUT);
             this.intervals.set(roomId, intervalId);
         }
     }
 
-    updateTimer(roomId: string) {
-        this.timers.set(roomId, this.timers.get(roomId) + 1);
+    updateTimer(roomId: string, gameMode: string) {
+        if (gameMode === 'tl') {
+            this.timers.set(roomId, this.timers.get(roomId) - 1);
+        } else {
+            this.timers.set(roomId, this.timers.get(roomId) + 1);
+        }
         this.classicModeGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
     }
 
-    getTimeFromRoom(roomId: string): number {
+    addToTimer(roomId: string, increment: number) {
+        this.timers.set(roomId, this.timers.get(roomId) + increment);
+        if (this.timers.get(roomId) >= 120) {
+            this.timers.set(roomId, 120);
+        }
+        this.classicModeGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
+    }
+
+    removeToTimer(roomId: string, decrement: number) {
+        this.timers.set(roomId, this.timers.get(roomId) - decrement);
+        if (this.timers.get(roomId) <= 0) {
+            this.timers.set(roomId, 0);
+        }
+        this.classicModeGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
+    }
+
+    getTimeFromRoom(roomId: string, gameMode: string): number {
+        if (gameMode === 'tl') {
+            return this.timers.get(roomId) || 60;
+        }
         return this.timers.get(roomId) || 0;
     }
 
