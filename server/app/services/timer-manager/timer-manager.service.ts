@@ -34,6 +34,7 @@ export class TimerManagerService {
         if (this.timers.get(roomId) >= 120) {
             this.timers.set(roomId, 120);
         }
+        console.log('Adds to timer on manager');
         this.classicModeGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
     }
 
@@ -54,6 +55,7 @@ export class TimerManagerService {
 
     deleteTimerData(roomId: string) {
         clearInterval(this.intervals.get(roomId));
+        console.log('Deletes timer data');
         this.intervals.delete(roomId);
         this.timers.delete(roomId);
     }

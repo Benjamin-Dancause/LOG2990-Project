@@ -79,6 +79,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onAddToTimer(client: Socket, increment: number) {
         const roomId = [...client.rooms][1];
         if (roomId) {
+            console.log('add to timer on gateway');
             this.timerManager.addToTimer(roomId, increment);
         }
     }
@@ -280,6 +281,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     handleVictorySequence(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
         if (roomId) {
+            console.log('Victory sequence received');
             this.timerManager.deleteTimerData(roomId);
             this.server.to(roomId).emit('send-victorious-player', player1);
         }

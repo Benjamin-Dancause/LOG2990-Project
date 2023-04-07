@@ -51,6 +51,7 @@ export class GameService {
                 this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
             }, DELAY.BIGTIMEOUT);
         } else {
+            console.log('Adds to timer in game service');
             this.socketService.addToTimer();
         }
     }
