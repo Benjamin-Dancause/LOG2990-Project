@@ -20,19 +20,21 @@ export class MainPageComponent {
 
     gamemodeSelection(): void {
         sessionStorage.setItem('gameMode', 'tl');
+        sessionStorage.setItem('gameTitle', 'Temps Limité');
         this.dialog.open(this.gamemodeSelectionTemplate, {
             width: '410px',
         });
     }
     saveUserName(): void {
         sessionStorage.setItem('userName', this.userName);
+        sessionStorage.setItem('gameMaster', this.userName);
         sessionStorage.setItem('gameMode', 'tl');
         this.socketService.initializeSocket();
     }
 
     saveUserNameDuo(): void {
         sessionStorage.setItem('userName', this.userName);
-        sessionStorage.setItem('gameMode', 'tlduo');
+        sessionStorage.setItem('gameMode', 'tl');
         this.socketService.initializeSocket();
     }
 }

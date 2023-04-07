@@ -26,6 +26,7 @@ export class WaitingRoomPageComponent implements OnInit, AfterViewInit, OnDestro
     ngOnInit(): void {
         this.inputName = sessionStorage.getItem('userName') as string;
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
+        console.log('this is the gameTitle: ' + this.gameTitle);
         this.socketService.handleLobby(this.inputName, this.gameTitle);
     }
 

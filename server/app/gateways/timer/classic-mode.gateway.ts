@@ -129,6 +129,9 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
                 this.roomIdToPlayerSockets.set(roomToJoin, socketInfo);
                 this.server.to(roomToJoin).emit('lobby-created', completeGameInfo);
                 this.server.sockets.emit('completed-lobby', lobby.gameTitle);
+                if (lobby.gameTitle === 'Temps Limité') {
+                    this.server.to(roomToJoin).emit('redirectToGame', '/limited-time');
+                }
             }
         }
     }
