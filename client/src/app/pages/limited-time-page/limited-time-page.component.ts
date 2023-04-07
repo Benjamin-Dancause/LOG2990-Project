@@ -37,11 +37,9 @@ export class LimitedTimePageComponent implements OnInit {
             this.socketService.initializeGame(games);
         });
     }
-
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngAfterViewInit() {
         this.socketService.socket.on('send-victorious-player', () => {
-            console.log('cochon');
             this.showPopup = true;
             this.socketService.deleteRoomGameInfo();
         });

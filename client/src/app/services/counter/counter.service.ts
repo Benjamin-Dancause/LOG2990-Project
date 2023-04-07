@@ -25,8 +25,11 @@ export class CounterService {
         this.socketService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
             const playerName: string = sessionStorage.getItem('userName') as string;
             const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
+            console.log('Counter info: ' + counterInfo.counter);
             const isPlayer1: boolean = gameMaster === playerName;
-            if (!(this.gameMode === 'solo') && isPlayer1 !== counterInfo.player1) {
+            console.log('Counter 1 : ' + this.counter);
+            console.log('Counter 2 : ' + this.counter2);
+            if (!(this.gameMode === 'solo') && !(this.gameMode === 'tl') && isPlayer1 !== counterInfo.player1) {
                 this.counter2 = counterInfo.counter;
             } else {
                 this.counter = counterInfo.counter;

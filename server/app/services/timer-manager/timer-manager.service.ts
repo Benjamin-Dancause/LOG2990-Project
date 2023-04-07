@@ -63,4 +63,8 @@ export class TimerManagerService {
         this.timers.set(roomId, time);
         this.deleteTimerData(roomId);
     }
+
+    isInitializedTimer(roomId: string): boolean {
+        return this.timers.has(roomId);
+    }
 }

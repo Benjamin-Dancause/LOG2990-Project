@@ -49,11 +49,18 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onInitOneVsOneComponents(client: Socket, lobbyInfo: { player1: boolean; gameMode: string }) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            if (lobbyInfo.player1) {
-                this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
-                this.counterManager.startCounter(roomId + '_player1');
+            if (lobbyInfo.gameMode === 'tl') {
+                if (this.timerManager.isInitializedTimer(roomId) && this.counterManager.isInitializedCounter(roomId)) {
+                    this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
+                    this.counterManager.startCounter(roomId + '_player1');
+                }
             } else {
-                this.counterManager.startCounter(roomId + '_player2');
+                if (lobbyInfo.player1) {
+                    this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
+                    this.counterManager.startCounter(roomId + '_player1');
+                } else {
+                    this.counterManager.startCounter(roomId + '_player2');
+                }
             }
         }
     }
@@ -142,9 +149,11 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         if (roomId) {
             if (player1) {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player1');
+                console.log('Counter info: ' + counter);
                 this.server.to(roomId).emit('counter-update', { counter, player1 });
             } else {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player2');
+                console.log('Counter info: ' + counter);
                 this.server.to(roomId).emit('counter-update', { counter, player1 });
             }
         }
@@ -322,7 +331,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
             const newGameInfo = this.gameManager.switchGame(roomId);
             console.log(newGameInfo.length);
             if (newGameInfo.length > 0) {
-                console.log('switch-images');
                 const newImages = newGameInfo.newImages;
                 this.server.to(roomId).emit('switch-images', newImages);
             } else {
