@@ -198,7 +198,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onNewRecordSet(client: Socket, name: string) {
         const rooms = this.gameManager.getAllRooms();
         for(let room of rooms) {
-            console.log("RECORD FOR ROOM " + room); 
+            console.log("RECORD SENT TO ROOM " + room); 
             this.server.to(room).emit('new-record', name);
         }
         

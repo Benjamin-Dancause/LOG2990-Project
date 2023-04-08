@@ -46,7 +46,9 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit{
                 }
                 this.showPopup = true;
             }
-            this.socketService.deleteRoomGameInfo();
+            if(this.player1) {
+                this.socketService.deleteRoomGameInfo();
+            }
         });
         
         this.socketService.socket.on('player-quit-game', () => {

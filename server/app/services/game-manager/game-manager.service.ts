@@ -81,18 +81,13 @@ export class GameManager {
     }
 
     deleteRoomGameInfo(roomId: string) {
+        console.log("KEYS LENGTH = " + this.roomIdToGameDifferences.size);
         this.roomIdToGameDifferences.delete(roomId);
-        for(const [key, value] of this.roomIdToGameDifferences){
-            console.log(`${key}: ${value}`);
-        }
+        console.log("KEYS LENGTH AFTER= " + this.roomIdToGameDifferences.size);
     }
 
     getAllRooms() : IterableIterator<string> {
         const keys: IterableIterator<string> = this.roomIdToGameDifferences.keys();
-
-        /*for(let key of keys) {
-            console.log("KEY = " + key);
-        }*/
         return keys;
     }
 

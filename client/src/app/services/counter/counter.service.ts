@@ -14,7 +14,7 @@ export class CounterService {
     winCondition: number = 1000;
     gameMode: string;
     allDiffsSubscription: Subscription;
-    victorySent: boolean = true;
+    victorySent: boolean = false;
 
     constructor(public socketService: SocketService, private communicationService: CommunicationService) {}
 
@@ -38,9 +38,9 @@ export class CounterService {
                 this.counter = counterInfo.counter;
             }
 
-            if (this.counter === this.winCondition && this.victorySent) {
+            if (this.counter === this.winCondition && !this.victorySent) {
                 this.socketService.sendVictoriousPlayer(counterInfo.player1);
-                this.victorySent = false;
+                this.victorySent = true;
             }
         });
     }
@@ -50,6 +50,7 @@ export class CounterService {
     }
 
     resetCounter(player1: boolean) {
+        this.victorySent = false;
         this.counter = 0;
         this.counter2 = 0;
         this.winCondition = 1000;
