@@ -32,6 +32,7 @@ export class GamePageComponent implements OnInit {
     ngAfterViewInit() {
         this.socketService.socket.on('send-victorious-player', () => {
             this.showPopup = true;
+            sessionStorage.setItem('winner', 'true');
             this.socketService.deleteRoomGameInfo();
         });
     }

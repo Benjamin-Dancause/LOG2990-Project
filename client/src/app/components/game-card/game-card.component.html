@@ -9,24 +9,26 @@
         </div>
         <div class="best-times-container">
             <h4>Meilleurs temps</h4>
-            <div class="solo">
+            <div *ngIf="bestTimes" class="solo">
                 <h4>Solo</h4>
                 <div
-                    *ngFor="let time of bestSoloTimes.slice(0, 3); let i = index"
+                    *ngFor="let i of numbers"
                     class="best-time"
                     [ngClass]="{ gold: i === 0, silver: i === 1, bronze: i === 2 }"
                 >
-                    <span>{{ time.name }} {{ time.time }}</span>
+                    <span>
+                        {{ bestTimes.usersSolo[i] }} <br> {{ convertTime(bestTimes.timesSolo[i]) }}
+                    </span>
                 </div>
             </div>
-            <div class="oneVsOne">
+            <div *ngIf="bestTimes" class="oneVsOne">
                 <h4>1vs1</h4>
                 <div
-                    *ngFor="let time of best1vs1Times.slice(0, 3); let i = index"
+                    *ngFor="let i of numbers"
                     class="best-time"
                     [ngClass]="{ gold: i === 0, silver: i === 1, bronze: i === 2 }"
                 >
-                    <span>{{ time.name }} {{ time.time }}</span>
+                    <span>{{ bestTimes.usersMulti[i] }} <br> {{ convertTime(bestTimes.timesMulti[i]) }}</span>
                 </div>
             </div>
         </div>

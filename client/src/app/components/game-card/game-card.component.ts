@@ -5,6 +5,8 @@ import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
+import { bestTimes } from '@common/game-interfaces';
+import { range } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -18,6 +20,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     @Input() imageLink: string;
     @Input() difficulty: boolean;
     @Input() configuration: boolean;
+    @Input() bestTimes: bestTimes;
 
     @ViewChild('namePopupTemplate', { static: true })
     namePopupTemplate: TemplateRef<any>;
@@ -29,20 +32,9 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     userName: string;
     name: string;
     createButton: boolean = true;
+    numbers : number[] = [];
 
-    bestSoloTimes = [
-        { name: 'User 1', time: '00:30' },
-        { name: 'User 2', time: '00:45' },
-        { name: 'User 3', time: '00:20' },
-        { name: 'User 4', time: '00:35' },
-    ];
 
-    best1vs1Times = [
-        { name: 'User 5', time: '00:25' },
-        { name: 'User 6', time: '00:40' },
-        { name: 'User 7', time: '00:10' },
-        { name: 'User 8', time: '00:30' },
-    ];
 
     private readonly serverUrl: string = environment.serverUrl;
 
@@ -52,7 +44,11 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         private communication: CommunicationService,
         private socketService: SocketService,
         public gameCardService: GameCardService,
-    ) {}
+    ) {
+        range(0, 3).subscribe(
+              num => this.numbers.push(num),
+            );
+    }
 
     get color() {
         return this.difficulty ? 'red' : 'green';
@@ -61,19 +57,32 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     get levelText() {
         return this.difficulty ? 'Difficile' : 'Facile';
     }
-    get topThreeBestTimesSolo() {
-        return this.bestSoloTimes.slice(0, 3);
+
+    get timesSolo() {
+        return this.bestTimes.timesSolo;
     }
 
-    get topThreeBestTimesOneVsOne() {
-        return this.best1vs1Times.slice(0, 3);
-    }
+
 
     ngOnInit(): void {
         this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
         if (!this.configuration) {
             this.buttonUpdating();
         }
+    }
+
+    convertTime(time: number): string {
+        let minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+        let stringSeconds: string = seconds.toString();
+        let stringMinutes: string  = minutes.toString();
+        if (seconds < 10) {
+            stringSeconds = '0' + seconds;
+        }
+        if (minutes < 10) {
+            stringMinutes = '0' + minutes;
+        }
+        return stringMinutes + ':' + stringSeconds;
     }
 
     ngAfterViewInit(): void {

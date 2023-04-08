@@ -8,7 +8,7 @@ import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
-import { GameDiffData } from '@common/game-interfaces';
+import { GameDiffData, playerTime } from '@common/game-interfaces';
 import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
 
@@ -32,6 +32,24 @@ export class GameService {
     constructor(private communicationService: CommunicationService, private counterService: CounterService, private socketService: SocketService) {
         this.socketService.socket.on('update-difference', (response: ClickResponse) => {
             this.updateDifferences(response);
+        });
+
+        this.socketService.socket.on('send-victorious-player', () => {
+            setTimeout(() => {
+                if (sessionStorage.getItem('winner') === 'true' && this.differenceFound.length !== 0) {
+                    console.log('You won!');
+                    let minutes = +(sessionStorage.getItem('newTimeMinutes') as string);
+                    let seconds = +(sessionStorage.getItem('newTimeSeconds') as string);
+                    let time = minutes * 60 + seconds;
+                    let playerTime: playerTime = {
+                    user: sessionStorage.getItem('userName') as string,
+                    time: time,
+                    isSolo: sessionStorage.getItem('gameMode') === 'solo',
+                }
+                communicationService.updateBestTimes(this.gameName, playerTime);
+                this.differenceFound = [];
+                }
+            }, 250);
         });
     }
 
