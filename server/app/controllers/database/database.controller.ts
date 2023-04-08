@@ -28,7 +28,6 @@ export class DatabaseController {
         description: 'Update the best times for a game',
     })
     updateTimes(@Param('gameTitle') gameTitle: string, @Body() playerTime : playerTime): void{
-        console.log(playerTime);
         this.databaseService.updateBestTimes(gameTitle, playerTime.isSolo, playerTime.user, playerTime.time);
     }
     

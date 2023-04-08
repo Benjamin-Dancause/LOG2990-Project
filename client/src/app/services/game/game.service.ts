@@ -35,15 +35,21 @@ export class GameService {
         });
 
         this.socketService.socket.on('send-victorious-player', () => {
-            let minutes = +(sessionStorage.getItem('newTimeMinutes') as string);
-            let seconds = +(sessionStorage.getItem('newTimeSeconds') as string);
-            let time = minutes * 60 + seconds;
-            let playerTime: playerTime = {
-                user: sessionStorage.getItem('userName') as string,
-                time: time,
-                isSolo: sessionStorage.getItem('gameMode') === 'solo',
-            }
-            communicationService.updateBestTimes(this.gameName, playerTime);
+            setTimeout(() => {
+                if (sessionStorage.getItem('winner') === 'true' && this.differenceFound.length !== 0) {
+                    console.log('You won!');
+                    let minutes = +(sessionStorage.getItem('newTimeMinutes') as string);
+                    let seconds = +(sessionStorage.getItem('newTimeSeconds') as string);
+                    let time = minutes * 60 + seconds;
+                    let playerTime: playerTime = {
+                    user: sessionStorage.getItem('userName') as string,
+                    time: time,
+                    isSolo: sessionStorage.getItem('gameMode') === 'solo',
+                }
+                communicationService.updateBestTimes(this.gameName, playerTime);
+                this.differenceFound = [];
+                }
+            }, 250);
         });
     }
 

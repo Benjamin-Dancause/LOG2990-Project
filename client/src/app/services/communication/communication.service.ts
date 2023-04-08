@@ -68,9 +68,7 @@ export class CommunicationService {
     }
 
     updateBestTimes(name: string, playerTime: playerTime) {
-        console.log(playerTime);
         this.http.request('POST', `${this.baseUrl}/database/${name}`, { body: playerTime }).subscribe();
-        console.log('updated');
     }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
