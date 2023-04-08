@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CommunicationService } from '../communication/communication.service';
 import { SocketService } from '../socket/socket.service';
@@ -15,6 +15,8 @@ export class CounterService {
     gameMode: string;
     allDiffsSubscription: Subscription;
     victorySent: boolean = false;
+    recordMessage = new EventEmitter<string>();
+    
 
     constructor(public socketService: SocketService, private communicationService: CommunicationService) {}
 
@@ -39,6 +41,7 @@ export class CounterService {
             }
 
             if (this.counter === this.winCondition && !this.victorySent) {
+                this.isNewBestTime();
                 this.socketService.sendVictoriousPlayer(counterInfo.player1);
                 this.victorySent = true;
             }
@@ -67,6 +70,12 @@ export class CounterService {
                 this.winCondition = 1000;
             }
         });
+    }
+
+    isNewBestTime(){
+        if(true) {
+            this.recordMessage.emit('Nouveau record');
+        }
     }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface

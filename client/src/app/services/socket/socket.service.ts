@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@common/game-interfaces';
 import { Socket, io } from 'socket.io-client';
@@ -9,7 +9,6 @@ import { environment } from 'src/environments/environment';
 })
 export class SocketService {
     socket: Socket;
-    recordMessage = new EventEmitter<string>();
     private readonly baseUrl: string = environment.webSocketUrl;
     
     initializeSocket(): void {
@@ -97,7 +96,6 @@ export class SocketService {
     }
 
     sendVictoriousPlayer(player1: boolean) {
-        this.recordMessage.emit('Nouveau record');
         this.socket.emit('on-victory-sequence', player1);
     }
     

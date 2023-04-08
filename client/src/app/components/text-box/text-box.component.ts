@@ -9,7 +9,6 @@ import { Subscription } from 'rxjs';
     selector: 'app-text-box',
     templateUrl: './text-box.component.html',
     styleUrls: ['./text-box.component.scss'],
-    providers: [CounterService],
 })
 export class TextBoxComponent implements OnInit, OnDestroy {
     @Input() single: boolean = true;
@@ -26,7 +25,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     errorSubscription: Subscription;
     recordSubscription: Subscription;
 
-    constructor(public gameService: GameService, public socketService: SocketService) {
+    constructor(public gameService: GameService, public socketService: SocketService, public counterService: CounterService) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
         this.successSubscription = new Subscription();
@@ -67,7 +66,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.socketService.sendPlayerSuccess(this.userName);
             });
-            this.recordSubscription = this.socketService.recordMessage.subscribe(() => {
+            this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
                 this.socketService.sendNewRecord(this.userName);
             });
         } else {
@@ -77,7 +76,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.writeSuccessMessage(this.userName);
             });
-            this.recordSubscription = this.socketService.recordMessage.subscribe(() => {
+            this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
                 this.writeNewRecordMessage(this.userName);
             });
         }
@@ -175,6 +174,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         }
         if (this.successSubscription) {
             this.successSubscription.unsubscribe();
+        }
+        if (this.recordSubscription) {
+            this.recordSubscription.unsubscribe();
         }
         sessionStorage.clear();
     }
