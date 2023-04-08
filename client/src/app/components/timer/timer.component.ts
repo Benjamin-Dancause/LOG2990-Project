@@ -21,6 +21,8 @@ export class TimerComponent implements OnInit, OnDestroy {
             this.sec = time % 60;
             this.minutes = this.pad(this.min);
             this.seconds = this.pad(this.sec);
+            sessionStorage.setItem('newTimeMinutes', this.minutes)
+            sessionStorage.setItem('newTimeSeconds', this.seconds)
         });
     }
 

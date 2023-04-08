@@ -66,3 +66,17 @@ export interface RoomGameData {
     differences: Coords[][];
     images: string[];
 }
+
+export interface bestTimes {
+    name: string;
+    usersSolo: string[];
+    usersMulti: string[];
+    timesSolo: number[];
+    timesMulti: number[];
+}
+
+export interface playerTime {
+    user: string;
+    time: number;
+    isSolo: boolean;
+}
