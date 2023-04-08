@@ -34,29 +34,31 @@ export class databaseService {
     }
 
     async updateBestTimes(name: string, isSolo: boolean, user: string, newBestTime: number) {
-        let time = await this.collection.findOne({ name: name });
-        let index = -1;
-        if (isSolo) {
-            index = this.bubbleUp(time.timesSolo, newBestTime);
-            time.usersSolo.push(user);
-            if (index !== -1)
-            {
-                this.bubbleTo(time.usersSolo, time.usersSolo.length - 1, index);
+        await this.collection.findOne({ name: name }).then((time) =>
+        {
+            let index = -1;
+            if (isSolo) {
+                index = this.bubbleUp(time.timesSolo, newBestTime);
+                time.usersSolo.push(user);
+                if (index !== -1)
+                {
+                    this.bubbleTo(time.usersSolo, time.usersSolo.length - 1, index);
+                }
+                time.usersSolo.pop();
             }
-            time.usersSolo.pop();
-        }
-        else {
-            index = this.bubbleUp(time.timesMulti, newBestTime);
-            time.usersMulti.push(user);
-            if (index !== -1)
-            {
-                this.bubbleTo(time.usersMulti, time.usersMulti.length - 1, index);
+            else {
+                index = this.bubbleUp(time.timesMulti, newBestTime);
+                time.usersMulti.push(user);
+                if (index !== -1)
+                {
+                    this.bubbleTo(time.usersMulti, time.usersMulti.length - 1, index);
+                }
+                time.usersMulti.pop();
             }
-            time.usersMulti.pop();
-        }
-        if (index !== -1) {
-            this.collection.findOneAndReplace({name: name}, time);
-        }
+            if (index !== -1) {
+                this.collection.findOneAndReplace({name: name}, time);
+            }
+        });	
     }
 
     bubbleUp(array: number[], bubble: number): number {
