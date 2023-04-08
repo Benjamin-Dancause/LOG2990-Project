@@ -8,7 +8,7 @@ import { MongoClient } from 'mongodb';
 
 @Injectable()
 export class databaseService {
-    private readonly mongoUrl: string = 'mongodb://localhost:27017';
+    private readonly mongoUrl: string = 'mongodb+srv://equipe210:differences210@2990-210.po0vcim.mongodb.net/?retryWrites=true&w=majority';
     private readonly dbName: string = 'Projet2';
     private readonly client: MongoClient;
     private readonly collection: any;
