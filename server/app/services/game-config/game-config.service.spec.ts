@@ -1,6 +1,6 @@
 import { GameConfigService } from './game-config.service';
 
-fdescribe('GameConfigService', () => {
+describe('GameConfigService', () => {
     let gameConfigService: GameConfigService;
 
     beforeEach(() => {

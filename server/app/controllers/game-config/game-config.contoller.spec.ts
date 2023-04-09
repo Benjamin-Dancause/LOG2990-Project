@@ -1,59 +1,78 @@
-import { Test } from '@nestjs/testing';
-import { GameController } from './game-config.controller';
+import { GameConfigService } from '@app/services/game-config/game-config.service';
+import { Test, TestingModule } from '@nestjs/testing';
+import { GameConfigController } from './game-config.controller';
 
-describe('GameController', () => {
-    let gameController: GameController;
+fdescribe('GameConfigController', () => {
+    let controller: GameConfigController;
+    let gameConfigService: GameConfigService;
 
     beforeEach(async () => {
-        const app = await Test.createTestingModule({
-            controllers: [GameController],
+        const module: TestingModule = await Test.createTestingModule({
+            controllers: [GameConfigController],
+            providers: [GameConfigService],
         }).compile();
 
-        gameController = app.get<GameController>(GameController);
+        controller = module.get<GameConfigController>(GameConfigController);
+        gameConfigService = module.get<GameConfigService>(GameConfigService);
     });
 
-    describe('addPlayer', () => {
-        it('should add a player to the good game', () => {
-            const userName = 'Test name User';
-            const gameTitle = 'Test name Game';
+    describe('getCountdownTime', () => {
+        it('should return countdownTime', async () => {
+            const countdownTime = 30;
+            jest.spyOn(gameConfigService, 'getCountdownTime').mockReturnValue(Promise.resolve(countdownTime));
 
-            gameController.addPlayer(gameTitle, userName);
-            expect(gameController.getPlayers(gameTitle)).toContain(userName);
-        });
-    });
-
-    describe('getPlayers', () => {
-        it('should return an empty array if no players in game', () => {
-            const gameTitle = 'test game';
-            expect(gameController.getPlayers(gameTitle)).toEqual([]);
-        });
-
-        it('should return an array of players in the specified game', () => {
-            const gameTitle = 'Test name Game';
-            const userName1 = 'Test name User 1';
-            const userName2 = 'Test name User 2';
-
-            gameController.addPlayer(gameTitle, userName1);
-            gameController.addPlayer(gameTitle, userName2);
-
-            expect(gameController.getPlayers(gameTitle)).toEqual([userName1, userName2]);
+            expect(await controller.getCountdownTime()).toEqual(countdownTime);
         });
     });
 
-    describe('removePlayer', () => {
-        it('should remove a player from the game', () => {
-            const gameTitle = 'Test name Game';
-            const userName = 'Test name User';
+    describe('setCountdownTime', () => {
+        it('should set countdownTime', async () => {
+            const countdownTime = 60;
+            jest.spyOn(gameConfigService, 'setCountdownTime');
 
-            gameController.addPlayer(gameTitle, userName);
-            gameController.removePlayer(gameTitle, userName);
-            expect(gameController.getPlayers(gameTitle)).not.toContain(userName);
+            await controller.setCountdownTime(countdownTime);
+
+            expect(gameConfigService.setCountdownTime).toHaveBeenCalledWith(countdownTime);
         });
-        it('should remove a player from an empty game', () => {
-            const gameTitle = 'emptyGame';
-            const userName = 'user1';
-            gameController.removePlayer(gameTitle, userName);
-            expect(gameController.getPlayers(gameTitle)).toEqual([]);
+    });
+
+    describe('getPenaltyTime', () => {
+        it('should return penaltyTime', async () => {
+            const penaltyTime = 5;
+            jest.spyOn(gameConfigService, 'getPenaltyTime').mockReturnValue(Promise.resolve(penaltyTime));
+
+            expect(await controller.getPenaltyTime()).toEqual(penaltyTime);
+        });
+    });
+
+    describe('setPenaltyTime', () => {
+        it('should set penaltyTime', async () => {
+            const penaltyTime = 10;
+            jest.spyOn(gameConfigService, 'setPenaltyTime');
+
+            await controller.setPenaltyTime(penaltyTime);
+
+            expect(gameConfigService.setPenaltyTime).toHaveBeenCalledWith(penaltyTime);
+        });
+    });
+
+    describe('getTimeGained', () => {
+        it('should return timeGained', async () => {
+            const timeGained = 5;
+            jest.spyOn(gameConfigService, 'getTimeGained').mockReturnValue(Promise.resolve(timeGained));
+
+            expect(await controller.getTimeGained()).toEqual(timeGained);
+        });
+    });
+
+    describe('setTimeGained', () => {
+        it('should set timeGained', async () => {
+            const timeGained = 10;
+            jest.spyOn(gameConfigService, 'setTimeGained');
+
+            await controller.setTimeGained(timeGained);
+
+            expect(gameConfigService.setTimeGained).toHaveBeenCalledWith(timeGained);
         });
     });
 });
