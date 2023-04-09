@@ -118,81 +118,38 @@ export class GameService {
             return;
         }
         this.flashOneDifference1(ctxs);
-        this.cheatTimeout = setTimeout(() => {
-            this.isHintModeEnabled = false;
-            clearInterval(this.cheatTimeout);
-        }, 1000);
+        this.cheatTimeout = setTimeout(() => ((this.isHintModeEnabled = false), clearInterval(this.cheatTimeout)), 1000);
     }
 
     flashOneDifference1(ctxs: CanvasRenderingContext2D[]) {
-        this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
-            const differences = gameData.differences.filter(
-                (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
-            );
-            if (differences.length > 0) {
-                const randomDifference = differences[Math.floor(Math.random() * differences.length)];
-                const coords = randomDifference;
+        this.communicationService.getAllDiffs(this.gameName).subscribe(({ differences }) => {
+            const unfoundDiffs = differences.filter((difference) => !this.differenceFound.includes(differences.indexOf(difference) + 1));
+            if (unfoundDiffs.length > 0) {
+                const randomDifference = unfoundDiffs[Math.floor(Math.random() * unfoundDiffs.length)];
                 const quarterWidth = Math.round(CANVAS.WIDTH / 4);
                 const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
-                let minX = Number.MAX_VALUE;
-                let minY = Number.MAX_VALUE;
-                let maxX = Number.MIN_VALUE;
-                let maxY = Number.MIN_VALUE;
-                for (const coord of coords) {
-                    if (coord.x < minX) {
-                        minX = coord.x;
-                    }
-                    if (coord.y < minY) {
-                        minY = coord.y;
-                    }
-                    if (coord.x > maxX) {
-                        maxX = coord.x;
-                    }
-                    if (coord.y > maxY) {
-                        maxY = coord.y;
-                    }
-                }
+                const minX = Math.min(...randomDifference.map((d) => d.x));
+                const minY = Math.min(...randomDifference.map((d) => d.y));
+                const maxX = Math.max(...randomDifference.map((d) => d.x));
+                const maxY = Math.max(...randomDifference.map((d) => d.y));
                 const centerX = Math.round((minX + maxX) / 2);
                 const centerY = Math.round((minY + maxY) / 2);
-                const x = centerX <= CANVAS.WIDTH / 2 ? 0 : CANVAS.WIDTH - quarterWidth * 2;
-                const y = centerY <= CANVAS.HEIGHT / 2 ? 0 : CANVAS.HEIGHT - quarterHeight * 2;
-
-                const width = Math.min(quarterWidth * 2, CANVAS.WIDTH - x);
-                const height = Math.min(quarterHeight * 2, CANVAS.HEIGHT - y);
-                ctxs[2].fillStyle = 'yellow';
-                ctxs[3].fillStyle = 'yellow';
-                const flash = setInterval(() => {
-                    ctxs[2].fillRect(x, y, width, height);
-                    ctxs[3].fillRect(x, y, width, height);
-                    setTimeout(() => {
-                        ctxs[2].clearRect(x, y, width, height);
-                        ctxs[3].clearRect(x, y, width, height);
-                    }, 100);
-                }, 200);
-                setTimeout(() => {
-                    clearInterval(flash);
-                }, 1000);
+                const xCoord = centerX <= CANVAS.WIDTH / 2 ? 0 : CANVAS.WIDTH - quarterWidth * 2;
+                const yCoord = centerY <= CANVAS.HEIGHT / 2 ? 0 : CANVAS.HEIGHT - quarterHeight * 2;
+                const width = Math.min(quarterWidth * 2, CANVAS.WIDTH - xCoord);
+                const height = Math.min(quarterHeight * 2, CANVAS.HEIGHT - yCoord);
+                ctxs[2].fillStyle = ctxs[3].fillStyle = 'yellow';
+                const flash = setInterval(
+                    () => (
+                        ctxs[2].fillRect(xCoord, yCoord, width, height),
+                        ctxs[3].fillRect(xCoord, yCoord, width, height),
+                        setTimeout(() => (ctxs[2].clearRect(xCoord, yCoord, width, height), ctxs[3].clearRect(xCoord, yCoord, width, height)), 100)
+                    ),
+                    200,
+                );
+                setTimeout(() => clearInterval(flash), 1000);
             }
         });
-    }
-
-    blinkDifference1(ctxs: CanvasRenderingContext2D[], difference: Coords[]) {
-        ctxs[2].fillStyle = 'yellow';
-        ctxs[3].fillStyle = 'yellow';
-        const flash = setInterval(() => {
-            for (const coord of difference) {
-                ctxs[2].fillRect(coord.x, coord.y, 1, 1);
-                ctxs[3].fillRect(coord.x, coord.y, 1, 1);
-            }
-            setTimeout(() => {
-                ctxs[2].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-                ctxs[3].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-            }, 100);
-        }, 200);
-
-        setTimeout(() => {
-            clearInterval(flash);
-        }, 1000);
     }
 
     hintMode2(ctxs: CanvasRenderingContext2D[]) {
@@ -285,25 +242,6 @@ export class GameService {
                 }, 1000);
             }
         });
-    }
-
-    blinkDifference2(ctxs: CanvasRenderingContext2D[], difference: Coords[]) {
-        ctxs[2].fillStyle = 'orange';
-        ctxs[3].fillStyle = 'orange';
-        const flash = setInterval(() => {
-            for (const coord of difference) {
-                ctxs[2].fillRect(coord.x, coord.y, 1, 1);
-                ctxs[3].fillRect(coord.x, coord.y, 1, 1);
-            }
-            setTimeout(() => {
-                ctxs[2].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-                ctxs[3].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-            }, 100);
-        }, 200);
-
-        setTimeout(() => {
-            clearInterval(flash);
-        }, 1000);
     }
 
     hintMode3(ctxs: CanvasRenderingContext2D[]) {
