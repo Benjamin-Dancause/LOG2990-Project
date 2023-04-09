@@ -171,75 +171,37 @@ export class GameService {
                 (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
             );
             const randomIndex = Math.floor(Math.random() * remainingDiffs.length);
-            const randomDifference = remainingDiffs[randomIndex];
-
-            if (randomDifference) {
-                const coords = randomDifference;
+            const coords = remainingDiffs[randomIndex];
+            if (coords) {
                 const quarterWidth = Math.round(CANVAS.WIDTH / 4);
                 const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
-                let minX = Number.MAX_VALUE;
-                let minY = Number.MAX_VALUE;
-                let maxX = Number.MIN_VALUE;
-                let maxY = Number.MIN_VALUE;
-                for (const coord of coords) {
-                    if (coord.x < minX) {
-                        minX = coord.x;
-                    }
-                    if (coord.y < minY) {
-                        minY = coord.y;
-                    }
-                    if (coord.x > maxX) {
-                        maxX = coord.x;
-                    }
-                    if (coord.y > maxY) {
-                        maxY = coord.y;
-                    }
-                }
+                const [minX, minY, maxX, maxY] = coords.reduce(
+                    // eslint-disable-next-line @typescript-eslint/no-shadow
+                    ([minX, minY, maxX, maxY], { x, y }) => [Math.min(minX, x), Math.min(minY, y), Math.max(maxX, x), Math.max(maxY, y)],
+                    [Number.MAX_VALUE, Number.MAX_VALUE, Number.MIN_VALUE, Number.MIN_VALUE],
+                );
                 const centerX = Math.round((minX + maxX) / 2);
                 const centerY = Math.round((minY + maxY) / 2);
-                let x: number;
-                let y: number;
-                let width: number;
-                let height: number;
-                if (centerX < quarterWidth) {
-                    x = 0;
-                    width = quarterWidth;
-                } else if (centerX < quarterWidth * 2) {
-                    x = quarterWidth;
-                    width = quarterWidth;
-                } else if (centerX < quarterWidth * 3) {
-                    x = quarterWidth * 2;
-                    width = quarterWidth;
-                } else {
-                    x = quarterWidth * 3;
-                    width = quarterWidth;
-                }
-                if (centerY < quarterHeight) {
-                    y = 0;
-                    height = quarterHeight;
-                } else if (centerY < quarterHeight * 2) {
-                    y = quarterHeight;
-                    height = quarterHeight;
-                } else if (centerY < quarterHeight * 3) {
-                    y = quarterHeight * 2;
-                    height = quarterHeight;
-                } else {
-                    y = quarterHeight * 3;
-                    height = quarterHeight;
-                }
-                ctxs[2].fillStyle = 'orange';
-                ctxs[3].fillStyle = 'orange';
-                const flash = setInterval(() => {
-                    ctxs[2].fillRect(x, y, width, height);
-                    ctxs[3].fillRect(x, y, width, height);
+                const [x, y, width, height] = [
+                    // eslint-disable-next-line no-bitwise
+                    ((centerX / quarterWidth) | 0) * quarterWidth,
+                    // eslint-disable-next-line no-bitwise
+                    ((centerY / quarterHeight) | 0) * quarterHeight,
+                    quarterWidth,
+                    quarterHeight,
+                ];
+                ctxs.slice(2).forEach((ctx) => {
+                    ctx.fillStyle = 'orange';
+                    const flash = setInterval(() => {
+                        ctx.fillRect(x, y, width, height);
+                        setTimeout(() => {
+                            ctx.clearRect(x, y, width, height);
+                        }, 100);
+                    }, 200);
                     setTimeout(() => {
-                        ctxs[2].clearRect(x, y, width, height);
-                        ctxs[3].clearRect(x, y, width, height);
-                    }, 100);
-                }, 200);
-                setTimeout(() => {
-                    clearInterval(flash);
-                }, 1000);
+                        clearInterval(flash);
+                    }, 1000);
+                });
             }
         });
     }
