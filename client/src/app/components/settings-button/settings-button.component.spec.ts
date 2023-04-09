@@ -4,7 +4,7 @@ import { GameConfigService } from '@app/services/game-config/game-config.service
 import { of } from 'rxjs';
 import { SettingsButtonComponent } from './settings-button.component';
 
-fdescribe('SettingsButtonComponent', () => {
+describe('SettingsButtonComponent', () => {
     let component: SettingsButtonComponent;
     let fixture: ComponentFixture<SettingsButtonComponent>;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
