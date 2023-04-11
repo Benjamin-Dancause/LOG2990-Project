@@ -69,7 +69,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onSoloGame(client: Socket, gameMode: string) {
         const roomId = randomUUID();
         this.socketIdToRoomId[client.id] = roomId;
-        console.log(this.socketIdToRoomId[client.id] + " === " + roomId);
         if (roomId) {
             client.join(roomId);
             this.timerManager.startTimer(roomId, gameMode);
@@ -81,7 +80,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onAddToTimer(client: Socket, increment: number) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            console.log('add to timer on gateway');
             this.timerManager.addToTimer(roomId, increment);
         }
     }
@@ -152,11 +150,9 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         if (roomId) {
             if (player1) {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player1');
-                console.log('Counter info: ' + counter);
                 this.server.to(roomId).emit('counter-update', { counter, player1 });
             } else {
                 const counter: number = this.counterManager.incrementCounter(roomId + '_player2');
-                console.log('Counter info: ' + counter);
                 this.server.to(roomId).emit('counter-update', { counter, player1 });
             }
         }
@@ -197,11 +193,9 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     @SubscribeMessage('send-new-record')
     onNewRecordSet(client: Socket, name: string) {
         const rooms = this.gameManager.getAllRooms();
-        for(let room of rooms) {
-            console.log("RECORD SENT TO ROOM " + room); 
+        for (let room of rooms) {
             this.server.to(room).emit('new-record', name);
         }
-        
     }
 
     @SubscribeMessage('reject-player')
@@ -293,7 +287,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     handleVictorySequence(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            console.log('Victory sequence received');
             this.timerManager.deleteTimerData(roomId);
             this.server.to(roomId).emit('send-victorious-player', player1);
         }
@@ -302,7 +295,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     // eslint-disable-next-line no-unused-vars
     handleConnection(client: Socket) {
         this.connectionCounter++;
-        console.log('New connection, total clients connected is now: ' + this.connectionCounter);
         if (this.connectionCounter > 1) {
             this.server.sockets.emit('connection-count', 'There is now more than 1 person online');
         }
@@ -310,7 +302,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
 
     handleDisconnect(@ConnectedSocket() client: Socket) {
         this.connectionCounter--;
-        console.log('New disconnection, total clients connected is now: ' + this.connectionCounter);
         const roomId = this.socketIdToRoomId[client.id];
         if (roomId) {
             client.leave(roomId);
@@ -327,7 +318,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
 
     @SubscribeMessage('initialize-game')
     async onInitializeGame(client: Socket, gameTitles: string[]) {
-        console.log('initialize-game');
         const roomId = [...client.rooms][1];
         const images = await this.gameManager.loadGame(roomId, gameTitles);
         this.server.to(roomId).emit('switch-images', images);
@@ -344,12 +334,10 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         const roomId = [...client.rooms][1];
         if (roomId) {
             const newGameInfo = this.gameManager.switchGame(roomId);
-            console.log(newGameInfo.length);
             if (newGameInfo.length > 0) {
                 const newImages = newGameInfo.newImages;
                 this.server.to(roomId).emit('switch-images', newImages);
             } else {
-                console.log('send-victorious-player');
                 this.server.to(roomId).emit('send-victorious-player', true);
                 this.timerManager.deleteTimerData(roomId);
             }

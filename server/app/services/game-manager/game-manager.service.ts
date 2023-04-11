@@ -27,15 +27,12 @@ export class GameManager {
             games.push(roomGameData);
         }
         const rooms = this.getAllRooms();
-        for(let room of rooms){
-            if(room === roomId){
-                console.log("UNIQUE ROOM = " + room);
+        for (let room of rooms) {
+            if (room === roomId) {
                 return this.switchImages(roomId);
             }
         }
-        console.log("NEW ROOM = " + roomId);
         this.roomIdToGameDifferences.set(roomId, games);
-        console.log("CREATED = " + this.roomIdToGameDifferences.get(roomId));
 
         return this.switchImages(roomId);
     }
@@ -81,12 +78,10 @@ export class GameManager {
     }
 
     deleteRoomGameInfo(roomId: string) {
-        console.log("KEYS LENGTH = " + this.roomIdToGameDifferences.size);
         this.roomIdToGameDifferences.delete(roomId);
-        console.log("KEYS LENGTH AFTER= " + this.roomIdToGameDifferences.size);
     }
 
-    getAllRooms() : IterableIterator<string> {
+    getAllRooms(): IterableIterator<string> {
         const keys: IterableIterator<string> = this.roomIdToGameDifferences.keys();
         return keys;
     }

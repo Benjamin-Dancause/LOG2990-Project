@@ -31,7 +31,7 @@ export class LimitedTimePageComponent implements OnInit {
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
         this.userName = sessionStorage.getItem('userName') as string;
         const gameMode = sessionStorage.getItem('gameMode') as string;
-        this.socketService.soloGame(gameMode);
+        this.socketService.initOneVsOneComponents(true, gameMode);
         this.communication.getGameNames().subscribe((games) => {
             games = this.shuffleGames(games);
             this.socketService.initializeGame(games);
