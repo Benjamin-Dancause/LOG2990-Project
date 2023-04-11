@@ -3,6 +3,7 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as http from 'http';
+import { GameConfigController } from './controllers/game-config/game-config.controller';
 import { DatabaseController } from './controllers/database/database.controller';
 import { GameManagerController } from './controllers/game-manager/game-manager.controller';
 import { GameController } from './controllers/game/game.controller';
@@ -10,6 +11,7 @@ import { GamecardsController } from './controllers/gamecards/gamecards.controlle
 import { StoreController } from './controllers/store/store.controller';
 import { ClassicModeGateway } from './gateways/timer/classic-mode.gateway';
 import { CounterManagerService } from './services/counter-manager/counter-manager.service';
+import { GameConfigService } from './services/game-config/game-config.service';
 import { databaseService } from './services/database/database.service';
 import { GameManager } from './services/game-manager/game-manager.service';
 import { StoreService } from './services/store/store.service';
@@ -27,7 +29,8 @@ import { WaitingRoomManagerService } from './services/waiting-room-manager/waiti
             }),
         }),
     ],
-    controllers: [GamecardsController, GameManagerController, StoreController, GameController, DatabaseController],
+    controllers: [GamecardsController, GameManagerController, StoreController, GameController, GameConfigController, DatabaseController],
+
     providers: [
         ChatGateway,
         Logger,
@@ -39,6 +42,7 @@ import { WaitingRoomManagerService } from './services/waiting-room-manager/waiti
         TimerManagerService,
         CounterManagerService,
         WaitingRoomManagerService,
+        GameConfigService,
     ],
 })
 export class AppModule {}
