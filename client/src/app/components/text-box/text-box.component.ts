@@ -38,8 +38,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
 
-        if (this.gameMode !== 'solo') {
+        if (this.gameMode !== 'solo' && this.opponentName !== '') {
             this.setOpponentName();
+            console.log('Opponent Name: ' + this.opponentName);
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
             this.socketService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
                 if (this.userName === messageInfo.name) {
@@ -70,7 +71,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
                 this.socketService.sendNewRecord(this.userName);
             });
-            this.socketService.socket.on('player-quit-game', () => {
+            this.socketService.socket.on('player-quit-limited', () => {
                 this.multiplayer = false;
             });
         } else {
@@ -88,7 +89,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
 
     setOpponentName() {
         const gameMaster = sessionStorage.getItem('gameMaster') as string;
-        this.multiplayer = true;
+        if (sessionStorage.getItem('joininPlayer') as string) {
+            this.multiplayer = true;
+        }
         if (gameMaster === this.userName) {
             this.opponentName = sessionStorage.getItem('joiningPlayer') as string;
         } else {

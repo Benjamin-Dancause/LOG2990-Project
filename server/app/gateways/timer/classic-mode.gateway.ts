@@ -94,6 +94,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onLeaveGame(client: Socket) {
         const roomId = [...client.rooms][1];
         if (roomId) {
+            console.log('does it call here?');
             this.timerManager.deleteTimerData(roomId);
             this.server.to(roomId).emit('player-quit-game');
         }
@@ -102,7 +103,8 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onLeftlimitedTime(client: Socket) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            this.server.to(roomId).emit('player-quit-game');
+            console.log('emitted correctly');
+            this.server.to(roomId).emit('player-quit-limited');
         }
     }
 
@@ -292,6 +294,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     handleVictorySequence(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
         if (roomId) {
+            console.log('Calls here 2 ?');
             this.timerManager.deleteTimerData(roomId);
             this.server.to(roomId).emit('send-victorious-player', player1);
         }
@@ -310,8 +313,8 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         const roomId = this.socketIdToRoomId[client.id];
         if (roomId) {
             client.leave(roomId);
-            this.timerManager.deleteTimerData(roomId);
-            this.counterManager.deleteCounterData(roomId);
+            //this.timerManager.deleteTimerData(roomId);
+            //this.counterManager.deleteCounterData(roomId);
             this.waitingRoomManager.deleteLobbyInfo(roomId);
             this.roomIdToPlayerSockets.delete(roomId);
         }
@@ -344,6 +347,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
                 this.server.to(roomId).emit('switch-images', newImages);
             } else {
                 this.server.to(roomId).emit('send-victorious-player', true);
+                console.log('Calls here 4?');
                 this.timerManager.deleteTimerData(roomId);
             }
         }

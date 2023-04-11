@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@common/game-interfaces';
-import { Socket, io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -77,6 +77,9 @@ export class SocketService {
 
     leaveGame() {
         this.socket.emit('leave-game');
+    }
+
+    leaveLimitedTime() {
         this.socket.emit('leave-limited-time');
     }
 
