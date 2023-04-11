@@ -21,6 +21,7 @@ export class CounterService {
         const gameTitle: string = sessionStorage.getItem('gameTitle') as string;
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.setWinCondition(this.gameMode, gameTitle);
+        console.log('Win condition is: ' + this.winCondition);
         this.socketService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
             const playerName: string = sessionStorage.getItem('userName') as string;
             const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
@@ -44,15 +45,18 @@ export class CounterService {
     resetCounter(player1: boolean) {
         this.counter = 0;
         this.counter2 = 0;
+        this.winCondition = 1000;
         this.socketService.resetCounter(player1);
     }
 
     setWinCondition(gameMode: string, gameTitle: string) {
         this.allDiffsSubscription = this.communicationService.getDiffAmount(gameTitle).subscribe((totalDiff: number) => {
-            if (gameMode !== 'solo') {
+            if (gameMode === '1v1') {
                 this.winCondition = Math.ceil(totalDiff / 2);
-            } else {
+            } else if (gameMode === 'solo') {
                 this.winCondition = totalDiff;
+            } else {
+                this.winCondition = 1000;
             }
         });
     }

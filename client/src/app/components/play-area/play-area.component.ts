@@ -36,6 +36,7 @@ export class PlayAreaComponent implements AfterViewInit {
 
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
+    isHintModeEnabled = false;
     isCheatEnabled = false;
 
     imageLeftStr: string = '';
@@ -49,6 +50,9 @@ export class PlayAreaComponent implements AfterViewInit {
 
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+
+    private hintModeCount = 0;
+    private hintModeTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
     // eslint-disable-next-line max-params
     constructor(
@@ -85,7 +89,41 @@ export class PlayAreaComponent implements AfterViewInit {
         this.game.cheatMode(ctxs);
     }
 
+    @HostListener('document:keydown.i', ['$event'])
+    onHintKeyDown(event: KeyboardEvent) {
+        if (event.target instanceof HTMLInputElement) {
+            return;
+        }
+
+        if (this.hintModeTimeoutId !== null) {
+            clearTimeout(this.hintModeTimeoutId);
+        }
+
+        switch (this.hintModeCount) {
+            case 0: {
+                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+                this.game.hintMode1(ctxs);
+                this.hintModeCount++;
+                break;
+            }
+            case 1: {
+                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+                this.game.hintMode2(ctxs);
+                this.hintModeCount++;
+                break;
+            }
+            case 2: {
+                const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
+                this.game.hintMode3(ctxs);
+                this.hintModeCount++;
+                break;
+            }
+        }
+    }
+
     async initCanvases() {
+        this.game.clearContexts();
+        console.log(this.game.playAreaCtx.length);
         const img1 = new Image();
         img1.setAttribute('crossOrigin', 'anonymous');
         img1.src = this.imageLeftStr;
@@ -115,20 +153,34 @@ export class PlayAreaComponent implements AfterViewInit {
             this.socketService.initOneVsOneComponents(this.player1, gameMode);
         });
 
+        // this.socketService.socket.on('images', (game) => {
+        //     this.imageLeftStr = this.serverURL + '/' + game.images[0];
+        //     this.imageRightStr = this.serverURL + '/' + game.images[1];
+        //     this.initCanvases();
+        // });
+        this.socketService.socket.off('switch-images');
+        this.socketService.socket.on('switch-images', (newImages: string[]) => {
+            this.imageLeftStr = this.serverURL + '/' + newImages[0];
+            this.imageRightStr = this.serverURL + '/' + newImages[1];
+            console.log('CALLS INIT CANVASES');
+            this.initCanvases();
+        });
+
         if ((sessionStorage.getItem('gameMode') as string) === '1v1') {
             this.socketService.assignPlayerInfo(this.gameName);
         }
 
-        this.communicationService.getGameByName(this.gameName).subscribe((game) => {
-            this.imageLeftStr = this.serverURL + '/' + game.images[0];
-            this.imageRightStr = this.serverURL + '/' + game.images[1];
-            this.initCanvases();
-        });
+        // this.communicationService.getGameByName(this.gameName).subscribe((game) => {
+        //     this.imageLeftStr = this.serverURL + '/' + game.images[0];
+        //     this.imageRightStr = this.serverURL + '/' + game.images[1];
+        //     this.initCanvases();
+        // });
     }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy(): void {
         this.game.clearContexts();
         this.game.clearDifferenceArray();
+        this.socketService.disconnectSocket();
     }
 }

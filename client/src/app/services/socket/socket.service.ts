@@ -55,6 +55,10 @@ export class SocketService {
         this.socket.emit('get-gameTitle', roomId);
     }
 
+    getImages() {
+        this.socket.emit('get-images');
+    }
+
     deleteGame(gameTitle: string) {
         this.socket.emit('delete-game', gameTitle);
     }
@@ -117,6 +121,14 @@ export class SocketService {
 
     addToTimer() {
         this.socket.emit('add-to-timer', 10);
+    }
+
+    removeToTimer() {
+        this.socket.emit('remove-to-timer', 5);
+    }
+
+    switchGame() {
+        this.socket.emit('switch-game');
     }
 
     disconnectSocket() {
