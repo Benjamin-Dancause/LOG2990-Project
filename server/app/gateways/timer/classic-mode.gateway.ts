@@ -50,10 +50,8 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         const roomId = [...client.rooms][1];
         if (roomId) {
             if (lobbyInfo.gameMode === 'tl') {
-                if (this.timerManager.isInitializedTimer(roomId) && this.counterManager.isInitializedCounter(roomId)) {
-                    this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
-                    this.counterManager.startCounter(roomId + '_player1');
-                }
+                this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
+                this.counterManager.startCounter(roomId + '_player1');
             } else {
                 if (lobbyInfo.player1) {
                     this.timerManager.startTimer(roomId, lobbyInfo.gameMode);

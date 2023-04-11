@@ -439,9 +439,6 @@ export class GameService {
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
                     this.playErrorSound();
-                    if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
-                        this.socketService.removeToTimer();
-                    }
                     this.isClickDisabled = true;
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);

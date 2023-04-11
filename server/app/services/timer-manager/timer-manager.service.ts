@@ -10,9 +10,7 @@ export class TimerManagerService {
     constructor(@Inject(forwardRef(() => ClassicModeGateway)) private readonly classicModeGateway: ClassicModeGateway) {}
 
     startTimer(roomId: string, gameMode: string) {
-        console.log(this.timers.has(roomId) + 'roomId: ' + roomId);
         if (!this.timers.has(roomId)) {
-            console.log('start timer');
             const time: number = this.getTimeFromRoom(roomId, gameMode);
             this.timers.set(roomId, time);
             const intervalId = setInterval(() => {
