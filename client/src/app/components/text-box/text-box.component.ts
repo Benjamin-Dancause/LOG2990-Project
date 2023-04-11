@@ -20,6 +20,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     userName: string;
     message = '';
     opponentName: string = '';
+    multiplayer: boolean = false;
     gameMode: string = '';
     successSubscription: Subscription;
     errorSubscription: Subscription;
@@ -37,7 +38,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
 
-        if (this.gameMode !== 'solo' || this.opponentName !== '') {
+        if (this.gameMode !== 'solo') {
             this.setOpponentName();
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
             this.socketService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
@@ -69,6 +70,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
                 this.socketService.sendNewRecord(this.userName);
             });
+            this.socketService.socket.on('player-quit-game', () => {
+                this.multiplayer = false;
+            });
         } else {
             this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
                 this.writeErrorMessage(this.userName);
@@ -84,6 +88,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
 
     setOpponentName() {
         const gameMaster = sessionStorage.getItem('gameMaster') as string;
+        this.multiplayer = true;
         if (gameMaster === this.userName) {
             this.opponentName = sessionStorage.getItem('joiningPlayer') as string;
         } else {
