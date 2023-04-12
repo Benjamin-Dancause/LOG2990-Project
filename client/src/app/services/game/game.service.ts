@@ -232,6 +232,26 @@ export class GameService {
     }
 
     blinkDifference3(ctxs: CanvasRenderingContext2D[], difference: Coords[]) {
+        // set up event listener for mouse move
+        const canvas = ctxs[2].canvas;
+        canvas.addEventListener('mousemove', (event) => {
+            const cursorX = event.clientX - canvas.getBoundingClientRect().left;
+            const cursorY = event.clientY - canvas.getBoundingClientRect().top;
+
+            // calculate distance between mouse cursor and difference
+            const distance = Math.sqrt((cursorX - difference[0].x) ** 2 + (cursorY - difference[0].y) ** 2);
+
+            // change cursor color based on distance
+            if (distance < 50) {
+                canvas.style.cursor = 'url(./assets/red-cursor.png) 10 10, auto';
+            } else if (distance < 100) {
+                canvas.style.cursor = 'url(./assets/orange-cursor.png) 10 10, auto';
+            } else {
+                canvas.style.cursor = 'url(./assets/green-cursor.png) 10 10, auto';
+            }
+        });
+
+        // blink the difference as before
         ctxs[2].fillStyle = 'violet';
         ctxs[3].fillStyle = 'violet';
         const flash = setInterval(() => {
@@ -247,6 +267,7 @@ export class GameService {
 
         setTimeout(() => {
             clearInterval(flash);
+            canvas.style.cursor = 'auto'; // reset cursor to default
         }, 1000);
     }
 
