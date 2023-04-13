@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CommunicationService } from '../communication/communication.service';
 import { SocketService } from '../socket/socket.service';
@@ -14,7 +14,8 @@ export class CounterService {
     winCondition: number = 1000;
     gameMode: string;
     allDiffsSubscription: Subscription;
-    victorySent: boolean = true;
+    victorySent: boolean = false;
+    recordMessage = new EventEmitter<string>();
 
     constructor(public socketService: SocketService, private communicationService: CommunicationService) {}
 
@@ -22,25 +23,20 @@ export class CounterService {
         const gameTitle: string = sessionStorage.getItem('gameTitle') as string;
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.setWinCondition(this.gameMode, gameTitle);
-        console.log('Win condition is: ' + this.winCondition);
         this.socketService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
-            console.log("JE SUIS UN IMPOSTEUR");
             const playerName: string = sessionStorage.getItem('userName') as string;
             const gameMaster: string = sessionStorage.getItem('gameMaster') as string;
-            console.log('Counter info: ' + counterInfo.counter);
             const isPlayer1: boolean = gameMaster === playerName;
-            console.log('Counter 1 : ' + this.counter);
-            console.log('Counter 2 : ' + this.counter2);
             if (!(this.gameMode === 'solo') && !(this.gameMode === 'tl') && isPlayer1 !== counterInfo.player1) {
                 this.counter2 = counterInfo.counter;
             } else {
-
                 this.counter = counterInfo.counter;
             }
 
-            if (this.counter === this.winCondition && this.victorySent) {
+            if (this.counter === this.winCondition && !this.victorySent) {
+                this.isNewBestTime();
                 this.socketService.sendVictoriousPlayer(counterInfo.player1);
-                this.victorySent = false;
+                this.victorySent = true;
             }
         });
     }
@@ -50,6 +46,7 @@ export class CounterService {
     }
 
     resetCounter(player1: boolean) {
+        this.victorySent = false;
         this.counter = 0;
         this.counter2 = 0;
         this.winCondition = 1000;
@@ -66,6 +63,12 @@ export class CounterService {
                 this.winCondition = 1000;
             }
         });
+    }
+
+    isNewBestTime() {
+        if (true) {
+            this.recordMessage.emit('Nouveau record');
+        }
     }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface

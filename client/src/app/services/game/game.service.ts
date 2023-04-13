@@ -8,7 +8,7 @@ import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
-import { GameDiffData } from '@common/game-interfaces';
+import { GameDiffData, playerTime } from '@common/game-interfaces';
 import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
 
@@ -34,6 +34,23 @@ export class GameService {
         this.socketService.socket.on('update-difference', (response: ClickResponse) => {
             this.updateDifferences(response);
         });
+
+        this.socketService.socket.on('send-victorious-player', () => {
+            setTimeout(() => {
+                if (sessionStorage.getItem('winner') === 'true' && this.differenceFound.length !== 0) {
+                    let minutes = +(sessionStorage.getItem('newTimeMinutes') as string);
+                    let seconds = +(sessionStorage.getItem('newTimeSeconds') as string);
+                    let time = minutes * 60 + seconds;
+                    let playerTime: playerTime = {
+                        user: sessionStorage.getItem('userName') as string,
+                        time: time,
+                        isSolo: sessionStorage.getItem('gameMode') === 'solo',
+                    };
+                    communicationService.updateBestTimes(this.gameName, playerTime);
+                    this.differenceFound = [];
+                }
+            }, 250);
+        });
     }
 
     getContexts(ctx: CanvasRenderingContext2D) {
@@ -43,7 +60,6 @@ export class GameService {
     }
 
     updateDifferences(response: ClickResponse) {
-        console.log('Difference number: ' + response.differenceNumber);
         this.flashDifferences(response.coords, this.playAreaCtx);
         if ((sessionStorage.getItem('gameMode') as string) !== 'tl') {
             this.differenceFound.push(response.differenceNumber);
@@ -51,13 +67,11 @@ export class GameService {
                 this.updateImages(response.coords, this.playAreaCtx[2], this.playAreaCtx[3]);
             }, DELAY.BIGTIMEOUT);
         } else {
-            console.log('Adds to timer in game service');
             this.socketService.addToTimer();
         }
     }
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
-        console.log('Contexts length: ' + this.playAreaCtx.length);
         ctxs[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
         ctxs[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
         const flash = setInterval(() => {
@@ -405,7 +419,6 @@ export class GameService {
             this.socketService.socket.off('click-response');
             this.socketService.sendPosition(mousePosition);
             this.socketService.socket.on('click-response', (response: ClickResponse) => {
-                console.log('Response:' + response.isDifference);
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.successMessage.emit('Trouvé');
                     context.fillStyle = 'green';
@@ -426,9 +439,6 @@ export class GameService {
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
                     this.playErrorSound();
-                    if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
-                        this.socketService.removeToTimer();
-                    }
                     this.isClickDisabled = true;
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);

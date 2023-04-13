@@ -35,10 +35,12 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit{
         this.socketService.socket.on('send-victorious-player', () => {
             if (this.counterService.counter > this.counterService.counter2) {
                 this.isWinner = true;
+                sessionStorage.setItem('winner', 'true');
                 this.winningPlayer = sessionStorage.getItem('userName') as string;
                 this.showPopup = true;
             } else {
                 this.isWinner = false;
+                sessionStorage.setItem('winner', 'false');
                 if ((sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string)) {
                     this.winningPlayer = sessionStorage.getItem('joiningPlayer') as string;
                 } else {
@@ -46,7 +48,9 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit{
                 }
                 this.showPopup = true;
             }
-            this.socketService.deleteRoomGameInfo();
+            if(this.player1) {
+                this.socketService.deleteRoomGameInfo();
+            }
         });
         
         this.socketService.socket.on('player-quit-game', () => {
