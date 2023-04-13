@@ -16,11 +16,11 @@ export class databaseService {
     constructor() {
         this.client = new MongoClient(this.mongoUrl);
         this.collection = this.client.db(this.dbName).collection<bestTimes>('bestTimes')
-        this.collection.drop();
         this.setup();
     }
 
     async setup(): Promise<void> {
+        await this.collection.deleteMany({});
         const gamesContent = await fs.readFile('assets/data/gamesData.json', 'utf-8').then((data) => JSON.parse(data));
         for (const game of gamesContent) {
             const bestTimes: bestTimes = { 'name': game.name, 'timesSolo': [600,610,620], 'timesMulti': [600,610,620], usersSolo: ['User1','User2','User3'], usersMulti: ['User4','User5','User6'] };
@@ -106,5 +106,12 @@ export class databaseService {
         return await this.collection.find({}).toArray();
     }
 
+    async deleteBestTimes(name: string): Promise<void> {
+        await this.collection.deleteOne({ name: { $eq : name } });
+    }
 
+    async resetBestTimes(name: string): Promise<void> {
+        await this.collection.findOneAndReplace({name: name}, { 'name': name, 'timesSolo': [600,610,620], 'timesMulti': [600,610,620]
+            , usersSolo: ['User1','User2','User3'], usersMulti: ['User4','User5','User6'] });
+    }
 }
