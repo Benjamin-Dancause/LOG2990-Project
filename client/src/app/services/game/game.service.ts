@@ -328,7 +328,7 @@ export class GameService {
             this.socketService.socket.off('click-response');
             this.socketService.sendPosition(mousePosition);
             this.socketService.socket.on('click-response', (response: ClickResponse) => {
-                console.log('Response:' + response.isDifference);
+                // console.log('Response:' + response.isDifference);
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.successMessage.emit('Trouvé');
                     context.fillStyle = 'green';
@@ -372,7 +372,7 @@ export class GameService {
         }
     }
 
-    initializeClickResponseListener() {}
+    // initializeClickResponseListener() {}
 
     clearContexts(): void {
         this.playAreaCtx = [];
