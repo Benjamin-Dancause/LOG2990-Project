@@ -40,7 +40,7 @@
                 <button *ngIf="!createButton">Joindre une partie 1vs1</button>
             </div>
             <button *ngIf="configuration" (click)="deleteGame(gameTitle)">Supprimer partie</button>
-            <button *ngIf="configuration">Réinitialiser les meilleurs temps</button>
+            <button *ngIf="configuration" (click)="resetBestTimes(gameTitle)">Réinitialiser les meilleurs temps</button>
         </div>
 
         <ng-template #namePopupTemplate>

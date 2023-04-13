@@ -70,6 +70,14 @@ export class CommunicationService {
     updateBestTimes(name: string, playerTime: playerTime) {
         this.http.request('POST', `${this.baseUrl}/database/${name}`, { body: playerTime }).subscribe();
     }
+    
+    resetBestTimes(name: string) {
+        this.http.request('POST', `${this.baseUrl}/database/reset/${name}`).subscribe();
+    }
+
+    resetAllBestTimes() {
+        this.http.request('POST', `${this.baseUrl}/database/reset`).subscribe();
+    }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);

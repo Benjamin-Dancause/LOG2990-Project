@@ -7,6 +7,7 @@ import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { bestTimes } from '@common/game-interfaces';
 import { range } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -152,7 +153,6 @@ export class GameCardComponent implements OnInit, AfterViewInit {
 
     deleteGame(gameTitle: string) {
         this.gameCardService.getPlayers(this.gameTitle).subscribe((players) => {
-            // if (players.length === 0) {
             const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
                 data: {
                     title: 'Confirmation',
@@ -167,9 +167,22 @@ export class GameCardComponent implements OnInit, AfterViewInit {
                     });
                 }
             });
-            // } else {
-            //     alert('This card is currently being played by another user.');
-            // }
+        });
+    }
+
+    resetBestTimes(gameTitle: string) {
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+            data: {
+                title: 'Confirmation',
+                message: 'Êtes-vous sûr de vouloir réinitialiser les meilleurs temps ?',
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result === 'yes') {
+                this.communication.resetBestTimes(gameTitle)
+                delay(250);
+                this.reloadPage();
+            }
         });
     }
 
