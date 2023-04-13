@@ -22,7 +22,13 @@ export class DatabaseController {
     getTimes(@Param('gameTitle') gameTitle: string): Promise<bestTimes>{
         return this.databaseService.getBestTimesByName(gameTitle);
     }
-
+    @Post('/reset')
+    @ApiOkResponse({
+        description: 'Reset the best times for all games',
+    })
+    resetAllBestTimes(): void{
+        this.databaseService.setup();
+    }
     @Post('/:gameTitle')
     @ApiOkResponse({
         description: 'Update the best times for a game',
@@ -45,5 +51,5 @@ export class DatabaseController {
     resetBestTimes(@Param('gameTitle') gameTitle: string): void{
         this.databaseService.resetBestTimes(gameTitle);
     }
-    
+
 }

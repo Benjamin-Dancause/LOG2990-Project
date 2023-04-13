@@ -1,7 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { GameSelectionPageData, bestTimes } from '@common/game-interfaces';
+import { delay } from 'rxjs';
 
 const PAGE_SIZE = 4;
 
@@ -18,7 +21,7 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
     pageSize = PAGE_SIZE;
     lastPage = 0;
 
-    constructor(protected communication: CommunicationService, public socketService: SocketService) {
+    constructor(protected communication: CommunicationService, public socketService: SocketService, public dialog: MatDialog,) {
         communication.getAllGames().subscribe((gamecards: GameSelectionPageData[]) => {
             /* for (const gamecard of gamecards) {
                 gamecard.configuration = true;
@@ -61,5 +64,28 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
         if (this.currentPage < this.lastPage) {
             this.currentPage++;
         }
+    }
+
+    reloadPage() {
+        location.reload();
+    }
+
+
+    
+    resetBestTimes() {
+        console.log('reset');
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+            data: {
+                title: 'Confirmation',
+                message: 'Êtes-vous sûr de vouloir réinitialiser les meilleurs temps ?',
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result === 'yes') {
+                this.communication.resetAllBestTimes()
+                delay(250);
+                this.reloadPage();
+            }
+        });
     }
 }
