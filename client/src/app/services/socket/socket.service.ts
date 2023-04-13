@@ -64,7 +64,7 @@ export class SocketService {
     }
 
     initOneVsOneComponents(player1: boolean, gameMode: string) {
-        this.socket.emit('init-OneVsOne-components', { player1: player1, gameMode: gameMode });
+        this.socket.emit('init-OneVsOne-components', { player1, gameMode });
     }
 
     sendDifferenceFound(response: ClickResponse) {
@@ -85,6 +85,10 @@ export class SocketService {
 
     sendPlayerSuccess(name: string) {
         this.socket.emit('send-player-success', name);
+    }
+
+    sendPlayerHint(name: string) {
+        this.socket.emit('send-player-hint', name);
     }
 
     sendVictoriousPlayer(player1: boolean) {

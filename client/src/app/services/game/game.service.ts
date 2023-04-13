@@ -20,6 +20,7 @@ export class GameService {
     successSound = new Audio('./assets/success.mp3');
     errorMessage = new EventEmitter<string>();
     successMessage = new EventEmitter<string>();
+    hintMessage = new EventEmitter<string>();
     private isClickDisabled = false;
     private differenceFound: number[] = [];
     private gameName: string = '';
@@ -113,6 +114,7 @@ export class GameService {
 
     hintMode1(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
+        this.hintMessage.emit();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
@@ -154,6 +156,7 @@ export class GameService {
 
     hintMode2(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
+        this.hintMessage.emit();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
@@ -208,6 +211,7 @@ export class GameService {
 
     hintMode3(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
+        this.hintMessage.emit();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;

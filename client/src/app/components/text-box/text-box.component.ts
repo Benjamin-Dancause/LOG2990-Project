@@ -24,11 +24,13 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     gameMode: string = '';
     successSubscription: Subscription;
     errorSubscription: Subscription;
+    hintSubscription: Subscription;
 
     constructor(public gameService: GameService, public socketService: SocketService) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
         this.successSubscription = new Subscription();
+        this.hintSubscription = new Subscription();
     }
 
     ngOnInit(): void {
@@ -68,6 +70,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             });
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.writeSuccessMessage(this.userName);
+            });
+            this.hintSubscription = this.gameService.hintMessage.subscribe(() => {
+                this.writeHintMessage();
             });
         }
     }
@@ -135,6 +140,11 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         if (this.gameMode !== 'solo') {
             systemMessage += ` par ${name}`;
         }
+        this.addSystemMessage(systemMessage);
+    }
+
+    writeHintMessage() {
+        const systemMessage = `${this.getTimestamp()} -  Indice utilisé`;
         this.addSystemMessage(systemMessage);
     }
 
