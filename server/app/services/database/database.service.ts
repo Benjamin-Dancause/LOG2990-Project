@@ -8,7 +8,7 @@ import { MongoClient } from 'mongodb';
 
 @Injectable()
 export class databaseService {
-    private readonly mongoUrl: string = 'mongodb+srv://equipe210:differences210@2990-210.po0vcim.mongodb.net/?retryWrites=true&w=majority';
+    private readonly mongoUrl: string = 'mongodb://localhost:27017';
     private readonly dbName: string = 'Projet2';
     private readonly client: MongoClient;
     private readonly collection: any;
@@ -106,5 +106,12 @@ export class databaseService {
         return await this.collection.find({}).toArray();
     }
 
+    async deleteBestTimes(name: string): Promise<void> {
+        await this.collection.deleteOne({ name: { $eq : name } });
+    }
 
+    async resetBestTimes(name: string): Promise<void> {
+        await this.collection.findOneAndReplace({name: name}, { 'name': name, 'timesSolo': [600,610,620], 'timesMulti': [600,610,620]
+            , usersSolo: ['User1','User2','User3'], usersMulti: ['User4','User5','User6'] });
+    }
 }

@@ -1,6 +1,6 @@
 import { databaseService } from '@app/services/database/database.service';
 import { bestTimes, playerTime } from '@common/game-interfaces';
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 
 @Controller('database')
@@ -29,6 +29,21 @@ export class DatabaseController {
     })
     updateTimes(@Param('gameTitle') gameTitle: string, @Body() playerTime : playerTime): void{
         this.databaseService.updateBestTimes(gameTitle, playerTime.isSolo, playerTime.user, playerTime.time);
+    }
+    @Delete('/:gameTitle')
+    @ApiOkResponse({
+        description: 'Delete the best times for a game',
+    })
+    deleteTimes(@Param('gameTitle') gameTitle: string): void{
+        this.databaseService.deleteBestTimes(gameTitle);
+    }
+
+    @Post('/reset/:gameTitle')
+    @ApiOkResponse({
+        description: 'Reset the best times for a game',
+    })
+    resetBestTimes(@Param('gameTitle') gameTitle: string): void{
+        this.databaseService.resetBestTimes(gameTitle);
     }
     
 }

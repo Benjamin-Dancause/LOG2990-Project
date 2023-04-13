@@ -1,3 +1,4 @@
+import { databaseService } from '@app/services/database/database.service';
 import { StoreService } from '@app/services/store/store.service';
 import { Coords } from '@common/game-interfaces';
 import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post } from '@nestjs/common';
@@ -6,7 +7,7 @@ import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 
 @Controller('games')
 export class StoreController {
-    constructor(private readonly storeService: StoreService) {}
+    constructor(private readonly storeService: StoreService, private databaseService: databaseService) {}
 
     @Post('/images')
     @Header('Content-Type', 'image/png')
@@ -57,6 +58,7 @@ export class StoreController {
         description: 'delete game from data',
     })
     async deleteGame(@Param('name') name: string) {
+        await this.databaseService.deleteBestTimes(name);
         return this.storeService.deleteGame(name);
     }
 
@@ -67,5 +69,5 @@ export class StoreController {
     async getGameAvailability(@Param('name') name: string) {
         const isAvailable = await this.storeService.getGameAvailability(name);
         return isAvailable;
-    }
+    }    
 }
