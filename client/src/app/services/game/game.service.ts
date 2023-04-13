@@ -232,56 +232,40 @@ export class GameService {
     }
 
     blinkDifference3(ctxs: CanvasRenderingContext2D[], difference: Coords[]) {
-        // set up event listener for mouse move on the first canvas
         const canvas1 = ctxs[2].canvas;
         const canvas1MouseMoveHandler = (event: { clientX: number; clientY: number }) => {
             const cursorX = event.clientX - canvas1.getBoundingClientRect().left;
             const cursorY = event.clientY - canvas1.getBoundingClientRect().top;
 
-            // calculate distance between mouse cursor and difference
             const distance = Math.sqrt((cursorX - difference[0].x) ** 2 + (cursorY - difference[0].y) ** 2);
-
-            // change cursor color based on distance
             if (distance < 50) {
-                canvas1.style.cursor = 'url(./assets/red-cursor.png) 10 10, auto';
-                ctxs[3].fillStyle = 'red';
-            } else if (distance < 100) {
-                canvas1.style.cursor = 'url(./assets/orange-cursor.png) 10 10, auto';
-                ctxs[3].fillStyle = 'orange';
+                canvas1.style.cursor = 'url(./assets/red-cursor.png) 0 0, auto';
+            } else if (distance < 150) {
+                canvas1.style.cursor = 'url(./assets/orange-cursor.png) 0 0, auto';
             } else {
-                canvas1.style.cursor = 'url(./assets/green-cursor.png) 10 10, auto';
-                ctxs[3].fillStyle = 'green';
+                canvas1.style.cursor = 'url(./assets/blue-cursor.png) 0 0, auto';
             }
         };
         canvas1.addEventListener('mousemove', canvas1MouseMoveHandler);
 
-        // set up event listener for mouse move on the second canvas
         const canvas2 = ctxs[3].canvas;
         const canvas2MouseMoveHandler = (event: { clientX: number; clientY: number }) => {
             const cursorX = event.clientX - canvas2.getBoundingClientRect().left;
             const cursorY = event.clientY - canvas2.getBoundingClientRect().top;
 
-            // calculate distance between mouse cursor and difference
             const distance = Math.sqrt((cursorX - difference[0].x) ** 2 + (cursorY - difference[0].y) ** 2);
-
-            // change cursor color based on distance
             if (distance < 50) {
-                canvas2.style.cursor = 'url(./assets/red-cursor.png) 10 10, auto';
-                ctxs[2].fillStyle = 'red';
-            } else if (distance < 100) {
-                canvas2.style.cursor = 'url(./assets/orange-cursor.png) 10 10, auto';
-                ctxs[2].fillStyle = 'orange';
+                canvas2.style.cursor = 'url(./assets/red-cursor.png) 0 0, auto';
+            } else if (distance < 150) {
+                canvas2.style.cursor = 'url(./assets/orange-cursor.png) 0 0, auto';
             } else {
-                canvas2.style.cursor = 'url(./assets/green-cursor.png) 10 10, auto';
-                ctxs[2].fillStyle = 'green';
+                canvas2.style.cursor = 'url(./assets/blue-cursor.png) 0 0, auto';
             }
         };
         canvas2.addEventListener('mousemove', canvas2MouseMoveHandler);
-
-        // set up event listener for click on both canvases
         const handleClick = () => {
-            canvas1.style.cursor = 'auto'; // reset cursor to default on the first canvas
-            canvas2.style.cursor = 'auto'; // reset cursor to default on the second canvas
+            canvas1.style.cursor = 'auto';
+            canvas2.style.cursor = 'auto';
             canvas1.removeEventListener('mousemove', canvas1MouseMoveHandler);
             canvas2.removeEventListener('mousemove', canvas2MouseMoveHandler);
             canvas1.removeEventListener('click', handleClick);
@@ -289,24 +273,10 @@ export class GameService {
         };
         canvas1.addEventListener('click', handleClick);
         canvas2.addEventListener('click', handleClick);
-        // blink the difference as before
-        ctxs[2].fillStyle = 'violet';
-        ctxs[3].fillStyle = 'violet';
-        const flash = setInterval(() => {
-            for (const coord of difference) {
-                ctxs[2].fillRect(coord.x, coord.y, 1, 1);
-                ctxs[3].fillRect(coord.x, coord.y, 1, 1);
-            }
-            setTimeout(() => {
-                ctxs[2].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-                ctxs[3].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-            }, 100);
-        }, 200);
 
         setTimeout(() => {
-            clearInterval(flash);
-            canvas1.style.cursor = 'auto'; // reset cursor to default on the first canvas
-            canvas2.style.cursor = 'auto'; // reset cursor to
+            canvas1.style.cursor = 'auto';
+            canvas2.style.cursor = 'auto';
         }, 1000);
     }
 
