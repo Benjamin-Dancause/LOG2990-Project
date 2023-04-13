@@ -234,7 +234,7 @@ export class GameService {
     blinkDifference3(ctxs: CanvasRenderingContext2D[], difference: Coords[]) {
         // set up event listener for mouse move on the first canvas
         const canvas1 = ctxs[2].canvas;
-        canvas1.addEventListener('mousemove', (event) => {
+        const canvas1MouseMoveHandler = (event: { clientX: number; clientY: number }) => {
             const cursorX = event.clientX - canvas1.getBoundingClientRect().left;
             const cursorY = event.clientY - canvas1.getBoundingClientRect().top;
 
@@ -252,11 +252,12 @@ export class GameService {
                 canvas1.style.cursor = 'url(./assets/green-cursor.png) 10 10, auto';
                 ctxs[3].fillStyle = 'green';
             }
-        });
+        };
+        canvas1.addEventListener('mousemove', canvas1MouseMoveHandler);
 
         // set up event listener for mouse move on the second canvas
         const canvas2 = ctxs[3].canvas;
-        canvas2.addEventListener('mousemove', (event) => {
+        const canvas2MouseMoveHandler = (event: { clientX: number; clientY: number }) => {
             const cursorX = event.clientX - canvas2.getBoundingClientRect().left;
             const cursorY = event.clientY - canvas2.getBoundingClientRect().top;
 
@@ -274,18 +275,20 @@ export class GameService {
                 canvas2.style.cursor = 'url(./assets/green-cursor.png) 10 10, auto';
                 ctxs[2].fillStyle = 'green';
             }
-        });
+        };
+        canvas2.addEventListener('mousemove', canvas2MouseMoveHandler);
 
         // set up event listener for click on both canvases
-        canvas1.addEventListener('click', () => {
+        const handleClick = () => {
             canvas1.style.cursor = 'auto'; // reset cursor to default on the first canvas
             canvas2.style.cursor = 'auto'; // reset cursor to default on the second canvas
-        });
-        canvas2.addEventListener('click', () => {
-            canvas1.style.cursor = 'auto'; // reset cursor to default on the first canvas
-            canvas2.style.cursor = 'auto'; // reset cursor to default on the second canvas
-        });
-
+            canvas1.removeEventListener('mousemove', canvas1MouseMoveHandler);
+            canvas2.removeEventListener('mousemove', canvas2MouseMoveHandler);
+            canvas1.removeEventListener('click', handleClick);
+            canvas2.removeEventListener('click', handleClick);
+        };
+        canvas1.addEventListener('click', handleClick);
+        canvas2.addEventListener('click', handleClick);
         // blink the difference as before
         ctxs[2].fillStyle = 'violet';
         ctxs[3].fillStyle = 'violet';
