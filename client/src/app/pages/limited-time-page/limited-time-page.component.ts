@@ -31,17 +31,16 @@ export class LimitedTimePageComponent implements OnInit {
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
         this.userName = sessionStorage.getItem('userName') as string;
         const gameMode = sessionStorage.getItem('gameMode') as string;
-        this.socketService.soloGame(gameMode);
+        const otherPlayer = sessionStorage.getItem('joiningPlayer') as string;
+        otherPlayer ? this.socketService.initOneVsOneComponents(true, gameMode) : this.socketService.soloGame(gameMode);
         this.communication.getGameNames().subscribe((games) => {
             games = this.shuffleGames(games);
             this.socketService.initializeGame(games);
         });
     }
-
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngAfterViewInit() {
         this.socketService.socket.on('send-victorious-player', () => {
-            console.log('cochon');
             this.showPopup = true;
             this.socketService.deleteRoomGameInfo();
         });

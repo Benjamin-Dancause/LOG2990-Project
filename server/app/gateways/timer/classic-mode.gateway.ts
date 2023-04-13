@@ -49,11 +49,16 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onInitOneVsOneComponents(client: Socket, lobbyInfo: { player1: boolean; gameMode: string }) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            if (lobbyInfo.player1) {
+            if (lobbyInfo.gameMode === 'tl') {
                 this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
                 this.counterManager.startCounter(roomId + '_player1');
             } else {
-                this.counterManager.startCounter(roomId + '_player2');
+                if (lobbyInfo.player1) {
+                    this.timerManager.startTimer(roomId, lobbyInfo.gameMode);
+                    this.counterManager.startCounter(roomId + '_player1');
+                } else {
+                    this.counterManager.startCounter(roomId + '_player2');
+                }
             }
         }
     }
@@ -61,6 +66,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     @SubscribeMessage('solo-game')
     onSoloGame(client: Socket, gameMode: string) {
         const roomId = randomUUID();
+        this.socketIdToRoomId[client.id] = roomId;
         if (roomId) {
             client.join(roomId);
             this.timerManager.startTimer(roomId, gameMode);
@@ -88,7 +94,16 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onLeaveGame(client: Socket) {
         const roomId = [...client.rooms][1];
         if (roomId) {
+            console.log('does it call here?');
             this.timerManager.deleteTimerData(roomId);
+            this.server.to(roomId).emit('player-quit-game');
+        }
+    }
+    @SubscribeMessage('leave-limited-time')
+    onLeftlimitedTime(client: Socket) {
+        const roomId = [...client.rooms][1];
+        if (roomId) {
+            console.log('emitted correctly');
             this.server.to(roomId).emit('player-quit-game');
         }
     }
@@ -129,6 +144,9 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
                 this.roomIdToPlayerSockets.set(roomToJoin, socketInfo);
                 this.server.to(roomToJoin).emit('lobby-created', completeGameInfo);
                 this.server.sockets.emit('completed-lobby', lobby.gameTitle);
+                if (lobby.gameTitle === 'Temps Limité') {
+                    this.server.to(roomToJoin).emit('redirectToGame', '/limited-time');
+                }
             }
         }
     }
@@ -176,6 +194,14 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         const roomId = [...client.rooms][1];
         if (roomId) {
             this.server.to(roomId).emit('player-success', name);
+        }
+    }
+
+    @SubscribeMessage('send-new-record')
+    onNewRecordSet(client: Socket, name: string) {
+        const rooms = this.gameManager.getAllRooms();
+        for (let room of rooms) {
+            this.server.to(room).emit('new-record', name);
         }
     }
 
@@ -268,6 +294,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     handleVictorySequence(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
         if (roomId) {
+            console.log('Calls here 2 ?');
             this.timerManager.deleteTimerData(roomId);
             this.server.to(roomId).emit('send-victorious-player', player1);
         }
@@ -276,7 +303,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     // eslint-disable-next-line no-unused-vars
     handleConnection(client: Socket) {
         this.connectionCounter++;
-        console.log('New connection, total clients connected is now: ' + this.connectionCounter);
         if (this.connectionCounter > 1) {
             this.server.sockets.emit('connection-count', 'There is now more than 1 person online');
         }
@@ -284,13 +310,13 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
 
     handleDisconnect(@ConnectedSocket() client: Socket) {
         this.connectionCounter--;
-        console.log('New disconnection, total clients connected is now: ' + this.connectionCounter);
         const roomId = this.socketIdToRoomId[client.id];
         if (roomId) {
             client.leave(roomId);
-            this.timerManager.deleteTimerData(roomId);
-            this.counterManager.deleteCounterData(roomId);
+            //this.timerManager.deleteTimerData(roomId);
+            //this.counterManager.deleteCounterData(roomId);
             this.waitingRoomManager.deleteLobbyInfo(roomId);
+            this.roomIdToPlayerSockets.delete(roomId);
         }
     }
 
@@ -300,7 +326,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
 
     @SubscribeMessage('initialize-game')
     async onInitializeGame(client: Socket, gameTitles: string[]) {
-        console.log('initialize-game');
         const roomId = [...client.rooms][1];
         const images = await this.gameManager.loadGame(roomId, gameTitles);
         this.server.to(roomId).emit('switch-images', images);
@@ -317,14 +342,12 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         const roomId = [...client.rooms][1];
         if (roomId) {
             const newGameInfo = this.gameManager.switchGame(roomId);
-            console.log(newGameInfo.length);
             if (newGameInfo.length > 0) {
-                console.log('switch-images');
                 const newImages = newGameInfo.newImages;
                 this.server.to(roomId).emit('switch-images', newImages);
             } else {
-                console.log('send-victorious-player');
                 this.server.to(roomId).emit('send-victorious-player', true);
+                console.log('Calls here 4?');
                 this.timerManager.deleteTimerData(roomId);
             }
         }

@@ -9,7 +9,6 @@ import { Subscription } from 'rxjs';
     selector: 'app-text-box',
     templateUrl: './text-box.component.html',
     styleUrls: ['./text-box.component.scss'],
-    providers: [CounterService],
 })
 export class TextBoxComponent implements OnInit, OnDestroy {
     @Input() single: boolean = true;
@@ -21,23 +20,29 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     userName: string;
     message = '';
     opponentName: string = '';
+    multiplayer: boolean = false;
     gameMode: string = '';
     successSubscription: Subscription;
     errorSubscription: Subscription;
+    recordSubscription: Subscription;
 
-    constructor(public gameService: GameService, public socketService: SocketService) {
+    constructor(public gameService: GameService, public socketService: SocketService, public counterService: CounterService) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
         this.successSubscription = new Subscription();
+        this.recordSubscription = new Subscription();
     }
 
     ngOnInit(): void {
         const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
-
-        if (this.gameMode !== 'solo' && this.gameMode !== 'tl') {
+        const joiner = sessionStorage.getItem('joiningPlayer') as string;
+        console.log(joiner);
+        if (this.gameMode !== 'solo' && joiner) {
+            this.multiplayer = true;
             this.setOpponentName();
+            console.log('Opponent Name: ' + this.opponentName);
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
             this.socketService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
                 if (this.userName === messageInfo.name) {
@@ -55,12 +60,21 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.socketService.socket.on('player-success', (name: string) => {
                 this.writeSuccessMessage(name);
             });
+            this.socketService.socket.on('new-record', (name: string) => {
+                this.writeNewRecordMessage(name);
+            });
 
             this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
                 this.socketService.sendPlayerError(this.userName);
             });
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.socketService.sendPlayerSuccess(this.userName);
+            });
+            this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
+                this.socketService.sendNewRecord(this.userName);
+            });
+            this.socketService.socket.on('player-quit-game', () => {
+                this.multiplayer = false;
             });
         } else {
             this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
@@ -69,11 +83,17 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.writeSuccessMessage(this.userName);
             });
+            this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
+                this.writeNewRecordMessage(this.userName);
+            });
         }
     }
 
     setOpponentName() {
         const gameMaster = sessionStorage.getItem('gameMaster') as string;
+        if (sessionStorage.getItem('joininPlayer') as string) {
+            this.multiplayer = true;
+        }
         if (gameMaster === this.userName) {
             this.opponentName = sessionStorage.getItem('joiningPlayer') as string;
         } else {
@@ -138,6 +158,11 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         this.addSystemMessage(systemMessage);
     }
 
+    writeNewRecordMessage(name: string) {
+        let systemMessage = `${this.getTimestamp()} - ${name} obtient la POSITION place dans les meilleurs temps du jeu ${name} en ${this.gameMode}`;
+        this.addSystemMessage(systemMessage);
+    }
+
     getTimestamp() {
         const now = new Date();
         const hour = now.getHours().toString().padStart(2, '0');
@@ -159,6 +184,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         }
         if (this.successSubscription) {
             this.successSubscription.unsubscribe();
+        }
+        if (this.recordSubscription) {
+            this.recordSubscription.unsubscribe();
         }
         sessionStorage.clear();
     }

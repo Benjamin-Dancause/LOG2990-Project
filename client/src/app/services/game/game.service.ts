@@ -23,6 +23,7 @@ export class GameService {
     private isClickDisabled = false;
     private differenceFound: number[] = [];
     private gameName: string = '';
+    private player1: boolean;
     private isCheatEnabled = false;
     private isHintModeEnabled = false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,17 +38,16 @@ export class GameService {
         this.socketService.socket.on('send-victorious-player', () => {
             setTimeout(() => {
                 if (sessionStorage.getItem('winner') === 'true' && this.differenceFound.length !== 0) {
-                    console.log('You won!');
                     let minutes = +(sessionStorage.getItem('newTimeMinutes') as string);
                     let seconds = +(sessionStorage.getItem('newTimeSeconds') as string);
                     let time = minutes * 60 + seconds;
                     let playerTime: playerTime = {
-                    user: sessionStorage.getItem('userName') as string,
-                    time: time,
-                    isSolo: sessionStorage.getItem('gameMode') === 'solo',
-                }
-                communicationService.updateBestTimes(this.gameName, playerTime);
-                this.differenceFound = [];
+                        user: sessionStorage.getItem('userName') as string,
+                        time: time,
+                        isSolo: sessionStorage.getItem('gameMode') === 'solo',
+                    };
+                    communicationService.updateBestTimes(this.gameName, playerTime);
+                    this.differenceFound = [];
                 }
             }, 250);
         });
@@ -60,7 +60,6 @@ export class GameService {
     }
 
     updateDifferences(response: ClickResponse) {
-        console.log('Difference number: ' + response.differenceNumber);
         this.flashDifferences(response.coords, this.playAreaCtx);
         if ((sessionStorage.getItem('gameMode') as string) !== 'tl') {
             this.differenceFound.push(response.differenceNumber);
@@ -73,7 +72,6 @@ export class GameService {
     }
 
     flashDifferences(coords: Coords[], ctxs: CanvasRenderingContext2D[]) {
-        console.log('Contexts length: ' + this.playAreaCtx.length);
         ctxs[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
         ctxs[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
         const flash = setInterval(() => {
@@ -89,7 +87,10 @@ export class GameService {
 
         setTimeout(() => {
             clearInterval(flash);
-            if ((sessionStorage.getItem('gameMode') as string) === 'tl') {
+            if (
+                (sessionStorage.getItem('gameMode') as string) === 'tl' &&
+                (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string)
+            ) {
                 this.socketService.switchGame();
             }
         }, 1000);
@@ -373,6 +374,11 @@ export class GameService {
 
     setGameName() {
         this.gameName = (sessionStorage.getItem('gameTitle') as string) || '';
+        if ((sessionStorage.getItem('gameMode') as string) === 'tl') {
+            this.player1 = true;
+        } else {
+            this.player1 = (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false;
+        }
     }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
@@ -388,9 +394,7 @@ export class GameService {
     }
 
     incrementCounter() {
-        this.counterService.incrementCounter(
-            (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string) ? true : false,
-        );
+        this.counterService.incrementCounter(this.player1);
     }
 
     playErrorSound() {
@@ -415,7 +419,6 @@ export class GameService {
             this.socketService.socket.off('click-response');
             this.socketService.sendPosition(mousePosition);
             this.socketService.socket.on('click-response', (response: ClickResponse) => {
-                console.log('Response:' + response.isDifference);
                 if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
                     this.successMessage.emit('Trouvé');
                     context.fillStyle = 'green';
@@ -436,9 +439,6 @@ export class GameService {
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
                     this.playErrorSound();
-                    if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
-                        this.socketService.removeToTimer();
-                    }
                     this.isClickDisabled = true;
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);

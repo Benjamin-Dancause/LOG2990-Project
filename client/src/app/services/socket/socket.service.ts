@@ -79,6 +79,10 @@ export class SocketService {
         this.socket.emit('leave-game');
     }
 
+    leaveLimitedTime() {
+        this.socket.emit('leave-limited-time');
+    }
+
     sendPlayerMessage(name: string, message: string) {
         this.socket.emit('send-player-message', { name, message });
     }
@@ -89,6 +93,10 @@ export class SocketService {
 
     sendPlayerSuccess(name: string) {
         this.socket.emit('send-player-success', name);
+    }
+
+    sendNewRecord(name: string) {
+        this.socket.emit('send-new-record', name);
     }
 
     sendVictoriousPlayer(player1: boolean) {

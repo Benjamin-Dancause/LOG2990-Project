@@ -26,6 +26,12 @@ export class GameManager {
             };
             games.push(roomGameData);
         }
+        const rooms = this.getAllRooms();
+        for (let room of rooms) {
+            if (room === roomId) {
+                return this.switchImages(roomId);
+            }
+        }
         this.roomIdToGameDifferences.set(roomId, games);
 
         return this.switchImages(roomId);
@@ -73,6 +79,11 @@ export class GameManager {
 
     deleteRoomGameInfo(roomId: string) {
         this.roomIdToGameDifferences.delete(roomId);
+    }
+
+    getAllRooms(): IterableIterator<string> {
+        const keys: IterableIterator<string> = this.roomIdToGameDifferences.keys();
+        return keys;
     }
 
     // async verifyPos(name: string, clickCoord: Coords): Promise<DifferenceInterface> {

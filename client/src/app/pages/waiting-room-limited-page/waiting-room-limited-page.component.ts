@@ -43,7 +43,7 @@ export class WaitingRoomLimitedPageComponent implements OnInit, AfterViewInit {
     startLimitedTimeGame(): void {}
 
     leaveLobby() {
-        this.socketService.leaveLobby();
+        this.socketService.closeLobby(this.gameTitle);
         this.router.navigate(['/home']);
     }
 }
