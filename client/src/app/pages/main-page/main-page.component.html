@@ -52,18 +52,18 @@
             (click)="saveUserName()"
             [disabled]="!inputRef.valid"
             [mat-dialog-close]="true"
-            [routerLink]="inputRef.valid ? ['/game'] : []"
+            [routerLink]="inputRef.valid ? ['/limited-time'] : []"
         >
             Seul
         </button>
         <button
             mat-button
-            (click)="saveUserName()"
+            (click)="saveUserNameDuo()"
             [disabled]="!inputRef.valid"
             [mat-dialog-close]="true"
-            [routerLink]="inputRef.valid ? ['/game'] : []"
+            [routerLink]="inputRef.valid ? ['waitingRoom-limited'] : []"
         >
-            Multijoueur
+            Coopératif
         </button>
     </mat-dialog-actions>
 </ng-template>

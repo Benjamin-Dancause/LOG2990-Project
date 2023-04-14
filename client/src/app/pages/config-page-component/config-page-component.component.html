@@ -10,6 +10,7 @@
             [imageUrl]="game.image"
             [difficulty]="game.difficulty"
             [configuration]="true"
+            [bestTimes]="this.bestTimes[i]"
         ></app-game-card>
     </div>
     <app-previous-next-button
@@ -20,5 +21,6 @@
         (next)="onNext()"
     >
     </app-previous-next-button>
+    <button class="resetAll" (click)="resetBestTimes()">Réinitialiser les tous meilleurs temps</button>
     <button class="create" [routerLink]="['/create']">Création de jeu</button>
 </div>

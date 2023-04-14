@@ -9,7 +9,6 @@ import { Subscription } from 'rxjs';
     selector: 'app-text-box',
     templateUrl: './text-box.component.html',
     styleUrls: ['./text-box.component.scss'],
-    providers: [CounterService],
 })
 export class TextBoxComponent implements OnInit, OnDestroy {
     @Input() single: boolean = true;
@@ -21,6 +20,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     userName: string;
     message = '';
     opponentName: string = '';
+    multiplayer: boolean = false;
     gameMode: string = '';
     successSubscription: Subscription;
     errorSubscription: Subscription;
@@ -39,9 +39,12 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
-
-        if (this.gameMode !== 'solo') {
+        const joiner = sessionStorage.getItem('joiningPlayer') as string;
+        console.log(joiner);
+        if (this.gameMode !== 'solo' && joiner) {
+            this.multiplayer = true;
             this.setOpponentName();
+            console.log('Opponent Name: ' + this.opponentName);
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
             this.socketService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
                 if (this.userName === messageInfo.name) {
@@ -59,12 +62,21 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.socketService.socket.on('player-success', (name: string) => {
                 this.writeSuccessMessage(name);
             });
+            this.socketService.socket.on('new-record', (name: string) => {
+                this.writeNewRecordMessage(name);
+            });
 
             this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
                 this.socketService.sendPlayerError(this.userName);
             });
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.socketService.sendPlayerSuccess(this.userName);
+            });
+            this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
+                this.socketService.sendNewRecord(this.userName);
+            });
+            this.socketService.socket.on('player-quit-game', () => {
+                this.multiplayer = false;
             });
         } else {
             this.errorSubscription = this.gameService.errorMessage.subscribe(() => {
@@ -77,7 +89,6 @@ export class TextBoxComponent implements OnInit, OnDestroy {
                 this.writeHintMessage();
             });
             this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
-                this.writeHintMessage();
                 this.writeNewRecordMessage(this.userName);
             });
         }
@@ -85,6 +96,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
 
     setOpponentName() {
         const gameMaster = sessionStorage.getItem('gameMaster') as string;
+        if (sessionStorage.getItem('joininPlayer') as string) {
+            this.multiplayer = true;
+        }
         if (gameMaster === this.userName) {
             this.opponentName = sessionStorage.getItem('joiningPlayer') as string;
         } else {
@@ -159,7 +173,6 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.gameMode
         }`;
         this.addSystemMessage(systemMessage);
-        this.addSystemMessage(systemMessage);
     }
 
     getTimestamp() {
@@ -183,6 +196,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         }
         if (this.successSubscription) {
             this.successSubscription.unsubscribe();
+        }
+        if (this.recordSubscription) {
+            this.recordSubscription.unsubscribe();
         }
         sessionStorage.clear();
     }

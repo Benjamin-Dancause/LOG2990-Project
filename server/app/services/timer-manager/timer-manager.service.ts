@@ -37,6 +37,14 @@ export class TimerManagerService {
         this.classicModeGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
     }
 
+    removeToTimer(roomId: string, decrement: number) {
+        this.timers.set(roomId, this.timers.get(roomId) - decrement);
+        if (this.timers.get(roomId) <= 0) {
+            this.timers.set(roomId, 0);
+        }
+        this.classicModeGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
+    }
+
     getTimeFromRoom(roomId: string, gameMode: string): number {
         if (gameMode === 'tl') {
             return this.timers.get(roomId) || 60;
@@ -45,6 +53,7 @@ export class TimerManagerService {
     }
 
     deleteTimerData(roomId: string) {
+        this.getAllRooms();
         clearInterval(this.intervals.get(roomId));
         this.intervals.delete(roomId);
         this.timers.delete(roomId);
@@ -54,5 +63,18 @@ export class TimerManagerService {
         const time = 0;
         this.timers.set(roomId, time);
         this.deleteTimerData(roomId);
+    }
+
+    isInitializedTimer(roomId: string): boolean {
+        return this.timers.has(roomId);
+    }
+
+    getAllRooms(): void {
+        const keys: IterableIterator<string> = this.timers.keys();
+
+        for (let key of keys) {
+            console.log('KEY = ' + key);
+        }
+        //return keys;
     }
 }

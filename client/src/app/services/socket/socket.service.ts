@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
+import { Coords } from '@app/classes/coords';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
@@ -54,6 +55,10 @@ export class SocketService {
         this.socket.emit('get-gameTitle', roomId);
     }
 
+    getImages() {
+        this.socket.emit('get-images');
+    }
+
     deleteGame(gameTitle: string) {
         this.socket.emit('delete-game', gameTitle);
     }
@@ -74,6 +79,10 @@ export class SocketService {
         this.socket.emit('leave-game');
     }
 
+    leaveLimitedTime() {
+        this.socket.emit('leave-limited-time');
+    }
+
     sendPlayerMessage(name: string, message: string) {
         this.socket.emit('send-player-message', { name, message });
     }
@@ -87,7 +96,6 @@ export class SocketService {
     }
 
     sendNewRecord(name: string) {
-        this.socket.emit('send-player-hint', name);
         this.socket.emit('send-new-record', name);
     }
 
@@ -125,6 +133,14 @@ export class SocketService {
 
     addToTimer() {
         this.socket.emit('add-to-timer', 10);
+    }
+
+    removeToTimer() {
+        this.socket.emit('remove-to-timer', 5);
+    }
+
+    switchGame() {
+        this.socket.emit('switch-game');
     }
 
     disconnectSocket() {

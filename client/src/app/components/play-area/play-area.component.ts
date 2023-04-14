@@ -122,6 +122,7 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     async initCanvases() {
+        this.game.clearContexts();
         const img1 = new Image();
         img1.setAttribute('crossOrigin', 'anonymous');
         img1.src = this.imageLeftStr;
@@ -146,25 +147,38 @@ export class PlayAreaComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.socketService.socket.on('player-info', (gameplayInfo: OneVsOneGameplayInfo) => {
-            this.player1 = gameplayInfo.player1;
             const gameMode = sessionStorage.getItem('gameMode') as string;
+            this.player1 = gameMode === 'tl' ? true : gameplayInfo.player1;
             this.socketService.initOneVsOneComponents(this.player1, gameMode);
+        });
+
+        // this.socketService.socket.on('images', (game) => {
+        //     this.imageLeftStr = this.serverURL + '/' + game.images[0];
+        //     this.imageRightStr = this.serverURL + '/' + game.images[1];
+        //     this.initCanvases();
+        // });
+        this.socketService.socket.off('switch-images');
+        this.socketService.socket.on('switch-images', (newImages: string[]) => {
+            this.imageLeftStr = this.serverURL + '/' + newImages[0];
+            this.imageRightStr = this.serverURL + '/' + newImages[1];
+            this.initCanvases();
         });
 
         if ((sessionStorage.getItem('gameMode') as string) === '1v1') {
             this.socketService.assignPlayerInfo(this.gameName);
         }
 
-        this.communicationService.getGameByName(this.gameName).subscribe((game) => {
-            this.imageLeftStr = this.serverURL + '/' + game.images[0];
-            this.imageRightStr = this.serverURL + '/' + game.images[1];
-            this.initCanvases();
-        });
+        // this.communicationService.getGameByName(this.gameName).subscribe((game) => {
+        //     this.imageLeftStr = this.serverURL + '/' + game.images[0];
+        //     this.imageRightStr = this.serverURL + '/' + game.images[1];
+        //     this.initCanvases();
+        // });
     }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy(): void {
         this.game.clearContexts();
         this.game.clearDifferenceArray();
+        this.socketService.disconnectSocket();
     }
 }

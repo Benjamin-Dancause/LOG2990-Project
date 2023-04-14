@@ -13,6 +13,9 @@ export class TimerService {
         return new Observable<number>((observer) => {
             this.socketService.socket.on('timer', (time: number) => {
                 observer.next(time);
+                if ((sessionStorage.getItem('gameMode') as string) === 'tl' && time === 0) {
+                    this.socketService.sendVictoriousPlayer(true);
+                }
             });
         });
     }

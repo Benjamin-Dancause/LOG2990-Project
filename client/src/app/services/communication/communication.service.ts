@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameDiffData, GameSelectionPageData, GameplayData } from '@common/game-interfaces';
+import { GameDiffData, GameSelectionPageData, GameplayData, bestTimes, playerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -62,6 +62,23 @@ export class CommunicationService {
         const url = `${this.baseUrl}/games/${name}`;
         return this.http.get<boolean>(url);
     }
+
+    getAllBestTimes(): Observable<bestTimes[]> {
+        return this.http.get<bestTimes[]>(`${this.baseUrl}/database/all`, { responseType: 'json' });
+    }
+
+    updateBestTimes(name: string, playerTime: playerTime) {
+        this.http.request('POST', `${this.baseUrl}/database/${name}`, { body: playerTime }).subscribe();
+    }
+    
+    resetBestTimes(name: string) {
+        this.http.request('POST', `${this.baseUrl}/database/reset/${name}`).subscribe();
+    }
+
+    resetAllBestTimes() {
+        this.http.request('POST', `${this.baseUrl}/database/reset`).subscribe();
+    }
+
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);
     }
