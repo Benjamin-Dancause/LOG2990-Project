@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
-import { Coords } from '@common/game-interfaces';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
@@ -85,6 +84,11 @@ export class SocketService {
 
     sendPlayerSuccess(name: string) {
         this.socket.emit('send-player-success', name);
+    }
+
+    sendNewRecord(name: string) {
+        this.socket.emit('send-player-hint', name);
+        this.socket.emit('send-new-record', name);
     }
 
     sendPlayerHint(name: string) {

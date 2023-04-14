@@ -24,12 +24,14 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     gameMode: string = '';
     successSubscription: Subscription;
     errorSubscription: Subscription;
+    recordSubscription: Subscription;
     hintSubscription: Subscription;
 
-    constructor(public gameService: GameService, public socketService: SocketService) {
+    constructor(public gameService: GameService, public socketService: SocketService, public counterService: CounterService) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
         this.successSubscription = new Subscription();
+        this.recordSubscription = new Subscription();
         this.hintSubscription = new Subscription();
     }
 
@@ -73,6 +75,10 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             });
             this.hintSubscription = this.gameService.hintMessage.subscribe(() => {
                 this.writeHintMessage();
+            });
+            this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
+                this.writeHintMessage();
+                this.writeNewRecordMessage(this.userName);
             });
         }
     }
@@ -145,6 +151,14 @@ export class TextBoxComponent implements OnInit, OnDestroy {
 
     writeHintMessage() {
         const systemMessage = `${this.getTimestamp()} -  Indice utilisé`;
+        this.addSystemMessage(systemMessage);
+    }
+
+    writeNewRecordMessage(name: string) {
+        const systemMessage = `${this.getTimestamp()} - ${name} obtient la POSITION place dans les meilleurs temps du jeu ${name} en ${
+            this.gameMode
+        }`;
+        this.addSystemMessage(systemMessage);
         this.addSystemMessage(systemMessage);
     }
 
