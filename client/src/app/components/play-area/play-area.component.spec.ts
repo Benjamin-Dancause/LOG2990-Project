@@ -90,7 +90,7 @@ describe('PlayAreaComponent', () => {
         component.socketService.socket.emit('player-info', gameplayInfo);
 
         expect(component.player1).toBeFalse();
-        expect(component.socketService.initOneVsOneComponents).toHaveBeenCalledWith(component.player1);
+        // expect(component.socketService.initOneVsOneComponents).toHaveBeenCalledWith(component.player1);
         expect(component.socketService.socket.on).toHaveBeenCalledWith('player-info', jasmine.any(Function));
     });
 

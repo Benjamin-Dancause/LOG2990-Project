@@ -25,12 +25,14 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     successSubscription: Subscription;
     errorSubscription: Subscription;
     recordSubscription: Subscription;
+    hintSubscription: Subscription;
 
     constructor(public gameService: GameService, public socketService: SocketService, public counterService: CounterService) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
         this.successSubscription = new Subscription();
         this.recordSubscription = new Subscription();
+        this.hintSubscription = new Subscription();
     }
 
     ngOnInit(): void {
@@ -82,6 +84,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             });
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.writeSuccessMessage(this.userName);
+            });
+            this.hintSubscription = this.gameService.hintMessage.subscribe(() => {
+                this.writeHintMessage();
             });
             this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
                 this.writeNewRecordMessage(this.userName);
@@ -158,8 +163,15 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         this.addSystemMessage(systemMessage);
     }
 
+    writeHintMessage() {
+        const systemMessage = `${this.getTimestamp()} -  Indice utilisé`;
+        this.addSystemMessage(systemMessage);
+    }
+
     writeNewRecordMessage(name: string) {
-        let systemMessage = `${this.getTimestamp()} - ${name} obtient la POSITION place dans les meilleurs temps du jeu ${name} en ${this.gameMode}`;
+        const systemMessage = `${this.getTimestamp()} - ${name} obtient la POSITION place dans les meilleurs temps du jeu ${name} en ${
+            this.gameMode
+        }`;
         this.addSystemMessage(systemMessage);
     }
 

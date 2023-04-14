@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
-import { Coords } from '@common/game-interfaces';
+import { Coords } from '@app/classes/coords';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
@@ -68,7 +68,7 @@ export class SocketService {
     }
 
     initOneVsOneComponents(player1: boolean, gameMode: string) {
-        this.socket.emit('init-OneVsOne-components', { player1: player1, gameMode: gameMode });
+        this.socket.emit('init-OneVsOne-components', { player1, gameMode });
     }
 
     sendDifferenceFound(response: ClickResponse) {
@@ -97,6 +97,10 @@ export class SocketService {
 
     sendNewRecord(name: string) {
         this.socket.emit('send-new-record', name);
+    }
+
+    sendPlayerHint(name: string) {
+        this.socket.emit('send-player-hint', name);
     }
 
     sendVictoriousPlayer(player1: boolean) {
