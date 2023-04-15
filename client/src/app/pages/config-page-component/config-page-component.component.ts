@@ -4,7 +4,7 @@ import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { TIME } from '@common/constants';
-import { bestTimes, GameSelectionPageData } from '@common/game-interfaces';
+import { GameSelectionPageData, bestTimes } from '@common/game-interfaces';
 import { delay } from 'rxjs';
 
 const PAGE_SIZE = 4;
@@ -81,7 +81,6 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
         location.reload();
     }
     resetBestTimes() {
-        // console.log('reset');
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
             data: {
                 title: 'Confirmation',

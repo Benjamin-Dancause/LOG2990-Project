@@ -98,8 +98,15 @@ export class databaseService {
         array[index2] = buffer;
     }
 
-    async getBestTimesByName(name: string): Promise<bestTimes | null> {
-        return await this.collection.findOne({ name: { $eq : name } });
+    async getBestTimesByName(name: string, gameMode: string): Promise<bestTimes | null> {
+        if(gameMode === 'solo') {
+            const result = await this.collection.findOne({ name: { $eq : name } });
+            return result.timesSolo;
+        }
+        else if(gameMode === '1v1'){
+            const result = await this.collection.findOne({ name: { $eq : name } });
+            return result.timesMulti;
+        }
       }
 
     async getBestTimes(): Promise<bestTimes[]> {

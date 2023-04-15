@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
@@ -8,7 +8,7 @@ import { SocketService } from '@app/services/socket/socket.service';
     templateUrl: './game-one-vs-one-page.component.html',
     styleUrls: ['./game-one-vs-one-page.component.scss'],
 })
-export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
+export class GameOneVsOnePageComponent implements AfterViewInit, OnInit, OnDestroy {
     gameTitle: string;
     userName: string;
     winningPlayer: string = '';
@@ -48,9 +48,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
                 }
                 this.showPopup = true;
             }
-            if (this.player1) {
-                this.socketService.deleteRoomGameInfo();
-            }
+            
         });
 
         this.socketService.socket.on('player-quit-game', () => {
@@ -62,5 +60,11 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
 
     isPlayer1(): boolean {
         return sessionStorage.getItem('gameMaster') === sessionStorage.getItem('userName') ? true : false;
+    }
+
+    ngOnDestroy(): void {
+        if (this.player1) {
+            this.socketService.deleteRoomGameInfo();
+        }
     }
 }

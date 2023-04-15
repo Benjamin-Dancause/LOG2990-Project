@@ -96,8 +96,8 @@ export class SocketService {
         this.socket.emit('send-player-success', name);
     }
 
-    sendNewRecord(name: string) {
-        this.socket.emit('send-new-record', name);
+    sendNewRecord(name: string, position: string) {
+        this.socket.emit('send-new-record', {name, position});
     }
 
     sendPlayerHint(name: string) {
