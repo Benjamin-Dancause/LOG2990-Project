@@ -25,22 +25,26 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     successSubscription: Subscription;
     errorSubscription: Subscription;
     recordSubscription: Subscription;
+    hintSubscription: Subscription;
 
     constructor(public gameService: GameService, public socketService: SocketService, public counterService: CounterService) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
         this.successSubscription = new Subscription();
         this.recordSubscription = new Subscription();
+        this.hintSubscription = new Subscription();
     }
 
     ngOnInit(): void {
         const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
-
-        if (this.gameMode !== 'solo' && this.opponentName !== '') {
+        const joiner = sessionStorage.getItem('joiningPlayer') as string;
+        // console.log(joiner);
+        if (this.gameMode !== 'solo' && joiner) {
+            this.multiplayer = true;
             this.setOpponentName();
-            console.log('Opponent Name: ' + this.opponentName);
+            // console.log('Opponent Name: ' + this.opponentName);
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
             this.socketService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
                 if (this.userName === messageInfo.name) {
@@ -71,7 +75,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
                 this.socketService.sendNewRecord(this.userName);
             });
-            this.socketService.socket.on('player-quit-limited', () => {
+            this.socketService.socket.on('player-quit-game', () => {
                 this.multiplayer = false;
             });
         } else {
@@ -80,6 +84,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             });
             this.successSubscription = this.gameService.successMessage.subscribe(() => {
                 this.writeSuccessMessage(this.userName);
+            });
+            this.hintSubscription = this.gameService.hintMessage.subscribe(() => {
+                this.writeHintMessage();
             });
             this.recordSubscription = this.counterService.recordMessage.subscribe(() => {
                 this.writeNewRecordMessage(this.userName);
@@ -156,8 +163,15 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         this.addSystemMessage(systemMessage);
     }
 
+    writeHintMessage() {
+        const systemMessage = `${this.getTimestamp()} -  Indice utilisé`;
+        this.addSystemMessage(systemMessage);
+    }
+
     writeNewRecordMessage(name: string) {
-        let systemMessage = `${this.getTimestamp()} - ${name} obtient la POSITION place dans les meilleurs temps du jeu ${name} en ${this.gameMode}`;
+        const systemMessage = `${this.getTimestamp()} - ${name} obtient la POSITION place dans les meilleurs temps du jeu ${name} en ${
+            this.gameMode
+        }`;
         this.addSystemMessage(systemMessage);
     }
 

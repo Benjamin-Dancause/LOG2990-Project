@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
-import { GameSelectionPageData, bestTimes } from '@common/game-interfaces';
+import { bestTimes, GameSelectionPageData } from '@common/game-interfaces';
 
 const PAGE_SIZE = 4;
 
@@ -24,7 +24,17 @@ export class GameSelectionPageComponent implements OnInit {
             this.games = gamecards;
             this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
         });
-        communication.getAllBestTimes().subscribe((bestTimes: bestTimes[]) => {
+        communication.getAllBestTimes().subscribe((times) => {
+            for (const game of this.games) {
+                for (const bestTime of times) {
+                    if (game.name === bestTime.name) {
+                        this.bestTimes.push(bestTime);
+                        break;
+                    }
+                }
+            }
+
+            /*
             for (let i = 0; i < this.games.length; i++) {
                 for (let j = 0; j < bestTimes.length; j++) {
                     if (this.games[i].name === bestTimes[j].name) {
@@ -33,6 +43,7 @@ export class GameSelectionPageComponent implements OnInit {
                     }
                 }
             }
+            */
         });
     }
 

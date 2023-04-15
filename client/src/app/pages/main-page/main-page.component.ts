@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class MainPageComponent implements OnInit {
     @ViewChild('gamemodeSelectionTemplate', { static: true })
-    gamemodeSelectionTemplate: TemplateRef<any>;
+    gamemodeSelectionTemplate: TemplateRef<unknown>;
 
     readonly title: string = 'Le Jeu Des Différences';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');

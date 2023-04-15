@@ -53,6 +53,7 @@ export class TimerManagerService {
     }
 
     deleteTimerData(roomId: string) {
+        this.getAllRooms();
         clearInterval(this.intervals.get(roomId));
         this.intervals.delete(roomId);
         this.timers.delete(roomId);
@@ -66,5 +67,14 @@ export class TimerManagerService {
 
     isInitializedTimer(roomId: string): boolean {
         return this.timers.has(roomId);
+    }
+
+    getAllRooms(): void {
+        const keys: IterableIterator<string> = this.timers.keys();
+
+        for (let key of keys) {
+            console.log('KEY = ' + key);
+        }
+        //return keys;
     }
 }

@@ -1,7 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
-import { GameSelectionPageData } from '@common/game-interfaces';
+import { TIME } from '@common/constants';
+import { bestTimes, GameSelectionPageData } from '@common/game-interfaces';
+import { delay } from 'rxjs';
 
 const PAGE_SIZE = 4;
 
@@ -12,18 +16,39 @@ const PAGE_SIZE = 4;
 })
 export class ConfigPageComponent implements OnInit, OnDestroy {
     games: GameSelectionPageData[] = [];
+    bestTimes: bestTimes[] = [];
 
     currentPage = 0;
     pageSize = PAGE_SIZE;
     lastPage = 0;
 
-    constructor(protected communication: CommunicationService, public socketService: SocketService) {
+    constructor(protected communication: CommunicationService, public socketService: SocketService, public dialog: MatDialog) {
         communication.getAllGames().subscribe((gamecards: GameSelectionPageData[]) => {
             /* for (const gamecard of gamecards) {
                 gamecard.configuration = true;
             }*/
             this.games = gamecards;
             this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
+        });
+        communication.getAllBestTimes().subscribe((times: bestTimes[]) => {
+            for (const game of this.games) {
+                for (const bestTime of times) {
+                    if (game.name === bestTime.name) {
+                        this.bestTimes.push(bestTime);
+                        break;
+                    }
+                }
+            }
+            /*
+            for (let i = 0; i < this.games.length; i++) {
+                for (let j = 0; j < bestTimes.length; j++) {
+                    if (this.games[i].name === bestTimes[j].name) {
+                        this.bestTimes.push(bestTimes[j]);
+                        break;
+                    }
+                }
+            }
+            */
         });
     }
 
@@ -50,5 +75,25 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
         if (this.currentPage < this.lastPage) {
             this.currentPage++;
         }
+    }
+
+    reloadPage() {
+        location.reload();
+    }
+    resetBestTimes() {
+        // console.log('reset');
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+            data: {
+                title: 'Confirmation',
+                message: 'Êtes-vous sûr de vouloir réinitialiser les meilleurs temps ?',
+            },
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result === 'yes') {
+                this.communication.resetAllBestTimes();
+                delay(TIME.BIG_DELAY);
+                this.reloadPage();
+            }
+        });
     }
 }

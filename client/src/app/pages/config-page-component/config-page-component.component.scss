@@ -94,7 +94,36 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
     box-shadow: 0 0 30px 4px $orange-glow;
     border-left: 10px solid $orange-border-left;
     bottom: 3%;
-    left: 41%;
+    left: 15%;
+
+    &:hover {
+        background-color: $background-color-hover;
+        border: 3px solid $cyan-border;
+        box-shadow: 0 0 30px 4px $cyan-glow;
+        border-left: 10px solid $cyan-border-left;
+    }
+    &:active {
+        box-shadow: 0 0 30px 8px $cyan-glow;
+    }
+}
+
+.resetAll {
+    background-color: $background-color;
+    position: absolute;
+    padding: 15px;
+    border-radius: 2px;
+    color: $cyan-text;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    font-family: 'Cyber', sans-serif;
+    border: 3px solid $orange-border;
+    box-shadow: 0 0 30px 4px $orange-glow;
+    border-left: 10px solid $orange-border-left;
+    bottom: 3%;
+    left: 35%;
 
     &:hover {
         background-color: $background-color-hover;

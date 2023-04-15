@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
-import { Coords } from '@common/game-interfaces';
+import { Coords } from '@app/classes/coords';
+import { TIME } from '@common/constants';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
@@ -68,7 +69,7 @@ export class SocketService {
     }
 
     initOneVsOneComponents(player1: boolean, gameMode: string) {
-        this.socket.emit('init-OneVsOne-components', { player1: player1, gameMode: gameMode });
+        this.socket.emit('init-OneVsOne-components', { player1, gameMode });
     }
 
     sendDifferenceFound(response: ClickResponse) {
@@ -97,6 +98,10 @@ export class SocketService {
 
     sendNewRecord(name: string) {
         this.socket.emit('send-new-record', name);
+    }
+
+    sendPlayerHint(name: string) {
+        this.socket.emit('send-player-hint', name);
     }
 
     sendVictoriousPlayer(player1: boolean) {
@@ -128,11 +133,11 @@ export class SocketService {
     }
 
     addToTimer() {
-        this.socket.emit('add-to-timer', 10);
+        this.socket.emit('add-to-timer', TIME.SMALL_ADD_TIME);
     }
 
     removeToTimer() {
-        this.socket.emit('remove-to-timer', 5);
+        this.socket.emit('remove-to-timer', TIME.SMALL_PENALTY);
     }
 
     switchGame() {

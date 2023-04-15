@@ -104,7 +104,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         const roomId = [...client.rooms][1];
         if (roomId) {
             console.log('emitted correctly');
-            this.server.to(roomId).emit('player-quit-limited');
+            this.server.to(roomId).emit('player-quit-game');
         }
     }
 
