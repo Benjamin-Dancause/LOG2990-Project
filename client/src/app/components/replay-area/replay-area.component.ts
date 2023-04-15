@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { ChatService } from '@app/services/chat/chat.service';
 import { ReplayService } from '@app/services/replay/replay.service';
 import { PlayAreaComponent } from '../play-area/play-area.component';
 
@@ -14,10 +15,11 @@ export class ReplayAreaComponent implements OnInit {
     speedSettings: number[] = [1, 2, 4];
     replaySpeed: number = 1;
     replaySpeedIndex: number = 0;
-    constructor(public replay: ReplayService) {}
+    constructor(public replay: ReplayService, private chat: ChatService) {}
 
     ngOnInit(): void {
         this.replay.startReplayTimer();
+        this.chat.deleteMessages();
     }
 
     togglePlayPause(): void {
@@ -36,6 +38,7 @@ export class ReplayAreaComponent implements OnInit {
 
     resetReplay(): void {
         this.replay.resetReplayTimer();
+        this.chat.deleteMessages();
         this.replayEvent.emit();
     }
 }

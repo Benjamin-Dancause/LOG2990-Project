@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { GameAction } from '@app/interfaces/game-action';
+import { ChatService } from '../chat/chat.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ReplayService {
-    constructor() {}
+    constructor(private chat: ChatService) {}
 
     public gameActions: GameAction[] = [];
     private actionTime: number = 0;
@@ -69,6 +70,10 @@ export class ReplayService {
 
             case 'difference-error':
                 console.log('difference-error for ' + this.currentGameAction.time);
+                break;
+
+            case 'message':
+                this.chat.messages.push(this.currentGameAction.payload);
                 break;
             default:
                 break;

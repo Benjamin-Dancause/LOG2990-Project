@@ -31,7 +31,7 @@ export class GameService {
     private player1: boolean;
     private isCheatEnabled = false;
     private isHintModeEnabled = false;
-    private time: number = 0;
+    public time: number = 0;
     private timeSubscription: Subscription;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private cheatTimeout: any;

@@ -3,6 +3,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@ang
 import { ChatService } from '@app/services/chat/chat.service';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameService } from '@app/services/game/game.service';
+import { ReplayService } from '@app/services/replay/replay.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { Subscription } from 'rxjs';
 
@@ -33,6 +34,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         public socketService: SocketService,
         public counterService: CounterService,
         public chat: ChatService,
+        public replay: ReplayService,
     ) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
@@ -42,6 +44,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.chat.deleteMessages();
         const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
@@ -126,6 +129,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             text,
         };
         this.chat.messages.push(message);
+        this.replay.addAction(this.gameService.time, 'message', message);
         this.scrollMessageArea();
     }
 
@@ -136,6 +140,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             text,
         };
         this.chat.messages.push(message);
+        this.replay.addAction(this.gameService.time, 'message', message);
         this.scrollMessageArea();
     }
 
@@ -146,6 +151,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             text,
         };
         this.chat.messages.push(message);
+        this.replay.addAction(this.gameService.time, 'message', message);
         this.scrollMessageArea();
     }
 
