@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CounterService } from '@app/services/counter/counter.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { CounterService } from '@app/services/counter/counter.service';
     templateUrl: './counter.component.html',
     styleUrls: ['./counter.component.scss'],
 })
-export class CounterComponent implements OnInit, OnDestroy {
+export class CounterComponent implements OnInit {
     @Input() playerSide: boolean;
 
     count: number;
@@ -17,10 +17,6 @@ export class CounterComponent implements OnInit, OnDestroy {
         this.player1 = this.isPlayer1();
         this.counterService.resetCounter(this.player1);
         this.counterService.initializeCounter();
-    }
-
-    ngOnDestroy(): void {
-        // this.counterService.resetCounter(this.player1);
     }
 
     isPlayer1(): boolean {

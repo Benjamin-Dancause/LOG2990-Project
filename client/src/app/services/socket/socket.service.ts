@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
+import { TIME } from '@common/constants';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
@@ -132,11 +133,11 @@ export class SocketService {
     }
 
     addToTimer() {
-        this.socket.emit('add-to-timer', 10);
+        this.socket.emit('add-to-timer', TIME.SMALL_ADD_TIME);
     }
 
     removeToTimer() {
-        this.socket.emit('remove-to-timer', 5);
+        this.socket.emit('remove-to-timer', TIME.SMALL_PENALTY);
     }
 
     switchGame() {

@@ -40,11 +40,11 @@ export class TextBoxComponent implements OnInit, OnDestroy {
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
         const joiner = sessionStorage.getItem('joiningPlayer') as string;
-        console.log(joiner);
+        // console.log(joiner);
         if (this.gameMode !== 'solo' && joiner) {
             this.multiplayer = true;
             this.setOpponentName();
-            console.log('Opponent Name: ' + this.opponentName);
+            // console.log('Opponent Name: ' + this.opponentName);
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
             this.socketService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
                 if (this.userName === messageInfo.name) {

@@ -28,13 +28,13 @@ export class GiveUpButtonComponent implements OnInit {
 
     removeUser(): void {
         const gameMode: string = sessionStorage.getItem('gameMode') as string;
-        console.log('TL ?: ' + gameMode);
-        console.log(gameMode === 'tl');
+        // console.log('TL ?: ' + gameMode);
+        // console.log(gameMode === 'tl');
         if (gameMode === 'tl') {
-            console.log('enters line 34');
+            // console.log('enters line 34');
             this.socketService.leaveLimitedTime();
         } else {
-            console.log('Enters line 36');
+            // console.log('Enters line 36');
             this.socketService.leaveGame();
         }
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
