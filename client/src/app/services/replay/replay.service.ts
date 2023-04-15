@@ -11,12 +11,16 @@ export class ReplayService {
     private time: number = 0;
     private actionTime: number = 0;
     private currentGameAction: GameAction;
+    private speedSettings: number[] = [1, 2, 4];
+    public replaySpeed: number = 1;
+    public replayTimer: number = 0;
+    replayInterval: any;
 
     addAction(time: number, action: string, payload?: any): void {
-        console.log(time);
-        console.log(action);
+        // console.log(time);
+        // console.log(action);
         if (payload) {
-            console.log(payload);
+            // console.log(payload);
         }
         const gameAction: GameAction = { time, action, payload };
         //const gameAction: GameAction = { time: 0, action, payload };
@@ -25,7 +29,7 @@ export class ReplayService {
 
     startReplay(): void {
         this.setNextActionTime();
-
+        this.startReplayTimer();
         if (this.time === this.actionTime) {
             this.playAction();
         }
@@ -56,23 +60,46 @@ export class ReplayService {
         switch (this.currentGameAction.action) {
             case 'update-difference':
                 //Call updateDifference
-                console.log('update-difference for ' + this.currentGameAction.time + ' : ' + this.currentGameAction.payload);
+                //console.log('update-difference for ' + this.currentGameAction.time + ' : ' + this.currentGameAction.payload);
                 break;
 
             case 'difference-found':
                 //call stuff for difference errors
-                console.log('difference-found for ' + this.currentGameAction.time);
+                // console.log('difference-found for ' + this.currentGameAction.time);
                 this.goToNextAction();
-                console.log('update-difference for ' + this.currentGameAction.time + ' : ' + this.currentGameAction.payload);
+                //console.log('update-difference for ' + this.currentGameAction.time + ' : ' + this.currentGameAction.payload);
                 break;
 
             case 'difference-error':
-                console.log('difference-error for ' + this.currentGameAction.time);
+                //console.log('difference-error for ' + this.currentGameAction.time);
                 break;
             default:
                 break;
         }
 
         this.goToNextAction();
+    }
+
+    changeSpeed(index: number): void {
+        this.replaySpeed = this.speedSettings[index];
+        this.startReplayTimer();
+    }
+
+    startReplayTimer(): void {
+        this.pauseReplayTimer();
+        const interval = 1000 / this.replaySpeed;
+        this.replayInterval = setInterval(() => {
+            this.replayTimer++;
+            console.log(this.replayTimer);
+        }, interval);
+    }
+
+    pauseReplayTimer(): void {
+        clearInterval(this.replayInterval);
+    }
+
+    resetReplayTimer(): void {
+        this.pauseReplayTimer();
+        this.replayTimer = 0;
     }
 }
