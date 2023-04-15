@@ -10,6 +10,7 @@ export class ReplayService {
     public gameActions: GameAction[] = [];
     private time: number = 0;
     private actionTime: number = 0;
+    private currentGameAction: GameAction;
 
     addAction(time: number, action: string, payload?: any): void {
         console.log(time);
@@ -18,6 +19,7 @@ export class ReplayService {
             console.log(payload);
         }
         const gameAction: GameAction = { time, action, payload };
+        //const gameAction: GameAction = { time: 0, action, payload };
         this.gameActions.push(gameAction);
     }
 
@@ -34,20 +36,34 @@ export class ReplayService {
     }
 
     setNextActionTime(): void {
-        this.actionTime = this.gameActions[0].time;
+        if (this.gameActions.length > 0) {
+            this.actionTime = this.gameActions[0].time;
+        }
     }
 
     goToNextAction(): void {
         this.gameActions.shift();
         this.setNextActionTime();
+        this.currentGameAction = this.getAction();
     }
 
     playAction(): void {
-        const gameAction = this.getAction();
-        switch (gameAction.action) {
+        this.currentGameAction = this.getAction();
+        switch (this.currentGameAction.action) {
             case 'update-difference':
                 //Call updateDifference
-                console.log('update-difference: ' + gameAction.payload);
+                console.log('update-difference for ' + this.currentGameAction.time + ' : ' + this.currentGameAction.payload);
+                break;
+
+            case 'difference-found':
+                //call stuff for difference errors
+                console.log('difference-found for ' + this.currentGameAction.time);
+                this.goToNextAction();
+                console.log('update-difference for ' + this.currentGameAction.time + ' : ' + this.currentGameAction.payload);
+                break;
+
+            case 'difference-error':
+                console.log('difference-error for ' + this.currentGameAction.time);
                 break;
             default:
                 break;

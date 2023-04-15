@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GameCardService } from '@app/services/game-card/game-card.service';
+import { ReplayService } from '@app/services/replay/replay.service';
 import { SocketService } from '@app/services/socket/socket.service';
 
 @Component({
@@ -13,7 +14,7 @@ export class GamePageComponent implements OnInit {
 
     showPopup = false;
 
-    constructor(public gameCardService: GameCardService, public socketService: SocketService) {}
+    constructor(public gameCardService: GameCardService, public socketService: SocketService, private replayService: ReplayService) {}
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
@@ -35,5 +36,9 @@ export class GamePageComponent implements OnInit {
             sessionStorage.setItem('winner', 'true');
             this.socketService.deleteRoomGameInfo();
         });
+    }
+
+    test() {
+        this.replayService.playAction();
     }
 }
