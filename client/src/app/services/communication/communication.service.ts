@@ -68,7 +68,7 @@ export class CommunicationService {
     }
 
     updateBestTimes(name: string, playerTime: playerTime) {
-        this.http.request('POST', `${this.baseUrl}/database/${name}`, { body: playerTime }).subscribe();
+        this.http.request('POST', `${this.baseUrl}/best-times/${name}`, { body: playerTime }).subscribe();
     }
 
     resetBestTimes(name: string) {
