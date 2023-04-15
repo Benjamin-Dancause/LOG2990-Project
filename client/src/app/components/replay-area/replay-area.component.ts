@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { ReplayService } from '@app/services/replay/replay.service';
 import { PlayAreaComponent } from '../play-area/play-area.component';
 
@@ -9,6 +9,7 @@ import { PlayAreaComponent } from '../play-area/play-area.component';
 })
 export class ReplayAreaComponent implements OnInit {
     @ViewChild(PlayAreaComponent) playArea: PlayAreaComponent;
+    @Output() replayEvent = new EventEmitter();
     isPlaying: boolean = false;
     speedSettings: number[] = [1, 2, 4];
     replaySpeed: number = 1;
@@ -33,6 +34,6 @@ export class ReplayAreaComponent implements OnInit {
 
     resetReplay(): void {
         this.replay.resetReplayTimer();
-        this.playArea.initCanvases();
+        this.replayEvent.emit();
     }
 }

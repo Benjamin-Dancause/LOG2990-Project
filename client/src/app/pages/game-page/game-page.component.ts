@@ -47,6 +47,9 @@ export class GamePageComponent implements OnInit {
         this.replayMode = true;
         this.playArea.initCanvases();
     }
+    receiveReplayEvent() {
+        this.playArea.initCanvases();
+    }
 
     test() {
         this.replayService.playAction();
