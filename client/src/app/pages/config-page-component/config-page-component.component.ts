@@ -31,6 +31,15 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
             this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
         });
         communication.getAllBestTimes().subscribe((bestTimes: bestTimes[]) => {
+            for (const game of this.games) {
+                for (const bestTime of bestTimes) {
+                    if (game.name === bestTime.name) {
+                        this.bestTimes.push(bestTime);
+                        break;
+                    }
+                }
+            }
+            /*
             for (let i = 0; i < this.games.length; i++) {
                 for (let j = 0; j < bestTimes.length; j++) {
                     if (this.games[i].name === bestTimes[j].name) {
@@ -39,6 +48,7 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
                     }
                 }
             }
+            */
         });
     }
 
