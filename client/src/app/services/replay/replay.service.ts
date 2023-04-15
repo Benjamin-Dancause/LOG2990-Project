@@ -24,7 +24,7 @@ export class ReplayService {
     startReplay(): void {
         this.setNextActionTime();
 
-        if ((this.time = this.actionTime)) {
+        if (this.time === this.actionTime) {
             this.playAction();
         }
     }
