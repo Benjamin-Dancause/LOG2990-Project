@@ -16,7 +16,9 @@ export class ReplayAreaComponent implements OnInit {
     replaySpeedIndex: number = 0;
     constructor(public replay: ReplayService) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.replay.startReplayTimer();
+    }
 
     togglePlayPause(): void {
         this.isPlaying = !this.isPlaying;
