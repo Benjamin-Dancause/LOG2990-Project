@@ -168,6 +168,8 @@ export class PlayAreaComponent implements AfterViewInit {
             this.socketService.assignPlayerInfo(this.gameName);
         }
 
+        this.game.timeUpdater();
+
         // this.communicationService.getGameByName(this.gameName).subscribe((game) => {
         //     this.imageLeftStr = this.serverURL + '/' + game.images[0];
         //     this.imageRightStr = this.serverURL + '/' + game.images[1];
@@ -179,6 +181,7 @@ export class PlayAreaComponent implements AfterViewInit {
     ngOnDestroy(): void {
         this.game.clearContexts();
         this.game.clearDifferenceArray();
+        this.game.clearTime();
         this.socketService.disconnectSocket();
     }
 }
