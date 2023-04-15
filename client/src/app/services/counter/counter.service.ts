@@ -66,10 +66,16 @@ export class CounterService {
     }
 
     isNewBestTime() {
+        this.recordMessage.emit('Nouveau record');
+    }
+
+    /*
+    isNewBestTime() {
         if (true) {
             this.recordMessage.emit('Nouveau record');
         }
     }
+    */
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy() {
