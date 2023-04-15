@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { GameConfigService } from '@app/services/game-config/game-config.service';
+import { TIME } from '@common/constants';
 import { of } from 'rxjs';
 import { SettingsButtonComponent } from './settings-button.component';
 
@@ -39,22 +40,22 @@ describe('SettingsButtonComponent', () => {
 
     describe('openSettings', () => {
         beforeEach(() => {
-            gameConfigServiceSpy.getCountdownTime.and.returnValue(of(30));
-            gameConfigServiceSpy.getPenaltyTime.and.returnValue(of(5));
-            gameConfigServiceSpy.getTimeGained.and.returnValue(of(5));
+            gameConfigServiceSpy.getCountdownTime.and.returnValue(of(TIME.COUNTDOWN_TIME));
+            gameConfigServiceSpy.getPenaltyTime.and.returnValue(of(TIME.SMALL_PENALTY));
+            gameConfigServiceSpy.getTimeGained.and.returnValue(of(TIME.SMALL_TIME_GAINED));
             component.openSettings();
         });
 
         it('should set the countdownTime', () => {
-            expect(component.countdownTime).toBe(30);
+            expect(component.countdownTime).toBe(TIME.COUNTDOWN_TIME);
         });
 
         it('should set the penaltyTime', () => {
-            expect(component.penaltyTime).toBe(5);
+            expect(component.penaltyTime).toBe(TIME.SMALL_PENALTY);
         });
 
         it('should set the timeGained', () => {
-            expect(component.timeGained).toBe(5);
+            expect(component.timeGained).toBe(TIME.SMALL_TIME_GAINED);
         });
 
         it('should open the dialog', () => {
@@ -83,7 +84,7 @@ describe('SettingsButtonComponent', () => {
         });
 
         it('should set the countdownTime', () => {
-            expect(gameConfigServiceSpy.setCountdownTime).toHaveBeenCalledWith(10);
+            expect(gameConfigServiceSpy.setCountdownTime).toHaveBeenCalledWith(TIME.SMALL_COUNTDOWN_TIME);
         });
 
         it('should set the penaltyTime', () => {
@@ -91,7 +92,7 @@ describe('SettingsButtonComponent', () => {
         });
 
         it('should set the timeGained', () => {
-            expect(gameConfigServiceSpy.setTimeGained).toHaveBeenCalledWith(7);
+            expect(gameConfigServiceSpy.setTimeGained).toHaveBeenCalledWith(TIME.SMALL_TIME_GAINED + 2);
         });
 
         it('should close the dialog', () => {
@@ -108,15 +109,15 @@ describe('SettingsButtonComponent', () => {
         });
 
         it('should reset countdownTime', () => {
-            expect(component.countdownTime).toBe(30);
+            expect(component.countdownTime).toBe(TIME.COUNTDOWN_TIME);
         });
 
         it('should reset penaltyTime', () => {
-            expect(component.penaltyTime).toBe(5);
+            expect(component.penaltyTime).toBe(TIME.SMALL_PENALTY);
         });
 
         it('should reset timeGained', () => {
-            expect(component.timeGained).toBe(5);
+            expect(component.timeGained).toBe(TIME.SMALL_TIME_GAINED);
         });
     });
 });

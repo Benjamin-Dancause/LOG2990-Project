@@ -5,6 +5,7 @@ import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
+import { TIME } from '@common/constants';
 import { bestTimes } from '@common/game-interfaces';
 import { range } from 'rxjs';
 import { delay } from 'rxjs/operators';
@@ -67,14 +68,14 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     }
 
     convertTime(time: number): string {
-        const minutes = Math.floor(time / 60);
-        const seconds = time % 60;
+        const minutes = Math.floor(time / TIME.SIXTY_SECONDS);
+        const seconds = time % TIME.SIXTY_SECONDS;
         let stringSeconds: string = seconds.toString();
         let stringMinutes: string = minutes.toString();
-        if (seconds < 10) {
+        if (seconds < TIME.TEN_SECONDS) {
             stringSeconds = '0' + seconds;
         }
-        if (minutes < 10) {
+        if (minutes < TIME.TEN_SECONDS) {
             stringMinutes = '0' + minutes;
         }
         return stringMinutes + ':' + stringSeconds;
@@ -174,7 +175,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result === 'yes') {
                 this.communication.resetBestTimes(gameTitle);
-                delay(250);
+                delay(TIME.BIG_DELAY);
                 this.reloadPage();
             }
         });

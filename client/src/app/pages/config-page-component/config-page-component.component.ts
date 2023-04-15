@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
+import { TIME } from '@common/constants';
 import { bestTimes, GameSelectionPageData } from '@common/game-interfaces';
 import { delay } from 'rxjs';
 
@@ -80,7 +81,7 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe((result) => {
             if (result === 'yes') {
                 this.communication.resetAllBestTimes();
-                delay(250);
+                delay(TIME.BIG_DELAY);
                 this.reloadPage();
             }
         });
