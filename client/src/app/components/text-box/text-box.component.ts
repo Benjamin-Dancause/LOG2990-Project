@@ -52,6 +52,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.setOpponentName();
             // console.log('Opponent Name: ' + this.opponentName);
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
+            this.socketService.socket.off('incoming-player-message');
             this.socketService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
                 if (this.userName === messageInfo.name) {
                     this.addSelfMessage(messageInfo.message);
@@ -207,6 +208,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.recordSubscription.unsubscribe();
         }
         sessionStorage.clear();
+        this.chat.deleteMessages();
     }
 }
 

@@ -7,4 +7,8 @@ import { Message } from '@app/components/text-box/text-box.component';
 export class ChatService {
     public messages: Message[] = [];
     constructor() {}
+
+    deleteMessages(): void {
+        this.messages = [];
+    }
 }
