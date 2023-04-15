@@ -8,7 +8,7 @@ import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
-import { GameDiffData, playerTime } from '@common/game-interfaces';
+import { GameDiffData, playerTime as PlayerTimeInterface } from '@common/game-interfaces';
 import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
 
@@ -42,7 +42,7 @@ export class GameService {
                     let minutes = +(sessionStorage.getItem('newTimeMinutes') as string);
                     let seconds = +(sessionStorage.getItem('newTimeSeconds') as string);
                     let time = minutes * 60 + seconds;
-                    let playerTime: playerTime = {
+                    let playerTime: PlayerTimeInterface = {
                         user: sessionStorage.getItem('userName') as string,
                         time,
                         isSolo: sessionStorage.getItem('gameMode') === 'solo',

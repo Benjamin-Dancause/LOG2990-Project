@@ -24,9 +24,9 @@ export class GameSelectionPageComponent implements OnInit {
             this.games = gamecards;
             this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
         });
-        communication.getAllBestTimes().subscribe((bestTimes: bestTimes[]) => {
+        communication.getAllBestTimes().subscribe((times) => {
             for (const game of this.games) {
-                for (const bestTime of bestTimes) {
+                for (const bestTime of times) {
                     if (game.name === bestTime.name) {
                         this.bestTimes.push(bestTime);
                         break;

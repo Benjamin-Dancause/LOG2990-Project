@@ -67,8 +67,8 @@ export class CommunicationService {
         return this.http.get<bestTimes[]>(`${this.baseUrl}/database/all`, { responseType: 'json' });
     }
 
-    updateBestTimes(name: string, playerTime: playerTime) {
-        this.http.request('POST', `${this.baseUrl}/database/${name}`, { body: playerTime }).subscribe();
+    updateBestTimes(name: string, newPlayerTime: playerTime) {
+        this.http.request('POST', `${this.baseUrl}/database/${name}`, { body: newPlayerTime }).subscribe();
     }
 
     resetBestTimes(name: string) {
