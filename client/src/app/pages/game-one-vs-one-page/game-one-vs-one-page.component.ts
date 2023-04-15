@@ -8,13 +8,14 @@ import { SocketService } from '@app/services/socket/socket.service';
     templateUrl: './game-one-vs-one-page.component.html',
     styleUrls: ['./game-one-vs-one-page.component.scss'],
 })
-export class GameOneVsOnePageComponent implements AfterViewInit, OnInit{
+export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
     gameTitle: string;
     userName: string;
     winningPlayer: string = '';
     player1: boolean = false;
     isWinner: boolean = false;
     showPopup = false;
+    replayMode = false;
 
     constructor(public gameCardService: GameCardService, public socketService: SocketService, public counterService: CounterService) {}
 
@@ -48,18 +49,18 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit{
                 }
                 this.showPopup = true;
             }
-            if(this.player1) {
+            if (this.player1) {
                 this.socketService.deleteRoomGameInfo();
             }
         });
-        
+
         this.socketService.socket.on('player-quit-game', () => {
             this.isWinner = true;
             this.winningPlayer = sessionStorage.getItem('userName') as string;
             this.showPopup = true;
         });
     }
-    
+
     isPlayer1(): boolean {
         return sessionStorage.getItem('gameMaster') === sessionStorage.getItem('userName') ? true : false;
     }

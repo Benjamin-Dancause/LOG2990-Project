@@ -1,4 +1,4 @@
-<div class="container">
+<div [class]="replayMode ? 'container disable-click' : 'container click'">
     <section class="play-area-container">
         <app-top-bar name="Nom de la fiche" [single]="true"></app-top-bar>
         <app-hints class="hint"></app-hints>
@@ -6,6 +6,9 @@
         <app-give-up-button text="Abandonner"></app-give-up-button>
     </section>
     <app-sidebar difficulty="Facile" mode="Classique" total="5" penalty="5" [solo]="true"></app-sidebar>
+</div>
+<div *ngIf="replayMode" class="replay-overlay" [style.display]="replayMode ? 'block' : 'none'">
+    <app-replay-area></app-replay-area>
 </div>
 
 <div class="popup-overlay" [style.display]="showPopup ? 'block' : 'none'">

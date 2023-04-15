@@ -10,7 +10,7 @@ import { SocketService } from '@app/services/socket/socket.service';
 export class GamePageComponent implements OnInit {
     gameTitle: string;
     userName: string;
-
+    replayMode = false;
     showPopup = false;
 
     constructor(public gameCardService: GameCardService, public socketService: SocketService) {}

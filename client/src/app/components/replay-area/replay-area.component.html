@@ -1,0 +1,13 @@
+<div class="container">
+    <div class="button-container">
+        <button class="restart btn">
+            <img src="./assets/icons8-restart-80.png">
+        </button>
+        <button class="play-pause btn" (click)="togglePlayPause()">
+            <img [src]="isPlaying ? './assets/icons8-play-80.png' : './assets/icons8-pause-80.png'">
+        </button>
+    </div>
+    <div class="speed-container">
+        <button class="btn" (click)="changeReplaySpeed()">{{ replaySpeed.toString() }}x</button>
+    </div>
+</div>
