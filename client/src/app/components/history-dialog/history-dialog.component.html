@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<div mat-dialog-content>
+    <table>
+        <tr *ngFor="let item of data.history"> {{item}}</tr>
+    </table>
+</div>
+<div mat-dialog-actions>
+    <button mat-button>Non</button>
+    <button mat-raised-button color="primary">Oui</button>
+</div>

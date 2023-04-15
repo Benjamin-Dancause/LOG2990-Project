@@ -1,6 +1,9 @@
 <div class="bigContainer">
     <div class="container">
         <h3>{{ gameTitle }}</h3>
+        <button (click)="gameHistory()" id="history">
+            <img id="historyImage" src="./assets/history_icon.png" />
+        </button>
         <div class="image-container">
             <img [src]="imageLink" />
         </div>
