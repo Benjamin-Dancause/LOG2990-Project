@@ -33,6 +33,7 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
 import { LimitedTimePageComponent } from './pages/limited-time-page/limited-time-page.component';
 import { WaitingRoomLimitedPageComponent } from './pages/waiting-room-limited-page/waiting-room-limited-page.component';
 import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room-page.component';
+import { ReplayAreaComponent } from './components/replay-area/replay-area.component';
 
 /**
  * Main module that is used in main.ts.
@@ -71,6 +72,7 @@ import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room
         WaitingRoomLimitedPageComponent,
         LimitedTimePageComponent,
         HintsComponent,
+        ReplayAreaComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],

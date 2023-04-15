@@ -15,6 +15,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
     player1: boolean = false;
     isWinner: boolean = false;
     showPopup = false;
+    replayMode = false;
 
     constructor(public gameCardService: GameCardService, public socketService: SocketService, public counterService: CounterService) {}
 
