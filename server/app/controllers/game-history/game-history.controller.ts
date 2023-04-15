@@ -7,6 +7,14 @@ import { ApiOkResponse } from '@nestjs/swagger';
 export class GameHistoryController {
     constructor(private readonly databaseService: databaseService) {}
 
+
+    @Get('/All')
+    @ApiOkResponse({
+        description: 'Get the game history for a game',
+    })
+    getAllHistory(): Promise<gameHistoryInfo[]>{
+        return this.databaseService.getAllGameHistory();
+    }
     @Get('/:gameTitle')
     @ApiOkResponse({
         description: 'Get the game history for a game',

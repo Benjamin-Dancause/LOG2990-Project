@@ -120,6 +120,10 @@ export class databaseService {
         return await this.collectionGameHistory.find({ gameTitle: { $eq : name } }).toArray();
     }
 
+    async getAllGameHistory(): Promise<gameHistoryInfo[]> {
+        return await this.collectionGameHistory.find({}).toArray();
+    }
+
     async deleteAllGameHistory(): Promise<void> {
         await this.collectionGameHistory.deleteMany({});
     }

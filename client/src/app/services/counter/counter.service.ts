@@ -22,6 +22,7 @@ export class CounterService {
     initializeCounter(): void {
         const gameTitle: string = sessionStorage.getItem('gameTitle') as string;
         this.gameMode = sessionStorage.getItem('gameMode') as string;
+        this.setStartingDate();
         this.setWinCondition(this.gameMode, gameTitle);
         this.socketService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
             const playerName: string = sessionStorage.getItem('userName') as string;
@@ -51,6 +52,11 @@ export class CounterService {
         this.counter2 = 0;
         this.winCondition = 1000;
         this.socketService.resetCounter(player1);
+    }
+
+    setStartingDate() {
+        let currentTime= new Date().toLocaleString();
+        sessionStorage.setItem('startingDate', currentTime);
     }
 
     setWinCondition(gameMode: string, gameTitle: string) {

@@ -187,12 +187,13 @@ export class GameCardComponent implements OnInit, AfterViewInit {
             const dialogRef = this.dialog.open(HistoryDialogComponent, {
                 data: {
                     title:this.gameTitle + ' - Historique des parties',
-                    history: [1,2,3]
+                    history: gameHistory,
+                    global:false
                 }
             });
             dialogRef.afterClosed().subscribe((result) => {
-                if (result === 'yes') {
-                    this.reloadPage();
+                if (result === 'reset') {
+                    this.communication.deleteGameHistory();
                 }
             });
         });

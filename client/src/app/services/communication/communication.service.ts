@@ -83,11 +83,15 @@ export class CommunicationService {
         return this.http.get<gameHistoryInfo[]>(`${this.baseUrl}/history/${name}`, { responseType: 'json' });
     }
 
+    getGameAllHistory(): Observable<gameHistoryInfo[]> {
+        return this.http.get<gameHistoryInfo[]>(`${this.baseUrl}/history/all`, { responseType: 'json' });
+    }
+
     deleteGameHistory() {
         this.http.request('DELETE', `${this.baseUrl}/history`).subscribe();
     }
 
-    createGameRegistry(gameHistoryInfo: gameHistoryInfo) {
+    updateGameHistory(gameHistoryInfo: gameHistoryInfo) {
         this.http.request('PUT', `${this.baseUrl}/history`, { body: gameHistoryInfo }).subscribe();
     }
 

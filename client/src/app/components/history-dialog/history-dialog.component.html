@@ -1,10 +1,24 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 <div mat-dialog-content>
     <table>
-        <tr *ngFor="let item of data.history"> {{item}}</tr>
+        <tr>
+            <th>Date</th>
+            <th *ngIf="data.global">Titre</th>
+            <th>Mode de jeu</th>
+            <th>Gagnant</th>
+            <th>Perdant</th>
+            <th>Durée</th>
+        <tr *ngFor="let item of data.history">
+            <td>{{item.time.startTime}}</td>
+            <td *ngIf="data.global">{{item.gameTitle}}</td>
+            <td>{{ displayMode(item) }}</td>
+            <td class="winner">{{ item.winner }}</td>
+            <td class="rature" *ngIf="item.surrender">{{ item.loser }}</td>
+            <td *ngIf="!item.surrender">{{ item.loser }}</td>
+            <td>{{displayTime(item.time.duration)}}</td>
+        </tr>
     </table>
 </div>
 <div mat-dialog-actions>
-    <button mat-button>Non</button>
-    <button mat-raised-button color="primary">Oui</button>
+    <button class="center"  (click)="onResetClick()" mat-raised-button color="primary">Réinitialiser l'historique de partie</button>
 </div>

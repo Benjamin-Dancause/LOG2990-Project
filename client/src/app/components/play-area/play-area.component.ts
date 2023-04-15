@@ -179,6 +179,7 @@ export class PlayAreaComponent implements AfterViewInit {
     ngOnDestroy(): void {
         this.game.clearContexts();
         this.game.clearDifferenceArray();
+        this.game.resetGameValues()
         this.socketService.disconnectSocket();
     }
 }

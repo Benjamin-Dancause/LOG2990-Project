@@ -8,7 +8,7 @@ import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
-import { GameDiffData, playerTime as PlayerTimeInterface } from '@common/game-interfaces';
+import { GameDiffData, playerTime as PlayerTimeInterface, gameHistoryInfo } from '@common/game-interfaces';
 import { CounterService } from '../counter/counter.service';
 import { SocketService } from '../socket/socket.service';
 
@@ -28,6 +28,8 @@ export class GameService {
     private player1: boolean;
     private isCheatEnabled = false;
     private isHintModeEnabled = false;
+    private otherGaveUp = false;
+    private time: number;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private cheatTimeout: any;
 
@@ -35,23 +37,74 @@ export class GameService {
         this.socketService.socket.on('update-difference', (response: ClickResponse) => {
             this.updateDifferences(response);
         });
+        this.listenForGiveUp();
+        this.listenForWinner();
+    }
 
+    listenForGiveUp(): void {
+        this.socketService.socket.on('player-quit-game', () => {
+            this.setTime();
+            this.otherGaveUp = true;
+            this.sendNewHistoryEntry();
+        });
+    }
+
+    listenForWinner(): void {
         this.socketService.socket.on('send-victorious-player', () => {
+
+
             setTimeout(() => {
                 if (sessionStorage.getItem('winner') === 'true' && this.differenceFound.length !== 0) {
-                    let minutes = +(sessionStorage.getItem('newTimeMinutes') as string);
-                    let seconds = +(sessionStorage.getItem('newTimeSeconds') as string);
-                    let time = minutes * 60 + seconds;
+                    this.setTime();
                     let playerTime: PlayerTimeInterface = {
                         user: sessionStorage.getItem('userName') as string,
-                        time,
+                        time: this.time,
                         isSolo: sessionStorage.getItem('gameMode') === 'solo',
                     };
-                    communicationService.updateBestTimes(this.gameName, playerTime);
+
+                    this.communicationService.updateBestTimes(this.gameName, playerTime);
                     this.differenceFound = [];
+                    this.sendNewHistoryEntry();
+                }
+                else if (sessionStorage.getItem('gameMode') === 'tl' && sessionStorage.getItem('gameMaster') === sessionStorage.getItem('userName')) {
+                    this.setTime();
+                    this.differenceFound = [];
+                    this.sendNewHistoryEntry();
                 }
             }, 250);
         });
+    }
+
+
+
+    setTime(): void {
+        let minutes = +(sessionStorage.getItem('newTimeMinutes') as string);
+        let seconds = +(sessionStorage.getItem('newTimeSeconds') as string);
+        this.time = minutes * 60 + seconds;
+    }
+
+    sendNewHistoryEntry() {
+        let loser: string;
+        if (sessionStorage.getItem('gameMode') === 'solo') {
+            loser = '';
+        }
+        else {
+            loser =sessionStorage.getItem('userName') !== sessionStorage.getItem('gameMaster') ? 
+                sessionStorage.getItem('gameMaster') as string : sessionStorage.getItem('joiningPlayer') as string;
+        }
+        let gameHistoryInfo: gameHistoryInfo = {
+            gameTitle: this.gameName,
+            winner: sessionStorage.getItem('userName') as string,
+            loser: loser,
+            surrender: this.otherGaveUp,
+            time: {
+                startTime: sessionStorage.getItem('startingDate') as string,
+                duration: this.time,
+            },
+            isSolo: sessionStorage.getItem('gameMode') === 'solo',
+            isLimitedTime: sessionStorage.getItem('gameMode') === 'tl'
+        };
+        this.communicationService.updateGameHistory(gameHistoryInfo);
     }
 
     getContexts(ctx: CanvasRenderingContext2D) {
@@ -363,11 +416,6 @@ export class GameService {
                     context.fillStyle = 'green';
                     context.fillText('Trouvé', mousePosition.x, mousePosition.y);
                     this.socketService.sendDifferenceFound(response);
-                    // if (sessionStorage.getItem('gameMode') === ('tl' as string)) {
-                    // this.socketService.switchGame();
-                    // this.socketService.addToTimer();
-                    //     console.log('differenceFound: ' + this.differenceFound);
-                    // }
                     this.incrementCounter();
                     this.playSuccessSound();
                     setTimeout(() => {
@@ -385,32 +433,8 @@ export class GameService {
                     }, DELAY.SMALLTIMEOUT);
                 }
             });
-
-            // this.communicationService.sendPosition(this.gameName, mousePosition).subscribe((response: ClickResponse) => {
-            //     if (response.isDifference && !this.differenceFound.includes(response.differenceNumber)) {
-            //         this.successMessage.emit('Trouvé');
-            //         context.fillStyle = 'green';
-            //         context.fillText('Trouvé', mousePosition.x, mousePosition.y);
-            //         this.socketService.sendDifferenceFound(response);
-            //         this.incrementCounter();
-            //         this.playSuccessSound();
-            //     } else {
-            //         this.errorMessage.emit('Erreur par le joueur');
-            //         context.fillStyle = 'red';
-            //         context.fillText('Erreur', mousePosition.x, mousePosition.y);
-            //         this.playErrorSound();
-            //         this.isClickDisabled = true;
-            //         setTimeout(() => {
-            //             context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
-            //             this.isClickDisabled = false;
-            //         }, DELAY.SMALLTIMEOUT);
-            //     }
-            // });
         }
     }
-
-    // initializeClickResponseListener() {}
-
     clearContexts(): void {
         this.playAreaCtx.length = 0;
     }
@@ -418,5 +442,10 @@ export class GameService {
     clearDifferenceArray() {
         this.differenceFound = [];
         this.isCheatEnabled = false;
+    }
+
+    resetGameValues() {
+        this.otherGaveUp = false
+        
     }
 }
