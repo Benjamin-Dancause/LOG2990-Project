@@ -2,6 +2,7 @@
 import { AfterViewInit, Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
+import { HistoryDialogComponent } from '@app/components/history-dialog/history-dialog.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
@@ -178,6 +179,23 @@ export class GameCardComponent implements OnInit, AfterViewInit {
                 delay(TIME.BIG_DELAY);
                 this.reloadPage();
             }
+        });
+    }
+
+    gameHistory() {
+        this.communication.getGameHistory(this.gameTitle).subscribe((gameHistory) => {
+            const dialogRef = this.dialog.open(HistoryDialogComponent, {
+                data: {
+                    title:this.gameTitle + ' - Historique des parties',
+                    history: gameHistory,
+                    global:false
+                }
+            });
+            dialogRef.afterClosed().subscribe((result) => {
+                if (result === 'reset') {
+                    this.communication.deleteGameHistory();
+                }
+            });
         });
     }
 
