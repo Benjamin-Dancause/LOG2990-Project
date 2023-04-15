@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameDiffData, GameSelectionPageData, GameplayData, bestTimes, playerTime } from '@common/game-interfaces';
+import { bestTimes, GameDiffData, GameplayData, GameSelectionPageData, playerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -70,7 +70,7 @@ export class CommunicationService {
     updateBestTimes(name: string, playerTime: playerTime) {
         this.http.request('POST', `${this.baseUrl}/database/${name}`, { body: playerTime }).subscribe();
     }
-    
+
     resetBestTimes(name: string) {
         this.http.request('POST', `${this.baseUrl}/database/reset/${name}`).subscribe();
     }

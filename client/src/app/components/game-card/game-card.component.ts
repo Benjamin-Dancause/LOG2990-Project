@@ -33,9 +33,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     userName: string;
     name: string;
     createButton: boolean = true;
-    numbers : number[] = [];
-
-
+    numbers: number[] = [];
 
     private readonly serverUrl: string = environment.serverUrl;
 
@@ -46,9 +44,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         private socketService: SocketService,
         public gameCardService: GameCardService,
     ) {
-        range(0, 3).subscribe(
-              num => this.numbers.push(num),
-            );
+        range(0, 3).subscribe((num) => this.numbers.push(num));
     }
 
     get color() {
@@ -63,8 +59,6 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         return this.bestTimes.timesSolo;
     }
 
-
-
     ngOnInit(): void {
         this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
         if (!this.configuration) {
@@ -73,10 +67,10 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     }
 
     convertTime(time: number): string {
-        let minutes = Math.floor(time / 60);
-        let seconds = time % 60;
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
         let stringSeconds: string = seconds.toString();
-        let stringMinutes: string  = minutes.toString();
+        let stringMinutes: string = minutes.toString();
         if (seconds < 10) {
             stringSeconds = '0' + seconds;
         }
@@ -179,7 +173,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result === 'yes') {
-                this.communication.resetBestTimes(gameTitle)
+                this.communication.resetBestTimes(gameTitle);
                 delay(250);
                 this.reloadPage();
             }
