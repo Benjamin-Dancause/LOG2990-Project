@@ -91,8 +91,12 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.hintSubscription = this.gameService.hintMessage.subscribe(() => {
                 this.writeHintMessage();
             });
+
+            this.socketService.socket.on('new-record', (recordInfo: {name: string, position: string}) => {
+                this.writeNewRecordMessage(recordInfo.name, recordInfo.position);
+            });
             this.recordSubscription = this.counterService.recordMessage.subscribe((position) => {
-                this.writeNewRecordMessage(this.userName, position);
+                this.socketService.sendNewRecord(this.userName, position);
             });
         }
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
 
@@ -7,7 +7,7 @@ import { SocketService } from '@app/services/socket/socket.service';
     templateUrl: './game-page.component.html',
     styleUrls: ['./game-page.component.scss'],
 })
-export class GamePageComponent implements OnInit {
+export class GamePageComponent implements OnInit, OnDestroy {
     gameTitle: string;
     userName: string;
 
@@ -33,7 +33,10 @@ export class GamePageComponent implements OnInit {
         this.socketService.socket.on('send-victorious-player', () => {
             this.showPopup = true;
             sessionStorage.setItem('winner', 'true');
-            this.socketService.deleteRoomGameInfo();
         });
+    }
+
+    ngOnDestroy(): void {
+        this.socketService.deleteRoomGameInfo();
     }
 }
