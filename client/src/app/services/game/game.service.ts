@@ -130,6 +130,7 @@ export class GameService {
     blinkAllDifferences(ctxs: CanvasRenderingContext2D[], gameData: GameDiffData) {
         ctxs[2].fillStyle = 'rgba(255, 0, 255, 0.4)';
         ctxs[3].fillStyle = 'rgba(255, 0, 255, 0.4)';
+        this.replayService.addAction(this.time, 'cheat-mode-toggle');
         let i = 0;
         const flash = setInterval(() => {
             for (const coordinate of gameData.differences) {
