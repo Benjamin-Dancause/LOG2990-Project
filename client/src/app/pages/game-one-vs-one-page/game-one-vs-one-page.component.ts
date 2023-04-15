@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { ReplayService } from '@app/services/replay/replay.service';
@@ -10,6 +11,8 @@ import { SocketService } from '@app/services/socket/socket.service';
     styleUrls: ['./game-one-vs-one-page.component.scss'],
 })
 export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
+    @ViewChild(PlayAreaComponent) playArea: PlayAreaComponent;
+
     gameTitle: string;
     userName: string;
     winningPlayer: string = '';
@@ -69,6 +72,12 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
 
     isPlayer1(): boolean {
         return sessionStorage.getItem('gameMaster') === sessionStorage.getItem('userName') ? true : false;
+    }
+
+    startReplay(): void {
+        this.showPopup = false;
+        this.replayMode = true;
+        this.playArea.initCanvases();
     }
 
     test() {

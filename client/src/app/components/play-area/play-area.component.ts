@@ -121,7 +121,7 @@ export class PlayAreaComponent implements AfterViewInit {
         }
     }
 
-    async initCanvases() {
+    public async initCanvases() {
         this.game.clearContexts();
         const img1 = new Image();
         img1.setAttribute('crossOrigin', 'anonymous');

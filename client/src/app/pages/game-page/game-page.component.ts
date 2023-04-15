@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { ReplayService } from '@app/services/replay/replay.service';
 import { SocketService } from '@app/services/socket/socket.service';
@@ -9,6 +10,8 @@ import { SocketService } from '@app/services/socket/socket.service';
     styleUrls: ['./game-page.component.scss'],
 })
 export class GamePageComponent implements OnInit {
+    @ViewChild(PlayAreaComponent) playArea: PlayAreaComponent;
+
     gameTitle: string;
     userName: string;
     replayMode = false;
@@ -22,6 +25,7 @@ export class GamePageComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.replayMode = false;
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
         this.userName = sessionStorage.getItem('userName') as string;
         const gameMode = sessionStorage.getItem('gameMode') as string;
@@ -36,6 +40,12 @@ export class GamePageComponent implements OnInit {
             sessionStorage.setItem('winner', 'true');
             this.socketService.deleteRoomGameInfo();
         });
+    }
+
+    startReplay(): void {
+        this.showPopup = false;
+        this.replayMode = true;
+        this.playArea.initCanvases();
     }
 
     test() {
