@@ -1,5 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChatService } from '@app/services/chat/chat.service';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameService } from '@app/services/game/game.service';
 import { SocketService } from '@app/services/socket/socket.service';
@@ -27,7 +28,12 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     recordSubscription: Subscription;
     hintSubscription: Subscription;
 
-    constructor(public gameService: GameService, public socketService: SocketService, public counterService: CounterService) {
+    constructor(
+        public gameService: GameService,
+        public socketService: SocketService,
+        public counterService: CounterService,
+        public chat: ChatService,
+    ) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.errorSubscription = new Subscription();
         this.successSubscription = new Subscription();
@@ -118,7 +124,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             timestamp: this.getTimestamp(),
             text,
         };
-        this.messages.push(message);
+        this.chat.messages.push(message);
         this.scrollMessageArea();
     }
 
@@ -128,7 +134,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             timestamp: this.getTimestamp(),
             text,
         };
-        this.messages.push(message);
+        this.chat.messages.push(message);
         this.scrollMessageArea();
     }
 
@@ -138,7 +144,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             timestamp: '',
             text,
         };
-        this.messages.push(message);
+        this.chat.messages.push(message);
         this.scrollMessageArea();
     }
 
@@ -204,39 +210,8 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     }
 }
 
-interface Message {
+export interface Message {
     type: 'system' | 'opponent' | 'self';
     timestamp: string;
     text: string;
 }
-
-/*
-import { Component, ElementRef, ViewChild } from '@angular/core';
-
-@Component({
-    selector: 'app-text-box',
-    templateUrl: './text-box.component.html',
-    styleUrls: ['./text-box.component.scss'],
-})
-export class TextBoxComponent {
-    @ViewChild('messageArea', { static: true }) messageArea!: ElementRef;
-    messages: { content: string; type: string }[] = [];
-    newMessage: string = '';
-
-    scrollToBottom() {
-        setTimeout(() => {
-            this.messageArea.nativeElement.scrollTop = this.messageArea.nativeElement.scrollHeight;
-        }, 0);
-    }
-
-    sendMessage() {
-        if (this.newMessage.length > 0) {
-            const type = 'self';
-            const content = this.newMessage;
-            this.messages.push({ content, type });
-            this.newMessage = '';
-            this.scrollToBottom();
-        }
-    }
-}
-*/
