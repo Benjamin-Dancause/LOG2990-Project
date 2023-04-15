@@ -9,8 +9,11 @@ import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
 import { GameDiffData, playerTime } from '@common/game-interfaces';
+import { Subscription } from 'rxjs';
 import { CounterService } from '../counter/counter.service';
+import { ReplayService } from '../replay/replay.service';
 import { SocketService } from '../socket/socket.service';
+import { TimerService } from '../timer/timer.service';
 
 @Injectable({
     providedIn: 'root',
@@ -27,12 +30,21 @@ export class GameService {
     private player1: boolean;
     private isCheatEnabled = false;
     private isHintModeEnabled = false;
+    private time: number = 0;
+    private timeSubscription: Subscription;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private cheatTimeout: any;
     public playAreaCtx: CanvasRenderingContext2D[] = [];
 
-    constructor(private communicationService: CommunicationService, private counterService: CounterService, private socketService: SocketService) {
+    constructor(
+        private communicationService: CommunicationService,
+        private counterService: CounterService,
+        private socketService: SocketService,
+        private timerService: TimerService,
+        private replayService: ReplayService,
+    ) {
         this.socketService.socket.on('update-difference', (response: ClickResponse) => {
+            this.replayService.addAction(this.time, 'update-difference', response);
             this.updateDifferences(response);
         });
 
@@ -370,10 +382,12 @@ export class GameService {
                     // }
                     this.incrementCounter();
                     this.playSuccessSound();
+                    this.replayService.addAction(this.time, 'difference-found', mousePosition);
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     }, DELAY.SMALLTIMEOUT);
                 } else {
+                    this.replayService.addAction(this.time, 'difference-error');
                     this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
@@ -409,7 +423,18 @@ export class GameService {
         }
     }
 
-    // initializeClickResponseListener() {}
+    timeUpdater(): void {
+        this.timeSubscription = this.timerService.getTime().subscribe((time) => {
+            this.time = time;
+        });
+    }
+
+    clearTime(): void {
+        if (this.timeSubscription) {
+            this.time = 0;
+            this.timeSubscription.unsubscribe();
+        }
+    }
 
     clearContexts(): void {
         this.playAreaCtx.length = 0;
