@@ -18,6 +18,7 @@ import { SocketService } from '../socket/socket.service';
 export class GameService {
     errorSound = new Audio('./assets/erreur.mp3');
     successSound = new Audio('./assets/success.mp3');
+    playAreaCtx: CanvasRenderingContext2D[] = [];
     errorMessage = new EventEmitter<string>();
     successMessage = new EventEmitter<string>();
     hintMessage = new EventEmitter<string>();
@@ -29,7 +30,6 @@ export class GameService {
     private isHintModeEnabled = false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private cheatTimeout: any;
-    public playAreaCtx: CanvasRenderingContext2D[] = [];
 
     constructor(private communicationService: CommunicationService, private counterService: CounterService, private socketService: SocketService) {
         this.socketService.socket.on('update-difference', (response: ClickResponse) => {
@@ -44,7 +44,7 @@ export class GameService {
                     let time = minutes * 60 + seconds;
                     let playerTime: playerTime = {
                         user: sessionStorage.getItem('userName') as string,
-                        time: time,
+                        time,
                         isSolo: sessionStorage.getItem('gameMode') === 'solo',
                     };
                     communicationService.updateBestTimes(this.gameName, playerTime);

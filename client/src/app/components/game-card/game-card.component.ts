@@ -147,7 +147,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     }
 
     deleteGame(gameTitle: string) {
-        this.gameCardService.getPlayers(this.gameTitle).subscribe((players) => {
+        this.gameCardService.getPlayers(this.gameTitle).subscribe(() => {
             const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
                 data: {
                     title: 'Confirmation',
