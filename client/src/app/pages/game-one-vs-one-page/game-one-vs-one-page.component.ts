@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
+import { ReplayService } from '@app/services/replay/replay.service';
 import { SocketService } from '@app/services/socket/socket.service';
 
 @Component({
@@ -17,7 +18,12 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
     showPopup = false;
     replayMode = false;
 
-    constructor(public gameCardService: GameCardService, public socketService: SocketService, public counterService: CounterService) {}
+    constructor(
+        public gameCardService: GameCardService,
+        public socketService: SocketService,
+        public counterService: CounterService,
+        private replayService: ReplayService,
+    ) {}
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
@@ -63,5 +69,9 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
 
     isPlayer1(): boolean {
         return sessionStorage.getItem('gameMaster') === sessionStorage.getItem('userName') ? true : false;
+    }
+
+    test() {
+        this.replayService.playAction();
     }
 }

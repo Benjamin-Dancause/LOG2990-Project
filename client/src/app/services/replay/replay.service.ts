@@ -47,6 +47,10 @@ export class ReplayService {
         this.currentGameAction = this.getAction();
     }
 
+    deleteReplayInfo(): void {
+        this.gameActions = [];
+    }
+
     playAction(): void {
         this.currentGameAction = this.getAction();
         switch (this.currentGameAction.action) {
