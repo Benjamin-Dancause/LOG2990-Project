@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
+import { ReplayService } from '@app/services/replay/replay.service';
 import { SocketService } from '@app/services/socket/socket.service';
 
 @Component({
@@ -20,7 +21,12 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
     showPopup = false;
     replayMode = false;
 
-    constructor(public gameCardService: GameCardService, public socketService: SocketService, public counterService: CounterService) {}
+    constructor(
+        public gameCardService: GameCardService,
+        public socketService: SocketService,
+        public counterService: CounterService,
+        private replayService: ReplayService,
+    ) {}
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
@@ -72,5 +78,9 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
         this.showPopup = false;
         this.replayMode = true;
         this.playArea.initCanvases();
+    }
+
+    test() {
+        this.replayService.playAction();
     }
 }
