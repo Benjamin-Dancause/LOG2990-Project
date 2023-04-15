@@ -47,3 +47,14 @@ export enum DIFFERENCE {
     DIFFCOUNT_MAX = 9,
     DIFFCOUNT_MIN = 3,
 }
+
+export enum TIME {
+    SMALL_ADD_TIME = 10,
+    SMALL_PENALTY = 5,
+    SMALL_TIME_GAINED = 5,
+    COUNTDOWN_TIME = 30,
+    SMALL_COUNTDOWN_TIME = 10,
+    BIG_DELAY = 250,
+    SIXTY_SECONDS = 60,
+    TEN_SECONDS = 10,
+}

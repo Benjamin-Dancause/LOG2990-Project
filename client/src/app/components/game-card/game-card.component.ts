@@ -5,6 +5,7 @@ import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
+import { TIME } from '@common/constants';
 import { bestTimes } from '@common/game-interfaces';
 import { range } from 'rxjs';
 import { delay } from 'rxjs/operators';
@@ -33,9 +34,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     userName: string;
     name: string;
     createButton: boolean = true;
-    numbers : number[] = [];
-
-
+    numbers: number[] = [];
 
     private readonly serverUrl: string = environment.serverUrl;
 
@@ -46,9 +45,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         private socketService: SocketService,
         public gameCardService: GameCardService,
     ) {
-        range(0, 3).subscribe(
-              num => this.numbers.push(num),
-            );
+        range(0, 3).subscribe((num) => this.numbers.push(num));
     }
 
     get color() {
@@ -63,8 +60,6 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         return this.bestTimes.timesSolo;
     }
 
-
-
     ngOnInit(): void {
         this.imageLink = this.serverUrl + `/assets/images/${this.gameTitle}_orig.bmp`;
         if (!this.configuration) {
@@ -73,14 +68,14 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     }
 
     convertTime(time: number): string {
-        let minutes = Math.floor(time / 60);
-        let seconds = time % 60;
+        const minutes = Math.floor(time / TIME.SIXTY_SECONDS);
+        const seconds = time % TIME.SIXTY_SECONDS;
         let stringSeconds: string = seconds.toString();
-        let stringMinutes: string  = minutes.toString();
-        if (seconds < 10) {
+        let stringMinutes: string = minutes.toString();
+        if (seconds < TIME.TEN_SECONDS) {
             stringSeconds = '0' + seconds;
         }
-        if (minutes < 10) {
+        if (minutes < TIME.TEN_SECONDS) {
             stringMinutes = '0' + minutes;
         }
         return stringMinutes + ':' + stringSeconds;
@@ -152,7 +147,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     }
 
     deleteGame(gameTitle: string) {
-        this.gameCardService.getPlayers(this.gameTitle).subscribe((players) => {
+        this.gameCardService.getPlayers(this.gameTitle).subscribe(() => {
             const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
                 data: {
                     title: 'Confirmation',
@@ -179,8 +174,8 @@ export class GameCardComponent implements OnInit, AfterViewInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result === 'yes') {
-                this.communication.resetBestTimes(gameTitle)
-                delay(250);
+                this.communication.resetBestTimes(gameTitle);
+                delay(TIME.BIG_DELAY);
                 this.reloadPage();
             }
         });
