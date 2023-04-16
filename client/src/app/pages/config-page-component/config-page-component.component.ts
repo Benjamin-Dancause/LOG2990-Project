@@ -82,7 +82,6 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
         location.reload();
     }
     resetBestTimes() {
-        // console.log('reset');
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
             data: {
                 title: 'Confirmation',

@@ -67,6 +67,10 @@ export class CommunicationService {
         return this.http.get<bestTimes[]>(`${this.baseUrl}/best-times/all`, { responseType: 'json' });
     }
 
+    getBestTimesForGame(gameTitle: string, gameMode: string): Observable<bestTimes[]> {
+        return this.http.get<bestTimes[]>(`${this.baseUrl}/best-times/${gameTitle}/${gameMode}`, { responseType: 'json' });
+    }
+
     updateBestTimes(name: string, playerTime: playerTime) {
         this.http.request('POST', `${this.baseUrl}/best-times/${name}`, { body: playerTime }).subscribe();
     }
