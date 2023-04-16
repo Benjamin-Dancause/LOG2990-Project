@@ -39,6 +39,7 @@ export class ReplayAreaComponent implements OnInit {
     resetReplay(): void {
         this.replay.resetReplayTimer();
         this.chat.deleteMessages();
+        this.replay.startReplayTimer();
         this.replayEvent.emit();
     }
 }

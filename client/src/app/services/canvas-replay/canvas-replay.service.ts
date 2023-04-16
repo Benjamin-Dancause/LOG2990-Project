@@ -55,17 +55,33 @@ export class CanvasReplayService {
         }
     }
 
-    foundPopup(): void {}
+    foundPopup(coord: Coords, context: CanvasRenderingContext2D): void {
+        context.fillStyle = 'green';
+        context.fillText('Trouvé', coord.x, coord.y);
+        this.playSuccessSound();
+        setTimeout(() => {
+            context.clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+        }, 1000 / this.replaySpeed);
+    }
 
-    errorPopup(): void {}
+    errorPopup(coord: Coords, context: CanvasRenderingContext2D): void {
+        context.fillStyle = 'red';
+        context.fillText('Erreur', coord.x, coord.y);
+        this.playErrorSound();
+        setTimeout(() => {
+            context.clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+        }, 1000 / this.replaySpeed);
+    }
 
     playErrorSound() {
         this.errorSound.currentTime = 0;
+        this.errorSound.playbackRate = this.replaySpeed;
         this.errorSound.play();
     }
 
     playSuccessSound() {
         this.successSound.currentTime = 0;
+        this.successSound.playbackRate = this.replaySpeed;
         this.successSound.play();
     }
 

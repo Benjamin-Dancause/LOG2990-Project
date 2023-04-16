@@ -64,13 +64,13 @@ export class ReplayService {
 
             case 'difference-found':
                 //call stuff for difference errors
-                console.log('difference-found for ' + this.currentGameAction.time);
+                this.canvasReplay.foundPopup(this.currentGameAction.payload.mousePosition, this.currentGameAction.payload.context);
                 this.goToNextAction();
                 this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
                 break;
 
             case 'difference-error':
-                console.log('difference-error for ' + this.currentGameAction.time);
+                this.canvasReplay.errorPopup(this.currentGameAction.payload.mousePosition, this.currentGameAction.payload.context);
                 break;
 
             case 'message':
@@ -85,6 +85,8 @@ export class ReplayService {
         this.goToNextAction();
         if (this.gameActions.length - this.replayIndex > 0) {
             this.checkForAction();
+        } else {
+            this.pauseReplayTimer();
         }
     }
 
