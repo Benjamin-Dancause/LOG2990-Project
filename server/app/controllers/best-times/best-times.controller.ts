@@ -3,8 +3,8 @@ import { bestTimes, playerTime } from '@common/game-interfaces';
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 
-@Controller('database')
-export class DatabaseController {
+@Controller('best-times')
+export class BestTimesController {
     constructor(private readonly databaseService: databaseService) {}
 
     @Get('/all')
@@ -51,5 +51,4 @@ export class DatabaseController {
     resetBestTimes(@Param('gameTitle') gameTitle: string): void{
         this.databaseService.resetBestTimes(gameTitle);
     }
-
 }

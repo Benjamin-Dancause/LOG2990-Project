@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +20,7 @@ import { DrawingToolsComponent } from './components/drawing-tools/drawing-tools.
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { GiveUpButtonComponent } from './components/give-up-button/give-up-button.component';
 import { HintsComponent } from './components/hints/hints.component';
+import { HistoryDialogComponent } from './components/history-dialog/history-dialog.component';
 import { HomeButtonComponent } from './components/home-button/home-button.component';
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
 import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
@@ -71,9 +73,10 @@ import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room
         WaitingRoomLimitedPageComponent,
         LimitedTimePageComponent,
         HintsComponent,
+        HistoryDialogComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],
-    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
+    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, CommonModule],
 })
 export class AppModule {}
