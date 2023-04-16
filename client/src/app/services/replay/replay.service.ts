@@ -17,10 +17,10 @@ export class ReplayService {
     replayInterval: any;
     checkActionInterval: any;
     actionTime: number = 0;
+    speedSettings: number[] = [1, 2, TIME.FOUR_X_SPEED];
     private currentGameAction: GameAction;
-    private speedSettings: number[] = [1, 2, TIME.FOUR_X_SPEED];
 
-    constructor(private chat: ChatService, private canvasReplay: CanvasReplayService) {}
+    constructor(public chat: ChatService, public canvasReplay: CanvasReplayService) {}
 
     addAction(time: number, action: string, payload?: any): void {
         const gameAction: GameAction = { time, action, payload };
