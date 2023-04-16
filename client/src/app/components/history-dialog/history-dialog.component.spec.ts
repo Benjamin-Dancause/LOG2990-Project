@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HistoryDialogComponent } from './history-dialog.component';
 
 describe('ConfirmationDialogComponent', () => {
     let component: HistoryDialogComponent;
     let fixture: ComponentFixture<HistoryDialogComponent>;
-    let dialogRef: MatDialogRef<HistoryDialogComponent>;
+    // let dialogRef: MatDialogRef<HistoryDialogComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -21,7 +21,7 @@ describe('ConfirmationDialogComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(HistoryDialogComponent);
         component = fixture.componentInstance;
-        dialogRef = TestBed.inject(MatDialogRef);
+        // dialogRef = TestBed.inject(MatDialogRef);
         fixture.detectChanges();
     });
 

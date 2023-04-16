@@ -39,6 +39,8 @@ export enum DELAY {
     BIGTIMEOUT = 2000,
     SMALLTIMEOUT = 1000,
     HUGE_TIMEOUT = 5000,
+    MINITIMEOUT = 200,
+    SMALLESTTIMEOUT = 100,
 }
 
 export enum DIFFERENCE {
@@ -57,4 +59,6 @@ export enum TIME {
     BIG_DELAY = 250,
     SIXTY_SECONDS = 60,
     TEN_SECONDS = 10,
+    TEN_MINUTES = 10,
+    FOUR_X_SPEED = 4,
 }

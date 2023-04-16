@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { ChatService } from '@app/services/chat/chat.service';
 import { ReplayService } from '@app/services/replay/replay.service';
+import { TIME } from '@common/constants';
 import { PlayAreaComponent } from '../play-area/play-area.component';
 
 @Component({
@@ -12,7 +13,7 @@ export class ReplayAreaComponent implements OnInit {
     @ViewChild(PlayAreaComponent) playArea: PlayAreaComponent;
     @Output() replayEvent = new EventEmitter();
     isPlaying: boolean = false;
-    speedSettings: number[] = [1, 2, 4];
+    speedSettings: number[] = [1, 2, TIME.FOUR_X_SPEED];
     replaySpeed: number = 1;
     replaySpeedIndex: number = 0;
     constructor(public replay: ReplayService, private chat: ChatService) {}

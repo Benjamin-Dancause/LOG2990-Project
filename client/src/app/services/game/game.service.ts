@@ -22,6 +22,7 @@ export class GameService {
     errorSound = new Audio('./assets/erreur.mp3');
     successSound = new Audio('./assets/success.mp3');
     playAreaCtx: CanvasRenderingContext2D[] = [];
+    time: number = 0;
     errorMessage = new EventEmitter<string>();
     successMessage = new EventEmitter<string>();
     hintMessage = new EventEmitter<string>();
@@ -32,7 +33,6 @@ export class GameService {
     private isCheatEnabled = false;
     private isHintModeEnabled = false;
     private differencesToFlash: Coords[][] = [];
-    time: number = 0;
     private timeSubscription: Subscription;
     private otherGaveUp = false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -168,7 +168,7 @@ export class GameService {
             return;
         }
         const flash = this.flashAllDifferences(ctxs);
-        console.log(flash.length);
+        // console.log(flash.length);
         this.replayService.addAction(this.time, 'blink-all-differences', flash);
         this.cheatTimeout = setInterval(() => {
             this.flashAllDifferences(ctxs);

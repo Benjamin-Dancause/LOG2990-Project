@@ -97,7 +97,7 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
         });
     }
 
-    AllGamesHistory() {
+    allGamesHistory() {
         this.communication.getGameAllHistory().subscribe((allGamesHistory) => {
             const dialogRef = this.dialog.open(HistoryDialogComponent, {
                 data: {
