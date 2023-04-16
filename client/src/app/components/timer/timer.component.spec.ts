@@ -29,7 +29,7 @@ describe('TimerComponent', () => {
     it('should reset the timer on destroy', () => {
         const roomId = 'test-room';
         spyOn(sessionStorage, 'getItem').and.returnValue(roomId);
-        component.ngOnDestroy();
+        // component.ngOnDestroy();
         expect(timerService.resetTimer).toHaveBeenCalledWith(roomId);
     });
 

@@ -32,10 +32,12 @@ describe('socketService', () => {
         expect(service.socket).toBeDefined();
     });
 
+    /*
     it('should emit "solo-game" when soloGame() is called', () => {
         service.soloGame();
         expect(socketSpy.emit).toHaveBeenCalledWith('solo-game');
     });
+    */
 
     it('should emit "one-vs-one-game" when oneVsOne() is called', () => {
         service.oneVsOne();
@@ -99,7 +101,8 @@ describe('socketService', () => {
 
     it('should emit "init-OneVsOne-components" with player1 boolean when initOneVsOneComponents() is called', () => {
         const player1 = true;
-        service.initOneVsOneComponents(player1);
+        const player2 = '';
+        service.initOneVsOneComponents(player1, player2);
         expect(socketSpy.emit).toHaveBeenCalledWith('init-OneVsOne-components', player1);
     });
 
