@@ -31,6 +31,7 @@ export class GameService {
     private player1: boolean;
     private isCheatEnabled = false;
     private isHintModeEnabled = false;
+    private differencesToFlash: Coords[][] = [];
     public time: number = 0;
     private timeSubscription: Subscription;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -115,22 +116,30 @@ export class GameService {
             clearInterval(this.cheatTimeout);
             return;
         }
-        this.flashAllDifferences(ctxs);
+        const flash = this.flashAllDifferences(ctxs);
+        console.log(flash.length);
+        this.replayService.addAction(this.time, 'blink-all-differences', flash);
         this.cheatTimeout = setInterval(() => {
             this.flashAllDifferences(ctxs);
         }, DELAY.SMALLTIMEOUT);
     }
 
-    flashAllDifferences(ctxs: CanvasRenderingContext2D[]) {
+    flashAllDifferences(ctxs: CanvasRenderingContext2D[]): Coords[][] {
+        this.differencesToFlash = [];
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             this.blinkAllDifferences(ctxs, gameData);
+            for (const coordinate of gameData.differences) {
+                if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
+                    this.differencesToFlash.push(coordinate);
+                }
+            }
         });
+        return this.differencesToFlash;
     }
 
     blinkAllDifferences(ctxs: CanvasRenderingContext2D[], gameData: GameDiffData) {
         ctxs[2].fillStyle = 'rgba(255, 0, 255, 0.4)';
         ctxs[3].fillStyle = 'rgba(255, 0, 255, 0.4)';
-        this.replayService.addAction(this.time, 'cheat-mode-toggle');
         let i = 0;
         const flash = setInterval(() => {
             for (const coordinate of gameData.differences) {
@@ -383,12 +392,12 @@ export class GameService {
                     // }
                     this.incrementCounter();
                     this.playSuccessSound();
-                    this.replayService.addAction(this.time, 'difference-found', mousePosition);
+                    this.replayService.addAction(this.time, 'difference-found', { mousePosition: mousePosition, context: context });
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     }, DELAY.SMALLTIMEOUT);
                 } else {
-                    this.replayService.addAction(this.time, 'difference-error');
+                    this.replayService.addAction(this.time, 'difference-error', { mousePosition: mousePosition, context: context });
                     this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
@@ -443,6 +452,7 @@ export class GameService {
 
     clearDifferenceArray() {
         this.differenceFound = [];
+        this.differencesToFlash = [];
         this.isCheatEnabled = false;
     }
 }

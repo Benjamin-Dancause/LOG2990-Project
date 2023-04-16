@@ -146,6 +146,7 @@ export class PlayAreaComponent implements AfterViewInit {
         this.ctxLeftTop = this.canvasLeftTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.ctxRightTop = this.canvasRightTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.game.getContexts(this.ctxLeftTop);
+        this.game.getContexts(this.ctxRightTop);
         this.canvasReplay.getContexts(this.ctxLeftTop);
         this.canvasReplay.getContexts(this.ctxRightTop);
     }

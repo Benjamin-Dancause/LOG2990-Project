@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { GameAction } from '@app/interfaces/game-action';
+import { CanvasReplayService } from '../canvas-replay/canvas-replay.service';
 import { ChatService } from '../chat/chat.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ReplayService {
-    constructor(private chat: ChatService) {}
+    constructor(private chat: ChatService, private canvasReplay: CanvasReplayService) {}
 
     public gameActions: GameAction[] = [];
     private actionTime: number = 0;
@@ -16,6 +17,7 @@ export class ReplayService {
     public replaySpeed: number = 1;
     public replayTimer: number = 0;
     replayInterval: any;
+    checkActionInterval: any;
 
     addAction(time: number, action: string, payload?: any): void {
         const gameAction: GameAction = { time, action, payload };
@@ -53,19 +55,18 @@ export class ReplayService {
     }
 
     playAction(): void {
-        console.log('game action length: ' + this.gameActions.length);
         this.currentGameAction = this.getAction();
         switch (this.currentGameAction.action) {
             case 'update-difference':
                 //Call updateDifference
-                console.log('update-difference for ' + this.currentGameAction.time + ' : ' + this.currentGameAction.payload);
+                this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
                 break;
 
             case 'difference-found':
                 //call stuff for difference errors
                 console.log('difference-found for ' + this.currentGameAction.time);
                 this.goToNextAction();
-                console.log('update-difference for ' + this.currentGameAction.time + ' : ' + this.currentGameAction.payload);
+                this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
                 break;
 
             case 'difference-error':
@@ -75,15 +76,21 @@ export class ReplayService {
             case 'message':
                 this.chat.messages.push(this.currentGameAction.payload);
                 break;
+            case 'blink-all-differences':
+                console.log('blink-all-differences: ' + this.currentGameAction.payload.length);
+                break;
             default:
                 break;
         }
-
         this.goToNextAction();
+        if (this.gameActions.length - this.replayIndex > 0) {
+            this.checkForAction();
+        }
     }
 
     changeSpeed(index: number): void {
         this.replaySpeed = this.speedSettings[index];
+        this.canvasReplay.updateReplaySpeed(this.replaySpeed);
         this.startReplayTimer();
     }
 
@@ -92,10 +99,10 @@ export class ReplayService {
         const interval = 1000 / this.replaySpeed;
         this.replayInterval = setInterval(() => {
             this.replayTimer++;
-            console.log(this.gameActions.length - this.replayIndex);
             if (this.gameActions.length - this.replayIndex > 0) {
                 this.checkForAction();
             }
+
             console.log(this.replayTimer);
         }, interval);
     }

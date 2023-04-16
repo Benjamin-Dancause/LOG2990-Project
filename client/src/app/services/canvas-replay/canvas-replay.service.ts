@@ -1,20 +1,27 @@
 import { Injectable } from '@angular/core';
 import { Coords } from '@app/classes/coords';
 import { CANVAS } from '@common/constants';
-import { ReplayService } from '../replay/replay.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CanvasReplayService {
+    errorSound = new Audio('./assets/erreur.mp3');
+    successSound = new Audio('./assets/success.mp3');
     contexts: CanvasRenderingContext2D[] = [];
-    constructor(private replay: ReplayService) {}
+    replaySpeed: number = 1;
+    constructor() {}
+
+    updateReplaySpeed(speed: number) {
+        this.replaySpeed = speed;
+    }
 
     updateDifferences(coords: Coords[]) {
+        console.log(coords);
         this.flashDifferences(coords);
         setTimeout(() => {
             this.updateImages(coords, this.contexts[2], this.contexts[3]);
-        }, 2000 / this.replay.replaySpeed);
+        }, 2000 / this.replaySpeed);
     }
 
     flashDifferences(coords: Coords[]) {
@@ -28,12 +35,12 @@ export class CanvasReplayService {
             setTimeout(() => {
                 this.contexts[0].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
                 this.contexts[1].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-            }, 100 / this.replay.replaySpeed);
-        }, 200 / this.replay.replaySpeed);
+            }, 100 / this.replaySpeed);
+        }, 200 / this.replaySpeed);
 
         setTimeout(() => {
             clearInterval(flash);
-        }, 1000 / this.replay.replaySpeed);
+        }, 1000 / this.replaySpeed);
     }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
@@ -47,6 +54,21 @@ export class CanvasReplayService {
             }
         }
     }
+
+    foundPopup(): void {}
+
+    errorPopup(): void {}
+
+    playErrorSound() {
+        this.errorSound.currentTime = 0;
+        this.errorSound.play();
+    }
+
+    playSuccessSound() {
+        this.successSound.currentTime = 0;
+        this.successSound.play();
+    }
+
     getContexts(ctx: CanvasRenderingContext2D) {
         if (ctx) {
             this.contexts.push(ctx);
