@@ -244,4 +244,19 @@ describe('socketService', () => {
         service.addToTimer();
         expect(socketSpy.emit).toHaveBeenCalledWith('add-to-timer', TIME.SMALL_ADD_TIME);
     });
+
+    it('should remove from the timer', () => {
+        service.removeToTimer();
+        expect(socketSpy.emit).toHaveBeenCalledWith('remove-to-timer', TIME.SMALL_PENALTY);
+    });
+
+    it('should emit switch-game when switchGame() is called', () => {
+        service.switchGame();
+        expect(socketSpy.emit).toHaveBeenCalledWith('switch-game');
+    });
+
+    it('should emit "leave-limited-time" when leaveLimitedTime() is called', () => {
+        service.leaveLimitedTime();
+        expect(socketSpy.emit).toHaveBeenCalledWith('leave-limited-time');
+    });
 });
