@@ -8,7 +8,7 @@ import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
-import { GameDiffData, playerTime as PlayerTimeInterface, gameHistoryInfo } from '@common/game-interfaces';
+import { GameDiffData, gameHistoryInfo, playerTime as PlayerTimeInterface } from '@common/game-interfaces';
 import { Subscription } from 'rxjs';
 import { CounterService } from '../counter/counter.service';
 import { ReplayService } from '../replay/replay.service';
@@ -22,6 +22,7 @@ export class GameService {
     errorSound = new Audio('./assets/erreur.mp3');
     successSound = new Audio('./assets/success.mp3');
     playAreaCtx: CanvasRenderingContext2D[] = [];
+    time: number = 0;
     errorMessage = new EventEmitter<string>();
     successMessage = new EventEmitter<string>();
     hintMessage = new EventEmitter<string>();
@@ -32,7 +33,6 @@ export class GameService {
     private isCheatEnabled = false;
     private isHintModeEnabled = false;
     private differencesToFlash: Coords[][] = [];
-    public time: number = 0;
     private timeSubscription: Subscription;
     private otherGaveUp = false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,7 +106,7 @@ export class GameService {
         let gameHistoryInfo: gameHistoryInfo = {
             gameTitle: this.gameName,
             winner: sessionStorage.getItem('userName') as string,
-            loser: loser,
+            loser,
             surrender: this.otherGaveUp,
             time: {
                 startTime: sessionStorage.getItem('startingDate') as string,
@@ -168,7 +168,7 @@ export class GameService {
             return;
         }
         const flash = this.flashAllDifferences(ctxs);
-        console.log(flash.length);
+        // console.log(flash.length);
         this.replayService.addAction(this.time, 'blink-all-differences', flash);
         this.cheatTimeout = setInterval(() => {
             this.flashAllDifferences(ctxs);
@@ -438,12 +438,12 @@ export class GameService {
                     this.socketService.sendDifferenceFound(response);
                     this.incrementCounter();
                     this.playSuccessSound();
-                    this.replayService.addAction(this.time, 'difference-found', { mousePosition: mousePosition, context: context });
+                    this.replayService.addAction(this.time, 'difference-found', { mousePosition, context });
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     }, DELAY.SMALLTIMEOUT);
                 } else {
-                    this.replayService.addAction(this.time, 'difference-error', { mousePosition: mousePosition, context: context });
+                    this.replayService.addAction(this.time, 'difference-error', { mousePosition, context });
                     this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameDiffData, GameSelectionPageData, GameplayData, bestTimes, gameHistoryInfo, playerTime } from '@common/game-interfaces';
+import { bestTimes, GameDiffData, gameHistoryInfo, GameplayData, GameSelectionPageData, playerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -71,8 +71,8 @@ export class CommunicationService {
         return this.http.get<bestTimes[]>(`${this.baseUrl}/best-times/${gameTitle}/${gameMode}`, { responseType: 'json' });
     }
 
-    updateBestTimes(name: string, playerTime: playerTime) {
-        this.http.request('POST', `${this.baseUrl}/best-times/${name}`, { body: playerTime }).subscribe();
+    updateBestTimes(name: string, time: playerTime) {
+        this.http.request('POST', `${this.baseUrl}/best-times/${name}`, { body: time }).subscribe();
     }
 
     resetBestTimes(name: string) {
@@ -95,8 +95,8 @@ export class CommunicationService {
         this.http.request('DELETE', `${this.baseUrl}/history`).subscribe();
     }
 
-    updateGameHistory(gameHistoryInfo: gameHistoryInfo) {
-        this.http.request('PUT', `${this.baseUrl}/history`, { body: gameHistoryInfo }).subscribe();
+    updateGameHistory(newGameHistoryInfo: gameHistoryInfo) {
+        this.http.request('PUT', `${this.baseUrl}/history`, { body: newGameHistoryInfo }).subscribe();
     }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {

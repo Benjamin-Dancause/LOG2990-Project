@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Coords } from '@app/classes/coords';
-import { CANVAS } from '@common/constants';
+import { CANVAS, DELAY } from '@common/constants';
 
 @Injectable({
     providedIn: 'root',
@@ -10,18 +10,17 @@ export class CanvasReplayService {
     successSound = new Audio('./assets/success.mp3');
     contexts: CanvasRenderingContext2D[] = [];
     replaySpeed: number = 1;
-    constructor() {}
 
     updateReplaySpeed(speed: number) {
         this.replaySpeed = speed;
     }
 
     updateDifferences(coords: Coords[]) {
-        console.log(coords);
+        // console.log(coords);
         this.flashDifferences(coords);
         setTimeout(() => {
             this.updateImages(coords, this.contexts[2], this.contexts[3]);
-        }, 2000 / this.replaySpeed);
+        }, DELAY.BIGTIMEOUT / this.replaySpeed);
     }
 
     flashDifferences(coords: Coords[]) {
@@ -35,12 +34,12 @@ export class CanvasReplayService {
             setTimeout(() => {
                 this.contexts[0].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
                 this.contexts[1].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-            }, 100 / this.replaySpeed);
-        }, 200 / this.replaySpeed);
+            }, DELAY.SMALLTIMEOUT / this.replaySpeed);
+        }, DELAY.MINITIMEOUT / this.replaySpeed);
 
         setTimeout(() => {
             clearInterval(flash);
-        }, 1000 / this.replaySpeed);
+        }, DELAY.SMALLTIMEOUT / this.replaySpeed);
     }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
@@ -67,7 +66,7 @@ export class CanvasReplayService {
         this.playErrorSound();
         setTimeout(() => {
             context.clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-        }, 1000 / this.replaySpeed);
+        }, DELAY.SMALLTIMEOUT / this.replaySpeed);
     }
 
     playErrorSound() {

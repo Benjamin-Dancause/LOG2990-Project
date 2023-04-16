@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// à corriger le disable
 import { Injectable } from '@angular/core';
 import { GameAction } from '@app/interfaces/game-action';
+import { DELAY, TIME } from '@common/constants';
 import { CanvasReplayService } from '../canvas-replay/canvas-replay.service';
 import { ChatService } from '../chat/chat.service';
 
@@ -7,21 +10,21 @@ import { ChatService } from '../chat/chat.service';
     providedIn: 'root',
 })
 export class ReplayService {
-    constructor(private chat: ChatService, private canvasReplay: CanvasReplayService) {}
-
-    public gameActions: GameAction[] = [];
-    private actionTime: number = 0;
-    private currentGameAction: GameAction;
-    private speedSettings: number[] = [1, 2, 4];
-    public replayIndex: number = 0;
-    public replaySpeed: number = 1;
-    public replayTimer: number = 0;
+    gameActions: GameAction[] = [];
+    replayIndex: number = 0;
+    replaySpeed: number = 1;
+    replayTimer: number = 0;
     replayInterval: any;
     checkActionInterval: any;
+    private actionTime: number = 0;
+    private currentGameAction: GameAction;
+    private speedSettings: number[] = [1, 2, TIME.FOUR_X_SPEED];
+
+    constructor(private chat: ChatService, private canvasReplay: CanvasReplayService) {}
 
     addAction(time: number, action: string, payload?: any): void {
         const gameAction: GameAction = { time, action, payload };
-        //const gameAction: GameAction = { time: 0, action, payload };
+        // const gameAction: GameAction = { time: 0, action, payload };
         this.gameActions.push(gameAction);
     }
 
@@ -58,12 +61,12 @@ export class ReplayService {
         this.currentGameAction = this.getAction();
         switch (this.currentGameAction.action) {
             case 'update-difference':
-                //Call updateDifference
+                // Call updateDifference
                 this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
                 break;
 
             case 'difference-found':
-                //call stuff for difference errors
+                // call stuff for difference errors
                 this.canvasReplay.foundPopup(this.currentGameAction.payload.mousePosition, this.currentGameAction.payload.context);
                 this.goToNextAction();
                 this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
@@ -77,7 +80,7 @@ export class ReplayService {
                 this.chat.messages.push(this.currentGameAction.payload);
                 break;
             case 'blink-all-differences':
-                console.log('blink-all-differences: ' + this.currentGameAction.payload.length);
+                // console.log('blink-all-differences: ' + this.currentGameAction.payload.length);
                 break;
             default:
                 break;
@@ -98,14 +101,14 @@ export class ReplayService {
 
     startReplayTimer(): void {
         this.pauseReplayTimer();
-        const interval = 1000 / this.replaySpeed;
+        const interval = DELAY.SMALLTIMEOUT / this.replaySpeed;
         this.replayInterval = setInterval(() => {
             this.replayTimer++;
             if (this.gameActions.length - this.replayIndex > 0) {
                 this.checkForAction();
             }
 
-            console.log(this.replayTimer);
+            // console.log(this.replayTimer);
         }, interval);
     }
 
