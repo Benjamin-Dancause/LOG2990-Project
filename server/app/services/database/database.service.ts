@@ -97,11 +97,11 @@ export class databaseService {
 
     async getBestTimesByName(name: string, gameMode: string): Promise<bestTimes | null> {
         if(gameMode === 'solo') {
-            const result = await this.collection.findOne({ name: { $eq : name } });
+            const result = await this.collectionBestTimes.findOne({ name: { $eq : name } });
             return result.timesSolo;
         }
         else if(gameMode === '1v1'){
-            const result = await this.collection.findOne({ name: { $eq : name } });
+            const result = await this.collectionBestTimes.findOne({ name: { $eq : name } });
             return result.timesMulti;
         }
       }

@@ -64,11 +64,11 @@ export class CommunicationService {
     }
 
     getAllBestTimes(): Observable<bestTimes[]> {
-        return this.http.get<bestTimes[]>(`${this.baseUrl}/database/all`, { responseType: 'json' });
+        return this.http.get<bestTimes[]>(`${this.baseUrl}/best-times/all`, { responseType: 'json' });
     }
 
     getBestTimesForGame(gameTitle: string, gameMode: string): Observable<bestTimes[]> {
-        return this.http.get<bestTimes[]>(`${this.baseUrl}/database/${gameTitle}/${gameMode}`, { responseType: 'json' });
+        return this.http.get<bestTimes[]>(`${this.baseUrl}/best-times/${gameTitle}/${gameMode}`, { responseType: 'json' });
     }
 
     updateBestTimes(name: string, playerTime: playerTime) {
