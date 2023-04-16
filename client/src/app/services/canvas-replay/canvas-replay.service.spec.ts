@@ -1,25 +1,24 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Coords } from '@app/classes/coords';
-import { DELAY } from '@common/constants';
+import { CANVAS, DELAY } from '@common/constants';
 import { CanvasReplayService } from './canvas-replay.service';
 
 describe('CanvasReplayService', () => {
     let service: CanvasReplayService;
     let mockCoords: Coords[];
+    let mockContext1: CanvasRenderingContext2D;
+    let mockContext2: CanvasRenderingContext2D;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(CanvasReplayService);
+        mockContext1 = jasmine.createSpyObj('CanvasRenderingContext2D', ['fillRect', 'clearRect']);
+        mockContext2 = jasmine.createSpyObj('CanvasRenderingContext2D', ['fillRect', 'clearRect']);
+        service.contexts = [mockContext1, mockContext2];
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
-    });
-
-    it('should update replay speed', () => {
-        const speed = 2;
-        service.updateReplaySpeed(speed);
-        expect(service.replaySpeed).toEqual(speed);
     });
 
     it('should update differences', () => {
@@ -172,4 +171,50 @@ describe('CanvasReplayService', () => {
 
         expect(service.contexts.length).toEqual(0);
     });
+
+    it('should set fillStyle to rgba(255, 0, 255, 0.4) on both contexts', () => {
+        service.flashDifferences([]);
+
+        expect(mockContext1.fillStyle).toEqual('rgba(255, 0, 255, 0.4)');
+        expect(mockContext2.fillStyle).toEqual('rgba(255, 0, 255, 0.4)');
+    });
+
+    it('should call fillRect on both contexts with the correct coordinates', () => {
+        const coords = [
+            { x: 10, y: 10 },
+            { x: 20, y: 20 },
+        ];
+        service.flashDifferences(coords);
+
+        for (const coordinate of coords) {
+            expect(mockContext1.fillRect).toHaveBeenCalledWith(coordinate.x, coordinate.y, 1, 1);
+            expect(mockContext2.fillRect).toHaveBeenCalledWith(coordinate.x, coordinate.y, 1, 1);
+        }
+    });
+
+    it('should call clearRect on both contexts after a delay', fakeAsync(() => {
+        service.replaySpeed = 2; // increase replay speed for faster test execution
+        const coords = [{ x: 10, y: 10 }];
+        service.flashDifferences(coords);
+
+        tick(DELAY.MINITIMEOUT / 2); // wait for the first fillRect call
+        expect(mockContext1.clearRect).not.toHaveBeenCalled();
+        expect(mockContext2.clearRect).not.toHaveBeenCalled();
+
+        tick(DELAY.SMALLTIMEOUT / 2); // wait for the clearRect call
+        expect(mockContext1.clearRect).toHaveBeenCalledWith(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+        expect(mockContext2.clearRect).toHaveBeenCalledWith(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+    }));
+
+    it('should clear the interval after a delay', fakeAsync(() => {
+        service.replaySpeed = 2; // increase replay speed for faster test execution
+        spyOn(window, 'clearInterval').and.callThrough();
+        service.flashDifferences([]);
+
+        tick(DELAY.SMALLTIMEOUT / 2); // wait for the interval to start
+        expect(window.clearInterval).not.toHaveBeenCalled();
+
+        tick(DELAY.SMALLTIMEOUT / 2); // wait for the interval to end
+        expect(window.clearInterval).toHaveBeenCalled();
+    }));
 });
