@@ -7,14 +7,14 @@ import { SocketService } from '../socket/socket.service';
 @Injectable({
     providedIn: 'root',
 })
-export class CounterService{
+export class CounterService {
     counter: number = 0;
     counter2: number = 0;
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     winCondition: number = 1000;
     gameMode: string;
-    allDiffsSubscription: Subscription = new Subscription;
-    allTimesForGameSubscription: Subscription = new Subscription;
+    allDiffsSubscription: Subscription = new Subscription();
+    allTimesForGameSubscription: Subscription = new Subscription();
     victorySent: boolean = false;
     recordMessage = new EventEmitter<string>();
 
@@ -56,7 +56,7 @@ export class CounterService{
     }
 
     setStartingDate() {
-        let currentTime= new Date().toLocaleString();
+        const currentTime = new Date().toLocaleString();
         sessionStorage.setItem('startingDate', currentTime);
     }
 
@@ -72,23 +72,21 @@ export class CounterService{
         });
     }
 
-    isNewBestTime(gameTitle: string){
+    isNewBestTime(gameTitle: string) {
         this.socketService.socket.off('new-record-time');
         this.socketService.socket.on('new-record-time', (newTime) => {
             this.allTimesForGameSubscription = this.communicationService.getBestTimesForGame(gameTitle, this.gameMode).subscribe((bestTimes) => {
-                    if(newTime < bestTimes[0]) {
-                        this.recordMessage.emit('1ère');
-                    }
-                    else if(newTime < bestTimes[1]) {
-                        this.recordMessage.emit('2e');
-                    }
-                    else if(newTime < bestTimes[2]) {
-                        this.recordMessage.emit('3e');
-                    }
+                if (newTime < bestTimes[0]) {
+                    this.recordMessage.emit('1ère');
+                } else if (newTime < bestTimes[1]) {
+                    this.recordMessage.emit('2e');
+                } else if (newTime < bestTimes[2]) {
+                    this.recordMessage.emit('3e');
+                }
             });
         });
     }
-    
+
     unsubscribeFrom() {
         if (this.allDiffsSubscription) {
             this.allDiffsSubscription.unsubscribe();

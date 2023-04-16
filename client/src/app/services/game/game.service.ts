@@ -8,7 +8,7 @@ import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
-import { GameDiffData, playerTime as PlayerTimeInterface, gameHistoryInfo } from '@common/game-interfaces';
+import { GameDiffData, gameHistoryInfo, playerTime as PlayerTimeInterface } from '@common/game-interfaces';
 import { Subscription } from 'rxjs';
 import { CounterService } from '../counter/counter.service';
 import { ReplayService } from '../replay/replay.service';
@@ -32,7 +32,7 @@ export class GameService {
     private isCheatEnabled = false;
     private isHintModeEnabled = false;
     private differencesToFlash: Coords[][] = [];
-    public time: number = 0;
+    time: number = 0;
     private timeSubscription: Subscription;
     private otherGaveUp = false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,7 +106,7 @@ export class GameService {
         let gameHistoryInfo: gameHistoryInfo = {
             gameTitle: this.gameName,
             winner: sessionStorage.getItem('userName') as string,
-            loser: loser,
+            loser,
             surrender: this.otherGaveUp,
             time: {
                 startTime: sessionStorage.getItem('startingDate') as string,
@@ -438,12 +438,12 @@ export class GameService {
                     this.socketService.sendDifferenceFound(response);
                     this.incrementCounter();
                     this.playSuccessSound();
-                    this.replayService.addAction(this.time, 'difference-found', { mousePosition: mousePosition, context: context });
+                    this.replayService.addAction(this.time, 'difference-found', { mousePosition, context });
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     }, DELAY.SMALLTIMEOUT);
                 } else {
-                    this.replayService.addAction(this.time, 'difference-error', { mousePosition: mousePosition, context: context });
+                    this.replayService.addAction(this.time, 'difference-error', { mousePosition, context });
                     this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
