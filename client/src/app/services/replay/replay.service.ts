@@ -16,7 +16,7 @@ export class ReplayService {
     replayTimer: number = 0;
     replayInterval: any;
     checkActionInterval: any;
-    private actionTime: number = 0;
+    actionTime: number = 0;
     private currentGameAction: GameAction;
     private speedSettings: number[] = [1, 2, TIME.FOUR_X_SPEED];
 
