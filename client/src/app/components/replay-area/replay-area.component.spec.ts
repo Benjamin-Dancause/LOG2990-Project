@@ -68,4 +68,25 @@ describe('ReplayAreaComponent', () => {
         expect(replayServiceSpy.changeSpeed).toHaveBeenCalledWith(component.replaySpeedIndex);
         expect(component.replaySpeed).not.toBe(1);
     });
+
+    it('should reset the replay timer', () => {
+        component.resetReplay();
+        expect(replayServiceSpy.resetReplayTimer).toHaveBeenCalled();
+    });
+
+    it('should delete chat messages', () => {
+        component.resetReplay();
+        expect(chatServiceSpy.deleteMessages).toHaveBeenCalled();
+    });
+
+    it('should start the replay timer', () => {
+        component.resetReplay();
+        expect(replayServiceSpy.startReplayTimer).toHaveBeenCalled();
+    });
+
+    it('should emit a replayEvent', () => {
+        spyOn(component.replayEvent, 'emit');
+        component.resetReplay();
+        expect(component.replayEvent.emit).toHaveBeenCalled();
+    });
 });
