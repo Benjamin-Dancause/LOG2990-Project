@@ -2,7 +2,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { ClickResponse } from '@app/classes/click-response';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameDiffData, GameplayData, GameSelectionPageData, playerTime } from '@common/game-interfaces';
+import { GameDiffData, gameHistoryInfo, GameplayData, GameSelectionPageData, playerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable } from 'rxjs';
 import { CommunicationService } from './communication.service';
@@ -279,5 +279,44 @@ describe('CommunicationService', () => {
 
         const request = httpMock.expectOne(`${service['baseUrl']}/best-times/test/modeTest`);
         expect(request.request.method).toEqual('GET');
+    });
+
+    it('should make a GET request to the expected URL when get Game history', () => {
+        const name = 'example';
+
+        service.getGameHistory(name).subscribe();
+
+        const request = httpMock.expectOne(`${service['baseUrl']}/history/${name}`);
+        expect(request.request.method).toEqual('GET');
+    });
+
+    it('should make a GET request to the expected URL when get game all history', () => {
+        service.getGameAllHistory().subscribe();
+
+        const request = httpMock.expectOne(`${service['baseUrl']}/history/all`);
+        expect(request.request.method).toEqual('GET');
+    });
+
+    it('should make a DELETE request to the expected URL', () => {
+        service.deleteGameHistory();
+
+        const request = httpMock.expectOne(`${service['baseUrl']}/history`);
+        expect(request.request.method).toEqual('DELETE');
+    });
+
+    it('should make a PUT request to the expected URL when update game history with newGameHistory', () => {
+        const newgameHistoryInfo: gameHistoryInfo = {
+            gameTitle: 'test',
+            winner: 'joueur 1',
+            loser: 'joueur 2',
+            surrender: true,
+            time: { startTime: 'string', duration: 5 },
+            isSolo: false,
+            isLimitedTime: true,
+        };
+        service.updateGameHistory(newgameHistoryInfo);
+
+        const request = httpMock.expectOne(`${service['baseUrl']}/history`);
+        expect(request.request.method).toEqual('PUT');
     });
 });
