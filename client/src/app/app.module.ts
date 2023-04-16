@@ -24,6 +24,7 @@ import { HistoryDialogComponent } from './components/history-dialog/history-dial
 import { HomeButtonComponent } from './components/home-button/home-button.component';
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
 import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
+import { ReplayAreaComponent } from './components/replay-area/replay-area.component';
 import { SettingsButtonComponent } from './components/settings-button/settings-button.component';
 import { SliderComponent } from './components/slider/slider.component';
 import { TimerComponent } from './components/timer/timer.component';
@@ -73,6 +74,7 @@ import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room
         WaitingRoomLimitedPageComponent,
         LimitedTimePageComponent,
         HintsComponent,
+        ReplayAreaComponent,
         HistoryDialogComponent,
     ],
     providers: [],

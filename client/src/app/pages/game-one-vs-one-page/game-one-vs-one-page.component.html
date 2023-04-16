@@ -1,11 +1,14 @@
-<div class="container">
+<div [class]="replayMode ? 'container disable-click' : 'container click'">
     <section class="play-area-container">
         <app-top-bar name="Nom de la fiche" [single]="false"></app-top-bar>
         <app-play-area class="play-area" tabindex="0"></app-play-area>
         <app-give-up-button text="Abandonner" ></app-give-up-button>
+        <button (click)="test()">TEST</button>
     </section>
     <app-sidebar difficulty="Facile" mode="1 VS 1" total="5" penalty="5"></app-sidebar>
-    
+</div>
+<div *ngIf="replayMode" class="replay-overlay" [style.display]="replayMode ? 'block' : 'none'">
+    <app-replay-area></app-replay-area>
 </div>
 
 <div class="popup-overlay" [style.display]="showPopup ? 'block' : 'none'">
@@ -18,6 +21,7 @@
                 src="https://img.freepik.com/free-vector/congratulations-lettering-with-balloon-confetti_157027-208.jpg?w=1380&t=st=1675722717~exp=1675723317~hmac=4626b75cdc84caa569fbd63dc464074a456397097df109324a37f8c3c69f5e60"
                 alt="Winner"
             />
+            <button (click)="startReplay()">VOIR UNE REPRISE VIDEO DE LA PARTIE</button>
             <button id="returnBtn" routerLink="/home" (click)="returnToMainMenu()">RETOURNER AU MENU PRINCIPAL</button>
         </div>
     </div>

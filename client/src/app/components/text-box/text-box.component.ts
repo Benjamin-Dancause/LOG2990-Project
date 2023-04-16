@@ -1,7 +1,9 @@
 // eslint-disable-next-line max-classes-per-file
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import { ChatService } from '@app/services/chat/chat.service';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameService } from '@app/services/game/game.service';
+import { ReplayService } from '@app/services/replay/replay.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { Subscription } from 'rxjs';
 
@@ -10,7 +12,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './text-box.component.html',
     styleUrls: ['./text-box.component.scss'],
 })
-export class TextBoxComponent implements OnInit, OnDestroy {
+export class TextBoxComponent implements OnDestroy {
     @Input() single: boolean = true;
     @Input() solo: boolean;
     @ViewChild('messageArea') messageArea: ElementRef;
@@ -28,20 +30,25 @@ export class TextBoxComponent implements OnInit, OnDestroy {
     recordSubscription: Subscription = new Subscription();
     hintSubscription: Subscription = new Subscription();
 
-    constructor(public gameService: GameService, public socketService: SocketService, public counterService: CounterService) {}
-    
-    ngOnInit(): void {
+    constructor(
+        public gameService: GameService,
+        public socketService: SocketService,
+        public counterService: CounterService,
+        public chat: ChatService,
+        public replay: ReplayService,
+    ) {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
+        this.chat.deleteMessages();
         const storedUserName = sessionStorage.getItem('userName');
         this.userName = storedUserName ? storedUserName : '';
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
         const joiner = sessionStorage.getItem('joiningPlayer') as string;
         if (this.gameMode !== 'solo' && joiner) {
-
             this.multiplayer = true;
             this.setOpponentName();
             this.addSystemMessage(`${this.getTimestamp()} - ${this.opponentName} a rejoint la partie.`);
+            this.socketService.socket.off('incoming-player-message');
             this.socketService.socket.on('incoming-player-message', (messageInfo: { name: string; message: string }) => {
                 if (this.userName === messageInfo.name) {
                     this.addSelfMessage(messageInfo.message);
@@ -59,7 +66,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
                 this.writeSuccessMessage(name);
             });
             this.socketService.socket.off('new-record');
-            this.socketService.socket.on('new-record', (recordInfo: {name: string, position: string, title: string, mode: string}) => {
+            this.socketService.socket.on('new-record', (recordInfo: { name: string; position: string; title: string; mode: string }) => {
                 this.writeNewRecordMessage(recordInfo.name, recordInfo.position, recordInfo.title, recordInfo.mode);
             });
 
@@ -70,10 +77,9 @@ export class TextBoxComponent implements OnInit, OnDestroy {
                 this.socketService.sendPlayerSuccess(this.userName);
             });
             this.recordSubscription = this.counterService.recordMessage.subscribe((position) => {
-                if(this.counterService.counter < this.counterService.counter2) {
+                if (this.counterService.counter < this.counterService.counter2) {
                     this.socketService.sendNewRecord(this.opponentName, position, this.gameTitle, this.gameMode);
-                }
-                else{
+                } else {
                     this.socketService.sendNewRecord(this.userName, position, this.gameTitle, this.gameMode);
                 }
             });
@@ -91,7 +97,7 @@ export class TextBoxComponent implements OnInit, OnDestroy {
                 this.writeHintMessage();
             });
             this.socketService.socket.off('new-record');
-            this.socketService.socket.on('new-record', (recordInfo: {name: string, position: string, title: string, mode: string}) => {
+            this.socketService.socket.on('new-record', (recordInfo: { name: string; position: string; title: string; mode: string }) => {
                 this.writeNewRecordMessage(recordInfo.name, recordInfo.position, recordInfo.title, recordInfo.mode);
             });
             this.recordSubscription = this.counterService.recordMessage.subscribe((position) => {
@@ -124,7 +130,8 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             timestamp: this.getTimestamp(),
             text,
         };
-        this.messages.push(message);
+        this.chat.messages.push(message);
+        this.replay.addAction(this.gameService.time, 'message', message);
         this.scrollMessageArea();
     }
 
@@ -134,7 +141,8 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             timestamp: this.getTimestamp(),
             text,
         };
-        this.messages.push(message);
+        this.chat.messages.push(message);
+        this.replay.addAction(this.gameService.time, 'message', message);
         this.scrollMessageArea();
     }
 
@@ -144,7 +152,8 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             timestamp: '',
             text,
         };
-        this.messages.push(message);
+        this.chat.messages.push(message);
+        this.replay.addAction(this.gameService.time, 'message', message);
         this.scrollMessageArea();
     }
 
@@ -205,42 +214,12 @@ export class TextBoxComponent implements OnInit, OnDestroy {
             this.recordSubscription.unsubscribe();
         }
         sessionStorage.clear();
+        this.chat.deleteMessages();
     }
 }
 
-interface Message {
+export interface Message {
     type: 'system' | 'opponent' | 'self';
     timestamp: string;
     text: string;
 }
-
-/*
-import { Component, ElementRef, ViewChild } from '@angular/core';
-
-@Component({
-    selector: 'app-text-box',
-    templateUrl: './text-box.component.html',
-    styleUrls: ['./text-box.component.scss'],
-})
-export class TextBoxComponent {
-    @ViewChild('messageArea', { static: true }) messageArea!: ElementRef;
-    messages: { content: string; type: string }[] = [];
-    newMessage: string = '';
-
-    scrollToBottom() {
-        setTimeout(() => {
-            this.messageArea.nativeElement.scrollTop = this.messageArea.nativeElement.scrollHeight;
-        }, 0);
-    }
-
-    sendMessage() {
-        if (this.newMessage.length > 0) {
-            const type = 'self';
-            const content = this.newMessage;
-            this.messages.push({ content, type });
-            this.newMessage = '';
-            this.scrollToBottom();
-        }
-    }
-}
-*/

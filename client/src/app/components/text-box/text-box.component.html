@@ -1,6 +1,6 @@
 <div class="message-box">
     <div class="message-area" #messageArea>
-      <div *ngFor="let message of messages" class="message" [ngClass]="{'event': message.type === 'system', 'opponent': message.type === 'opponent', 'self': message.type === 'self'}">
+      <div *ngFor="let message of chat.messages" class="message" [ngClass]="{'event': message.type === 'system', 'opponent': message.type === 'opponent', 'self': message.type === 'self'}">
         <span class="message-header">{{ message.type === 'system' ? '' : message.type === 'opponent' ? '' : '' }}</span>
         <span>{{ message.text }}</span>
       </div>

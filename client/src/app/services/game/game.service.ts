@@ -9,8 +9,11 @@ import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
 import { GameDiffData, playerTime as PlayerTimeInterface, gameHistoryInfo } from '@common/game-interfaces';
+import { Subscription } from 'rxjs';
 import { CounterService } from '../counter/counter.service';
+import { ReplayService } from '../replay/replay.service';
 import { SocketService } from '../socket/socket.service';
+import { TimerService } from '../timer/timer.service';
 
 @Injectable({
     providedIn: 'root',
@@ -28,13 +31,22 @@ export class GameService {
     private player1: boolean;
     private isCheatEnabled = false;
     private isHintModeEnabled = false;
+    private differencesToFlash: Coords[][] = [];
+    public time: number = 0;
+    private timeSubscription: Subscription;
     private otherGaveUp = false;
-    private time: number;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private cheatTimeout: any;
 
-    constructor(private communicationService: CommunicationService, private counterService: CounterService, private socketService: SocketService) {
+    constructor(
+        private communicationService: CommunicationService,
+        private counterService: CounterService,
+        private socketService: SocketService,
+        private timerService: TimerService,
+        private replayService: ReplayService,
+    ) {
         this.socketService.socket.on('update-difference', (response: ClickResponse) => {
+            this.replayService.addAction(this.time, 'update-difference', response);
             this.updateDifferences(response);
         });
         this.listenForGiveUp();
@@ -51,8 +63,6 @@ export class GameService {
 
     listenForWinner(): void {
         this.socketService.socket.on('send-victorious-player', () => {
-
-
             setTimeout(() => {
                 if (sessionStorage.getItem('winner') === 'true' && this.differenceFound.length !== 0) {
                     this.setTime();
@@ -65,8 +75,10 @@ export class GameService {
                     this.communicationService.updateBestTimes(this.gameName, playerTime);
                     this.differenceFound = [];
                     this.sendNewHistoryEntry();
-                }
-                else if (sessionStorage.getItem('gameMode') === 'tl' && sessionStorage.getItem('gameMaster') === sessionStorage.getItem('userName')) {
+                } else if (
+                    sessionStorage.getItem('gameMode') === 'tl' &&
+                    sessionStorage.getItem('gameMaster') === sessionStorage.getItem('userName')
+                ) {
                     this.setTime();
                     this.differenceFound = [];
                     this.sendNewHistoryEntry();
@@ -74,8 +86,6 @@ export class GameService {
             }, 250);
         });
     }
-
-
 
     setTime(): void {
         let minutes = +(sessionStorage.getItem('newTimeMinutes') as string);
@@ -87,10 +97,11 @@ export class GameService {
         let loser: string;
         if (sessionStorage.getItem('gameMode') === 'solo') {
             loser = '';
-        }
-        else {
-            loser =sessionStorage.getItem('userName') !== sessionStorage.getItem('gameMaster') ? 
-                sessionStorage.getItem('gameMaster') as string : sessionStorage.getItem('joiningPlayer') as string;
+        } else {
+            loser =
+                sessionStorage.getItem('userName') !== sessionStorage.getItem('gameMaster')
+                    ? (sessionStorage.getItem('gameMaster') as string)
+                    : (sessionStorage.getItem('joiningPlayer') as string);
         }
         let gameHistoryInfo: gameHistoryInfo = {
             gameTitle: this.gameName,
@@ -102,7 +113,7 @@ export class GameService {
                 duration: this.time,
             },
             isSolo: sessionStorage.getItem('gameMode') === 'solo',
-            isLimitedTime: sessionStorage.getItem('gameMode') === 'tl'
+            isLimitedTime: sessionStorage.getItem('gameMode') === 'tl',
         };
         this.communicationService.updateGameHistory(gameHistoryInfo);
     }
@@ -156,16 +167,25 @@ export class GameService {
             clearInterval(this.cheatTimeout);
             return;
         }
-        this.flashAllDifferences(ctxs);
+        const flash = this.flashAllDifferences(ctxs);
+        console.log(flash.length);
+        this.replayService.addAction(this.time, 'blink-all-differences', flash);
         this.cheatTimeout = setInterval(() => {
             this.flashAllDifferences(ctxs);
         }, DELAY.SMALLTIMEOUT);
     }
 
-    flashAllDifferences(ctxs: CanvasRenderingContext2D[]) {
+    flashAllDifferences(ctxs: CanvasRenderingContext2D[]): Coords[][] {
+        this.differencesToFlash = [];
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             this.blinkAllDifferences(ctxs, gameData);
+            for (const coordinate of gameData.differences) {
+                if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
+                    this.differencesToFlash.push(coordinate);
+                }
+            }
         });
+        return this.differencesToFlash;
     }
 
     blinkAllDifferences(ctxs: CanvasRenderingContext2D[], gameData: GameDiffData) {
@@ -418,10 +438,12 @@ export class GameService {
                     this.socketService.sendDifferenceFound(response);
                     this.incrementCounter();
                     this.playSuccessSound();
+                    this.replayService.addAction(this.time, 'difference-found', { mousePosition: mousePosition, context: context });
                     setTimeout(() => {
                         context.clearRect(0, 0, clickedCanvas.width, clickedCanvas.height);
                     }, DELAY.SMALLTIMEOUT);
                 } else {
+                    this.replayService.addAction(this.time, 'difference-error', { mousePosition: mousePosition, context: context });
                     this.errorMessage.emit('Erreur par le joueur');
                     context.fillStyle = 'red';
                     context.fillText('Erreur', mousePosition.x, mousePosition.y);
@@ -435,17 +457,31 @@ export class GameService {
             });
         }
     }
+
+    timeUpdater(): void {
+        this.timeSubscription = this.timerService.getTime().subscribe((time) => {
+            this.time = time;
+        });
+    }
+
+    clearTime(): void {
+        if (this.timeSubscription) {
+            this.time = 0;
+            this.timeSubscription.unsubscribe();
+        }
+    }
+
     clearContexts(): void {
         this.playAreaCtx.length = 0;
     }
 
     clearDifferenceArray() {
         this.differenceFound = [];
+        this.differencesToFlash = [];
         this.isCheatEnabled = false;
     }
 
     resetGameValues() {
-        this.otherGaveUp = false
-        
+        this.otherGaveUp = false;
     }
 }

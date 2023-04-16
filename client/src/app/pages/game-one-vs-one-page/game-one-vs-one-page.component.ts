@@ -1,6 +1,8 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
+import { ReplayService } from '@app/services/replay/replay.service';
 import { SocketService } from '@app/services/socket/socket.service';
 
 @Component({
@@ -9,14 +11,22 @@ import { SocketService } from '@app/services/socket/socket.service';
     styleUrls: ['./game-one-vs-one-page.component.scss'],
 })
 export class GameOneVsOnePageComponent implements AfterViewInit, OnInit, OnDestroy {
+    @ViewChild(PlayAreaComponent) playArea: PlayAreaComponent;
+
     gameTitle: string;
     userName: string;
     winningPlayer: string = '';
     player1: boolean = false;
     isWinner: boolean = false;
     showPopup = false;
+    replayMode = false;
 
-    constructor(public gameCardService: GameCardService, public socketService: SocketService, public counterService: CounterService) {}
+    constructor(
+        public gameCardService: GameCardService,
+        public socketService: SocketService,
+        public counterService: CounterService,
+        private replayService: ReplayService,
+    ) {}
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
@@ -48,7 +58,6 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit, OnDestr
                 }
                 this.showPopup = true;
             }
-            
         });
 
         this.socketService.socket.on('player-quit-game', () => {
@@ -60,6 +69,16 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit, OnDestr
 
     isPlayer1(): boolean {
         return sessionStorage.getItem('gameMaster') === sessionStorage.getItem('userName') ? true : false;
+    }
+
+    startReplay(): void {
+        this.showPopup = false;
+        this.replayMode = true;
+        this.playArea.initCanvases();
+    }
+
+    test() {
+        this.replayService.playAction();
     }
 
     ngOnDestroy(): void {

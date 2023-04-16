@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { CanvasReplayService } from '@app/services/canvas-replay/canvas-replay.service';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameService } from '@app/services/game/game.service';
@@ -60,6 +61,7 @@ export class PlayAreaComponent implements AfterViewInit {
         public communicationService: CommunicationService,
         public game: GameService,
         public socketService: SocketService,
+        public canvasReplay: CanvasReplayService,
     ) {
         this.gameName = sessionStorage.getItem('gameTitle') as string;
         this.game.setGameName();
@@ -121,7 +123,7 @@ export class PlayAreaComponent implements AfterViewInit {
         }
     }
 
-    async initCanvases() {
+    public async initCanvases() {
         this.game.clearContexts();
         const img1 = new Image();
         img1.setAttribute('crossOrigin', 'anonymous');
@@ -130,6 +132,7 @@ export class PlayAreaComponent implements AfterViewInit {
             this.ctxLeft = this.canvasLeft.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxLeft?.drawImage(img1, 0, 0);
             this.game.getContexts(this.ctxLeft);
+            this.canvasReplay.getContexts(this.ctxLeft);
         };
         const img2 = new Image();
         img2.setAttribute('crossOrigin', 'anonymous');
@@ -138,11 +141,14 @@ export class PlayAreaComponent implements AfterViewInit {
             this.ctxRight = this.canvasRight.nativeElement.getContext('2d') as CanvasRenderingContext2D;
             this.ctxRight?.drawImage(img2, 0, 0);
             this.game.getContexts(this.ctxRight);
+            this.canvasReplay.getContexts(this.ctxRight);
         };
         this.ctxLeftTop = this.canvasLeftTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.ctxRightTop = this.canvasRightTop.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.game.getContexts(this.ctxLeftTop);
         this.game.getContexts(this.ctxRightTop);
+        this.canvasReplay.getContexts(this.ctxLeftTop);
+        this.canvasReplay.getContexts(this.ctxRightTop);
     }
 
     ngAfterViewInit(): void {
@@ -168,6 +174,8 @@ export class PlayAreaComponent implements AfterViewInit {
             this.socketService.assignPlayerInfo(this.gameName);
         }
 
+        this.game.timeUpdater();
+
         // this.communicationService.getGameByName(this.gameName).subscribe((game) => {
         //     this.imageLeftStr = this.serverURL + '/' + game.images[0];
         //     this.imageRightStr = this.serverURL + '/' + game.images[1];
@@ -179,7 +187,9 @@ export class PlayAreaComponent implements AfterViewInit {
     ngOnDestroy(): void {
         this.game.clearContexts();
         this.game.clearDifferenceArray();
-        this.game.resetGameValues()
+        this.game.clearTime();
+        this.canvasReplay.clearContexts();
+        this.game.resetGameValues();
         this.socketService.disconnectSocket();
     }
 }
