@@ -31,7 +31,7 @@ describe('HistoryDialogComponent', () => {
 
     it('should display the correct time format', () => {
         const time = 1234;
-        const expectedTime = '20:34'; // 20 minutes and 34 seconds
+        const expectedTime = '20:34';
         const result = component.displayTime(time);
         expect(result).toEqual(expectedTime);
     });
