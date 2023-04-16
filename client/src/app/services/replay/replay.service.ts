@@ -119,4 +119,13 @@ export class ReplayService {
         this.pauseReplayTimer();
         this.replayTimer = 0;
     }
+
+    resetReplayData(): void {
+        this.actionTime = 0;
+        this.replayIndex = 0;
+        this.pauseReplayTimer();
+        this.replayTimer = 0;
+        this.gameActions = [];
+        this.replaySpeed = 1;
+    }
 }
