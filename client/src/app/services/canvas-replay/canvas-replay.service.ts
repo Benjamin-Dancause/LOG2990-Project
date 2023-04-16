@@ -59,9 +59,6 @@ export class CanvasReplayService {
         context.fillStyle = 'green';
         context.fillText('Trouvé', coord.x, coord.y);
         this.playSuccessSound();
-        // setTimeout(() => {
-        //     context.clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-        // }, 1000 / this.replaySpeed);
     }
 
     errorPopup(coord: Coords, context: CanvasRenderingContext2D): void {

@@ -35,7 +35,6 @@ export class GameService {
     public time: number = 0;
     private timeSubscription: Subscription;
     private otherGaveUp = false;
-    private time: number;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private cheatTimeout: any;
 
