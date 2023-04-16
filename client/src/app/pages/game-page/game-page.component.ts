@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { ReplayService } from '@app/services/replay/replay.service';
@@ -9,7 +9,7 @@ import { SocketService } from '@app/services/socket/socket.service';
     templateUrl: './game-page.component.html',
     styleUrls: ['./game-page.component.scss'],
 })
-export class GamePageComponent implements OnInit {
+export class GamePageComponent implements OnInit, OnDestroy {
     @ViewChild(PlayAreaComponent) playArea: PlayAreaComponent;
 
     gameTitle: string;
@@ -38,7 +38,6 @@ export class GamePageComponent implements OnInit {
         this.socketService.socket.on('send-victorious-player', () => {
             this.showPopup = true;
             sessionStorage.setItem('winner', 'true');
-            this.socketService.deleteRoomGameInfo();
         });
     }
 
@@ -53,5 +52,9 @@ export class GamePageComponent implements OnInit {
 
     test() {
         this.replayService.playAction();
+    }
+
+    ngOnDestroy(): void {
+        this.socketService.deleteRoomGameInfo();
     }
 }

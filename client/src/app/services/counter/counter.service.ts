@@ -7,13 +7,14 @@ import { SocketService } from '../socket/socket.service';
 @Injectable({
     providedIn: 'root',
 })
-export class CounterService {
+export class CounterService{
     counter: number = 0;
     counter2: number = 0;
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     winCondition: number = 1000;
     gameMode: string;
-    allDiffsSubscription: Subscription;
+    allDiffsSubscription: Subscription = new Subscription;
+    allTimesForGameSubscription: Subscription = new Subscription;
     victorySent: boolean = false;
     recordMessage = new EventEmitter<string>();
 
@@ -22,6 +23,7 @@ export class CounterService {
     initializeCounter(): void {
         const gameTitle: string = sessionStorage.getItem('gameTitle') as string;
         this.gameMode = sessionStorage.getItem('gameMode') as string;
+        this.setStartingDate();
         this.setWinCondition(this.gameMode, gameTitle);
         this.socketService.socket.on('counter-update', (counterInfo: { counter: number; player1: boolean }) => {
             const playerName: string = sessionStorage.getItem('userName') as string;
@@ -34,7 +36,7 @@ export class CounterService {
             }
 
             if (this.counter === this.winCondition && !this.victorySent) {
-                this.isNewBestTime();
+                this.isNewBestTime(gameTitle);
                 this.socketService.sendVictoriousPlayer(counterInfo.player1);
                 this.victorySent = true;
             }
@@ -53,6 +55,11 @@ export class CounterService {
         this.socketService.resetCounter(player1);
     }
 
+    setStartingDate() {
+        let currentTime= new Date().toLocaleString();
+        sessionStorage.setItem('startingDate', currentTime);
+    }
+
     setWinCondition(gameMode: string, gameTitle: string) {
         this.allDiffsSubscription = this.communicationService.getDiffAmount(gameTitle).subscribe((totalDiff: number) => {
             if (gameMode === '1v1') {
@@ -65,22 +72,29 @@ export class CounterService {
         });
     }
 
-    isNewBestTime() {
-        this.recordMessage.emit('Nouveau record');
+    isNewBestTime(gameTitle: string){
+        this.socketService.socket.off('new-record-time');
+        this.socketService.socket.on('new-record-time', (newTime) => {
+            this.allTimesForGameSubscription = this.communicationService.getBestTimesForGame(gameTitle, this.gameMode).subscribe((bestTimes) => {
+                    if(newTime < bestTimes[0]) {
+                        this.recordMessage.emit('1ère');
+                    }
+                    else if(newTime < bestTimes[1]) {
+                        this.recordMessage.emit('2e');
+                    }
+                    else if(newTime < bestTimes[2]) {
+                        this.recordMessage.emit('3e');
+                    }
+            });
+        });
     }
-
-    /*
-    isNewBestTime() {
-        if (true) {
-            this.recordMessage.emit('Nouveau record');
-        }
-    }
-    */
-
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
-    ngOnDestroy() {
+    
+    unsubscribeFrom() {
         if (this.allDiffsSubscription) {
             this.allDiffsSubscription.unsubscribe();
+        }
+        if (this.allTimesForGameSubscription) {
+            this.allTimesForGameSubscription.unsubscribe();
         }
     }
 }

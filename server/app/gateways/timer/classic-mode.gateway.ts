@@ -94,7 +94,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onLeaveGame(client: Socket) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            console.log('does it call here?');
             this.timerManager.deleteTimerData(roomId);
             this.server.to(roomId).emit('player-quit-game');
         }
@@ -103,7 +102,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     onLeftlimitedTime(client: Socket) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            console.log('emitted correctly');
             this.server.to(roomId).emit('player-quit-game');
         }
     }
@@ -198,10 +196,11 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @SubscribeMessage('send-new-record')
-    onNewRecordSet(client: Socket, name: string) {
+    onNewRecordSet(client: Socket, recordInfo: {name: string, position: string, title: string, mode: string}) {
         const rooms = this.gameManager.getAllRooms();
+        console.log(rooms);
         for (let room of rooms) {
-            this.server.to(room).emit('new-record', name);
+            this.server.to(room).emit('new-record', recordInfo);
         }
     }
 
@@ -294,7 +293,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     handleVictorySequence(client: Socket, player1: boolean) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            console.log('Calls here 2 ?');
+            this.server.to(roomId).emit('new-record-time', this.timerManager.getTimeFromRoom(roomId, ''));
             this.timerManager.deleteTimerData(roomId);
             this.server.to(roomId).emit('send-victorious-player', player1);
         }
@@ -347,7 +346,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
                 this.server.to(roomId).emit('switch-images', newImages);
             } else {
                 this.server.to(roomId).emit('send-victorious-player', true);
-                console.log('Calls here 4?');
                 this.timerManager.deleteTimerData(roomId);
             }
         }

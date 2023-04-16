@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
@@ -10,7 +10,7 @@ import { SocketService } from '@app/services/socket/socket.service';
     templateUrl: './game-one-vs-one-page.component.html',
     styleUrls: ['./game-one-vs-one-page.component.scss'],
 })
-export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
+export class GameOneVsOnePageComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(PlayAreaComponent) playArea: PlayAreaComponent;
 
     gameTitle: string;
@@ -58,9 +58,6 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
                 }
                 this.showPopup = true;
             }
-            if (this.player1) {
-                this.socketService.deleteRoomGameInfo();
-            }
         });
 
         this.socketService.socket.on('player-quit-game', () => {
@@ -82,5 +79,11 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit {
 
     test() {
         this.replayService.playAction();
+    }
+
+    ngOnDestroy(): void {
+        if (this.player1) {
+            this.socketService.deleteRoomGameInfo();
+        }
     }
 }

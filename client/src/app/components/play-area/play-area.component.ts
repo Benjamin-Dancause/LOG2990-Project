@@ -189,6 +189,7 @@ export class PlayAreaComponent implements AfterViewInit {
         this.game.clearDifferenceArray();
         this.game.clearTime();
         this.canvasReplay.clearContexts();
+        this.game.resetGameValues();
         this.socketService.disconnectSocket();
     }
 }

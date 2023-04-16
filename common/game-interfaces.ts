@@ -80,3 +80,13 @@ export interface playerTime {
     time: number;
     isSolo: boolean;
 }
+
+export interface gameHistoryInfo {
+    gameTitle: string;
+    winner: string;
+    loser: string;
+    surrender: boolean;
+    time: {startTime: string, duration: number};
+    isSolo: boolean;
+    isLimitedTime: boolean;
+}

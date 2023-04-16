@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
-import { bestTimes, GameDiffData, GameplayData, GameSelectionPageData, playerTime } from '@common/game-interfaces';
+import { GameDiffData, GameSelectionPageData, GameplayData, bestTimes, gameHistoryInfo, playerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -64,19 +64,39 @@ export class CommunicationService {
     }
 
     getAllBestTimes(): Observable<bestTimes[]> {
-        return this.http.get<bestTimes[]>(`${this.baseUrl}/database/all`, { responseType: 'json' });
+        return this.http.get<bestTimes[]>(`${this.baseUrl}/best-times/all`, { responseType: 'json' });
     }
 
-    updateBestTimes(name: string, newPlayerTime: playerTime) {
-        this.http.request('POST', `${this.baseUrl}/database/${name}`, { body: newPlayerTime }).subscribe();
+    getBestTimesForGame(gameTitle: string, gameMode: string): Observable<bestTimes[]> {
+        return this.http.get<bestTimes[]>(`${this.baseUrl}/best-times/${gameTitle}/${gameMode}`, { responseType: 'json' });
+    }
+
+    updateBestTimes(name: string, playerTime: playerTime) {
+        this.http.request('POST', `${this.baseUrl}/best-times/${name}`, { body: playerTime }).subscribe();
     }
 
     resetBestTimes(name: string) {
-        this.http.request('POST', `${this.baseUrl}/database/reset/${name}`).subscribe();
+        this.http.request('POST', `${this.baseUrl}/best-times/reset/${name}`).subscribe();
     }
 
     resetAllBestTimes() {
-        this.http.request('POST', `${this.baseUrl}/database/reset`).subscribe();
+        this.http.request('POST', `${this.baseUrl}/best-times/reset`).subscribe();
+    }
+
+    getGameHistory(name: string): Observable<gameHistoryInfo[]> {
+        return this.http.get<gameHistoryInfo[]>(`${this.baseUrl}/history/${name}`, { responseType: 'json' });
+    }
+
+    getGameAllHistory(): Observable<gameHistoryInfo[]> {
+        return this.http.get<gameHistoryInfo[]>(`${this.baseUrl}/history/all`, { responseType: 'json' });
+    }
+
+    deleteGameHistory() {
+        this.http.request('DELETE', `${this.baseUrl}/history`).subscribe();
+    }
+
+    updateGameHistory(gameHistoryInfo: gameHistoryInfo) {
+        this.http.request('PUT', `${this.baseUrl}/history`, { body: gameHistoryInfo }).subscribe();
     }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {

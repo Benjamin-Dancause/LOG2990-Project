@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -19,9 +20,11 @@ import { DrawingToolsComponent } from './components/drawing-tools/drawing-tools.
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { GiveUpButtonComponent } from './components/give-up-button/give-up-button.component';
 import { HintsComponent } from './components/hints/hints.component';
+import { HistoryDialogComponent } from './components/history-dialog/history-dialog.component';
 import { HomeButtonComponent } from './components/home-button/home-button.component';
 import { MainPageButtonComponent } from './components/main-page-button/main-page-button.component';
 import { PreviousNextButtonComponent } from './components/previous-next-button/previous-next-button.component';
+import { ReplayAreaComponent } from './components/replay-area/replay-area.component';
 import { SettingsButtonComponent } from './components/settings-button/settings-button.component';
 import { SliderComponent } from './components/slider/slider.component';
 import { TimerComponent } from './components/timer/timer.component';
@@ -33,7 +36,6 @@ import { GameSelectionPageComponent } from './pages/game-selection-page-componen
 import { LimitedTimePageComponent } from './pages/limited-time-page/limited-time-page.component';
 import { WaitingRoomLimitedPageComponent } from './pages/waiting-room-limited-page/waiting-room-limited-page.component';
 import { WaitingRoomPageComponent } from './pages/waiting-room-page/waiting-room-page.component';
-import { ReplayAreaComponent } from './components/replay-area/replay-area.component';
 
 /**
  * Main module that is used in main.ts.
@@ -73,9 +75,10 @@ import { ReplayAreaComponent } from './components/replay-area/replay-area.compon
         LimitedTimePageComponent,
         HintsComponent,
         ReplayAreaComponent,
+        HistoryDialogComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],
-    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
+    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, CommonModule],
 })
 export class AppModule {}
