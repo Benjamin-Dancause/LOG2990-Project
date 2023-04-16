@@ -2,7 +2,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { ClickResponse } from '@app/classes/click-response';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameDiffData, GameplayData, GameSelectionPageData } from '@common/game-interfaces';
+import { GameDiffData, GameplayData, GameSelectionPageData, playerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable } from 'rxjs';
 import { CommunicationService } from './communication.service';
@@ -15,6 +15,7 @@ describe('CommunicationService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
+            providers: [CommunicationService],
         });
         service = TestBed.inject(CommunicationService);
         httpMock = TestBed.inject(HttpTestingController);
@@ -238,5 +239,45 @@ describe('CommunicationService', () => {
         });
         const req = httpMock.expectOne(`${service['baseUrl']}/games/${name}`);
         expect(req.request.method).toBe('GET');
+    });
+
+    it('should make a GET request to the expected URL', () => {
+        service.getAllBestTimes().subscribe();
+
+        const request = httpMock.expectOne(`${service['baseUrl']}/best-times/all`);
+        expect(request.request.method).toEqual('GET');
+    });
+
+    it('should make a POST request to the expected URL', () => {
+        service.resetAllBestTimes();
+
+        const request = httpMock.expectOne(`${service['baseUrl']}/best-times/reset`);
+        expect(request.request.method).toEqual('POST');
+    });
+
+    it('should make a POST request to the expected URL when reset best tume', () => {
+        service.resetBestTimes('test');
+
+        const request = httpMock.expectOne(`${service['baseUrl']}/best-times/reset/test`);
+        expect(request.request.method).toEqual('POST');
+    });
+
+    it('should make a POST request to the expected URL when update best time whit playerTime', () => {
+        const time: playerTime = {
+            user: 'test',
+            time: 10,
+            isSolo: true,
+        };
+        service.updateBestTimes('test', time);
+
+        const request = httpMock.expectOne(`${service['baseUrl']}/best-times/test`);
+        expect(request.request.method).toEqual('POST');
+    });
+
+    it('should make a GET request to the expected URL when get best times for game', () => {
+        service.getBestTimesForGame('test', 'modeTest').subscribe();
+
+        const request = httpMock.expectOne(`${service['baseUrl']}/best-times/test/modeTest`);
+        expect(request.request.method).toEqual('GET');
     });
 });
