@@ -1,4 +1,5 @@
 // eslint-disable-next-line no-restricted-imports
+import * as fs from 'fs/promises';
 import { StoreService } from '../store/store.service';
 import { GameManager } from './game-manager.service';
 
@@ -17,34 +18,6 @@ describe('GameManager', () => {
             expect(gameManager.createGame(gameData)).toBe(5);
         });
     });
-
-    //TODO : EDIT THIS TO USE SOCKETS
-
-    // describe('verifyPos', () => {
-    //     it('should return an object indicating that no difference was found if the click is not on a difference', async () => {
-    //         const gameName = 'test_game';
-    //         const clickCoord = { x: 1, y: 2 };
-    //         const gameData = {
-    //             name: gameName,
-    //             differences: [
-    //                 [
-    //                     { x: 3, y: 4 },
-    //                     { x: 5, y: 6 },
-    //                 ],
-    //                 [
-    //                     { x: 7, y: 8 },
-    //                     { x: 9, y: 10 },
-    //                 ],
-    //             ],
-    //         };
-    //         const gamesContent = [{ name: gameName, differences: gameData.differences }];
-    //         jest.spyOn(fs, 'readFile').mockImplementation(async () => Promise.resolve(JSON.stringify(gamesContent)));
-
-    //         const expectedDifference = { isDifference: false, differenceNumber: 0, coords: [] };
-    //         const differenceInterface = await gameManager.verifyPos(gameName, clickCoord);
-    //         expect(differenceInterface).toEqual(expectedDifference);
-    //     });
-    // });
 
     describe('createGame', () => {
         it('should return the amount of differences for games', async () => {
@@ -70,5 +43,24 @@ describe('GameManager', () => {
 
     afterEach(() => {
         jest.restoreAllMocks();
+    });
+
+    it('loadGame should load game data and return new images', async () => {
+        const roomId = 'room1';
+        const gameTitles = ['game1'];
+        const expectedImages = ['image1.jpg', 'image2.jpg'];
+        jest.spyOn(fs, 'readFile').mockResolvedValueOnce(
+            JSON.stringify([
+                {
+                    name: 'game1',
+                    count: 5,
+                    differences: [],
+                    images: expectedImages,
+                },
+            ]),
+        );
+
+        const newImages = await gameManager.loadGame(roomId, gameTitles);
+        expect(newImages).toEqual(expectedImages);
     });
 });
