@@ -75,18 +75,18 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @SubscribeMessage('add-to-timer')
-    onAddToTimer(client: Socket, increment: number) {
+    onAddToTimer(client: Socket) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            this.timerManager.addToTimer(roomId, increment);
+            this.timerManager.addToTimer(roomId);
         }
     }
 
     @SubscribeMessage('remove-to-timer')
-    onRemoveToTimer(client: Socket, decrement: number) {
+    onRemoveToTimer(client: Socket) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            this.timerManager.removeToTimer(roomId, decrement);
+            this.timerManager.removeToTimer(roomId);
         }
     }
 
@@ -196,9 +196,8 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @SubscribeMessage('send-new-record')
-    onNewRecordSet(client: Socket, recordInfo: {name: string, position: string, title: string, mode: string}) {
+    onNewRecordSet(client: Socket, recordInfo: { name: string; position: string; title: string; mode: string }) {
         const rooms = this.gameManager.getAllRooms();
-        console.log(rooms);
         for (let room of rooms) {
             this.server.to(room).emit('new-record', recordInfo);
         }

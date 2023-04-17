@@ -48,6 +48,7 @@ export class PlayAreaComponent implements AfterViewInit {
     ctxRightTop: CanvasRenderingContext2D | null = null;
     gameName: string = '';
     player1: boolean = true;
+    opponent: boolean = false;
 
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
@@ -93,7 +94,7 @@ export class PlayAreaComponent implements AfterViewInit {
 
     @HostListener('document:keydown.i', ['$event'])
     onHintKeyDown(event: KeyboardEvent) {
-        if (event.target instanceof HTMLInputElement) {
+        if (event.target instanceof HTMLInputElement || this.opponent) {
             return;
         }
 
@@ -173,7 +174,7 @@ export class PlayAreaComponent implements AfterViewInit {
         if ((sessionStorage.getItem('gameMode') as string) === '1v1') {
             this.socketService.assignPlayerInfo(this.gameName);
         }
-
+        this.opponent = (sessionStorage.getItem('joiningPlayer') as string) ? true : false;
         this.game.timeUpdater();
 
         // this.communicationService.getGameByName(this.gameName).subscribe((game) => {

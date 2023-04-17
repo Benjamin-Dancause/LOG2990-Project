@@ -214,6 +214,7 @@ export class GameService {
     hintMode1(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
@@ -256,6 +257,7 @@ export class GameService {
     hintMode2(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
@@ -311,6 +313,7 @@ export class GameService {
     hintMode3(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
