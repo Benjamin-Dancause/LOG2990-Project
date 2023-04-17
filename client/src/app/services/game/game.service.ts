@@ -23,23 +23,23 @@ export class GameService {
     successSound = new Audio('./assets/success.mp3');
     playAreaCtx: CanvasRenderingContext2D[] = [];
     time: number = 0;
+    isHintModeEnabled = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cheatTimeout: any;
+    differenceFound: number[] = [];
     errorMessage = new EventEmitter<string>();
     successMessage = new EventEmitter<string>();
     hintMessage = new EventEmitter<string>();
     private isClickDisabled = false;
-    private differenceFound: number[] = [];
     private gameName: string = '';
     private player1: boolean;
     private isCheatEnabled = false;
-    private isHintModeEnabled = false;
     private differencesToFlash: Coords[][] = [];
     private timeSubscription: Subscription;
     private otherGaveUp = false;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private cheatTimeout: any;
 
     constructor(
-        private communicationService: CommunicationService,
+        public communicationService: CommunicationService,
         private counterService: CounterService,
         private socketService: SocketService,
         private timerService: TimerService,

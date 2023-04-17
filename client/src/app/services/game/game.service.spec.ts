@@ -234,4 +234,105 @@ describe('GameService', () => {
         gameService.flashAllDifferences(mockCtxs);
         expect(gameService.blinkAllDifferences).toHaveBeenCalled();
     });
+    it('should toggle isHintModeEnabled and call flashOneDifference1 and setTimeout if isHintModeEnabled is true', fakeAsync(() => {
+        const mockCtx = {} as CanvasRenderingContext2D;
+        /*
+        const mockDiffs = {
+            differences: [
+                { x: 10, y: 10 },
+                { x: 20, y: 20 },
+            ],
+        };
+        */
+        // const getAllDiffsSpy = spyOn(mockCommunicationService, 'getAllDiffs').and.returnValue(of(mockDiffs));
+        const flashOneDifference1Spy = spyOn(gameService, 'flashOneDifference1');
+        const hintMessageEmitSpy = spyOn(gameService.hintMessage, 'emit');
+        gameService.isHintModeEnabled = false;
+        const timeout = 1000;
+
+        gameService.hintMode1([mockCtx]);
+        expect(hintMessageEmitSpy).toHaveBeenCalled();
+        expect(gameService.isHintModeEnabled).toBeTrue();
+        expect(flashOneDifference1Spy).toHaveBeenCalled();
+        // expect(getAllDiffsSpy).toHaveBeenCalled();
+
+        tick(timeout);
+        expect(gameService.isHintModeEnabled).toBeFalse();
+        expect(clearInterval).toHaveBeenCalled();
+    }));
+
+    it('should disable hint mode and clear the timeout when called and hint mode was previously enabled', fakeAsync(() => {
+        const mockCtx = {} as CanvasRenderingContext2D;
+        gameService.getContexts(mockCtx);
+        gameService.isHintModeEnabled = true;
+        gameService.cheatTimeout = 1 as unknown;
+        spyOn(window, 'clearInterval');
+        gameService.hintMode1(gameService['playAreaCtx']);
+        expect(gameService.isHintModeEnabled).toBeFalse();
+        expect(clearInterval).toHaveBeenCalled();
+        expect(gameService.cheatTimeout).toBeUndefined();
+    }));
+
+    /*
+    it('should not flash a difference when called and all differences have been found', fakeAsync(() => {
+        const mockCtx = {} as CanvasRenderingContext2D;
+        gameService.getContexts(mockCtx);
+        gameService['differenceFound'] = [1, 2];
+        spyOn(gameService, 'flashOneDifference1');
+
+        gameService.hintMode1(gameService['playAreaCtx']);
+        expect(gameService.isHintModeEnabled).toBeTrue();
+        expect(gameService.flashOneDifference1).toHaveBeenCalled();
+        tick(1000);
+        expect(gameService.isHintModeEnabled).toBeFalse();
+        expect(clearInterval).toHaveBeenCalled();
+        expect(gameService.cheatTimeout).toBeUndefined();
+    }));
+    */
+
+    it('should toggle isHintModeEnabled and call flashOneDifference1 and setTimeout if isHintModeEnabled is true', fakeAsync(() => {
+        const mockCtx = {} as CanvasRenderingContext2D;
+        const flashOneDifference2Spy = spyOn(gameService, 'flashOneDifference2');
+        const hintMessageEmitSpy = spyOn(gameService.hintMessage, 'emit');
+        gameService.isHintModeEnabled = false;
+        const timeout = 1000;
+
+        gameService.hintMode2([mockCtx]);
+        expect(hintMessageEmitSpy).toHaveBeenCalled();
+        expect(gameService.isHintModeEnabled).toBeTrue();
+        expect(flashOneDifference2Spy).toHaveBeenCalled();
+
+        tick(timeout);
+        expect(gameService.isHintModeEnabled).toBeFalse();
+        expect(clearInterval).toHaveBeenCalled();
+    }));
+
+    it('should disable hint mode and clear the timeout when called and hint mode was previously enabled', fakeAsync(() => {
+        const mockCtx = {} as CanvasRenderingContext2D;
+        gameService.getContexts(mockCtx);
+        gameService.isHintModeEnabled = true;
+        gameService.cheatTimeout = 1 as unknown;
+        spyOn(window, 'clearInterval');
+        gameService.hintMode2(gameService['playAreaCtx']);
+        expect(gameService.isHintModeEnabled).toBeFalse();
+        expect(clearInterval).toHaveBeenCalled();
+        expect(gameService.cheatTimeout).toBeUndefined();
+    }));
+
+    it('should toggle isHintModeEnabled and call flashOneDifference1 and setTimeout if isHintModeEnabled is true', fakeAsync(() => {
+        const mockCtx = {} as CanvasRenderingContext2D;
+        const flashOneDifference3Spy = spyOn(gameService, 'flashOneRandomDifference');
+        const hintMessageEmitSpy = spyOn(gameService.hintMessage, 'emit');
+        gameService.isHintModeEnabled = true;
+        const timeout = 1000;
+
+        gameService.hintMode3([mockCtx]);
+        expect(hintMessageEmitSpy).toHaveBeenCalled();
+        expect(gameService.isHintModeEnabled).toBeTrue();
+        expect(flashOneDifference3Spy).toHaveBeenCalled();
+
+        tick(timeout);
+        expect(gameService.isHintModeEnabled).toBeFalse();
+        expect(clearInterval).toHaveBeenCalled();
+    }));
 });
