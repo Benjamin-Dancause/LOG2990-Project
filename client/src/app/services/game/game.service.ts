@@ -385,6 +385,7 @@ export class GameService {
     }
 
     setGameName() {
+        this.replayService.resetReplayData();
         this.gameName = (sessionStorage.getItem('gameTitle') as string) || '';
         if ((sessionStorage.getItem('gameMode') as string) === 'tl') {
             this.player1 = true;
