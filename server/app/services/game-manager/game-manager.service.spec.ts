@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-restricted-imports
-import { RoomGameData } from '@common/game-interfaces';
+import { GameDiffData, RoomGameData } from '@common/game-interfaces';
 import * as fs from 'fs/promises';
 import { StoreService } from '../store/store.service';
 import { GameManager } from './game-manager.service';
@@ -168,7 +168,6 @@ describe('GameManager', () => {
             const result = gameManager.switchData(roomId);
 
             expect(result).not.toBe(1);
-            // expect(gameManager.roomIdToGameDifferences.get(roomId)).toEqual([{ id: 2 }]);
         });
 
         it('should return 0 if there are no more games', () => {
@@ -186,5 +185,84 @@ describe('GameManager', () => {
             gameManager.deleteRoomGameInfo(roomId);
             expect(gameManager.roomIdToGameDifferences.get(roomId)).toBeUndefined();
         });
+    });
+
+    describe('getAllDifferences', () => {
+        it('should return the count and differences for a given game name', async () => {
+            const gameName = 'game1';
+            const gameData = {
+                id: 1,
+                count: 5,
+                differences: [
+                    [
+                        { x: 1, y: 2 },
+                        { x: 3, y: 4 },
+                    ],
+                    [
+                        { x: 5, y: 6 },
+                        { x: 7, y: 8 },
+                        { x: 9, y: 10 },
+                    ],
+                ],
+            };
+            jest.spyOn(fs, 'readFile').mockResolvedValueOnce(
+                JSON.stringify([
+                    {
+                        name: gameName,
+                        ...gameData,
+                    },
+                ]),
+            );
+            const expected: GameDiffData = { id: 0, count: 5, differences: gameData.differences };
+            const result = await gameManager.getAllDifferences(gameName);
+            expect(result).toEqual(expected);
+        });
+    });
+
+    it('should set room games if roomId is valid', async () => {
+        const roomId = 'room1';
+        const gameTitles = ['game1'];
+        const expectedImages = ['image1.jpg', 'image2.jpg'];
+        jest.spyOn(fs, 'readFile').mockResolvedValueOnce(
+            JSON.stringify([
+                {
+                    name: 'game1',
+                    count: 5,
+                    differences: [],
+                    images: expectedImages,
+                },
+            ]),
+        );
+
+        await gameManager.loadGame(roomId, gameTitles);
+        expect(gameManager.roomIdToGameDifferences.get(roomId)).toBeDefined();
+    });
+
+    it('should return images of the room if it exists', async () => {
+        const roomId = 'room1';
+        const gameTitles = ['game1'];
+        const expectedImages = ['image1.jpg', 'image2.jpg'];
+        jest.spyOn(fs, 'readFile').mockResolvedValueOnce(
+            JSON.stringify([
+                {
+                    name: 'game1',
+                    count: 5,
+                    differences: [],
+                    images: expectedImages,
+                },
+            ]),
+        );
+        gameManager.getAllRooms = jest.fn().mockReturnValue([roomId]);
+        gameManager.roomIdToGameDifferences.set(roomId, [
+            {
+                name: 'game1',
+                count: 5,
+                differences: [],
+                images: expectedImages,
+            },
+        ]); // set the game differences for the room
+
+        await gameManager.loadGame(roomId, gameTitles);
+        expect(gameManager.switchImages(roomId)).toEqual(expectedImages);
     });
 });
