@@ -47,6 +47,7 @@ export class PlayAreaComponent implements AfterViewInit {
     ctxLeftTop: CanvasRenderingContext2D | null = null;
     ctxRightTop: CanvasRenderingContext2D | null = null;
     gameName: string = '';
+    public replay: boolean = false;
     player1: boolean = true;
     opponent: boolean = false;
 
@@ -65,6 +66,7 @@ export class PlayAreaComponent implements AfterViewInit {
         public canvasReplay: CanvasReplayService,
     ) {
         this.gameName = sessionStorage.getItem('gameTitle') as string;
+        this.replay = false;
         this.game.setGameName();
     }
 
@@ -84,7 +86,7 @@ export class PlayAreaComponent implements AfterViewInit {
     }
     @HostListener('document:keydown.t', ['$event'])
     onKeyDown(event: KeyboardEvent) {
-        if (event.target instanceof HTMLInputElement) {
+        if (event.target instanceof HTMLInputElement || this.replay) {
             return;
         }
         this.isCheatEnabled = !this.isCheatEnabled;
@@ -94,7 +96,7 @@ export class PlayAreaComponent implements AfterViewInit {
 
     @HostListener('document:keydown.i', ['$event'])
     onHintKeyDown(event: KeyboardEvent) {
-        if (event.target instanceof HTMLInputElement || this.opponent) {
+        if (event.target instanceof HTMLInputElement || this.opponent || this.replay) {
             return;
         }
 
