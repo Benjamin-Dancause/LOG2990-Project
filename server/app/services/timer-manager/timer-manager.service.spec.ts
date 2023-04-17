@@ -54,4 +54,65 @@ describe('TimerManagerService', () => {
         expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
         expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, initialTime - 1);
     });
+
+    it('should not decrement the timer if game mode is not tl', () => {
+        const roomId = 'test-room';
+        const gameMode = '';
+        const initialTime = 60;
+
+        service.startTimer(roomId, gameMode);
+        service.updateTimer(roomId, gameMode);
+
+        expect(service.getTimeFromRoom(roomId, gameMode)).not.toEqual(initialTime - 1);
+        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
+        expect(classicModeGateway.emitTimeToRoom).not.toHaveBeenCalledWith(roomId, initialTime - 1);
+    });
+
+    it('addToTimer should add increment to the timer and emit the new timer value if it is less than 120', () => {
+        const roomId = 'test-room';
+        const increment = 10;
+
+        service.timers.set(roomId, 50);
+        service.addToTimer(roomId, increment);
+
+        expect(service.timers.get(roomId)).toEqual(60);
+        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
+        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 60);
+    });
+
+    it('addToTimer should set the timer to 120 and emit the new timer value if it exceeds 120', () => {
+        const roomId = 'test-room';
+        const increment = 100;
+
+        service.timers.set(roomId, 50);
+        service.addToTimer(roomId, increment);
+
+        expect(service.timers.get(roomId)).toEqual(120);
+        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
+        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 120);
+    });
+
+    it('removeToTimer should subtract decrement from the timer and emit the new timer value if it is greater than 0', () => {
+        const roomId = 'test-room';
+        const decrement = 10;
+
+        service.timers.set(roomId, 50);
+        service.removeToTimer(roomId, decrement);
+
+        expect(service.timers.get(roomId)).toEqual(40);
+        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
+        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 40);
+    });
+
+    it('removeToTimer should set the timer to 0 and emit the new timer value if it becomes negative', () => {
+        const roomId = 'test-room';
+        const decrement = 100;
+
+        service.timers.set(roomId, 50);
+        service.removeToTimer(roomId, decrement);
+
+        expect(service.timers.get(roomId)).toEqual(0);
+        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
+        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 0);
+    });
 });
