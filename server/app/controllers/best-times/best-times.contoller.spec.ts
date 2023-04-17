@@ -1,102 +1,78 @@
 import { databaseService } from '@app/services/database/database.service';
-import { playerTime } from '@common/game-interfaces';
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { BestTimesController } from './best-times.controller';
 
 describe('BestTimesController', () => {
-    let gameController: BestTimesController;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let databaseServiceMock: any;
+    let controller: BestTimesController;
+    let databaseServiceMock: Partial<databaseService>;
 
     beforeEach(async () => {
         databaseServiceMock = {
-            getBestTimes: jest.fn(),
-            getBestTimesByName: jest.fn(),
+            getBestTimes: jest.fn().mockReturnValue(Promise.resolve([{ gameTitle: 'game1', gameMode: 'mode1', times: [] }])),
+            getBestTimesByName: jest.fn().mockReturnValue(Promise.resolve({ gameTitle: 'game1', gameMode: 'mode1', times: [] })),
             setup: jest.fn(),
             updateBestTimes: jest.fn(),
             deleteBestTimes: jest.fn(),
             resetBestTimes: jest.fn(),
         };
 
-        const app = await Test.createTestingModule({
+        const module: TestingModule = await Test.createTestingModule({
             controllers: [BestTimesController],
-            providers: [
-                {
-                    provide: databaseService,
-                    useValue: databaseServiceMock,
-                },
-            ],
+            providers: [{ provide: databaseService, useValue: databaseServiceMock }],
         }).compile();
 
-        gameController = app.get<BestTimesController>(BestTimesController);
+        controller = module.get<BestTimesController>(BestTimesController);
     });
 
-    /*
     describe('getAllTimes', () => {
-        it('should call databaseService.getBestTimes and return the result', async () => {
-            const expected: bestTimes[] = [{ gameTitle: 'game1', gameMode: 'solo', times: [] }];
-            databaseServiceMock.getBestTimes.mockReturnValue(of(expected));
-
-            const result = await gameController.getAllTimes();
+        it('should return an array of bestTimes', async () => {
+            const result = await controller.getAllTimes();
 
             expect(databaseServiceMock.getBestTimes).toHaveBeenCalled();
-            expect(result).toEqual(expected);
+            expect(result).toEqual([{ gameTitle: 'game1', gameMode: 'mode1', times: [] }]);
         });
     });
 
     describe('getTimes', () => {
-        it('should call databaseService.getBestTimesByName with the correct parameters and return the result', async () => {
-            const gameTitle = 'game1';
-            const gameMode = 'solo';
-            name: string;
-    usersSolo: string[];
-    usersMulti: string[];
-    timesSolo: number[];
-    timesMulti: number[];
-            const expected: bestTimes = { 'game1', gameMode, times: [] };
-            databaseServiceMock.getBestTimesByName.mockReturnValue(of(expected));
+        it('should return bestTimes for a given gameTitle and gameMode', async () => {
+            const result = await controller.getTimes('game1', 'mode1');
 
-            const result = await gameController.getTimes(gameTitle, gameMode);
-
-            expect(databaseServiceMock.getBestTimesByName).toHaveBeenCalledWith(gameTitle, gameMode);
-            expect(result).toEqual(expected);
+            expect(databaseServiceMock.getBestTimesByName).toHaveBeenCalledWith('game1', 'mode1');
+            expect(result).toEqual({ gameTitle: 'game1', gameMode: 'mode1', times: [] });
         });
     });
-    */
 
     describe('resetAllBestTimes', () => {
-        it('should call databaseService.setup', async () => {
-            gameController.resetAllBestTimes();
+        it('should call setup method of databaseService', () => {
+            controller.resetAllBestTimes();
 
             expect(databaseServiceMock.setup).toHaveBeenCalled();
         });
     });
 
     describe('updateTimes', () => {
-        it('should call databaseService.updateBestTimes with the correct parameters', async () => {
-            const gameTitle = 'game1';
-            const playerTime: playerTime = { isSolo: true, user: 'user1', time: 123 };
-            gameController.updateTimes(gameTitle, playerTime);
+        it('should call updateBestTimes method of databaseService', () => {
+            const playerTime = { isSolo: true, user: 'John', time: 60 };
 
-            expect(databaseServiceMock.updateBestTimes).toHaveBeenCalledWith(gameTitle, true, 'user1', 123);
+            controller.updateTimes('game1', playerTime);
+
+            expect(databaseServiceMock.updateBestTimes).toHaveBeenCalledWith('game1', true, 'John', 60);
         });
     });
 
     describe('deleteTimes', () => {
-        it('should call databaseService.deleteBestTimes with the correct parameter', async () => {
-            const gameTitle = 'game1';
-            gameController.deleteTimes(gameTitle);
+        it('should call deleteBestTimes method of databaseService', () => {
+            controller.deleteTimes('game1');
 
-            expect(databaseServiceMock.deleteBestTimes).toHaveBeenCalledWith(gameTitle);
+            expect(databaseServiceMock.deleteBestTimes).toHaveBeenCalledWith('game1');
         });
     });
 
     describe('resetBestTimes', () => {
-        it('should call databaseService.resetBestTimes with the correct parameter', async () => {
-            const gameTitle = 'game1';
-            gameController.resetBestTimes(gameTitle);
+        it('should call resetBestTimes method of databaseService', () => {
+            controller.resetBestTimes('game1');
 
-            expect(databaseServiceMock.resetBestTimes).toHaveBeenCalledWith(gameTitle);
+            expect(databaseServiceMock.resetBestTimes).toHaveBeenCalledWith('game1');
         });
     });
 });
