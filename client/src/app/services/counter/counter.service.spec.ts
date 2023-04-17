@@ -31,6 +31,10 @@ describe('CounterService', () => {
         mockSocketService = TestBed.inject(SocketService) as jasmine.SpyObj<SocketService>;
     });
 
+    afterEach(() => {
+        service.unsubscribeFrom();
+    });
+
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
