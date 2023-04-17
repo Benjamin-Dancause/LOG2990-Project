@@ -62,6 +62,14 @@ export class StoreController {
         return this.storeService.deleteGame(name);
     }
 
+    @Delete('/delete/games')
+    @ApiOkResponse({
+        description: 'delete all game from data',
+    })
+    async deleteAllGames() {
+        return this.storeService.deleteAllGames();
+    }
+
     @Get(':name')
     @ApiOkResponse({
         description: 'check game availability',
