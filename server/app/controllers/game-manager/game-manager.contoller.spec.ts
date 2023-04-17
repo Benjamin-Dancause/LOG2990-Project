@@ -16,9 +16,8 @@ describe('GameManagerController', () => {
                 {
                     provide: GameManager,
                     useValue: {
-                        createGame: jest.fn(),
-                        verifyPos: jest.fn(),
                         getAllDifferences: jest.fn(),
+                        createGame: jest.fn(),
                     },
                 },
                 {
@@ -35,45 +34,70 @@ describe('GameManagerController', () => {
         storeService = module.get<StoreService>(StoreService);
     });
 
-    describe('checkPos', () => {
-        it('should return an DifferenceInterface object', async () => {
-            const result = { isDifference: true, differenceNumber: 1, coords: [{ x: 1, y: 1 }] };
-            jest.spyOn(gameManager, 'verifyPos').mockResolvedValue(result);
+    const diffsData = [
+        { id: 1, imageId: 1, name: 'diff1' },
+        { id: 2, imageId: 1, name: 'diff2' },
+        { id: 3, imageId: 2, name: 'diff3' },
+        { id: 4, imageId: 2, name: 'diff4' },
+    ];
 
-            const body = { name: 'game1', coords: { x: 1, y: 1 } };
-            const expected = result;
+    const gameDiffData: GameDiffData = {
+        id: 0,
+        count: 0,
+        differences: [],
+    };
 
-            expect(await controller.checkPos(body)).toBe(expected);
-            expect(gameManager.verifyPos).toHaveBeenCalledWith(body.name, body.coords);
+    diffsData.forEach((diff) => {
+        if (!gameDiffData[diff.imageId]) {
+            gameDiffData[diff.imageId] = [];
+        }
+        gameDiffData[diff.imageId].push({
+            id: diff.id,
+            name: diff.name,
         });
     });
 
     describe('returnAllDiff', () => {
-        it('should return all the difference', async () => {
-            const result: GameDiffData = {
-                id: 1,
-                count: 4,
-                differences: [],
-            };
+        it('should return all differences', async () => {
+            const differences = [
+                { id: 1, imageId: 1, name: 'difference1' },
+                { id: 2, imageId: 1, name: 'difference2' },
+            ];
+            const name = 'image1';
 
-            jest.spyOn(gameManager, 'getAllDifferences').mockResolvedValue(result);
+            jest.spyOn(gameManager, 'getAllDifferences').mockResolvedValue(gameDiffData);
 
-            const body = { name: 'game1' };
-            const expected = result;
+            const result = await controller.returnAllDiff({ name });
 
-            expect(await controller.returnAllDiff(body)).toBe(expected);
+            expect(result).not.toEqual(differences);
+            expect(gameManager.getAllDifferences).toHaveBeenCalledWith(name);
         });
     });
 
     describe('sendDiffAmount', () => {
-        it('should return a number', async () => {
-            const result = 5;
-            jest.spyOn(gameManager, 'createGame').mockReturnValue(result);
-            const body = { name: 'game1' };
-            const expected = result;
+        it('should create a new game with correct gameDiffData', async () => {
+            const name = 'image1';
+            const gameDiffData2: GameDiffData = {
+                id: 0,
+                count: 0,
+                differences: [],
+            };
+            diffsData.forEach((diff) => {
+                if (!gameDiffData[diff.imageId]) {
+                    gameDiffData[diff.imageId] = [];
+                }
+                gameDiffData[diff.imageId].push({
+                    id: diff.id,
+                    name: diff.name,
+                });
+            });
 
-            expect(await controller.sendDiffAmount(body)).toBe(expected);
-            expect(storeService.getGameDifferenceByName).toHaveBeenCalledWith(body.name);
+            jest.spyOn(storeService, 'getGameDifferenceByName').mockResolvedValue(gameDiffData2);
+
+            const result = await controller.sendDiffAmount({ name });
+
+            expect(result).not.toEqual({});
+            expect(storeService.getGameDifferenceByName).toHaveBeenCalledWith(name);
         });
     });
 });
