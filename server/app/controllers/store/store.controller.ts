@@ -69,5 +69,5 @@ export class StoreController {
     async getGameAvailability(@Param('name') name: string) {
         const isAvailable = await this.storeService.getGameAvailability(name);
         return isAvailable;
-    }    
+    }
 }
