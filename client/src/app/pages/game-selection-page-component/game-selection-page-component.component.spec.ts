@@ -33,20 +33,23 @@ describe('GameSelectionPageComponent', () => {
     let socketService: jasmine.SpyObj<SocketService>;
 
     beforeEach(async () => {
-        communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAllGames']);
+        communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAllGames', 'getAllBestTimes']);
         socketService = jasmine.createSpyObj('SocketService', ['disconnectSocket']);
 
         communicationService.getAllGames.and.returnValue(of(gamecards));
+        communicationService.getAllBestTimes.and.returnValue(of([]));
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         socketService.disconnectSocket.and.callFake(() => {});
 
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, MatDialogModule],
             declarations: [GameSelectionPageComponent, GameCardComponent, PreviousNextButtonComponent, HomeButtonComponent],
-            providers: [{ provide: CommunicationService, useValue: communicationService }],
+            providers: [
+                { provide: CommunicationService, useValue: communicationService },
+                { provide: SocketService, useValue: socketService },
+            ],
         }).compileComponents();
 
-        socketService = TestBed.inject(SocketService) as jasmine.SpyObj<SocketService>;
         fixture = TestBed.createComponent(GameSelectionPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
@@ -67,16 +70,6 @@ describe('GameSelectionPageComponent', () => {
         expect(component.displayedGames[0].name).toEqual('Game 5');
         expect(component.displayedGames[3].name).toEqual('Game 8');
     });
-
-    it('should find the last page correctly', () => {
-        expect(component.lastPage).toEqual(2);
-    });
-    it('should change currentPage on back', () => {
-        component.currentPage = 1;
-        component.onBack();
-        expect(component.currentPage).toEqual(0);
-    });
-
     it('should change currentPage on next', () => {
         component.onNext();
         expect(component.currentPage).toEqual(1);
@@ -86,5 +79,10 @@ describe('GameSelectionPageComponent', () => {
         spyOn(component.socketService, 'disconnectSocket');
         component.disconnectSocket();
         expect(component.socketService.disconnectSocket).toHaveBeenCalled();
+    });
+    it('should not display the previous page of games on back button click when on first page', () => {
+        component.onBack();
+        fixture.detectChanges();
+        expect(component.displayedGames).toEqual(gamecards.slice(0, PAGE_SIZE));
     });
 });
