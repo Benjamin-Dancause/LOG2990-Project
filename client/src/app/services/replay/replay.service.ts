@@ -15,6 +15,8 @@ export class ReplayService {
     replaySpeed: number = 1;
     replayTimer: number = 0;
     replayInterval: any;
+    differencesFound: number[] = [];
+    cheatInterval: ReturnType<typeof setInterval>;
     checkActionInterval: any;
     actionTime: number = 0;
     speedSettings: number[] = [1, 2, TIME.FOUR_X_SPEED];
@@ -24,7 +26,7 @@ export class ReplayService {
 
     addAction(time: number, action: string, payload?: any): void {
         const gameAction: GameAction = { time, action, payload };
-        // const gameAction: GameAction = { time: 0, action, payload };
+        console.log('Payload: ' + payload);
         this.gameActions.push(gameAction);
     }
 
@@ -79,8 +81,15 @@ export class ReplayService {
             case 'message':
                 this.chat.messages.push(this.currentGameAction.payload);
                 break;
-            case 'blink-all-differences':
-                // console.log('blink-all-differences: ' + this.currentGameAction.payload.length);
+            case 'cheat-mode-on':
+                this.differencesFound = this.currentGameAction.payload;
+                this.canvasReplay.flashAllDifferences(this.differencesFound);
+                this.cheatInterval = setInterval(() => {
+                    this.canvasReplay.flashAllDifferences(this.differencesFound);
+                }, DELAY.SMALLTIMEOUT / this.replaySpeed);
+                break;
+            case 'cheat-mode-off':
+                clearInterval(this.cheatInterval);
                 break;
             default:
                 break;
@@ -104,11 +113,10 @@ export class ReplayService {
         const interval = DELAY.SMALLTIMEOUT / this.replaySpeed;
         this.replayInterval = setInterval(() => {
             this.replayTimer++;
+            console.log(this.replayTimer);
             if (this.gameActions.length - this.replayIndex > 0) {
                 this.checkForAction();
             }
-
-            // console.log(this.replayTimer);
         }, interval);
     }
 
@@ -120,6 +128,7 @@ export class ReplayService {
         this.actionTime = 0;
         this.replayIndex = 0;
         this.pauseReplayTimer();
+        this.differencesFound = [];
         this.replayTimer = 0;
     }
 
@@ -127,6 +136,7 @@ export class ReplayService {
         this.actionTime = 0;
         this.replayIndex = 0;
         this.pauseReplayTimer();
+        this.differencesFound = [];
         this.replayTimer = 0;
         this.gameActions = [];
         this.replaySpeed = 1;

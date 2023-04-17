@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Coords } from '@app/classes/coords';
 import { CANVAS, DELAY } from '@common/constants';
+import { GameDiffData } from '@common/game-interfaces';
+import { CommunicationService } from '../communication/communication.service';
 
 @Injectable({
     providedIn: 'root',
@@ -10,6 +12,8 @@ export class CanvasReplayService {
     successSound = new Audio('./assets/success.mp3');
     contexts: CanvasRenderingContext2D[] = [];
     replaySpeed: number = 1;
+
+    constructor(private communicationService: CommunicationService) {}
 
     updateReplaySpeed(speed: number) {
         this.replaySpeed = speed;
@@ -34,12 +38,52 @@ export class CanvasReplayService {
             setTimeout(() => {
                 this.contexts[0].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
                 this.contexts[1].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
-            }, DELAY.SMALLTIMEOUT / this.replaySpeed);
+            }, DELAY.SMALLESTTIMEOUT / this.replaySpeed);
         }, DELAY.MINITIMEOUT / this.replaySpeed);
 
         setTimeout(() => {
             clearInterval(flash);
         }, DELAY.SMALLTIMEOUT / this.replaySpeed);
+    }
+
+    flashAllDifferences(differencesFound: number[]): void {
+        const gameName = sessionStorage.getItem('gameTitle') as string;
+        this.communicationService.getAllDiffs(gameName).subscribe((gameData: GameDiffData) => {
+            this.blinkAllDifferences(differencesFound, gameData);
+            // for (const coordinate of gameData.differences) {
+            //     if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
+            //         this.differencesToFlash.push(coordinate);
+            //     }
+            // }
+        });
+    }
+
+    blinkAllDifferences(differencesFound: number[], gameData: GameDiffData): void {
+        this.contexts[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
+        this.contexts[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
+        let i = 0;
+        //not global
+        console.log('game data: ' + gameData.differences.length);
+        console.log('differences found' + differencesFound);
+        const flash = setInterval(() => {
+            console.log('differences found within interval ' + differencesFound);
+            for (const coordinate of gameData.differences) {
+                if (!differencesFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
+                    for (const coord of coordinate) {
+                        this.contexts[0].fillRect(coord.x, coord.y, 1, 1);
+                        this.contexts[1].fillRect(coord.x, coord.y, 1, 1);
+                    }
+                }
+            }
+            i++;
+            setTimeout(() => {
+                this.contexts[0].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+                this.contexts[1].clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+            }, 100 / this.replaySpeed);
+            if (i === 4) {
+                clearInterval(flash);
+            }
+        }, 200 / this.replaySpeed);
     }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
