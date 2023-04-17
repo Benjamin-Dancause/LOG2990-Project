@@ -21,7 +21,8 @@
         (next)="onNext()"
     >
     </app-previous-next-button>
-    <button class="resetAll" (click)="resetBestTimes()">Réinitialiser les tous meilleurs temps</button>
-    <button class="history" (click)="allGamesHistory()">historique global</button>
+    <button class="delete" (click)="deleteAll()">Supprimer toutes les parties</button>
+    <button class="resetAll" (click)="resetBestTimes()">Réinitialiser tous les meilleurs temps</button>
+    <button class="history" (click)="allGamesHistory()">Historique global</button>
     <button class="create" [routerLink]="['/create']">Création de jeu</button>
 </div>

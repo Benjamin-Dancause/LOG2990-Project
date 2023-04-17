@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
-import { bestTimes, GameDiffData, gameHistoryInfo, GameplayData, GameSelectionPageData, playerTime } from '@common/game-interfaces';
+import { GameDiffData, GameSelectionPageData, GameplayData, bestTimes, gameHistoryInfo, playerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -54,10 +55,15 @@ export class CommunicationService {
     getAllDiffs(name: string): Observable<GameDiffData> {
         return this.http.post<GameDiffData>(`${this.baseUrl}/gaming/findAll`, { name }, { responseType: 'json' });
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     deleteGame(name: string): Observable<any> {
         return this.http.delete(`${this.baseUrl}/games/${name}`);
     }
+
+    deleteAll(): Observable<any> {
+        return this.http.delete(`${this.baseUrl}/games/delete/games`);
+    }
+
     getGameAvailability(name: string): Observable<boolean> {
         const url = `${this.baseUrl}/games/${name}`;
         return this.http.get<boolean>(url);
