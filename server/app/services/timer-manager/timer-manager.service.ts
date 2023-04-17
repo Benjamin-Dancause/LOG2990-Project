@@ -1,4 +1,4 @@
-import { ClassicModeGateway } from '@app/gateways/timer/classic-mode.gateway';
+import { ClassicModeGateway } from '@app/gateways/classic-mode/classic-mode.gateway';
 import { DELAY } from '@common/constants';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 

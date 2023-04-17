@@ -1,10 +1,12 @@
 import { ClickResponse } from '@app/classes/click-response';
 import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
+import { GameManager } from '@app/services/game-manager/game-manager.service';
+import { StoreService } from '@app/services/store/store.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { createStubInstance, SinonStubbedInstance, stub } from 'sinon';
+import { SinonStubbedInstance, createStubInstance, stub } from 'sinon';
 import { BroadcastOperator, Server, Socket } from 'socket.io';
 import { PRIVATE_ROOM_ID } from '../chat/chat.gateway.constants';
 import { ClassicModeGateway } from './classic-mode.gateway';
@@ -20,6 +22,8 @@ describe('ClassicModeGateway', () => {
     let service: CounterManagerService;
     let timer: TimerManagerService;
     let counter: CounterManagerService;
+    let game: GameManager;
+    let store: StoreService;
     let logger: SinonStubbedInstance<Logger>;
     let socket: SinonStubbedInstance<Socket>;
     // let lobby: SinonStubbedInstance<Lobby>;
@@ -39,6 +43,10 @@ describe('ClassicModeGateway', () => {
         counter.startCounter = jest.fn();
         counter.resetCounter = jest.fn().mockReturnValue(0);
         counter.incrementCounter = jest.fn().mockReturnValue(1);
+        game = createStubInstance<GameManager>(GameManager);
+        game.createGame = jest.fn();
+        game.loadGame = await jest.fn();
+        store = createStubInstance<StoreService>(StoreService);
 
         const module: TestingModule = await Test.createTestingModule({
             providers: [
@@ -53,6 +61,8 @@ describe('ClassicModeGateway', () => {
                 },
                 { provide: CounterManagerService, useValue: counter },
                 WaitingRoomManagerService,
+                {provide: GameManager, useValue: game},
+                {provide: StoreService, useValue: store},
             ],
         }).compile();
 
@@ -129,7 +139,7 @@ describe('ClassicModeGateway', () => {
         gateway.onStartOneVsOne(socket);
     });
     it('should start a solo game', () => {
-        gateway.onSoloGame(socket);
+        gateway.onSoloGame(socket, '');
         expect(socket.join.calledOnce).toBeTruthy();
         expect(timer.startTimer).toHaveBeenCalled();
         expect(counter.startCounter).toHaveBeenCalled();
@@ -218,13 +228,14 @@ describe('ClassicModeGateway', () => {
     it('should start timer and counter on "init-OneVsOne-components', () => {
         stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID, '1234']));
         const player1 = true;
-        gateway.onInitOneVsOneComponents(socket, player1);
+        const gameMode = '';
+        gateway.onInitOneVsOneComponents(socket, {player1: player1, gameMode: gameMode});
         expect(counter.startCounter).toBeCalledWith('1234_player1');
-        expect(timer.startTimer).toBeCalledWith('1234');
+        expect(timer.startTimer).toBeCalledWith('1234', gameMode);
 
         const player2 = false;
 
-        gateway.onInitOneVsOneComponents(socket, player2);
+        gateway.onInitOneVsOneComponents(socket, {player1: player2, gameMode: gameMode});
         expect(counter.startCounter).toBeCalledWith('1234_player2');
     });
     it('should reset the counter for player 1', () => {
