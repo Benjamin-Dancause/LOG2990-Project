@@ -1,4 +1,4 @@
-import { ClassicModeGateway } from '@app/gateways/timer/classic-mode.gateway';
+import { ClassicModeGateway } from '@app/gateways/classic-mode/classic-mode.gateway';
 // import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { WaitingRoomManagerService } from './waiting-room-manager.service';
