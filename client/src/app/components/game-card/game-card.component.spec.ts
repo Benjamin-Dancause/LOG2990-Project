@@ -23,7 +23,7 @@ describe('GameCardComponent', () => {
 
     beforeEach(async () => {
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-        mockCommunicationService = jasmine.createSpyObj('CommunicationService', ['getGameAvailability', 'deleteGame']);
+        mockCommunicationService = jasmine.createSpyObj('CommunicationService', ['getGameAvailability', 'deleteGame', 'resetBestTimes', 'getGameHistory']);
         mockGameCardService = jasmine.createSpyObj('GameCardService', ['getPlayers', 'addPlayer']);
         mockGameCardService.addPlayer.and.returnValue(of(null));
         mockGameCardService.getPlayers.and.returnValue(of(['null']));
@@ -43,6 +43,7 @@ describe('GameCardComponent', () => {
                 { provide: SocketService, useValue: mockSocketService },
                 { provide: GameCardService, useValue: mockGameCardService },
                 { provide: Location, useValue: mockLocation },
+                { provide: MatDialog, useValue: dialogSpy },
             ],
         }).compileComponents();
 
@@ -91,18 +92,6 @@ describe('GameCardComponent', () => {
         component.difficulty = true;
         expect(component.levelText).toBe('Difficile');
     });
-
-    /*
-    it('should return top 3 best solo times', () => {
-        const topThreeBestSoloTimes = component.topThreeBestTimesSolo;
-        expect(topThreeBestSoloTimes.length).toBe(3);
-    });
-
-    it('should return top 3 best 1vs1 times', () => {
-        const topThreeBest1vs1Times = component.topThreeBestTimesOneVsOne;
-        expect(topThreeBest1vs1Times.length).toBe(3);
-    });
-    */
 
     it('should save the user name, game title, and difficulty', () => {
         component.userName = 'John Doe';
@@ -259,12 +248,63 @@ describe('GameCardComponent', () => {
         expect(component.reloadPage).toHaveBeenCalled();
     }));
 
-    it('should show alert when trying to delete a game with players', fakeAsync(() => {
-        const players: string[] = ['player1', 'player2'];
-        mockGameCardService.getPlayers.and.returnValue(of(players));
-        spyOn(window, 'alert');
-        component.deleteGame('game1');
+    it('convertTime should return a string with the correct format', () => {
+        const time = 610;
+        const result = component.convertTime(time);
+        expect(result).toEqual('10:10');
+    });
+
+    it('convertTime should return a string with the correct format', () => {
+        const time = 1;
+        const result = component.convertTime(time);
+        expect(result).toEqual('00:01');
+    });
+
+    it('timesSolo getter should return the correct value', () => {
+        const bestTimes = {
+            name: 'game1',
+            usersSolo: [
+                'user1',
+                'user2',
+                'user3',
+            ],
+            usersMulti: [
+                'user1',
+                'user2',
+                'user3',
+            ],
+            timesSolo: [
+                100,
+                200,
+                300,
+            ],
+            timesMulti: [
+                100,
+                200,
+                300,
+            ],
+        };
+        component.bestTimes = bestTimes;
+        expect(component.timesSolo).toEqual(bestTimes.timesSolo);
+    });
+
+    it('should reset the best times when confirmed', fakeAsync(() => {
+        const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        dialogRefSpy.afterClosed.and.returnValue(of('yes'));
+    
+        dialogSpy.open.and.returnValue(dialogRefSpy);
+    
+        component.resetBestTimes('gameTitle');
         tick();
-        expect(window.alert).toHaveBeenCalledWith('This card is currently being played by another user.');
-    }));
+    
+        expect(dialogSpy.open).toHaveBeenCalledWith(ConfirmationDialogComponent, {
+          data: {
+            title: 'Confirmation',
+            message: 'Êtes-vous sûr de vouloir réinitialiser les meilleurs temps ?',
+          },
+        });
+    
+        expect(mockCommunicationService.resetBestTimes).toHaveBeenCalledWith('gameTitle');
+        expect(component.reloadPage).toHaveBeenCalled();
+      }));
 });

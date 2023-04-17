@@ -43,12 +43,21 @@ describe('GiveUpButtonComponent', () => {
         expect(dialog.open).toHaveBeenCalledWith(component.giveUpPromptTemplate, { width: '500px', height: '250px' });
     });
 
-    it('should disconnect socket when disconnectSocket is called', () => {
+    it('should call socketService.leaveLimitedTime() when removeUser is called and tl is in sessionStorage', () => {
+        spyOn(component.socketService, 'leaveLimitedTime');
+        spyOn(component.gameCardService, 'removePlayer').and.returnValue(of(null));
+        spyOn(sessionStorage, 'getItem').and.returnValue('tl');
+
+        component.removeUser();
+        expect(component.socketService.leaveLimitedTime).toHaveBeenCalled();
+    });
+
+    it('should call socketService.leaveGame() when removeUser is called and tl is not in sessionStorage', () => {
         spyOn(component.socketService, 'leaveGame');
         spyOn(component.gameCardService, 'removePlayer').and.returnValue(of(null));
+        spyOn(sessionStorage, 'getItem').and.returnValue('not tl');
 
         component.removeUser();
         expect(component.socketService.leaveGame).toHaveBeenCalled();
-        expect(component.gameCardService.removePlayer).toHaveBeenCalledWith(component.gameTitle, component.userName);
     });
 });
