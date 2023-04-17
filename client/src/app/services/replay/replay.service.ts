@@ -63,12 +63,10 @@ export class ReplayService {
         this.currentGameAction = this.getAction();
         switch (this.currentGameAction.action) {
             case 'update-difference':
-                // Call updateDifference
                 this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
                 break;
 
             case 'difference-found':
-                // call stuff for difference errors
                 this.canvasReplay.foundPopup(this.currentGameAction.payload.mousePosition, this.currentGameAction.payload.context);
                 this.goToNextAction();
                 this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
