@@ -115,4 +115,44 @@ describe('TimerManagerService', () => {
         expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
         expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 0);
     });
+
+    it('deleteTimerData should clear the timer interval and delete the timer data', () => {
+        const roomId = 'test-room';
+        const intervalId = setInterval(() => {}, 1000);
+
+        service.intervals.set(roomId, intervalId);
+        service.timers.set(roomId, 60);
+
+        service.deleteTimerData(roomId);
+
+        expect(service.intervals.has(roomId)).toBe(false);
+        expect(service.timers.has(roomId)).toBe(false);
+    });
+
+    it('resetTimer should set the timer to 0 and delete the timer data', () => {
+        const roomId = 'test-room';
+        const initialTime = 60;
+
+        service.timers.set(roomId, initialTime);
+        service.intervals.set(
+            roomId,
+            setInterval(() => {}, 1000),
+        );
+
+        service.resetTimer(roomId);
+        expect(service.intervals.has(roomId)).toBe(false);
+    });
+
+    it('isInitializedTimer should return true if the timer data is initialized', () => {
+        const roomId = 'test-room';
+
+        service.timers.set(roomId, 60);
+
+        expect(service.isInitializedTimer(roomId)).toBe(true);
+    });
+
+    it('isInitializedTimer should return false if the timer data is not initialized', () => {
+        const roomId = 'test-room';
+        expect(service.isInitializedTimer(roomId)).toBe(false);
+    });
 });

@@ -5,7 +5,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 @Injectable()
 export class TimerManagerService {
     timers = new Map<string, number>();
-    private intervals = new Map<string, NodeJS.Timeout>();
+    intervals = new Map<string, NodeJS.Timeout>();
 
     constructor(@Inject(forwardRef(() => ClassicModeGateway)) public classicModeGateway: ClassicModeGateway) {}
 
