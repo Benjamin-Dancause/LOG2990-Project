@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ClickResponse } from '@app/classes/click-response';
+import { TIME } from '@common/constants';
 import { Socket } from 'socket.io-client';
 
 import { SocketService } from './socket.service';
@@ -32,10 +33,12 @@ describe('socketService', () => {
         expect(service.socket).toBeDefined();
     });
 
+    /*
     it('should emit "solo-game" when soloGame() is called', () => {
         service.soloGame();
         expect(socketSpy.emit).toHaveBeenCalledWith('solo-game');
     });
+    */
 
     it('should emit "one-vs-one-game" when oneVsOne() is called', () => {
         service.oneVsOne();
@@ -99,7 +102,8 @@ describe('socketService', () => {
 
     it('should emit "init-OneVsOne-components" with player1 boolean when initOneVsOneComponents() is called', () => {
         const player1 = true;
-        service.initOneVsOneComponents(player1);
+        const player2 = '';
+        service.initOneVsOneComponents(player1, player2);
         expect(socketSpy.emit).toHaveBeenCalledWith('init-OneVsOne-components', player1);
     });
 
@@ -167,5 +171,92 @@ describe('socketService', () => {
     it('should disconnect socket when disconnectSocket is called', () => {
         service.disconnectSocket();
         expect(socketSpy.disconnect).toHaveBeenCalled();
+    });
+
+    it('should emit "solo-game" with the given game mode when soloGame() is called', () => {
+        const gameMode = 'easy';
+        service.soloGame(gameMode);
+        expect(socketSpy.emit).toHaveBeenCalledWith('solo-game', gameMode);
+    });
+
+    it('should emit "get-images" when getImages() is called', () => {
+        service.getImages();
+        expect(socketSpy.emit).toHaveBeenCalledWith('get-images');
+    });
+
+    it('should send a new record with the given name, position, title, and mode', () => {
+        const name = 'testName';
+        const position = 'testPosition';
+        const title = 'testTitle';
+        const mode = 'testMode';
+        service.sendNewRecord(name, position, title, mode);
+        expect(socketSpy.emit).toHaveBeenCalledWith('send-new-record', { name, position, title, mode });
+    });
+
+    it('should send a player hint with the given name', () => {
+        const name = 'testName';
+        service.sendPlayerHint(name);
+        expect(socketSpy.emit).toHaveBeenCalledWith('send-player-hint', name);
+    });
+
+    it('should send the victorious player with the given boolean value for player1', () => {
+        const player1 = true;
+        service.sendVictoriousPlayer(player1);
+        expect(socketSpy.emit).toHaveBeenCalledWith('on-victory-sequence', player1);
+    });
+
+    it('should reset the timer with the given roomId', () => {
+        const roomId = 'testRoomId';
+        service.resetTimer(roomId);
+        expect(socketSpy.emit).toHaveBeenCalledWith('reset-timer', roomId);
+    });
+
+    it('should increment the counter with the given boolean value for player1', () => {
+        const player1 = true;
+        service.incrementCounter(player1);
+        expect(socketSpy.emit).toHaveBeenCalledWith('increment-counter', player1);
+    });
+
+    it('should reset the counter with the given boolean value for player1', () => {
+        const player1 = true;
+        service.resetCounter(player1);
+        expect(socketSpy.emit).toHaveBeenCalledWith('reset-counter', player1);
+    });
+
+    it('should initialize the game with the given game titles', () => {
+        const gameTitles = ['testGame1', 'testGame2'];
+        service.initializeGame(gameTitles);
+        expect(socketSpy.emit).toHaveBeenCalledWith('initialize-game', gameTitles);
+    });
+
+    it('should send the mouse position with the given coordinates', () => {
+        const mousePosition = { x: 10, y: 20 };
+        service.sendPosition(mousePosition);
+        expect(socketSpy.emit).toHaveBeenCalledWith('verify-position', mousePosition);
+    });
+
+    it('should delete room game info', () => {
+        service.deleteRoomGameInfo();
+        expect(socketSpy.emit).toHaveBeenCalledWith('delete-room-game-info');
+    });
+
+    it('should add to the timer', () => {
+        service.addToTimer();
+        expect(socketSpy.emit).toHaveBeenCalledWith('add-to-timer', TIME.SMALL_ADD_TIME);
+    });
+
+    it('should remove from the timer', () => {
+        service.removeToTimer();
+        expect(socketSpy.emit).toHaveBeenCalledWith('remove-to-timer', TIME.SMALL_PENALTY);
+    });
+
+    it('should emit switch-game when switchGame() is called', () => {
+        service.switchGame();
+        expect(socketSpy.emit).toHaveBeenCalledWith('switch-game');
+    });
+
+    it('should emit "leave-limited-time" when leaveLimitedTime() is called', () => {
+        service.leaveLimitedTime();
+        expect(socketSpy.emit).toHaveBeenCalledWith('leave-limited-time');
     });
 });

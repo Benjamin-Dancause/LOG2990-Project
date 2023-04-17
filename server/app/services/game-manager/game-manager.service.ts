@@ -6,7 +6,7 @@ import { StoreService } from '../store/store.service';
 export class GameManager {
     constructor(private storeService: StoreService) {}
 
-    private roomIdToGameDifferences = new Map<string, RoomGameData[]>();
+    roomIdToGameDifferences = new Map<string, RoomGameData[]>();
 
     createGame(gameData: GameDiffData): number {
         return gameData.count || 0;
@@ -16,7 +16,7 @@ export class GameManager {
         const infoPath = 'assets/data/gamesData.json';
         const allGames = await fs.readFile(infoPath, 'utf-8').then((data) => JSON.parse(data));
         const games: RoomGameData[] = [];
-        for (let title of gameTitles) {
+        for (const title of gameTitles) {
             const currentGameData = await allGames.find((game) => game.name === title);
             const roomGameData: RoomGameData = {
                 name: currentGameData.name,
@@ -27,7 +27,7 @@ export class GameManager {
             games.push(roomGameData);
         }
         const rooms = this.getAllRooms();
-        for (let room of rooms) {
+        for (const room of rooms) {
             if (room === roomId) {
                 return this.switchImages(roomId);
             }
@@ -45,7 +45,7 @@ export class GameManager {
                 if (coord.x === clickCoord.x && coord.y === clickCoord.y) {
                     const differenceNumber = differences.indexOf(difference) + 1;
                     const coords = differences[differenceNumber - 1];
-                    //differences.splice(differenceNumber - 1, 1);
+                    // differences.splice(differenceNumber - 1, 1);
                     return { isDifference: true, differenceNumber, coords };
                 }
             }
@@ -56,7 +56,7 @@ export class GameManager {
         const remainingGames: number = this.switchData(roomId);
         if (remainingGames > 0) {
             const newImages: string[] = this.switchImages(roomId);
-            const switchGameInfo = { length: remainingGames, newImages: newImages };
+            const switchGameInfo = { length: remainingGames, newImages };
             return switchGameInfo;
         } else {
             return { length: remainingGames, newImages: [] };

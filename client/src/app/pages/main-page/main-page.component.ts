@@ -10,7 +10,8 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class MainPageComponent implements OnInit {
     @ViewChild('gamemodeSelectionTemplate', { static: true })
-    gamemodeSelectionTemplate: TemplateRef<unknown>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    gamemodeSelectionTemplate: TemplateRef<any>;
 
     readonly title: string = 'Le Jeu Des Différences';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');

@@ -18,7 +18,7 @@ export class CounterService {
     victorySent: boolean = false;
     recordMessage = new EventEmitter<string>();
 
-    constructor(public socketService: SocketService, private communicationService: CommunicationService) {}
+    constructor(public socketService: SocketService, public communicationService: CommunicationService) {}
 
     initializeCounter(): void {
         const gameTitle: string = sessionStorage.getItem('gameTitle') as string;

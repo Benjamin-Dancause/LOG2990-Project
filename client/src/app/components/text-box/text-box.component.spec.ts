@@ -1,3 +1,4 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { EventEmitter } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TextBoxComponent } from '@app/components/text-box/text-box.component';
@@ -24,6 +25,7 @@ describe('TextBoxComponent', () => {
         mockSocket.emit.and.returnValue(mockSocket);
         await TestBed.configureTestingModule({
             declarations: [TextBoxComponent],
+            imports: [HttpClientTestingModule],
             providers: [
                 { provide: SocketService, useValue: mockSocketService },
                 { provide: GameService, useValue: mockGameService },

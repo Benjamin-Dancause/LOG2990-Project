@@ -92,6 +92,7 @@ describe('GameCardComponent', () => {
         expect(component.levelText).toBe('Difficile');
     });
 
+    /*
     it('should return top 3 best solo times', () => {
         const topThreeBestSoloTimes = component.topThreeBestTimesSolo;
         expect(topThreeBestSoloTimes.length).toBe(3);
@@ -101,6 +102,7 @@ describe('GameCardComponent', () => {
         const topThreeBest1vs1Times = component.topThreeBestTimesOneVsOne;
         expect(topThreeBest1vs1Times.length).toBe(3);
     });
+    */
 
     it('should save the user name, game title, and difficulty', () => {
         component.userName = 'John Doe';

@@ -4,10 +4,10 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class TimerManagerService {
-    private timers = new Map<string, number>();
-    private intervals = new Map<string, NodeJS.Timeout>();
+    timers = new Map<string, number>();
+    intervals = new Map<string, NodeJS.Timeout>();
 
-    constructor(@Inject(forwardRef(() => ClassicModeGateway)) private readonly classicModeGateway: ClassicModeGateway) {}
+    constructor(@Inject(forwardRef(() => ClassicModeGateway)) public classicModeGateway: ClassicModeGateway) {}
 
     startTimer(roomId: string, gameMode: string) {
         if (!this.timers.has(roomId)) {
@@ -67,5 +67,4 @@ export class TimerManagerService {
     isInitializedTimer(roomId: string): boolean {
         return this.timers.has(roomId);
     }
-
 }

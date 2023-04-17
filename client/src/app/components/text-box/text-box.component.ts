@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ChatService } from '@app/services/chat/chat.service';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameService } from '@app/services/game/game.service';
@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './text-box.component.html',
     styleUrls: ['./text-box.component.scss'],
 })
-export class TextBoxComponent implements OnDestroy {
+export class TextBoxComponent implements OnDestroy, OnInit {
     @Input() single: boolean = true;
     @Input() solo: boolean;
     @ViewChild('messageArea') messageArea: ElementRef;
@@ -104,6 +104,10 @@ export class TextBoxComponent implements OnDestroy {
                 this.socketService.sendNewRecord(this.userName, position, this.gameTitle, this.gameMode);
             });
         }
+    }
+
+    ngOnInit() {
+        throw new Error('Method not implemented.');
     }
 
     setOpponentName() {

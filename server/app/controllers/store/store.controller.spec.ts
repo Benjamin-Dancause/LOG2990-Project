@@ -1,108 +1,109 @@
-import { StoreController } from '@app/controllers/store/store.controller';
+import { databaseService } from '@app/services/database/database.service';
 import { StoreService } from '@app/services/store/store.service';
+import { GameSelectionPageData } from '@common/game-interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
-import { createStubInstance, SinonStubbedInstance } from 'sinon';
+import { StoreController } from './store.controller';
 
 describe('StoreController', () => {
     let controller: StoreController;
-    let storeService: SinonStubbedInstance<StoreService>;
+    let storeService: StoreService;
 
     beforeEach(async () => {
-        storeService = createStubInstance(StoreService);
         const module: TestingModule = await Test.createTestingModule({
             controllers: [StoreController],
             providers: [
                 {
                     provide: StoreService,
-                    useValue: storeService,
+                    useValue: {
+                        storeImage: jest.fn(),
+                        storeInfo: jest.fn(),
+                        getAllNames: jest.fn(),
+                        getAllGames: jest.fn(),
+                        getGameByName: jest.fn(),
+                        deleteGame: jest.fn(),
+                        getGameAvailability: jest.fn(),
+                    },
+                },
+                {
+                    provide: databaseService,
+                    useValue: {
+                        deleteBestTimes: jest.fn(),
+                    },
                 },
             ],
         }).compile();
 
         controller = module.get<StoreController>(StoreController);
+        storeService = module.get<StoreService>(StoreService);
     });
-
-    it('should be defined', () => {
-        expect(controller).toBeDefined();
-    });
-
-    it('storeData() should call storeService.storeImage() twice', async () => {
-        const storeImageSpy = jest.spyOn(storeService, 'storeImage');
-        const gameData = {
-            name: 'game1',
-            originalImage: 'image1',
-            modifiableImage: 'image2',
+    it('should store data', async () => {
+        const data = {
+            name: 'test-game',
+            originalImage: 'original-image-data',
+            modifiableImage: 'modifiable-image-data',
             difficulty: true,
-            count: 6,
-            differences: [
-                [
-                    { x: 1, y: 1 },
-                    { x: 2, y: 2 },
-                ],
-            ],
+            count: 5,
+            differences: [[{ x: 1, y: 2 }], [{ x: 3, y: 4 }]],
         };
 
-        await controller.storeData(gameData);
-        expect(storeImageSpy).toHaveBeenCalledTimes(2);
+        jest.spyOn(storeService, 'storeImage').mockResolvedValue('relative-path');
+        jest.spyOn(storeService, 'storeInfo').mockResolvedValue();
+
+        await controller.storeData(data);
+
+        expect(storeService.storeImage).toHaveBeenCalledTimes(2);
+        expect(storeService.storeImage).toHaveBeenCalledWith('test-game_orig', 'original-image-data');
+        expect(storeService.storeImage).toHaveBeenCalledWith('test-game_modif', 'modifiable-image-data');
+        expect(storeService.storeInfo).toHaveBeenCalledWith('test-game', ['relative-path', 'relative-path'], true, 5, [
+            [{ x: 1, y: 2 }],
+            [{ x: 3, y: 4 }],
+        ]);
     });
 
-    it('storeData() should call storeService.storeInfo()', async () => {
-        const storeImageSpy = jest.spyOn(storeService, 'storeInfo').mockImplementation();
-        const gameData = {
-            name: 'game1',
-            originalImage: 'image1',
-            modifiableImage: 'image2',
-            difficulty: true,
-            count: 6,
-            differences: [
-                [
-                    { x: 1, y: 1 },
-                    { x: 2, y: 2 },
-                ],
-            ],
-        };
-        await controller.storeData(gameData);
+    it('should get all game names', async () => {
+        const names = ['game1', 'game2'];
 
-        expect(storeImageSpy).toHaveBeenCalled();
+        jest.spyOn(storeService, 'getAllNames').mockResolvedValue(names);
+
+        const result = await controller.getNames();
+
+        expect(result).toEqual(names);
+        expect(storeService.getAllNames).toHaveBeenCalled();
+    });
+    it('should get all game information', async () => {
+        const gameList: GameSelectionPageData[] = [
+            { name: 'game1', image: 'image1', difficulty: true },
+            { name: 'game2', image: 'image2', difficulty: true },
+        ];
+
+        const games = [{ name: 'game1' }, { name: 'game2' }];
+
+        jest.spyOn(storeService, 'getAllGames').mockResolvedValue(gameList);
+        const result = await controller.getGameList();
+        expect(result).not.toEqual(games);
+        expect(storeService.getAllGames).toHaveBeenCalled();
     });
 
-    it('getNames() should call storeService.getAllNames()', async () => {
-        const getAllNamesSpy = jest.spyOn(storeService, 'getAllNames');
-
-        await controller.getNames();
-
-        expect(getAllNamesSpy).toHaveBeenCalled();
+    it('should get game information by name', async () => {
+        const gameName = 'test-game';
+        const games = [{ name: 'game1' }, { name: 'game2' }];
+        const result = await controller.getGameByName({ name: gameName });
+        expect(result).not.toEqual(games);
+        expect(storeService.getGameByName).toHaveBeenCalled();
     });
 
-    it('getGameList() should call storeService.getAllGames()', async () => {
-        const getAllNamesSpy = jest.spyOn(storeService, 'getAllGames');
-
-        await controller.getGameList();
-
-        expect(getAllNamesSpy).toHaveBeenCalled();
+    it('should check game availability', async () => {
+        const gameName = 'test-game';
+        jest.spyOn(storeService, 'getGameAvailability').mockResolvedValue(true);
+        const result = await controller.getGameAvailability(gameName);
+        expect(result).toEqual(true);
+        expect(storeService.getGameAvailability).toHaveBeenCalledWith(gameName);
     });
 
-    it('getGameByName should call storeService.getGameByName()', async () => {
-        const body = { name: 'testGame' };
-        jest.spyOn(storeService, 'getGameByName').mockImplementation();
-
-        await controller.getGameByName(body);
-        expect(storeService.getGameByName).toHaveBeenCalledWith(body);
-    });
-
-    it('deleteGame should call storeService.deleteGame()', async () => {
-        const body = 'testGame';
-        jest.spyOn(storeService, 'deleteGame').mockImplementation();
-
-        await controller.deleteGame(body);
-        expect(storeService.deleteGame).toHaveBeenCalledWith(body);
-    });
-
-    it('getGameAvailability should call storeService.getGameAvailability()', async () => {
-        const body = 'testGame';
-        jest.spyOn(storeService, 'getGameAvailability').mockImplementation();
-
-        await controller.getGameAvailability(body);
-        expect(storeService.getGameAvailability).toHaveBeenCalledWith(body);
+    it('should delete the game and its best times from the database and the store', async () => {
+        const gameName = 'test-game';
+        jest.spyOn(storeService, 'deleteGame').mockResolvedValue();
+        await expect(controller.deleteGame(gameName)).resolves.toBeUndefined();
+        expect(storeService.deleteGame).toHaveBeenCalledWith(gameName);
     });
 });
