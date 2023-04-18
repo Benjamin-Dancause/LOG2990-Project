@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-restricted-imports
+import { StoreService } from '@app/services/store/store.service';
 import { GameDiffData, RoomGameData } from '@common/game-interfaces';
 import * as fs from 'fs/promises';
-import { StoreService } from '../store/store.service';
 import { GameManager } from './game-manager.service';
 
 describe('GameManager', () => {
@@ -17,6 +17,17 @@ describe('GameManager', () => {
             const gameData = { id: 1, count: 5, differences: [] };
             // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             expect(gameManager.createGame(gameData)).toBe(5);
+        });
+
+        it('should return 0 when gameData is falsy', () => {
+            // Arrange
+            const gameData = null;
+
+            // Act
+            const result = gameManager.createGame(gameData);
+
+            // Assert
+            expect(result).toBe(0);
         });
     });
 
@@ -161,6 +172,7 @@ describe('GameManager', () => {
                 images: ['image1.jpg', 'image2.jpg'],
             },
         ];
+        // eslint-disable-next-line @typescript-eslint/no-shadow
         const gameManager = new GameManager(new StoreService());
         gameManager.roomIdToGameDifferences.set(roomId, initialGames);
 
@@ -217,6 +229,17 @@ describe('GameManager', () => {
             const result = await gameManager.getAllDifferences(gameName);
             expect(result).toEqual(expected);
         });
+    });
+
+    it('should return an object with id: 0, count: 0, and an empty differences array when the game is not found', async () => {
+        // Arrange
+        const gameName = 'nonexistent-game';
+
+        // Act
+        const result = await gameManager.getAllDifferences(gameName);
+
+        // Assert
+        expect(result).toEqual({ id: 0, count: 0, differences: [] });
     });
 
     it('should set room games if roomId is valid', async () => {

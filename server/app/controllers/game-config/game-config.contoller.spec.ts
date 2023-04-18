@@ -2,7 +2,7 @@ import { GameConfigService } from '@app/services/game-config/game-config.service
 import { Test, TestingModule } from '@nestjs/testing';
 import { GameConfigController } from './game-config.controller';
 
-fdescribe('GameConfigController', () => {
+describe('GameConfigController', () => {
     let controller: GameConfigController;
     let gameConfigService: GameConfigService;
 
@@ -19,7 +19,7 @@ fdescribe('GameConfigController', () => {
     describe('getCountdownTime', () => {
         it('should return countdownTime', async () => {
             const countdownTime = 30;
-            jest.spyOn(gameConfigService, 'getCountdownTime').mockReturnValue(Promise.resolve(countdownTime));
+            jest.spyOn(gameConfigService, 'getCountdownTime').mockReturnValue(await Promise.resolve(countdownTime));
 
             expect(await controller.getCountdownTime()).toEqual(countdownTime);
         });
@@ -39,7 +39,7 @@ fdescribe('GameConfigController', () => {
     describe('getPenaltyTime', () => {
         it('should return penaltyTime', async () => {
             const penaltyTime = 5;
-            jest.spyOn(gameConfigService, 'getPenaltyTime').mockReturnValue(Promise.resolve(penaltyTime));
+            jest.spyOn(gameConfigService, 'getPenaltyTime').mockReturnValue(await Promise.resolve(penaltyTime));
 
             expect(await controller.getPenaltyTime()).toEqual(penaltyTime);
         });
@@ -59,7 +59,7 @@ fdescribe('GameConfigController', () => {
     describe('getTimeGained', () => {
         it('should return timeGained', async () => {
             const timeGained = 5;
-            jest.spyOn(gameConfigService, 'getTimeGained').mockReturnValue(Promise.resolve(timeGained));
+            jest.spyOn(gameConfigService, 'getTimeGained').mockReturnValue(await Promise.resolve(timeGained));
 
             expect(await controller.getTimeGained()).toEqual(timeGained);
         });

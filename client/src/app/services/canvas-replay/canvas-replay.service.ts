@@ -20,7 +20,6 @@ export class CanvasReplayService {
     }
 
     updateDifferences(coords: Coords[]) {
-        // console.log(coords);
         this.flashDifferences(coords);
         setTimeout(() => {
             this.updateImages(coords, this.contexts[2], this.contexts[3]);
@@ -62,11 +61,7 @@ export class CanvasReplayService {
         this.contexts[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
         this.contexts[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
         let i = 0;
-        //not global
-        console.log('game data: ' + gameData.differences.length);
-        console.log('differences found' + differencesFound);
         const flash = setInterval(() => {
-            console.log('differences found within interval ' + differencesFound);
             for (const coordinate of gameData.differences) {
                 if (!differencesFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
                     for (const coord of coordinate) {
@@ -84,6 +79,81 @@ export class CanvasReplayService {
                 clearInterval(flash);
             }
         }, 200 / this.replaySpeed);
+    }
+    flashOneDifference1(randomDifference: Coords[], differencesFound: number[]): void {
+        const gameName = sessionStorage.getItem('gameTitle') as string;
+        this.communicationService.getAllDiffs(gameName).subscribe(({ differences }) => {
+            const unfoundDiffs = differences.filter((difference) => !differencesFound.includes(differences.indexOf(difference) + 1));
+            if (unfoundDiffs.length > 0) {
+                const quarterWidth = Math.round(CANVAS.WIDTH / 4);
+                const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
+                const minX = Math.min(...randomDifference.map((d) => d.x));
+                const minY = Math.min(...randomDifference.map((d) => d.y));
+                const maxX = Math.max(...randomDifference.map((d) => d.x));
+                const maxY = Math.max(...randomDifference.map((d) => d.y));
+                const centerX = Math.round((minX + maxX) / 2);
+                const centerY = Math.round((minY + maxY) / 2);
+                const xCoord = centerX <= CANVAS.WIDTH / 2 ? 0 : CANVAS.WIDTH - quarterWidth * 2;
+                const yCoord = centerY <= CANVAS.HEIGHT / 2 ? 0 : CANVAS.HEIGHT - quarterHeight * 2;
+                const width = Math.min(quarterWidth * 2, CANVAS.WIDTH - xCoord);
+                const height = Math.min(quarterHeight * 2, CANVAS.HEIGHT - yCoord);
+                this.contexts[0].fillStyle = this.contexts[1].fillStyle = 'yellow';
+                const flash = setInterval(
+                    () => (
+                        this.contexts[0].fillRect(xCoord, yCoord, width, height),
+                        this.contexts[1].fillRect(xCoord, yCoord, width, height),
+                        setTimeout(
+                            () => (
+                                this.contexts[0].clearRect(xCoord, yCoord, width, height), this.contexts[1].clearRect(xCoord, yCoord, width, height)
+                            ),
+                            100 / this.replaySpeed,
+                        )
+                    ),
+                    200 / this.replaySpeed,
+                );
+                setTimeout(() => clearInterval(flash), 1000 / this.replaySpeed);
+            }
+        });
+    }
+    flashOneDifference2(randomIndex: number, differencesFound: number[]) {
+        const gameName = sessionStorage.getItem('gameTitle') as string;
+        this.communicationService.getAllDiffs(gameName).subscribe((gameData: GameDiffData) => {
+            const remainingDiffs = gameData.differences.filter(
+                (difference) => !differencesFound.includes(gameData.differences.indexOf(difference) + 1),
+            );
+            const coords = remainingDiffs[randomIndex];
+            if (coords) {
+                const quarterWidth = Math.round(CANVAS.WIDTH / 4);
+                const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
+                const [minX, minY, maxX, maxY] = coords.reduce(
+                    // eslint-disable-next-line @typescript-eslint/no-shadow
+                    ([minX, minY, maxX, maxY], { x, y }) => [Math.min(minX, x), Math.min(minY, y), Math.max(maxX, x), Math.max(maxY, y)],
+                    [Number.MAX_VALUE, Number.MAX_VALUE, Number.MIN_VALUE, Number.MIN_VALUE],
+                );
+                const centerX = Math.round((minX + maxX) / 2);
+                const centerY = Math.round((minY + maxY) / 2);
+                const [x, y, width, height] = [
+                    // eslint-disable-next-line no-bitwise
+                    ((centerX / quarterWidth) | 0) * quarterWidth,
+                    // eslint-disable-next-line no-bitwise
+                    ((centerY / quarterHeight) | 0) * quarterHeight,
+                    quarterWidth,
+                    quarterHeight,
+                ];
+                for (let ctx of this.contexts.slice(0, 1)) {
+                    ctx.fillStyle = 'orange';
+                    const flash = setInterval(() => {
+                        ctx.fillRect(x, y, width, height);
+                        setTimeout(() => {
+                            ctx.clearRect(x, y, width, height);
+                        }, 100 / this.replaySpeed);
+                    }, 200 / this.replaySpeed);
+                    setTimeout(() => {
+                        clearInterval(flash);
+                    }, 1000 / this.replaySpeed);
+                }
+            }
+        });
     }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
@@ -131,6 +201,7 @@ export class CanvasReplayService {
         }
     }
     clearContexts(): void {
-        this.contexts.length = 0;
+        this.contexts = [];
+        this.replaySpeed = 1;
     }
 }

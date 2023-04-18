@@ -1,8 +1,8 @@
 import { ClassicModeGateway } from '@app/gateways/classic-mode/classic-mode.gateway';
+import { GameConfigService } from '@app/services/game-config/game-config.service';
 import { DELAY } from '@common/constants';
 import { GameConstants } from '@common/game-interfaces';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { GameConfigService } from '../game-config/game-config.service';
 
 @Injectable()
 export class TimerManagerService {
@@ -24,7 +24,6 @@ export class TimerManagerService {
                 penalty: penaltyTime,
             };
             this.constants.set(roomId, constants);
-            console.log(this.constants.get(roomId));
             const time: number = this.getTimeFromRoom(roomId, gameMode);
             this.timers.set(roomId, time);
             const intervalId = setInterval(() => {

@@ -4,20 +4,10 @@ import { CommunicationService } from '@app/services/communication/communication.
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameService } from '@app/services/game/game.service';
 import { SocketService } from '@app/services/socket/socket.service';
+import { CANVAS } from '@common/constants';
 import { environment } from 'src/environments/environment';
 
-// TODO : Avoir un fichier séparé pour les constantes!
-export const DEFAULT_WIDTH = 640;
-export const DEFAULT_HEIGHT = 480;
 
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
 interface OneVsOneGameplayInfo {
     gameTitle: string;
     roomId: string;
@@ -58,7 +48,7 @@ export class PlayAreaComponent implements AfterViewInit {
     gameMode: string = '';
 
     private readonly serverURL: string = environment.serverUrl;
-    private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+    private canvasSize = { x: CANVAS.WIDTH, y: CANVAS.HEIGHT };
 
     private hintModeCount = 0;
     private hintModeTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -91,8 +81,7 @@ export class PlayAreaComponent implements AfterViewInit {
     @HostListener('mousedown', ['$event'])
     onMouseDown(event: MouseEvent) {
         if (event.target instanceof HTMLCanvasElement) {
-            const ctxs = [this.ctxLeft, this.ctxRight, this.ctxLeftTop, this.ctxRightTop] as CanvasRenderingContext2D[];
-            this.game.checkClick(event, this.counterService, ctxs);
+            this.game.checkClick(event);
         }
     }
     @HostListener('document:keydown.t', ['$event'])
@@ -173,11 +162,6 @@ export class PlayAreaComponent implements AfterViewInit {
             this.socketService.initOneVsOneComponents(this.player1, gameMode);
         });
 
-        // this.socketService.socket.on('images', (game) => {
-        //     this.imageLeftStr = this.serverURL + '/' + game.images[0];
-        //     this.imageRightStr = this.serverURL + '/' + game.images[1];
-        //     this.initCanvases();
-        // });
         this.socketService.socket.off('switch-images');
         this.socketService.socket.on('switch-images', (newImages: string[]) => {
             this.imageLeftStr = this.serverURL + '/' + newImages[0];
@@ -190,12 +174,6 @@ export class PlayAreaComponent implements AfterViewInit {
         }
         this.opponent = (sessionStorage.getItem('joiningPlayer') as string) ? true : false;
         this.game.timeUpdater();
-
-        // this.communicationService.getGameByName(this.gameName).subscribe((game) => {
-        //     this.imageLeftStr = this.serverURL + '/' + game.images[0];
-        //     this.imageRightStr = this.serverURL + '/' + game.images[1];
-        //     this.initCanvases();
-        // });
     }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface

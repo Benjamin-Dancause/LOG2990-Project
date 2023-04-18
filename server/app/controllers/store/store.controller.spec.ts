@@ -22,6 +22,7 @@ describe('StoreController', () => {
                         getGameByName: jest.fn(),
                         deleteGame: jest.fn(),
                         getGameAvailability: jest.fn(),
+                        deleteAllGames: jest.fn(),
                     },
                 },
                 {
@@ -105,5 +106,13 @@ describe('StoreController', () => {
         jest.spyOn(storeService, 'deleteGame').mockResolvedValue();
         await expect(controller.deleteGame(gameName)).resolves.toBeUndefined();
         expect(storeService.deleteGame).toHaveBeenCalledWith(gameName);
+    });
+
+    it('should call the deleteAllGames method of the store service', async () => {
+        jest.spyOn(storeService, 'deleteAllGames').mockResolvedValue();
+
+        await controller.deleteAllGames();
+
+        expect(storeService.deleteAllGames).toHaveBeenCalled();
     });
 });

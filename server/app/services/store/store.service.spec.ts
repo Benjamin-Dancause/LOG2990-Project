@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { StoreService } from '@app/services/store/store.service';
 import { Coords, Data } from '@common/game-interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -28,6 +29,71 @@ describe('StoreService', () => {
 
     it('should be defined', () => {
         expect(service).toBeDefined();
+    });
+
+    describe('storeInfo', () => {
+        it('should add a new game to the gamesData array and write to the gamesData.json file', async () => {
+            const spyExtractData = jest.spyOn(service, 'extractData').mockResolvedValue([]);
+            const spyWriteFile = jest.spyOn(fs, 'writeFile').mockResolvedValue();
+
+            const name = 'test game';
+            const relativePaths = ['path/to/image1', 'path/to/image2'];
+            const difficulty = true;
+            const count = 10;
+            const differences = [
+                [
+                    { x: 1, y: 2 },
+                    { x: 3, y: 4 },
+                ],
+                [
+                    { x: 5, y: 6 },
+                    { x: 7, y: 8 },
+                ],
+            ];
+
+            await service.storeInfo(name, relativePaths, difficulty, count, differences);
+
+            expect(spyExtractData).toHaveBeenCalled();
+            expect(spyWriteFile).toHaveBeenCalledWith(
+                'assets/data/gamesData.json',
+                JSON.stringify([{ name, images: relativePaths, difficulty, count, differences }], null, 4),
+            );
+        });
+
+        it('should add a new game to the existing gamesData array and write to the gamesData.json file', async () => {
+            const existingGameData: Data = {
+                name: 'existing game',
+                images: ['path/to/image1'],
+                difficulty: false,
+                count: 5,
+                differences: [[{ x: 1, y: 2 }]],
+            };
+            const spyExtractData = jest.spyOn(service, 'extractData').mockResolvedValue([existingGameData]);
+            const spyWriteFile = jest.spyOn(fs, 'writeFile').mockResolvedValue();
+
+            const name = 'test game';
+            const relativePaths = ['path/to/image1', 'path/to/image2'];
+            const difficulty = true;
+            const count = 10;
+            const differences = [
+                [
+                    { x: 1, y: 2 },
+                    { x: 3, y: 4 },
+                ],
+                [
+                    { x: 5, y: 6 },
+                    { x: 7, y: 8 },
+                ],
+            ];
+
+            await service.storeInfo(name, relativePaths, difficulty, count, differences);
+
+            expect(spyExtractData).toHaveBeenCalled();
+            expect(spyWriteFile).toHaveBeenCalledWith(
+                'assets/data/gamesData.json',
+                JSON.stringify([existingGameData, { name, images: relativePaths, difficulty, count, differences }], null, 4),
+            );
+        });
     });
 
     it('should store image', async () => {
@@ -129,20 +195,58 @@ describe('StoreService', () => {
         expect(result).toBeUndefined();
     });
 
-    // marche pour la couverture, mais delete réellement les fichiers
-    /*
-    it('should delete a game and its associated image files from the storage', async () => {
-        const name = 'testGame';
-        const gamesData: Data[] = [{ name, images: [], difficulty: true, count: 1, differences: [] }];
-        jest.spyOn(service, 'extractData').mockResolvedValue(gamesData);
-        jest.spyOn(service, 'deleteFile').mockResolvedValue(undefined);
+    describe('deleteGame()', () => {
+        beforeEach(() => {
+            jest.spyOn(service, 'extractData').mockResolvedValueOnce([
+                { name: 'game1', images: ['img1.bmp'], difficulty: true, count: 10, differences: [] },
+                { name: 'game2', images: ['img2.bmp'], difficulty: false, count: 5, differences: [] },
+            ]);
+            jest.spyOn(service, 'deleteFile');
+            jest.spyOn(fs, 'writeFile').mockResolvedValueOnce(undefined);
+        });
 
-        await service.deleteGame(name);
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
 
-        expect(service.deleteFile).toHaveBeenCalledWith(`assets/images/${name}_modif.bmp`);
-        expect(service.deleteFile).toHaveBeenCalledWith(`assets/images/${name}_orig.bmp`);
+        it('should delete the game with the given name and write to the gamesData.json file', async () => {
+            await service.deleteGame('game1');
+            expect(service.extractData).toHaveBeenCalled();
+            expect(service.deleteFile).toHaveBeenCalledTimes(2);
+            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_modif.bmp');
+            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_orig.bmp');
+            expect(fs.writeFile).toHaveBeenCalledWith(
+                'assets/data/gamesData.json',
+                JSON.stringify([{ name: 'game2', images: ['img2.bmp'], difficulty: false, count: 5, differences: [] }], null, 4),
+            );
+        });
     });
-    */
+
+    describe('deleteAllGames()', () => {
+        beforeEach(() => {
+            jest.spyOn(service, 'extractData').mockResolvedValueOnce([
+                { name: 'game1', images: ['img1.bmp'], difficulty: true, count: 10, differences: [] },
+                { name: 'game2', images: ['img2.bmp'], difficulty: false, count: 5, differences: [] },
+            ]);
+            jest.spyOn(service, 'deleteFile');
+            jest.spyOn(fs, 'writeFile').mockResolvedValueOnce(undefined);
+        });
+
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
+        it('should delete all games and write to the gamesData.json file', async () => {
+            await service.deleteAllGames();
+            expect(service.extractData).toHaveBeenCalled();
+            expect(service.deleteFile).toHaveBeenCalledTimes(4);
+            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_modif.bmp');
+            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_orig.bmp');
+            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game2_modif.bmp');
+            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game2_orig.bmp');
+            expect(fs.writeFile).toHaveBeenCalledWith('assets/data/gamesData.json', JSON.stringify([], null, 4));
+        });
+    });
 
     it('should not delete anything for a non-existent game', async () => {
         const name = 'nonExistentGame';
