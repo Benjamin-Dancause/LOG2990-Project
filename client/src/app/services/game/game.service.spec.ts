@@ -205,12 +205,10 @@ fdescribe('GameService', () => {
     });
 
     it('should do nothing if click disabled', () => {
-        const mockCtx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
-        const mockCtxs = [mockCtx, mockCtx, mockCtx, mockCtx];
         gameService['isClickDisabled'] = true;
         spyOn(gameService, 'updateDifferences');
         const mockEvent = { offsetX: 0, offsetY: 0 } as MouseEvent;
-        gameService.checkClick(mockEvent, mockCounterService, mockCtxs);
+        gameService.checkClick(mockEvent);
         expect(gameService.updateDifferences).not.toHaveBeenCalled();
     });
 

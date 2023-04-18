@@ -8,7 +8,7 @@ import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
-import { GameDiffData, gameHistoryInfo, playerTime as PlayerTimeInterface } from '@common/game-interfaces';
+import { GameDiffData, playerTime as PlayerTimeInterface, gameHistoryInfo } from '@common/game-interfaces';
 import { Subscription } from 'rxjs';
 import { CounterService } from '../counter/counter.service';
 import { ReplayService } from '../replay/replay.service';
@@ -179,11 +179,6 @@ export class GameService {
     flashAllDifferences(ctxs: CanvasRenderingContext2D[]): void {
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             this.blinkAllDifferences(ctxs, gameData);
-            // for (const coordinate of gameData.differences) {
-            //     if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
-            //         this.differencesToFlash.push(coordinate);
-            //     }
-            // }
         });
     }
 
@@ -422,8 +417,7 @@ export class GameService {
         this.successSound.play();
     }
 
-    // eslint-disable-next-line no-unused-vars
-    async checkClick(event: MouseEvent, counter: CounterService, ctxs: CanvasRenderingContext2D[]) {
+    async checkClick(event: MouseEvent) {
         if (!this.isClickDisabled && event?.button === MouseButton.Left) {
             const clickedCanvas = event.target as HTMLCanvasElement;
             const context = clickedCanvas.getContext('2d') as CanvasRenderingContext2D;
