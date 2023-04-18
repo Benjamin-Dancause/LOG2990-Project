@@ -16,12 +16,20 @@ export class GamePageComponent implements OnInit, OnDestroy {
     userName: string;
     replayMode = false;
     showPopup = false;
+    hintClick: boolean = false;
+    sharedData: boolean = false;
 
     constructor(public gameCardService: GameCardService, public socketService: SocketService, private replayService: ReplayService) {}
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
         this.showPopup = false;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onButtonClick(data: any) {
+        // La logique ici pour modifier la variable sharedData
+        this.hintClick = true;
     }
 
     ngOnInit() {

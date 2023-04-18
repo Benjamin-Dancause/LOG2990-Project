@@ -37,6 +37,8 @@ export class PlayAreaComponent implements AfterViewInit {
 
     @Input() solo: boolean;
     @Input() single: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    @Input() data: any;
 
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
@@ -114,6 +116,8 @@ export class PlayAreaComponent implements AfterViewInit {
         if (event.target instanceof HTMLInputElement || this.opponent || this.replay) {
             return;
         }
+
+        console.log(this.data);
 
         if (this.hintModeTimeoutId !== null) {
             clearTimeout(this.hintModeTimeoutId);
