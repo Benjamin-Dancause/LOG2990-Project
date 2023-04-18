@@ -100,7 +100,9 @@ export class ReplayService {
         }
         this.goToNextAction();
         if (this.gameActions.length - this.replayIndex > 0) {
-            this.checkForAction();
+            setTimeout(() => {
+                this.checkForAction();
+            }, 100 / this.replaySpeed);
         } else {
             this.pauseReplayTimer();
         }
