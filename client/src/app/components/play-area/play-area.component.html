@@ -8,11 +8,6 @@
         Your browser does not support the canvas element.
     </canvas>
     </div>
-    <!-- <div id="mouse-position-display">
-        <p>Clique en...</p>
-        <p *ngIf="mousePosition.x !== 0">X : {{ mousePosition.x }}</p>
-        <p *ngIf="mousePosition.y !== 0">Y : {{ mousePosition.y }}</p>
-    </div> -->
     <div id="canvasContainer">
     <canvas class="canvas" id="canvas-2" #gridCanvasRight [attr.width]="width" [attr.height]="height">
         Your browser does not support the canvas element.
@@ -22,9 +17,11 @@
     </canvas>
     </div>
 </div>
+<div *ngIf="!single" id="indice">
 <button (click)="decrementCounter()"  (click)="onIndexClick()"[disabled]="nbrIndices === 0">Indice</button>
 <span>
     <img class="loupe" src="./assets/loupe.png" *ngIf="nbrIndices >= 1" />
     <img class="loupe" src="./assets/loupe.png" *ngIf="nbrIndices >= 2" />
     <img class="loupe" src="./assets/loupe.png" *ngIf="nbrIndices >= 3" />
 </span>
+</div>
