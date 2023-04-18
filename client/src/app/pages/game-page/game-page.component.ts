@@ -16,8 +16,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
     userName: string;
     replayMode = false;
     showPopup = false;
-    hintClick: boolean = false;
-    sharedData: boolean = false;
+    hintClick = 0;
 
     constructor(public gameCardService: GameCardService, public socketService: SocketService, private replayService: ReplayService) {}
 
@@ -29,7 +28,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onButtonClick(data: any) {
         // La logique ici pour modifier la variable sharedData
-        this.hintClick = true;
+        this.hintClick++;
     }
 
     ngOnInit() {

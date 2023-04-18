@@ -10,7 +10,7 @@ export class HintsComponent {
     @Output() buttonClicked: EventEmitter<any> = new EventEmitter<any>();
 
     nbrIndices = 3;
-    data: boolean;
+    data = 0;
 
     @HostListener('window:keyup', ['$event'])
     keyEvent(event: KeyboardEvent): void {
@@ -23,10 +23,6 @@ export class HintsComponent {
         if (this.nbrIndices > 0) {
             this.nbrIndices--;
         }
-    }
-    onClick() {
-        const value = 'valeur du bouton';
-        this.buttonClicked.emit(value);
     }
 
     onButtonClicked() {

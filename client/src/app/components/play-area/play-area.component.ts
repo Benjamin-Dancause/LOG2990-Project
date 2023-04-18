@@ -118,6 +118,7 @@ export class PlayAreaComponent implements AfterViewInit {
         }
 
         console.log(this.data);
+        console.log(this.hintModeCount);
 
         if (this.hintModeTimeoutId !== null) {
             clearTimeout(this.hintModeTimeoutId);
