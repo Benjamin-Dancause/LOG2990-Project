@@ -20,7 +20,6 @@ export class CanvasReplayService {
     }
 
     updateDifferences(coords: Coords[]) {
-        // console.log(coords);
         this.flashDifferences(coords);
         setTimeout(() => {
             this.updateImages(coords, this.contexts[2], this.contexts[3]);
@@ -62,11 +61,7 @@ export class CanvasReplayService {
         this.contexts[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
         this.contexts[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
         let i = 0;
-        //not global
-        console.log('game data: ' + gameData.differences.length);
-        console.log('differences found' + differencesFound);
         const flash = setInterval(() => {
-            console.log('differences found within interval ' + differencesFound);
             for (const coordinate of gameData.differences) {
                 if (!differencesFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
                     for (const coord of coordinate) {
@@ -120,6 +115,46 @@ export class CanvasReplayService {
             }
         });
     }
+    flashOneDifference2(randomIndex: number, differencesFound: number[]) {
+        const gameName = sessionStorage.getItem('gameTitle') as string;
+        this.communicationService.getAllDiffs(gameName).subscribe((gameData: GameDiffData) => {
+            const remainingDiffs = gameData.differences.filter(
+                (difference) => !differencesFound.includes(gameData.differences.indexOf(difference) + 1),
+            );
+            const coords = remainingDiffs[randomIndex];
+            if (coords) {
+                const quarterWidth = Math.round(CANVAS.WIDTH / 4);
+                const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
+                const [minX, minY, maxX, maxY] = coords.reduce(
+                    // eslint-disable-next-line @typescript-eslint/no-shadow
+                    ([minX, minY, maxX, maxY], { x, y }) => [Math.min(minX, x), Math.min(minY, y), Math.max(maxX, x), Math.max(maxY, y)],
+                    [Number.MAX_VALUE, Number.MAX_VALUE, Number.MIN_VALUE, Number.MIN_VALUE],
+                );
+                const centerX = Math.round((minX + maxX) / 2);
+                const centerY = Math.round((minY + maxY) / 2);
+                const [x, y, width, height] = [
+                    // eslint-disable-next-line no-bitwise
+                    ((centerX / quarterWidth) | 0) * quarterWidth,
+                    // eslint-disable-next-line no-bitwise
+                    ((centerY / quarterHeight) | 0) * quarterHeight,
+                    quarterWidth,
+                    quarterHeight,
+                ];
+                for (let ctx of this.contexts.slice(0, 1)) {
+                    ctx.fillStyle = 'orange';
+                    const flash = setInterval(() => {
+                        ctx.fillRect(x, y, width, height);
+                        setTimeout(() => {
+                            ctx.clearRect(x, y, width, height);
+                        }, 100 / this.replaySpeed);
+                    }, 200 / this.replaySpeed);
+                    setTimeout(() => {
+                        clearInterval(flash);
+                    }, 1000 / this.replaySpeed);
+                }
+            }
+        });
+    }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -166,6 +201,7 @@ export class CanvasReplayService {
         }
     }
     clearContexts(): void {
-        this.contexts.length = 0;
+        this.contexts = [];
+        this.replaySpeed = 1;
     }
 }
