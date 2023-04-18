@@ -164,12 +164,10 @@ export class GameService {
         this.isCheatEnabled = !this.isCheatEnabled;
         if (!this.isCheatEnabled) {
             this.replayService.addAction(this.time, 'cheat-mode-off');
-            console.log('off: ' + this.differenceFound);
             clearInterval(this.cheatTimeout);
             return;
         }
         this.flashAllDifferences(ctxs);
-        console.log('on: ' + this.differenceFound);
         this.replayService.addAction(this.time, 'cheat-mode-on', this.differenceFound.slice());
         this.cheatTimeout = setInterval(() => {
             this.flashAllDifferences(ctxs);

@@ -20,7 +20,6 @@ export class CanvasReplayService {
     }
 
     updateDifferences(coords: Coords[]) {
-        // console.log(coords);
         this.flashDifferences(coords);
         setTimeout(() => {
             this.updateImages(coords, this.contexts[2], this.contexts[3]);
@@ -62,11 +61,7 @@ export class CanvasReplayService {
         this.contexts[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
         this.contexts[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
         let i = 0;
-        //not global
-        console.log('game data: ' + gameData.differences.length);
-        console.log('differences found' + differencesFound);
         const flash = setInterval(() => {
-            console.log('differences found within interval ' + differencesFound);
             for (const coordinate of gameData.differences) {
                 if (!differencesFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
                     for (const coord of coordinate) {

@@ -26,7 +26,6 @@ export class ReplayService {
 
     addAction(time: number, action: string, payload?: any): void {
         const gameAction: GameAction = { time, action, payload };
-        console.log('Payload: ' + payload);
         this.gameActions.push(gameAction);
     }
 
@@ -98,7 +97,6 @@ export class ReplayService {
                 this.canvasReplay.flashOneDifference2(this.currentGameAction.payload.randomIndex, this.currentGameAction.payload.differencesFound);
                 break;
             case 'hint-three':
-                console.log('hint-three ' + this.currentGameAction.payload);
                 this.replayTimer = this.currentGameAction.payload;
                 break;
             default:
