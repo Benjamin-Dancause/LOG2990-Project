@@ -43,21 +43,6 @@ export class StoreService {
             difficulty: game.difficulty,
         }));
     }
-    /*
-    async getAllGames(): Promise<GameSelectionPageData[]> {
-        const gamesData: Data[] = await this.extractData();
-        if (!gamesData) {
-            throw new Error('No games data found');
-        }
-        return gamesData.map((game) => ({
-            name: game.name,
-            image: game.images[0],
-            difficulty: game.difficulty,
-            count: game.count,
-            differences: game.differences,
-        }));
-    }
-    */
 
     async getGameByName(@Body() body: { name: string }): Promise<GameplayData> {
         const gamesData: Data[] = await this.extractData();
@@ -122,11 +107,6 @@ export class StoreService {
     }
 
     async deleteFile(filePath: string): Promise<void> {
-        try {
-            await promisify(fs.unlink)(filePath);
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error(`Error deleting file: ${error}`);
-        }
+        await promisify(fs.unlink)(filePath);
     }
 }
