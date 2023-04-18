@@ -54,6 +54,9 @@ export class PlayAreaComponent implements AfterViewInit {
     player1: boolean = true;
     opponent: boolean = false;
 
+    multiplayer: boolean = false;
+    gameMode: string = '';
+
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
@@ -71,6 +74,11 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gameName = sessionStorage.getItem('gameTitle') as string;
         this.replay = false;
         this.game.setGameName();
+        this.gameMode = sessionStorage.getItem('gameMode') as string;
+        const joiner = sessionStorage.getItem('joiningPlayer') as string;
+        if (this.gameMode !== 'solo' && joiner) {
+            this.multiplayer = true;
+        }
     }
 
     get width(): number {

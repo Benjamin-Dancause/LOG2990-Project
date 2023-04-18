@@ -17,7 +17,7 @@
     </canvas>
     </div>
 </div>
-<div *ngIf="!single" id="indice">
+<div *ngIf="!this.multiplayer" id="indice">
 <button (click)="decrementCounter()"  (click)="onIndexClick()"[disabled]="nbrIndices === 0">Indice</button>
 <span>
     <img class="loupe" src="./assets/loupe.png" *ngIf="nbrIndices >= 1" />
