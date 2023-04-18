@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { ChatService } from '@app/services/chat/chat.service';
 import { ReplayService } from '@app/services/replay/replay.service';
 import { TIME } from '@common/constants';
@@ -9,7 +9,7 @@ import { PlayAreaComponent } from '../play-area/play-area.component';
     templateUrl: './replay-area.component.html',
     styleUrls: ['./replay-area.component.scss'],
 })
-export class ReplayAreaComponent implements OnInit {
+export class ReplayAreaComponent implements OnInit, OnDestroy {
     @ViewChild(PlayAreaComponent) playArea: PlayAreaComponent;
     @Output() replayEvent = new EventEmitter();
     isPlaying: boolean = false;
@@ -42,5 +42,9 @@ export class ReplayAreaComponent implements OnInit {
         this.chat.deleteMessages();
         this.replay.startReplayTimer();
         this.replayEvent.emit();
+    }
+
+    ngOnDestroy(): void {
+        this.replay.resetReplayData();
     }
 }

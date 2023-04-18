@@ -99,6 +99,18 @@ export class StoreService {
         }
     }
 
+    async deleteAllGames(): Promise<void> {
+        const infoPath = 'assets/data/gamesData.json';
+        const gamesData: Data[] = await this.extractData();
+        gamesData.forEach((game) => {
+            const filePath1 = `assets/images/${game.name}_modif.bmp`;
+            const filePath2 = `assets/images/${game.name}_orig.bmp`;
+            this.deleteFile(filePath1);
+            this.deleteFile(filePath2);
+        });
+        await fs.writeFile(infoPath, JSON.stringify([], null, 4));
+    }
+
     async getGameAvailability(name: string): Promise<boolean> {
         const gamesData: Data[] = await this.extractData();
         const index = gamesData.findIndex((game) => game.name === name);

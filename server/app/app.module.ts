@@ -10,7 +10,7 @@ import { GameManagerController } from './controllers/game-manager/game-manager.c
 import { GameController } from './controllers/game/game.controller';
 import { GamecardsController } from './controllers/gamecards/gamecards.controller';
 import { StoreController } from './controllers/store/store.controller';
-import { ClassicModeGateway } from './gateways/timer/classic-mode.gateway';
+import { ClassicModeGateway } from './gateways/classic-mode/classic-mode.gateway';
 import { CounterManagerService } from './services/counter-manager/counter-manager.service';
 import { databaseService } from './services/database/database.service';
 import { GameConfigService } from './services/game-config/game-config.service';

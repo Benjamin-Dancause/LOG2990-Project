@@ -9,7 +9,10 @@ export class GameManager {
     roomIdToGameDifferences = new Map<string, RoomGameData[]>();
 
     createGame(gameData: GameDiffData): number {
-        return gameData.count || 0;
+        if (gameData) {
+            return gameData.count;
+        }
+        return 0;
     }
 
     async loadGame(roomId: string, gameTitles: string[]): Promise<string[]> {
@@ -111,6 +114,9 @@ export class GameManager {
 
         // eslint-disable-next-line @typescript-eslint/no-shadow
         const game = await gamesContent.find((game) => game.name === name);
-        return { id: 0, count: game.count, differences: game.differences };
+        if (game) {
+            return { id: 0, count: game.count, differences: game.differences };
+        }
+        return { id: 0, count: 0, differences: [] };
     }
 }

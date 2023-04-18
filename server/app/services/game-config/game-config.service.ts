@@ -6,7 +6,7 @@ export class GameConfigService {
     private penaltyTime = 5;
     private timeGained = 5;
 
-    async getCountdownTime(): Promise<number> {
+    getCountdownTime(): number {
         return this.countdownTime;
     }
 
@@ -14,7 +14,7 @@ export class GameConfigService {
         this.countdownTime = countdownTime;
     }
 
-    async getPenaltyTime(): Promise<number> {
+    getPenaltyTime(): number {
         return this.penaltyTime;
     }
 
@@ -22,7 +22,7 @@ export class GameConfigService {
         this.penaltyTime = penaltyTime;
     }
 
-    async getTimeGained(): Promise<number> {
+    getTimeGained(): number {
         return this.timeGained;
     }
 

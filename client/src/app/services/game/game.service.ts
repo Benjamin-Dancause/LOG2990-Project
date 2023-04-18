@@ -34,7 +34,6 @@ export class GameService {
     private gameName: string = '';
     private player1: boolean;
     private isCheatEnabled = false;
-    private differencesToFlash: Coords[][] = [];
     private timeSubscription: Subscription;
     private otherGaveUp = false;
 
@@ -164,28 +163,28 @@ export class GameService {
     cheatMode(ctxs: CanvasRenderingContext2D[]) {
         this.isCheatEnabled = !this.isCheatEnabled;
         if (!this.isCheatEnabled) {
+            this.replayService.addAction(this.time, 'cheat-mode-off');
+            console.log('off: ' + this.differenceFound);
             clearInterval(this.cheatTimeout);
             return;
         }
-        const flash = this.flashAllDifferences(ctxs);
-        // console.log(flash.length);
-        this.replayService.addAction(this.time, 'blink-all-differences', flash);
+        this.flashAllDifferences(ctxs);
+        console.log('on: ' + this.differenceFound);
+        this.replayService.addAction(this.time, 'cheat-mode-on', this.differenceFound.slice());
         this.cheatTimeout = setInterval(() => {
             this.flashAllDifferences(ctxs);
         }, DELAY.SMALLTIMEOUT);
     }
 
-    flashAllDifferences(ctxs: CanvasRenderingContext2D[]): Coords[][] {
-        this.differencesToFlash = [];
+    flashAllDifferences(ctxs: CanvasRenderingContext2D[]): void {
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             this.blinkAllDifferences(ctxs, gameData);
-            for (const coordinate of gameData.differences) {
-                if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
-                    this.differencesToFlash.push(coordinate);
-                }
-            }
+            // for (const coordinate of gameData.differences) {
+            //     if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
+            //         this.differencesToFlash.push(coordinate);
+            //     }
+            // }
         });
-        return this.differencesToFlash;
     }
 
     blinkAllDifferences(ctxs: CanvasRenderingContext2D[], gameData: GameDiffData) {
@@ -215,6 +214,7 @@ export class GameService {
     hintMode1(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
@@ -257,6 +257,7 @@ export class GameService {
     hintMode2(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
@@ -312,6 +313,7 @@ export class GameService {
     hintMode3(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
@@ -385,6 +387,7 @@ export class GameService {
     }
 
     setGameName() {
+        this.replayService.resetReplayData();
         this.gameName = (sessionStorage.getItem('gameTitle') as string) || '';
         if ((sessionStorage.getItem('gameMode') as string) === 'tl') {
             this.player1 = true;
@@ -477,7 +480,6 @@ export class GameService {
 
     clearDifferenceArray() {
         this.differenceFound = [];
-        this.differencesToFlash = [];
         this.isCheatEnabled = false;
     }
 

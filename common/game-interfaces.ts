@@ -86,7 +86,13 @@ export interface gameHistoryInfo {
     winner: string;
     loser: string;
     surrender: boolean;
-    time: {startTime: string, duration: number};
+    time: { startTime: string; duration: number };
     isSolo: boolean;
     isLimitedTime: boolean;
+}
+
+export interface GameConstants {
+    startTime: number;
+    increment: number;
+    penalty: number;
 }

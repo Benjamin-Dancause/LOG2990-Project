@@ -108,20 +108,23 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
 }
 
 .resetAll {
+    flex: 1;
     margin: 0 5px;
     padding: 2px;
     min-height: 40px;
     position: absolute;
-    left: 57%;
-    bottom: 4%;
+    word-wrap: break-word;
     background-color: $background-color;
     color: $cyan-text;
+    cursor: pointer;
     border: 3px solid $orange-border;
     box-shadow: 0px 0px 10px 3px $orange-glow;
     border-radius: 2px;
-    font-size: 0.8em;
+    font-size: 15px;
     font-weight: bold;
     transition: all 0.2s ease-in-out;
+    bottom: 4%;
+    left: 22%;
 
     &:hover {
         background-color: rgb(8, 52, 58);
@@ -132,20 +135,50 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
 }
 
 .history {
+    flex: 1;
     margin: 0 5px;
     padding: 2px;
     min-height: 40px;
     position: absolute;
-    left: 71%;
-    bottom: 4%;
+    word-wrap: break-word;
     background-color: $background-color;
     color: $cyan-text;
+    cursor: pointer;
     border: 3px solid $orange-border;
     box-shadow: 0px 0px 10px 3px $orange-glow;
     border-radius: 2px;
-    font-size: 0.8em;
+    font-size: 15px;
     font-weight: bold;
     transition: all 0.2s ease-in-out;
+    bottom: 4%;
+    right: 30%;
+
+    &:hover {
+        background-color: rgb(8, 52, 58);
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        color: white;
+    }
+}
+
+.delete {
+    flex: 1;
+    margin: 0 5px;
+    padding: 2px;
+    min-height: 40px;
+    position: absolute;
+    word-wrap: break-word;
+    background-color: $background-color;
+    color: $cyan-text;
+    cursor: pointer;
+    border: 3px solid $orange-border;
+    box-shadow: 0px 0px 10px 3px $orange-glow;
+    border-radius: 2px;
+    font-size: 15px;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+    bottom: 4%;
+    left: 10%;
 
     &:hover {
         background-color: rgb(8, 52, 58);

@@ -47,7 +47,9 @@ export class PlayAreaComponent implements AfterViewInit {
     ctxLeftTop: CanvasRenderingContext2D | null = null;
     ctxRightTop: CanvasRenderingContext2D | null = null;
     gameName: string = '';
+    public replay: boolean = false;
     player1: boolean = true;
+    opponent: boolean = false;
 
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
@@ -64,6 +66,7 @@ export class PlayAreaComponent implements AfterViewInit {
         public canvasReplay: CanvasReplayService,
     ) {
         this.gameName = sessionStorage.getItem('gameTitle') as string;
+        this.replay = false;
         this.game.setGameName();
     }
 
@@ -83,7 +86,7 @@ export class PlayAreaComponent implements AfterViewInit {
     }
     @HostListener('document:keydown.t', ['$event'])
     onKeyDown(event: KeyboardEvent) {
-        if (event.target instanceof HTMLInputElement) {
+        if (event.target instanceof HTMLInputElement || this.replay) {
             return;
         }
         this.isCheatEnabled = !this.isCheatEnabled;
@@ -97,7 +100,7 @@ export class PlayAreaComponent implements AfterViewInit {
     }
     @HostListener('document:keydown.i', ['$event'])
     onHintKeyDown(event: KeyboardEvent) {
-        if (event.target instanceof HTMLInputElement) {
+        if (event.target instanceof HTMLInputElement || this.opponent || this.replay) {
             return;
         }
 
@@ -191,7 +194,7 @@ export class PlayAreaComponent implements AfterViewInit {
         if ((sessionStorage.getItem('gameMode') as string) === '1v1') {
             this.socketService.assignPlayerInfo(this.gameName);
         }
-
+        this.opponent = (sessionStorage.getItem('joiningPlayer') as string) ? true : false;
         this.game.timeUpdater();
 
         // this.communicationService.getGameByName(this.gameName).subscribe((game) => {

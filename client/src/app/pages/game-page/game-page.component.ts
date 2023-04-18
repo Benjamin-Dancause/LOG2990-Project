@@ -44,6 +44,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
     startReplay(): void {
         this.showPopup = false;
         this.replayMode = true;
+        this.playArea.replay = true;
         this.playArea.initCanvases();
     }
     receiveReplayEvent() {
