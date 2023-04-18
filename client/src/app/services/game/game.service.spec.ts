@@ -28,7 +28,7 @@ describe('GameService', () => {
             'sendDifferenceFound',
             'addToTimer',
             'removeToTimer',
-            'switchGame'
+            'switchGame',
         ]);
         mockTimerService = jasmine.createSpyObj('TimerService', ['getTime']);
         mockSocketService.socket = jasmine.createSpyObj('Socket', ['on', 'off', 'emit']);
@@ -345,6 +345,4 @@ describe('GameService', () => {
         expect(gameService['player1']).toBeTrue();
         sessionStorage.removeItem('gameMode');
     });
-
-    
 });
