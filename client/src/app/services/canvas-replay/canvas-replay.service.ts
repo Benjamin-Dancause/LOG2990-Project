@@ -120,6 +120,46 @@ export class CanvasReplayService {
             }
         });
     }
+    flashOneDifference2(randomIndex: number, differencesFound: number[]) {
+        const gameName = sessionStorage.getItem('gameTitle') as string;
+        this.communicationService.getAllDiffs(gameName).subscribe((gameData: GameDiffData) => {
+            const remainingDiffs = gameData.differences.filter(
+                (difference) => !differencesFound.includes(gameData.differences.indexOf(difference) + 1),
+            );
+            const coords = remainingDiffs[randomIndex];
+            if (coords) {
+                const quarterWidth = Math.round(CANVAS.WIDTH / 4);
+                const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
+                const [minX, minY, maxX, maxY] = coords.reduce(
+                    // eslint-disable-next-line @typescript-eslint/no-shadow
+                    ([minX, minY, maxX, maxY], { x, y }) => [Math.min(minX, x), Math.min(minY, y), Math.max(maxX, x), Math.max(maxY, y)],
+                    [Number.MAX_VALUE, Number.MAX_VALUE, Number.MIN_VALUE, Number.MIN_VALUE],
+                );
+                const centerX = Math.round((minX + maxX) / 2);
+                const centerY = Math.round((minY + maxY) / 2);
+                const [x, y, width, height] = [
+                    // eslint-disable-next-line no-bitwise
+                    ((centerX / quarterWidth) | 0) * quarterWidth,
+                    // eslint-disable-next-line no-bitwise
+                    ((centerY / quarterHeight) | 0) * quarterHeight,
+                    quarterWidth,
+                    quarterHeight,
+                ];
+                for (let ctx of this.contexts.slice()) {
+                    ctx.fillStyle = 'orange';
+                    const flash = setInterval(() => {
+                        ctx.fillRect(x, y, width, height);
+                        setTimeout(() => {
+                            ctx.clearRect(x, y, width, height);
+                        }, 100 / this.replaySpeed);
+                    }, 200 / this.replaySpeed);
+                    setTimeout(() => {
+                        clearInterval(flash);
+                    }, 1000 / this.replaySpeed);
+                }
+            }
+        });
+    }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -166,6 +206,7 @@ export class CanvasReplayService {
         }
     }
     clearContexts(): void {
-        this.contexts.length = 0;
+        this.contexts = [];
+        this.replaySpeed = 1;
     }
 }

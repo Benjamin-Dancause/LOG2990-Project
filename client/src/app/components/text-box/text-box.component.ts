@@ -217,6 +217,9 @@ export class TextBoxComponent implements OnDestroy, OnInit {
         if (this.recordSubscription) {
             this.recordSubscription.unsubscribe();
         }
+        if (this.hintSubscription) {
+            this.hintSubscription.unsubscribe();
+        }
         sessionStorage.clear();
         this.chat.deleteMessages();
     }

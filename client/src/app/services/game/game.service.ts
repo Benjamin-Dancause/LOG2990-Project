@@ -258,24 +258,30 @@ export class GameService {
     hintMode2(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        const time = this.time;
         this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
         }
-        this.flashOneDifference2(ctxs);
+        this.flashOneDifference2(ctxs, time);
         this.cheatTimeout = setTimeout(() => {
             this.isHintModeEnabled = false;
             clearInterval(this.cheatTimeout);
         }, 1000);
     }
 
-    flashOneDifference2(ctxs: CanvasRenderingContext2D[]) {
+    flashOneDifference2(ctxs: CanvasRenderingContext2D[], time: number) {
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             const remainingDiffs = gameData.differences.filter(
                 (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
             );
             const randomIndex = Math.floor(Math.random() * remainingDiffs.length);
+            this.replayService.addAction(time, 'hint-one', {
+                randomIndex: randomIndex,
+                differencesFound: this.differenceFound.slice(),
+                newTime: this.time,
+            });
             const coords = remainingDiffs[randomIndex];
             if (coords) {
                 const quarterWidth = Math.round(CANVAS.WIDTH / 4);
