@@ -320,20 +320,22 @@ export class GameService {
     hintMode3(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        const time = this.time;
         this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
         }
-        this.flashOneRandomDifference(ctxs);
+        this.flashOneRandomDifference(ctxs, time);
         this.cheatTimeout = setTimeout(() => {
             this.isHintModeEnabled = false;
             clearInterval(this.cheatTimeout);
         }, 1000);
     }
 
-    flashOneRandomDifference(ctxs: CanvasRenderingContext2D[]) {
+    flashOneRandomDifference(ctxs: CanvasRenderingContext2D[], time: number) {
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
+            this.replayService.addAction(time, 'hint-three', this.time);
             const differences = gameData.differences.filter(
                 (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
             );
