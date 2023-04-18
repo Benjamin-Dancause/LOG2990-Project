@@ -91,6 +91,10 @@ export class PlayAreaComponent implements AfterViewInit {
         this.game.cheatMode(ctxs);
     }
 
+    onIndexClick() {
+        const event = new KeyboardEvent('keydown', { key: 'i' });
+        document.dispatchEvent(event);
+    }
     @HostListener('document:keydown.i', ['$event'])
     onHintKeyDown(event: KeyboardEvent) {
         if (event.target instanceof HTMLInputElement) {
@@ -120,6 +124,20 @@ export class PlayAreaComponent implements AfterViewInit {
                 this.hintModeCount++;
                 break;
             }
+        }
+    }
+    nbrIndices = 3;
+
+    @HostListener('window:keyup', ['$event'])
+    keyEvent(event: KeyboardEvent): void {
+        if (event.key === 'i') {
+            this.decrementCounter();
+        }
+    }
+
+    decrementCounter(): void {
+        if (this.nbrIndices > 0) {
+            this.nbrIndices--;
         }
     }
 
