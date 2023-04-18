@@ -164,12 +164,10 @@ export class GameService {
         this.isCheatEnabled = !this.isCheatEnabled;
         if (!this.isCheatEnabled) {
             this.replayService.addAction(this.time, 'cheat-mode-off');
-            console.log('off: ' + this.differenceFound);
             clearInterval(this.cheatTimeout);
             return;
         }
         this.flashAllDifferences(ctxs);
-        console.log('on: ' + this.differenceFound);
         this.replayService.addAction(this.time, 'cheat-mode-on', this.differenceFound.slice());
         this.cheatTimeout = setInterval(() => {
             this.flashAllDifferences(ctxs);
@@ -209,20 +207,26 @@ export class GameService {
     hintMode1(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        const time = this.time;
         this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
         }
-        this.flashOneDifference1(ctxs);
+        this.flashOneDifference1(ctxs, time);
         this.cheatTimeout = setTimeout(() => ((this.isHintModeEnabled = false), clearInterval(this.cheatTimeout)), 1000);
     }
 
-    flashOneDifference1(ctxs: CanvasRenderingContext2D[]) {
+    flashOneDifference1(ctxs: CanvasRenderingContext2D[], time: number) {
         this.communicationService.getAllDiffs(this.gameName).subscribe(({ differences }) => {
             const unfoundDiffs = differences.filter((difference) => !this.differenceFound.includes(differences.indexOf(difference) + 1));
             if (unfoundDiffs.length > 0) {
                 const randomDifference = unfoundDiffs[Math.floor(Math.random() * unfoundDiffs.length)];
+                this.replayService.addAction(time, 'hint-one', {
+                    randomDiff: randomDifference,
+                    differencesFound: this.differenceFound.slice(),
+                    newTime: this.time,
+                });
                 const quarterWidth = Math.round(CANVAS.WIDTH / 4);
                 const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
                 const minX = Math.min(...randomDifference.map((d) => d.x));
@@ -252,24 +256,30 @@ export class GameService {
     hintMode2(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        const time = this.time;
         this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
         }
-        this.flashOneDifference2(ctxs);
+        this.flashOneDifference2(ctxs, time);
         this.cheatTimeout = setTimeout(() => {
             this.isHintModeEnabled = false;
             clearInterval(this.cheatTimeout);
         }, 1000);
     }
 
-    flashOneDifference2(ctxs: CanvasRenderingContext2D[]) {
+    flashOneDifference2(ctxs: CanvasRenderingContext2D[], time: number) {
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             const remainingDiffs = gameData.differences.filter(
                 (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
             );
             const randomIndex = Math.floor(Math.random() * remainingDiffs.length);
+            this.replayService.addAction(time, 'hint-two', {
+                randomIndex: randomIndex,
+                differencesFound: this.differenceFound.slice(),
+                newTime: this.time,
+            });
             const coords = remainingDiffs[randomIndex];
             if (coords) {
                 const quarterWidth = Math.round(CANVAS.WIDTH / 4);
@@ -308,20 +318,22 @@ export class GameService {
     hintMode3(ctxs: CanvasRenderingContext2D[]) {
         this.isHintModeEnabled = !this.isHintModeEnabled;
         this.hintMessage.emit();
+        const time = this.time;
         this.socketService.removeToTimer();
         if (!this.isHintModeEnabled) {
             clearInterval(this.cheatTimeout);
             return;
         }
-        this.flashOneRandomDifference(ctxs);
+        this.flashOneRandomDifference(ctxs, time);
         this.cheatTimeout = setTimeout(() => {
             this.isHintModeEnabled = false;
             clearInterval(this.cheatTimeout);
         }, 1000);
     }
 
-    flashOneRandomDifference(ctxs: CanvasRenderingContext2D[]) {
+    flashOneRandomDifference(ctxs: CanvasRenderingContext2D[], time: number) {
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
+            this.replayService.addAction(time, 'hint-three', this.time);
             const differences = gameData.differences.filter(
                 (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
             );

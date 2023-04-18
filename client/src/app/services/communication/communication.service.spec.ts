@@ -223,6 +223,7 @@ describe('CommunicationService', () => {
 
         req.flush(expectedData);
     });
+
     it('should delete a game with a name', () => {
         const name = 'test-game';
         service.deleteGame(name).subscribe((response) => {
@@ -232,6 +233,16 @@ describe('CommunicationService', () => {
         const req = httpMock.expectOne(`${service['baseUrl']}/games/${name}`);
         expect(req.request.method).toBe('DELETE');
     });
+
+    it('should delete all games when deleteAll is called', () => {
+        service.deleteAll().subscribe((response) => {
+            expect(response).toBeInstanceOf(Observable);
+        });
+
+        const req = httpMock.expectOne(`${service['baseUrl']}/games/delete/games`);
+        expect(req.request.method).toBe('DELETE');
+    });
+
     it('should return true if game exists when getting game availaility', () => {
         const name = 'test-game';
         service.getGameAvailability(name).subscribe((response) => {

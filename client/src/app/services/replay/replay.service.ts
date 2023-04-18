@@ -26,7 +26,6 @@ export class ReplayService {
 
     addAction(time: number, action: string, payload?: any): void {
         const gameAction: GameAction = { time, action, payload };
-        console.log('Payload: ' + payload);
         this.gameActions.push(gameAction);
     }
 
@@ -89,12 +88,25 @@ export class ReplayService {
             case 'cheat-mode-off':
                 clearInterval(this.cheatInterval);
                 break;
+            case 'hint-one':
+                this.replayTimer = this.currentGameAction.payload.newTime;
+                this.canvasReplay.flashOneDifference1(this.currentGameAction.payload.randomDiff, this.currentGameAction.payload.differencesFound);
+                break;
+            case 'hint-two':
+                this.replayTimer = this.currentGameAction.payload.newTime;
+                this.canvasReplay.flashOneDifference2(this.currentGameAction.payload.randomIndex, this.currentGameAction.payload.differencesFound);
+                break;
+            case 'hint-three':
+                this.replayTimer = this.currentGameAction.payload;
+                break;
             default:
                 break;
         }
         this.goToNextAction();
         if (this.gameActions.length - this.replayIndex > 0) {
-            this.checkForAction();
+            setTimeout(() => {
+                this.checkForAction();
+            }, 100 / this.replaySpeed);
         } else {
             this.pauseReplayTimer();
         }
