@@ -85,6 +85,41 @@ export class CanvasReplayService {
             }
         }, 200 / this.replaySpeed);
     }
+    flashOneDifference1(randomDifference: Coords[], differencesFound: number[]): void {
+        const gameName = sessionStorage.getItem('gameTitle') as string;
+        this.communicationService.getAllDiffs(gameName).subscribe(({ differences }) => {
+            const unfoundDiffs = differences.filter((difference) => !differencesFound.includes(differences.indexOf(difference) + 1));
+            if (unfoundDiffs.length > 0) {
+                const quarterWidth = Math.round(CANVAS.WIDTH / 4);
+                const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
+                const minX = Math.min(...randomDifference.map((d) => d.x));
+                const minY = Math.min(...randomDifference.map((d) => d.y));
+                const maxX = Math.max(...randomDifference.map((d) => d.x));
+                const maxY = Math.max(...randomDifference.map((d) => d.y));
+                const centerX = Math.round((minX + maxX) / 2);
+                const centerY = Math.round((minY + maxY) / 2);
+                const xCoord = centerX <= CANVAS.WIDTH / 2 ? 0 : CANVAS.WIDTH - quarterWidth * 2;
+                const yCoord = centerY <= CANVAS.HEIGHT / 2 ? 0 : CANVAS.HEIGHT - quarterHeight * 2;
+                const width = Math.min(quarterWidth * 2, CANVAS.WIDTH - xCoord);
+                const height = Math.min(quarterHeight * 2, CANVAS.HEIGHT - yCoord);
+                this.contexts[0].fillStyle = this.contexts[1].fillStyle = 'yellow';
+                const flash = setInterval(
+                    () => (
+                        this.contexts[0].fillRect(xCoord, yCoord, width, height),
+                        this.contexts[1].fillRect(xCoord, yCoord, width, height),
+                        setTimeout(
+                            () => (
+                                this.contexts[0].clearRect(xCoord, yCoord, width, height), this.contexts[1].clearRect(xCoord, yCoord, width, height)
+                            ),
+                            100 / this.replaySpeed,
+                        )
+                    ),
+                    200 / this.replaySpeed,
+                );
+                setTimeout(() => clearInterval(flash), 1000 / this.replaySpeed);
+            }
+        });
+    }
 
     updateImages(coords: Coords[], ctxLeft: CanvasRenderingContext2D, ctxRight: CanvasRenderingContext2D) {
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
