@@ -107,10 +107,6 @@ export class PlayAreaComponent implements AfterViewInit {
         this.game.cheatMode(ctxs);
     }
 
-    onIndexClick() {
-        const event = new KeyboardEvent('keydown', { key: 'i' });
-        document.dispatchEvent(event);
-    }
     @HostListener('document:keydown.i', ['$event'])
     onHintKeyDown(event: KeyboardEvent) {
         if (event.target instanceof HTMLInputElement || this.opponent || this.replay) {
@@ -152,6 +148,11 @@ export class PlayAreaComponent implements AfterViewInit {
         if (event.key === 'i') {
             this.decrementCounter();
         }
+    }
+
+    onIndexClick() {
+        const event = new KeyboardEvent('keydown', { key: 'i' });
+        document.dispatchEvent(event);
     }
 
     decrementCounter(): void {

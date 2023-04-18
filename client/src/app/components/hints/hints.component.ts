@@ -25,6 +25,11 @@ export class HintsComponent {
         }
     }
 
+    onIndexClick() {
+        const event = new KeyboardEvent('keydown', { key: 'i' });
+        document.dispatchEvent(event);
+    }
+
     onButtonClicked() {
         this.buttonClicked.emit(this.data);
     }
