@@ -1,5 +1,5 @@
 
-<button (click)="onButtonClicked()" (click)="onIndexClick()" (click)="decrementCounter()" [disabled]="nbrIndices === 0">Indice</button>
+<button  (click)="onIndexClick()" (click)="decrementCounter()" [disabled]="nbrIndices === 0">Indice</button>
 <span>
     <img class="loupe" src="./assets/loupe.png" *ngIf="nbrIndices >= 1" />
     <img class="loupe" src="./assets/loupe.png" *ngIf="nbrIndices >= 2" />

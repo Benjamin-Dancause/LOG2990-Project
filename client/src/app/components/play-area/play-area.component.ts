@@ -37,8 +37,6 @@ export class PlayAreaComponent implements AfterViewInit {
 
     @Input() solo: boolean;
     @Input() single: boolean;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    @Input() data: any;
 
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
@@ -113,9 +111,6 @@ export class PlayAreaComponent implements AfterViewInit {
             return;
         }
 
-        console.log(this.data);
-        console.log(this.hintModeCount);
-
         if (this.hintModeTimeoutId !== null) {
             clearTimeout(this.hintModeTimeoutId);
         }
@@ -142,24 +137,6 @@ export class PlayAreaComponent implements AfterViewInit {
         }
     }
     nbrIndices = 3;
-
-    @HostListener('window:keyup', ['$event'])
-    keyEvent(event: KeyboardEvent): void {
-        if (event.key === 'i') {
-            this.decrementCounter();
-        }
-    }
-
-    onIndexClick() {
-        const event = new KeyboardEvent('keydown', { key: 'i' });
-        document.dispatchEvent(event);
-    }
-
-    decrementCounter(): void {
-        if (this.nbrIndices > 0) {
-            this.nbrIndices--;
-        }
-    }
 
     async initCanvases() {
         this.game.clearContexts();

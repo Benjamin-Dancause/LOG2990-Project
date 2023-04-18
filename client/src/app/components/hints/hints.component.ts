@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
     selector: 'app-hints',
@@ -6,11 +6,7 @@ import { Component, EventEmitter, HostListener, Output } from '@angular/core';
     styleUrls: ['./hints.component.scss'],
 })
 export class HintsComponent {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    @Output() buttonClicked: EventEmitter<any> = new EventEmitter<any>();
-
     nbrIndices = 3;
-    data = 0;
 
     @HostListener('window:keyup', ['$event'])
     keyEvent(event: KeyboardEvent): void {
@@ -28,9 +24,5 @@ export class HintsComponent {
     onIndexClick() {
         const event = new KeyboardEvent('keydown', { key: 'i' });
         document.dispatchEvent(event);
-    }
-
-    onButtonClicked() {
-        this.buttonClicked.emit(this.data);
     }
 }
