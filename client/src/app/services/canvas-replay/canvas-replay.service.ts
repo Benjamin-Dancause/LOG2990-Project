@@ -145,7 +145,7 @@ export class CanvasReplayService {
                     quarterWidth,
                     quarterHeight,
                 ];
-                for (let ctx of this.contexts.slice()) {
+                for (let ctx of this.contexts.slice(0, 1)) {
                     ctx.fillStyle = 'orange';
                     const flash = setInterval(() => {
                         ctx.fillRect(x, y, width, height);

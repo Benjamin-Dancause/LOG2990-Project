@@ -277,7 +277,7 @@ export class GameService {
                 (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
             );
             const randomIndex = Math.floor(Math.random() * remainingDiffs.length);
-            this.replayService.addAction(time, 'hint-one', {
+            this.replayService.addAction(time, 'hint-two', {
                 randomIndex: randomIndex,
                 differencesFound: this.differenceFound.slice(),
                 newTime: this.time,
