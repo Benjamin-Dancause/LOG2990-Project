@@ -7,6 +7,7 @@ import { StoreController } from './store.controller';
 describe('StoreController', () => {
     let controller: StoreController;
     let storeService: StoreService;
+    let databaseServ: databaseService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -36,7 +37,9 @@ describe('StoreController', () => {
 
         controller = module.get<StoreController>(StoreController);
         storeService = module.get<StoreService>(StoreService);
+        databaseServ = module.get<databaseService>(databaseService);
     });
+    
     it('should store data', async () => {
         const data = {
             name: 'test-game',
@@ -106,6 +109,7 @@ describe('StoreController', () => {
         jest.spyOn(storeService, 'deleteGame').mockResolvedValue();
         await expect(controller.deleteGame(gameName)).resolves.toBeUndefined();
         expect(storeService.deleteGame).toHaveBeenCalledWith(gameName);
+        expect(databaseServ.deleteBestTimes).toHaveBeenCalledWith(gameName);
     });
 
     it('should call the deleteAllGames method of the store service', async () => {

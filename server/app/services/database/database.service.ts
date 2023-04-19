@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { bestTimes, gameHistoryInfo } from '@common/game-interfaces';
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { promises as fs } from 'fs';
 import { MongoClient } from 'mongodb';
 
 @Injectable()
-export class databaseService {
+export class databaseService implements OnApplicationShutdown {
     private readonly mongoUrl: string = 'mongodb+srv://equipe210:differences210@2990-210.po0vcim.mongodb.net/?retryWrites=true&w=majority';
     private readonly dbName: string = 'Projet2';
     client: MongoClient;
@@ -142,5 +142,9 @@ export class databaseService {
 
     async deleteAllGameHistory(): Promise<void> {
         await this.collectionGameHistory.deleteMany({});
+    }
+
+    async onApplicationShutdown(signal?: string): Promise<void> {
+        await this.client.close();
     }
 }
