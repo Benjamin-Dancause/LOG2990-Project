@@ -341,7 +341,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         if (roomId) {
             const newGameInfo = this.gameManager.switchGame(roomId);
             if (newGameInfo.length > 0) {
-                const newImages = newGameInfo.newImages;
+                const newImages = newGameInfo;
                 this.server.to(roomId).emit('switch-images', newImages);
             } else {
                 this.server.to(roomId).emit('send-victorious-player', true);

@@ -10,7 +10,14 @@ describe('ReplayService', () => {
     let canvasReplaySpy: jasmine.SpyObj<CanvasReplayService>;
 
     beforeEach(() => {
-        canvasReplaySpy = jasmine.createSpyObj('CanvasReplayService', ['updateDifferences', 'foundPopup', 'errorPopup']);
+        canvasReplaySpy = jasmine.createSpyObj('CanvasReplayService', [
+            'updateDifferences',
+            'foundPopup',
+            'errorPopup',
+            'flashOneDifference1',
+            'flashOneDifference2',
+            'flashAllDifferences',
+        ]);
         TestBed.configureTestingModule({
             providers: [ReplayService, { provide: CanvasReplayService, useValue: canvasReplaySpy }],
         });
@@ -233,5 +240,65 @@ describe('ReplayService', () => {
         expect(service.replaySpeed).toEqual(speed);
         expect(service.canvasReplay.updateReplaySpeed).toHaveBeenCalledWith(speed);
         expect(service.startReplayTimer).toHaveBeenCalled();
+    });
+
+    it('should call clearInterval when action is cheat-mode-off', () => {
+        spyOn(service, 'getAction').and.returnValue({
+            action: 'cheat-mode-off',
+            payload: {},
+            time: 0,
+        });
+        service.playAction();
+        expect(canvasReplaySpy.updateDifferences).not.toHaveBeenCalled();
+        // expect(clearInterval).toHaveBeenCalled();
+    });
+
+    it('should call flashOneDifference1 when action is hint-one', () => {
+        spyOn(service, 'getAction').and.returnValue({
+            action: 'hint-one',
+            payload: {},
+            time: 0,
+        });
+        service.playAction();
+        expect(canvasReplaySpy.flashOneDifference1).toHaveBeenCalled();
+    });
+
+    it('should call flashOneDifference2 when action is hint-two', () => {
+        spyOn(service, 'getAction').and.returnValue({
+            action: 'hint-two',
+            payload: {},
+            time: 0,
+        });
+        service.playAction();
+        expect(canvasReplaySpy.flashOneDifference2).toHaveBeenCalled();
+    });
+    it('should call flashAllDifferences when action is cheat-mode-on', () => {
+        spyOn(service, 'getAction').and.returnValue({
+            action: 'cheat-mode-on',
+            payload: {},
+            time: 0,
+        });
+        service.playAction();
+        expect(canvasReplaySpy.flashAllDifferences).toHaveBeenCalled();
+    });
+
+    it('should call not call flashOneDifference2 when action is hint-three', () => {
+        spyOn(service, 'getAction').and.returnValue({
+            action: 'hint-three',
+            payload: {},
+            time: 0,
+        });
+        service.playAction();
+        expect(canvasReplaySpy.flashOneDifference2).not.toHaveBeenCalled();
+    });
+
+    it('should call flashOneDifference2 when action is hint-two', () => {
+        spyOn(service, 'getAction').and.returnValue({
+            action: 'hint-two',
+            payload: {},
+            time: 0,
+        });
+        service.playAction();
+        expect(canvasReplaySpy.flashOneDifference2).toHaveBeenCalled();
     });
 });

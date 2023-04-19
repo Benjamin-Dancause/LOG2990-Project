@@ -175,6 +175,7 @@ export class GameService {
     }
 
     flashAllDifferences(ctxs: CanvasRenderingContext2D[]): void {
+        this.gameName = sessionStorage.getItem('gameTitle') as string;
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             this.blinkAllDifferences(ctxs, gameData);
         });
@@ -218,6 +219,7 @@ export class GameService {
     }
 
     flashOneDifference1(ctxs: CanvasRenderingContext2D[], time: number) {
+        this.gameName = sessionStorage.getItem('gameTitle') as string;
         this.communicationService.getAllDiffs(this.gameName).subscribe(({ differences }) => {
             const unfoundDiffs = differences.filter((difference) => !this.differenceFound.includes(differences.indexOf(difference) + 1));
             if (unfoundDiffs.length > 0) {
@@ -270,6 +272,7 @@ export class GameService {
     }
 
     flashOneDifference2(ctxs: CanvasRenderingContext2D[], time: number) {
+        this.gameName = sessionStorage.getItem('gameTitle') as string;
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             const remainingDiffs = gameData.differences.filter(
                 (difference) => !this.differenceFound.includes(gameData.differences.indexOf(difference) + 1),
@@ -332,6 +335,7 @@ export class GameService {
     }
 
     flashOneRandomDifference(ctxs: CanvasRenderingContext2D[], time: number) {
+        this.gameName = sessionStorage.getItem('gameTitle') as string;
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             this.replayService.addAction(time, 'hint-three', this.time);
             const differences = gameData.differences.filter(
