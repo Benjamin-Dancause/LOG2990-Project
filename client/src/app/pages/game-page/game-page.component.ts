@@ -17,7 +17,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
     replayMode = false;
     showPopup = false;
 
-    constructor(public gameCardService: GameCardService, public socketService: SocketService, private replayService: ReplayService) {}
+    constructor(public gameCardService: GameCardService, public socketService: SocketService, public replayService: ReplayService) {}
 
     returnToMainMenu() {
         this.gameCardService.removePlayer(this.gameTitle, this.userName).subscribe();
