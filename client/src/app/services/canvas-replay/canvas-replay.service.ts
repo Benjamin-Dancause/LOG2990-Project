@@ -15,18 +15,18 @@ export class CanvasReplayService {
 
     constructor(private communicationService: CommunicationService) {}
 
-    updateReplaySpeed(speed: number) {
+    updateReplaySpeed(speed: number): void {
         this.replaySpeed = speed;
     }
 
-    updateDifferences(coords: Coords[]) {
+    updateDifferences(coords: Coords[]): void {
         this.flashDifferences(coords);
         setTimeout(() => {
             this.updateImages(coords, this.contexts[2], this.contexts[3]);
         }, DELAY.BIGTIMEOUT / this.replaySpeed);
     }
 
-    flashDifferences(coords: Coords[]) {
+    flashDifferences(coords: Coords[]): void {
         this.contexts[0].fillStyle = 'rgba(255, 0, 255, 0.4)';
         this.contexts[1].fillStyle = 'rgba(255, 0, 255, 0.4)';
         const flash = setInterval(() => {
@@ -49,11 +49,6 @@ export class CanvasReplayService {
         const gameName = sessionStorage.getItem('gameTitle') as string;
         this.communicationService.getAllDiffs(gameName).subscribe((gameData: GameDiffData) => {
             this.blinkAllDifferences(differencesFound, gameData);
-            // for (const coordinate of gameData.differences) {
-            //     if (!this.differenceFound.includes(gameData.differences.indexOf(coordinate) + 1)) {
-            //         this.differencesToFlash.push(coordinate);
-            //     }
-            // }
         });
     }
 
@@ -80,6 +75,7 @@ export class CanvasReplayService {
             }
         }, 200 / this.replaySpeed);
     }
+
     flashOneDifference1(randomDifference: Coords[], differencesFound: number[]): void {
         const gameName = sessionStorage.getItem('gameTitle') as string;
         this.communicationService.getAllDiffs(gameName).subscribe(({ differences }) => {
@@ -98,19 +94,14 @@ export class CanvasReplayService {
                 const width = Math.min(quarterWidth * 2, CANVAS.WIDTH - xCoord);
                 const height = Math.min(quarterHeight * 2, CANVAS.HEIGHT - yCoord);
                 this.contexts[0].fillStyle = this.contexts[1].fillStyle = 'yellow';
-                const flash = setInterval(
-                    () => (
-                        this.contexts[0].fillRect(xCoord, yCoord, width, height),
-                        this.contexts[1].fillRect(xCoord, yCoord, width, height),
-                        setTimeout(
-                            () => (
-                                this.contexts[0].clearRect(xCoord, yCoord, width, height), this.contexts[1].clearRect(xCoord, yCoord, width, height)
-                            ),
-                            100 / this.replaySpeed,
-                        )
-                    ),
-                    200 / this.replaySpeed,
-                );
+                const flash = setInterval(() => {
+                    this.contexts[0].fillRect(xCoord, yCoord, width, height);
+                    this.contexts[1].fillRect(xCoord, yCoord, width, height);
+                    setTimeout(
+                        () => (this.contexts[0].clearRect(xCoord, yCoord, width, height), this.contexts[1].clearRect(xCoord, yCoord, width, height)),
+                        100 / this.replaySpeed,
+                    );
+                }, 200 / this.replaySpeed);
                 setTimeout(() => clearInterval(flash), 1000 / this.replaySpeed);
             }
         });
@@ -122,7 +113,9 @@ export class CanvasReplayService {
                 (difference) => !differencesFound.includes(gameData.differences.indexOf(difference) + 1),
             );
             const coords = remainingDiffs[randomIndex];
+            console.log('1 ' + coords);
             if (coords) {
+                console.log('2');
                 const quarterWidth = Math.round(CANVAS.WIDTH / 4);
                 const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
                 const [minX, minY, maxX, maxY] = coords.reduce(

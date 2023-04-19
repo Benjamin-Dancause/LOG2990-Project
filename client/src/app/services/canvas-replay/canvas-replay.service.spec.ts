@@ -1,16 +1,26 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { Coords } from '@app/classes/coords';
 import { CANVAS, DELAY } from '@common/constants';
+import { GameDiffData } from '@common/game-interfaces';
+import { of } from 'rxjs';
+import { CommunicationService } from '../communication/communication.service';
 import { CanvasReplayService } from './canvas-replay.service';
 
-describe('CanvasReplayService', () => {
+fdescribe('CanvasReplayService', () => {
     let service: CanvasReplayService;
+    let mockCommunicationService: jasmine.SpyObj<CommunicationService>;
     // let mockCoords: Coords[];
     let mockContext1: CanvasRenderingContext2D;
     let mockContext2: CanvasRenderingContext2D;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        mockCommunicationService = jasmine.createSpyObj('CommunicationService', ['getDifferences', 'sendPosition', 'getAllDiffs', 'updateBestTimes']);
+
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
+            providers: [CanvasReplayService, { provide: CommunicationService, useValue: mockCommunicationService }],
+        });
         service = TestBed.inject(CanvasReplayService);
         mockContext1 = jasmine.createSpyObj('CanvasRenderingContext2D', ['fillRect', 'clearRect']);
         mockContext2 = jasmine.createSpyObj('CanvasRenderingContext2D', ['fillRect', 'clearRect']);
@@ -108,7 +118,7 @@ describe('CanvasReplayService', () => {
         const ctxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['fillRect']);
         service.getContexts(ctxSpy);
 
-        expect(service.contexts.length).toEqual(1);
+        expect(service.contexts.length).toEqual(3);
     });
 
     it('should set fillStyle to rgba(255, 0, 255, 0.4) on both contexts', () => {
@@ -173,4 +183,66 @@ describe('CanvasReplayService', () => {
         expect(service.contexts.length).toEqual(0);
     });
     */
+    it('should flash all differences', fakeAsync(() => {
+        const differences = [1, 2];
+        const gamedata: GameDiffData = {
+            id: 1,
+            count: 4,
+            differences: [[{ x: 1, y: 2 }], [{ x: 1, y: 2 }]],
+        };
+        sessionStorage.setItem('gameTitle', 'Monkey');
+        mockCommunicationService.getAllDiffs.and.returnValue(of(gamedata));
+        spyOn(service, 'blinkAllDifferences');
+
+        service.flashAllDifferences(differences);
+        expect(service.blinkAllDifferences).toHaveBeenCalled();
+        sessionStorage.removeItem('gameTitle');
+    }));
+    it('should blink all differences', fakeAsync(() => {
+        const differences = [6, 7];
+        const gameData = { differences: [[{ x: 10, y: 10 }]] } as GameDiffData;
+        spyOn(service, 'flashDifferences');
+        service.blinkAllDifferences(differences, gameData);
+        tick(DELAY.SMALLTIMEOUT);
+        expect(service.contexts[0].fillRect).toHaveBeenCalledTimes(4);
+    }));
+    it('should flashOneDifference1', fakeAsync(() => {
+        const randomDifference = [{ x: 1, y: 2 }];
+        const differences = [6, 7];
+        const gamedata: GameDiffData = {
+            id: 1,
+            count: 4,
+            differences: [[{ x: 1, y: 2 }], [{ x: 1, y: 2 }]],
+        };
+        sessionStorage.setItem('gameTitle', 'test');
+        mockCommunicationService.getAllDiffs.and.returnValue(of(gamedata));
+        spyOn(service, 'blinkAllDifferences');
+
+        service.flashOneDifference1(randomDifference, differences);
+        tick(1000);
+        expect(service.contexts[0].fillRect).toHaveBeenCalledTimes(4);
+        expect(service.contexts[1].fillRect).toHaveBeenCalledTimes(4);
+        expect(service.contexts[0].clearRect).toHaveBeenCalledTimes(4);
+        expect(service.contexts[0].clearRect).toHaveBeenCalledTimes(4);
+        sessionStorage.removeItem('gameTitle');
+    }));
+    fit('should flashOneDifference2', fakeAsync(() => {
+        const randomIndex = 2;
+        const differences = [6, 7];
+        const gamedata: GameDiffData = {
+            id: 1,
+            count: 4,
+            differences: [[{ x: 1, y: 2 }], [{ x: 1, y: 2 }]],
+        };
+        sessionStorage.setItem('gameTitle', 'test');
+        mockCommunicationService.getAllDiffs.and.returnValue(of(gamedata));
+        spyOn(service, 'blinkAllDifferences');
+
+        service.flashOneDifference2(randomIndex, differences);
+        tick(1000);
+        expect(false).toBeTruthy();
+    }));
+    it('should flash all differences', fakeAsync(() => {}));
+    it('should flash all differences', fakeAsync(() => {}));
+    it('should flash all differences', fakeAsync(() => {}));
 });

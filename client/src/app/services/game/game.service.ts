@@ -169,6 +169,7 @@ export class GameService {
         }
         this.flashAllDifferences(ctxs);
         this.replayService.addAction(this.time, 'cheat-mode-on', this.differenceFound.slice());
+        console.log('bug ' + this.differenceFound);
         this.cheatTimeout = setInterval(() => {
             this.flashAllDifferences(ctxs);
         }, DELAY.SMALLTIMEOUT);

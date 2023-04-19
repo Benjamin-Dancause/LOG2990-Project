@@ -7,7 +7,6 @@ import { SocketService } from '@app/services/socket/socket.service';
 import { CANVAS } from '@common/constants';
 import { environment } from 'src/environments/environment';
 
-
 interface OneVsOneGameplayInfo {
     gameTitle: string;
     roomId: string;
