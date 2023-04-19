@@ -44,4 +44,11 @@ describe('HintsComponent', () => {
 
         expect(component.nbrIndices).toEqual(0);
     });
+
+    it('should trigger "keydown" event with key "i" when onIndexClick is called', () => {
+        spyOn(document, 'dispatchEvent');
+        component.onIndexClick();
+
+        expect(document.dispatchEvent).toHaveBeenCalledOnceWith(new KeyboardEvent('keydown', { key: 'i' }));
+    });
 });
