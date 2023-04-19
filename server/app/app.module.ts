@@ -30,7 +30,15 @@ import { WaitingRoomManagerService } from './services/waiting-room-manager/waiti
             }),
         }),
     ],
-    controllers: [GamecardsController, GameManagerController, StoreController, GameController, GameConfigController, BestTimesController, GameHistoryController],
+    controllers: [
+        GamecardsController,
+        GameManagerController,
+        StoreController,
+        GameController,
+        GameConfigController,
+        BestTimesController,
+        GameHistoryController,
+    ],
 
     providers: [
         ChatGateway,

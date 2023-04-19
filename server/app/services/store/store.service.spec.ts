@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import { StoreService } from '@app/services/store/store.service';
+import { DIFFERENCE } from '@common/constants';
 import { Coords, Data } from '@common/game-interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
 import { promises as fs } from 'fs';
@@ -56,7 +57,7 @@ describe('StoreService', () => {
             expect(spyExtractData).toHaveBeenCalled();
             expect(spyWriteFile).toHaveBeenCalledWith(
                 'assets/data/gamesData.json',
-                JSON.stringify([{ name, images: relativePaths, difficulty, count, differences }], null, 4),
+                JSON.stringify([{ name, images: relativePaths, difficulty, count, differences }], null, DIFFERENCE.DIFFCOUNT),
             );
         });
 
@@ -91,7 +92,7 @@ describe('StoreService', () => {
             expect(spyExtractData).toHaveBeenCalled();
             expect(spyWriteFile).toHaveBeenCalledWith(
                 'assets/data/gamesData.json',
-                JSON.stringify([existingGameData, { name, images: relativePaths, difficulty, count, differences }], null, 4),
+                JSON.stringify([existingGameData, { name, images: relativePaths, difficulty, count, differences }], null, DIFFERENCE.DIFFCOUNT),
             );
         });
     });
@@ -217,7 +218,7 @@ describe('StoreService', () => {
             expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_orig.bmp');
             expect(fs.writeFile).toHaveBeenCalledWith(
                 'assets/data/gamesData.json',
-                JSON.stringify([{ name: 'game2', images: ['img2.bmp'], difficulty: false, count: 5, differences: [] }], null, 4),
+                JSON.stringify([{ name: 'game2', images: ['img2.bmp'], difficulty: false, count: 5, differences: [] }], null, DIFFERENCE.DIFFCOUNT),
             );
         });
     });
@@ -239,12 +240,12 @@ describe('StoreService', () => {
         it('should delete all games and write to the gamesData.json file', async () => {
             await service.deleteAllGames();
             expect(service.extractData).toHaveBeenCalled();
-            expect(service.deleteFile).toHaveBeenCalledTimes(4);
+            expect(service.deleteFile).toHaveBeenCalledTimes(DIFFERENCE.DIFFCOUNT);
             expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_modif.bmp');
             expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_orig.bmp');
             expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game2_modif.bmp');
             expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game2_orig.bmp');
-            expect(fs.writeFile).toHaveBeenCalledWith('assets/data/gamesData.json', JSON.stringify([], null, 4));
+            expect(fs.writeFile).toHaveBeenCalledWith('assets/data/gamesData.json', JSON.stringify([], null, DIFFERENCE.DIFFCOUNT));
         });
     });
 
@@ -289,8 +290,7 @@ describe('StoreService', () => {
                 { name: 'game1', images: [], difficulty: true, count: 1, differences: [] },
                 { name: 'game2', images: [], difficulty: false, count: 1, differences: [] },
             ];
-            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-            const expectedContent = JSON.stringify(gamesData, null, 4);
+            const expectedContent = JSON.stringify(gamesData, null, DIFFERENCE.DIFFCOUNT);
             jest.spyOn(fs, 'readFile').mockResolvedValue(expectedContent);
 
             const result = await service2.extractData();

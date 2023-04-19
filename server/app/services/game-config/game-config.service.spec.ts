@@ -1,3 +1,4 @@
+import { TIME } from '@common/constants';
 import { GameConfigService } from './game-config.service';
 
 describe('GameConfigService', () => {
@@ -9,31 +10,31 @@ describe('GameConfigService', () => {
 
     it('should return the initial countdown time', async () => {
         const countdownTime = await gameConfigService.getCountdownTime();
-        expect(countdownTime).toEqual(30);
+        expect(countdownTime).toEqual(TIME.COUNTDOWN_TIME);
     });
 
     it('should set the countdown time', () => {
-        gameConfigService.setCountdownTime(20);
-        expect(gameConfigService['countdownTime']).toEqual(20);
+        gameConfigService.setCountdownTime(TIME.MEDIUM_COUNTDOWN_TIME);
+        expect(gameConfigService['countdownTime']).toEqual(TIME.MEDIUM_COUNTDOWN_TIME);
     });
 
     it('should return the initial penalty time', async () => {
         const penaltyTime = await gameConfigService.getPenaltyTime();
-        expect(penaltyTime).toEqual(5);
+        expect(penaltyTime).toEqual(TIME.SMALL_PENALTY);
     });
 
     it('should set the penalty time', () => {
-        gameConfigService.setPenaltyTime(10);
-        expect(gameConfigService['penaltyTime']).toEqual(10);
+        gameConfigService.setPenaltyTime(TIME.SMALL_ADD_TIME);
+        expect(gameConfigService['penaltyTime']).toEqual(TIME.SMALL_ADD_TIME);
     });
 
     it('should return the initial time gained', async () => {
         const timeGained = await gameConfigService.getTimeGained();
-        expect(timeGained).toEqual(5);
+        expect(timeGained).toEqual(TIME.SMALL_TIME_GAINED);
     });
 
     it('should set the time gained', () => {
-        gameConfigService.setTimeGained(10);
-        expect(gameConfigService['timeGained']).toEqual(10);
+        gameConfigService.setTimeGained(TIME.SMALL_ADD_TIME);
+        expect(gameConfigService['timeGained']).toEqual(TIME.SMALL_ADD_TIME);
     });
 });

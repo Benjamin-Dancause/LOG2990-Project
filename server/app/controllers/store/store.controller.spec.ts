@@ -39,7 +39,7 @@ describe('StoreController', () => {
         storeService = module.get<StoreService>(StoreService);
         databaseServ = module.get<databaseService>(databaseService);
     });
-    
+
     it('should store data', async () => {
         const data = {
             name: 'test-game',

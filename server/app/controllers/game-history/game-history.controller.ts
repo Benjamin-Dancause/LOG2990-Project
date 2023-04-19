@@ -7,33 +7,32 @@ import { ApiOkResponse } from '@nestjs/swagger';
 export class GameHistoryController {
     constructor(private readonly databaseService: databaseService) {}
 
-
     @Get('/All')
     @ApiOkResponse({
         description: 'Get the game history for a game',
     })
-    getAllHistory(): Promise<gameHistoryInfo[]>{
+    async getAllHistory(): Promise<gameHistoryInfo[]> {
         return this.databaseService.getAllGameHistory();
     }
     @Get('/:gameTitle')
     @ApiOkResponse({
         description: 'Get the game history for a game',
     })
-    getHistory(@Param('gameTitle') gameTitle: string): Promise<gameHistoryInfo[]>{
+    async getHistory(@Param('gameTitle') gameTitle: string): Promise<gameHistoryInfo[]> {
         return this.databaseService.getGameHistory(gameTitle);
     }
     @Put('')
     @ApiOkResponse({
         description: 'Update the game history for a game',
     })
-    createGameHistory(@Body() gameHistoryInfo : gameHistoryInfo): void{
+    createGameHistory(@Body() gameHistoryInfo: gameHistoryInfo): void {
         this.databaseService.createGameHistory(gameHistoryInfo);
     }
     @Delete('')
     @ApiOkResponse({
         description: 'Delete the game history for all games',
     })
-    deleteHistory(): void{
+    deleteHistory(): void {
         this.databaseService.deleteAllGameHistory();
     }
 }

@@ -1,10 +1,11 @@
+import { TIME } from '@common/constants';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class GameConfigService {
-    private countdownTime = 30;
-    private penaltyTime = 5;
-    private timeGained = 5;
+    private countdownTime = TIME.COUNTDOWN_TIME;
+    private penaltyTime = TIME.SMALL_PENALTY;
+    private timeGained = TIME.SMALL_TIME_GAINED;
 
     getCountdownTime(): number {
         return this.countdownTime;
