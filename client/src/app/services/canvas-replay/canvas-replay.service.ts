@@ -113,9 +113,7 @@ export class CanvasReplayService {
                 (difference) => !differencesFound.includes(gameData.differences.indexOf(difference) + 1),
             );
             const coords = remainingDiffs[randomIndex];
-            console.log('1 ' + coords);
             if (coords) {
-                console.log('2');
                 const quarterWidth = Math.round(CANVAS.WIDTH / 4);
                 const quarterHeight = Math.round(CANVAS.HEIGHT / 4);
                 const [minX, minY, maxX, maxY] = coords.reduce(
