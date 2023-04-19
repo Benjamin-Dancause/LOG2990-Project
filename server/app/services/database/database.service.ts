@@ -57,9 +57,10 @@ export class databaseService implements OnApplicationShutdown {
                 this.bubbleTo(time.usersMulti, time.usersMulti.length - 1, index);
             }
             time.usersMulti.pop();
+
         }
         if (index !== -1) {
-            this.collectionBestTimes.findOneAndReplace({ name }, time);
+            await this.collectionBestTimes.findOneAndReplace({ name }, time);
         }
     }
 
@@ -97,7 +98,7 @@ export class databaseService implements OnApplicationShutdown {
         array[index2] = buffer;
     }
 
-    async getBestTimesByName(name: string, gameMode: string): Promise<bestTimes | null> {
+    async getBestTimesByName(name: string, gameMode: string): Promise<number[]> {
         if (gameMode === 'solo') {
             const result = await this.collectionBestTimes.findOne({ name: { $eq: name } });
             return result.timesSolo;

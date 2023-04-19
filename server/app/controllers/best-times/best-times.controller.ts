@@ -19,7 +19,7 @@ export class BestTimesController {
     @ApiOkResponse({
         description: 'Get the best times for a game',
     })
-    getTimes(@Param('gameTitle') gameTitle: string, @Param('gameMode') gameMode: string): Promise<bestTimes>{
+    getTimes(@Param('gameTitle') gameTitle: string, @Param('gameMode') gameMode: string): Promise<number[]>{
         return this.databaseService.getBestTimesByName(gameTitle, gameMode);
     }
     @Post('/reset')
