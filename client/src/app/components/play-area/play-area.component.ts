@@ -49,8 +49,8 @@ export class PlayAreaComponent implements AfterViewInit {
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: CANVAS.WIDTH, y: CANVAS.HEIGHT };
 
-    private hintModeCount = 0;
-    private hintModeTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    public hintModeCount = 0;
+    public hintModeTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
     // eslint-disable-next-line max-params
     constructor(

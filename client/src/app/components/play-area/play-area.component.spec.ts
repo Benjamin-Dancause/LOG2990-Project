@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { Socket } from 'socket.io-client';
 import { PlayAreaComponent } from './play-area.component';
 
-describe('PlayAreaComponent', () => {
+fdescribe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
     let mockCommunicationService: jasmine.SpyObj<CommunicationService>;
@@ -22,7 +22,12 @@ describe('PlayAreaComponent', () => {
     let mockSocket: jasmine.SpyObj<Socket>;
 
     beforeEach(async () => {
-        mockSocketService = jasmine.createSpyObj<SocketService>(['sendDifferenceFound', 'initOneVsOneComponents', 'assignPlayerInfo']);
+        mockSocketService = jasmine.createSpyObj<SocketService>([
+            'sendDifferenceFound',
+            'initOneVsOneComponents',
+            'assignPlayerInfo',
+            'disconnectSocket',
+        ]);
         mockCommunicationService = jasmine.createSpyObj<CommunicationService>(['getGameByName']);
         mockGameService = jasmine.createSpyObj<GameService>([
             'setGameName',
@@ -31,9 +36,15 @@ describe('PlayAreaComponent', () => {
             'clearContexts',
             'clearDifferenceArray',
             'checkClick',
+            'timeUpdater',
+            'clearTime',
+            'resetGameValues',
+            'hintMode1',
+            'hintMode2',
+            'hintMode3',
         ]);
         mockCounterService = jasmine.createSpyObj<CounterService>(['incrementCounter']);
-        mockSocket = jasmine.createSpyObj<Socket>(['emit', 'on']);
+        mockSocket = jasmine.createSpyObj<Socket>(['emit', 'on', 'off']);
         mockSocket.on.and.returnValue(mockSocket);
         mockSocket.emit.and.returnValue(mockSocket);
         mockCommunicationService.getGameByName.and.returnValue(
@@ -102,6 +113,24 @@ describe('PlayAreaComponent', () => {
         expect(component.socketService.assignPlayerInfo).toHaveBeenCalledWith('game1');
     });
 
+    it('should call switch-images', () => {
+        const newImages = {
+            images: ['/test.bmp', '/testing.bmp'],
+            title: 'test',
+        };
+        mockSocket.on.withArgs('switch-images', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback(newImages);
+            return mockSocket;
+        });
+        spyOn(component, 'initCanvases');
+
+        component.ngAfterViewInit();
+        component.socketService.socket.emit('switch-images', newImages);
+
+        expect(component.socketService.socket.on).toHaveBeenCalledWith('switch-images', jasmine.any(Function));
+        expect(component.initCanvases).toHaveBeenCalled();
+    });
+
     it('should check the mouse click', () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -118,6 +147,7 @@ describe('PlayAreaComponent', () => {
         component.onMouseDown(event);
         expect(component.game.checkClick).toHaveBeenCalled();
     });
+
     it('should check the mouse click and return if not canvas', () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -134,6 +164,7 @@ describe('PlayAreaComponent', () => {
         component.onMouseDown(event);
         expect(component.game.checkClick).not.toHaveBeenCalled();
     });
+
     it('should call game.cheatMode when "t" key is pressed', () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -147,6 +178,7 @@ describe('PlayAreaComponent', () => {
         component.onKeyDown(event);
         expect(component.game.cheatMode).toHaveBeenCalled();
     });
+
     it('should not call game.cheatMode when "t" key is pressed in chat', () => {
         const canvas = document.createElement('canvas');
         const input = document.createElement('input');
@@ -162,6 +194,94 @@ describe('PlayAreaComponent', () => {
         const event = eventArgs as any as KeyboardEvent;
         component.onKeyDown(event);
         expect(component.game.cheatMode).not.toHaveBeenCalled();
+    });
+
+    it('should not use hint when "i" key is pressed but is not a event.target instanceof HTMLInputElement || this.opponent || this.replay', () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        component.hintModeTimeoutId = null;
+        component.replay = true;
+        const event = new KeyboardEvent('keydown', {
+            key: 'i',
+        });
+        component.onHintKeyDown(event);
+        expect(component.game.hintMode1).not.toHaveBeenCalled();
+    });
+    it('should clearTimeout if hintModeTimeoutId is not null', async () => {
+        const timerId = window.setTimeout(() => {
+            console.log('Timer fired!');
+        }, 1000); // fire after 1 second
+
+        // cancel the timer before it fires
+        window.clearTimeout(timerId);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        component.hintModeTimeoutId = timerId as unknown as ReturnType<typeof setTimeout>;
+        const event = new KeyboardEvent('keydown', {
+            key: 'i',
+        });
+        component.onHintKeyDown(event);
+        expect(component.game.hintMode1).toHaveBeenCalled();
+    });
+
+    it('should use hint when "i" key is pressed', () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        component.hintModeTimeoutId = null;
+        const event = new KeyboardEvent('keydown', {
+            key: 'i',
+        });
+        component.onHintKeyDown(event);
+        expect(component.game.hintMode1).toHaveBeenCalled();
+    });
+
+    it('should use hint when "i" key is pressed', () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        component.hintModeTimeoutId = null;
+        component.hintModeCount = 1;
+        const event = new KeyboardEvent('keydown', {
+            key: 'i',
+        });
+        component.onHintKeyDown(event);
+        expect(component.game.hintMode2).toHaveBeenCalled();
+    });
+
+    it('should use hint when "i" key is pressed', () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        component.ctxLeft = ctx;
+        component.ctxLeftTop = ctx;
+        component.ctxRight = ctx;
+        component.ctxRightTop = ctx;
+        component.hintModeTimeoutId = null;
+        component.hintModeCount = 2;
+        const event = new KeyboardEvent('keydown', {
+            key: 'i',
+        });
+        component.onHintKeyDown(event);
+        expect(component.game.hintMode3).toHaveBeenCalled();
+    });
+
+    it('should initialize the canvases', () => {
+        component.initCanvases();
+        expect(component.game.getContexts).toHaveBeenCalled();
     });
 
     it('should clear canvases on destroy', () => {
