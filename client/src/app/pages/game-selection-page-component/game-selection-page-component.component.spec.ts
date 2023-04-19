@@ -7,6 +7,7 @@ import { HomeButtonComponent } from '@app/components/home-button/home-button.com
 import { PreviousNextButtonComponent } from '@app/components/previous-next-button/previous-next-button.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
+import { BEST_TIME } from '@common/constants';
 import { bestTimes } from '@common/game-interfaces';
 import { of } from 'rxjs';
 import { GameSelectionPageComponent } from './game-selection-page-component.component';
@@ -35,78 +36,78 @@ describe('GameSelectionPageComponent', () => {
             name: 'Game 1',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
         {
             name: 'Game 2',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
         {
             name: 'Game 3',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
         {
             name: 'Game 4',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
         {
             name: 'Game 5',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
         {
             name: 'Game 6',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
         {
             name: 'Game 7',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
         {
             name: 'Game 8',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
         {
             name: 'Game 9',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
         {
             name: 'Game 10',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
         {
             name: 'Game 11',
             usersSolo: ['player1', 'player2', 'player3'],
             usersMulti: ['player4', 'player5', 'player6'],
-            timesSolo: [300, 400, 500],
-            timesMulti: [500, 600, 700],
+            timesSolo: [BEST_TIME.WORST_SOLO_TIME, BEST_TIME.SOLO_TIME, BEST_TIME.BEST_SOLO_TIME],
+            timesMulti: [BEST_TIME.WORST_MULTI_TIME, BEST_TIME.MULTI_TIME, BEST_TIME.BEST_MULTI_TIME],
         },
     ];
 

@@ -48,6 +48,7 @@ export enum DIFFERENCE {
     EASY = 'Facile',
     DIFFCOUNT_MAX = 9,
     DIFFCOUNT_MIN = 3,
+    DIFFCOUNT = 4, 
 }
 
 export enum TIME {
@@ -55,10 +56,20 @@ export enum TIME {
     SMALL_PENALTY = 5,
     SMALL_TIME_GAINED = 5,
     COUNTDOWN_TIME = 30,
+    MEDIUM_COUNTDOWN_TIME = 20,
     SMALL_COUNTDOWN_TIME = 10,
     BIG_DELAY = 250,
     SIXTY_SECONDS = 60,
     TEN_SECONDS = 10,
     TEN_MINUTES = 10,
     FOUR_X_SPEED = 4,
+}
+
+export enum BEST_TIME {
+    WORST_SOLO_TIME = 300,
+    SOLO_TIME = 400,
+    BEST_SOLO_TIME = 500,
+    WORST_MULTI_TIME = 500,
+    MULTI_TIME = 600,
+    BEST_MULTI_TIME = 700,
 }
