@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { CommunicationService } from '../communication/communication.service';
 import { CanvasReplayService } from './canvas-replay.service';
 
-fdescribe('CanvasReplayService', () => {
+describe('CanvasReplayService', () => {
     let service: CanvasReplayService;
     let mockCommunicationService: jasmine.SpyObj<CommunicationService>;
     // let mockCoords: Coords[];
@@ -226,7 +226,7 @@ fdescribe('CanvasReplayService', () => {
         expect(service.contexts[0].clearRect).toHaveBeenCalledTimes(4);
         sessionStorage.removeItem('gameTitle');
     }));
-    fit('should flashOneDifference2', fakeAsync(() => {
+    it('should flashOneDifference2', fakeAsync(() => {
         const randomIndex = 2;
         const differences = [6, 7];
         const gamedata: GameDiffData = {
