@@ -15,7 +15,7 @@ export class GameManager {
         return 0;
     }
 
-    async loadGame(roomId: string, gameTitles: string[]): Promise<string[]> {
+    async loadGame(roomId: string, gameTitles: string[]): Promise<{ images: string[]; title: string }> {
         const infoPath = 'assets/data/gamesData.json';
         const allGames = await fs.readFile(infoPath, 'utf-8').then((data) => JSON.parse(data));
         const games: RoomGameData[] = [];
@@ -55,14 +55,14 @@ export class GameManager {
         }
         return { isDifference: false, differenceNumber: 0, coords: [] };
     }
-    switchGame(roomId: string): { length: number; newImages: string[] } {
+    switchGame(roomId: string): { length: number; images: string[]; title: string } {
         const remainingGames: number = this.switchData(roomId);
         if (remainingGames > 0) {
-            const newImages: string[] = this.switchImages(roomId);
-            const switchGameInfo = { length: remainingGames, newImages };
+            const newImages: { images: string[]; title: string } = this.switchImages(roomId);
+            const switchGameInfo = { length: remainingGames, images: newImages.images, title: newImages.title };
             return switchGameInfo;
         } else {
-            return { length: remainingGames, newImages: [] };
+            return { length: remainingGames, images: [], title: '' };
         }
     }
 
@@ -75,9 +75,9 @@ export class GameManager {
         return currentGames.length;
     }
 
-    switchImages(roomId: string): string[] {
+    switchImages(roomId: string): { images: string[]; title: string } {
         const currentGame = this.roomIdToGameDifferences.get(roomId)[0];
-        return currentGame.images;
+        return { images: currentGame.images, title: currentGame.name };
     }
 
     deleteRoomGameInfo(roomId: string) {

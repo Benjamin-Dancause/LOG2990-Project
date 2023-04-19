@@ -169,13 +169,13 @@ export class GameService {
         }
         this.flashAllDifferences(ctxs);
         this.replayService.addAction(this.time, 'cheat-mode-on', this.differenceFound.slice());
-        console.log('bug ' + this.differenceFound);
         this.cheatTimeout = setInterval(() => {
             this.flashAllDifferences(ctxs);
         }, DELAY.SMALLTIMEOUT);
     }
 
     flashAllDifferences(ctxs: CanvasRenderingContext2D[]): void {
+        this.gameName = sessionStorage.getItem('gameTitle') as string;
         this.communicationService.getAllDiffs(this.gameName).subscribe((gameData: GameDiffData) => {
             this.blinkAllDifferences(ctxs, gameData);
         });
