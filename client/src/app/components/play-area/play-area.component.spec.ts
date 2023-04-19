@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { Socket } from 'socket.io-client';
 import { PlayAreaComponent } from './play-area.component';
 
-fdescribe('PlayAreaComponent', () => {
+describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
     let mockCommunicationService: jasmine.SpyObj<CommunicationService>;
