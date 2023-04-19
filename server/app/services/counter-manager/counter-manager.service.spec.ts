@@ -62,4 +62,17 @@ describe('CounterManagerService', () => {
             expect(counter).toBe(0);
         });
     });
+
+    describe('isInitializedCounter', () => {
+        it('should return false if the counter has not been initialized for the given roomId', () => {
+            const roomId = 'testRoomId';
+            expect(service.isInitializedCounter(roomId)).toBe(false);
+        });
+
+        it('should return true if the counter has been initialized for the given roomId', () => {
+            const roomId = 'testRoomId';
+            service.startCounter(roomId);
+            expect(service.isInitializedCounter(roomId)).toBe(true);
+        });
+    });
 });

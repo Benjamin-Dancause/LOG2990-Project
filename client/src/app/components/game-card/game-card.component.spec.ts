@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { Socket } from 'socket.io-client';
 // eslint-disable-next-line no-restricted-imports
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { HistoryDialogComponent } from '../history-dialog/history-dialog.component';
 import { GameCardComponent } from './game-card.component';
 
 describe('GameCardComponent', () => {
@@ -23,7 +24,12 @@ describe('GameCardComponent', () => {
 
     beforeEach(async () => {
         dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-        mockCommunicationService = jasmine.createSpyObj('CommunicationService', ['getGameAvailability', 'deleteGame', 'resetBestTimes', 'getGameHistory']);
+        mockCommunicationService = jasmine.createSpyObj('CommunicationService', [
+            'getGameAvailability',
+            'deleteGame',
+            'resetBestTimes',
+            'getGameHistory',
+        ]);
         mockGameCardService = jasmine.createSpyObj('GameCardService', ['getPlayers', 'addPlayer']);
         mockGameCardService.addPlayer.and.returnValue(of(null));
         mockGameCardService.getPlayers.and.returnValue(of(['null']));
@@ -263,26 +269,10 @@ describe('GameCardComponent', () => {
     it('timesSolo getter should return the correct value', () => {
         const bestTimes = {
             name: 'game1',
-            usersSolo: [
-                'user1',
-                'user2',
-                'user3',
-            ],
-            usersMulti: [
-                'user1',
-                'user2',
-                'user3',
-            ],
-            timesSolo: [
-                100,
-                200,
-                300,
-            ],
-            timesMulti: [
-                100,
-                200,
-                300,
-            ],
+            usersSolo: ['user1', 'user2', 'user3'],
+            usersMulti: ['user1', 'user2', 'user3'],
+            timesSolo: [100, 200, 300],
+            timesMulti: [100, 200, 300],
         };
         component.bestTimes = bestTimes;
         expect(component.timesSolo).toEqual(bestTimes.timesSolo);
@@ -291,20 +281,47 @@ describe('GameCardComponent', () => {
     it('should reset the best times when confirmed', fakeAsync(() => {
         const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         dialogRefSpy.afterClosed.and.returnValue(of('yes'));
-    
+
         dialogSpy.open.and.returnValue(dialogRefSpy);
-    
+
         component.resetBestTimes('gameTitle');
         tick();
-    
+
         expect(dialogSpy.open).toHaveBeenCalledWith(ConfirmationDialogComponent, {
-          data: {
-            title: 'Confirmation',
-            message: 'Êtes-vous sûr de vouloir réinitialiser les meilleurs temps ?',
-          },
+            data: {
+                title: 'Confirmation',
+                message: 'Êtes-vous sûr de vouloir réinitialiser les meilleurs temps ?',
+            },
         });
-    
+
         expect(mockCommunicationService.resetBestTimes).toHaveBeenCalledWith('gameTitle');
         expect(component.reloadPage).toHaveBeenCalled();
-      }));
+    }));
+
+    it('should open history dialog and reset game history when dialog returns "reset"', fakeAsync(() => {
+        const gameHistory: any[] = [];
+        mockCommunicationService.getGameHistory.and.returnValue(of(gameHistory));
+        const dialogMock = {
+            afterClosed: () => of('reset'),
+        };
+        dialogSpy.open.and.returnValue(dialogMock as any);
+
+        component.gameTitle = 'gameTitle';
+        component.gameHistory();
+        tick();
+
+        expect(mockCommunicationService.getGameHistory).toHaveBeenCalledWith('gameTitle');
+
+        expect(dialogSpy.open).toHaveBeenCalledWith(HistoryDialogComponent, {
+            data: {
+                title: 'gameTitle - Historique des parties',
+                history: gameHistory,
+                global: false,
+            },
+        });
+
+        tick();
+
+        expect(mockCommunicationService.deleteGameHistory).toHaveBeenCalled();
+    }));
 });

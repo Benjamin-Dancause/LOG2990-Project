@@ -13,7 +13,15 @@ export class SidebarComponent implements OnInit {
     @Input() single: string;
     @Input() solo: boolean;
 
+    multiplayer: boolean = false;
+    gameMode: string = '';
+
     ngOnInit() {
         this.difficulty = sessionStorage.getItem('difficulty') as string;
+        this.gameMode = sessionStorage.getItem('gameMode') as string;
+        const joiner = sessionStorage.getItem('joiningPlayer') as string;
+        if (this.gameMode !== 'solo' && joiner) {
+            this.multiplayer = true;
+        }
     }
 }

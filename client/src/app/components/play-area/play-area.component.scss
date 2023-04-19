@@ -63,3 +63,41 @@
     color: red;
     border: 1px solid rgb(126, 222, 235);
 }
+
+button {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 0.5rem 2rem;
+    border-radius: 0.5rem;
+    background-color: black;
+    color: #fff;
+    margin-right: 1rem;
+    margin-left: 60px;
+    margin-top: 15px;
+    height: 8%;
+  }
+
+  button:hover:not([disabled]) {
+    background-color: #ff9900ff;
+    cursor: pointer;
+  }
+  
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /*
+  span {
+    font-size: 1.2rem;
+    color: #fff;
+  }
+  */
+
+.loupe {
+    width: 2rem;
+    height: 2rem;
+    margin-left: 0.8rem;
+    position: relative;
+    top: 10px;
+}

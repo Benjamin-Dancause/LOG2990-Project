@@ -1,14 +1,18 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { ClassicModeGateway } from '@app/gateways/classic-mode/classic-mode.gateway';
-import { DELAY } from '@common/constants';
+import { GameConfigService } from '@app/services/game-config/game-config.service';
+import { GameConstants } from '@common/game-interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TimerManagerService } from './timer-manager.service';
 
 describe('TimerManagerService', () => {
-    let service: TimerManagerService;
+    let timerManagerService: TimerManagerService;
     let classicModeGateway: ClassicModeGateway;
+    let gameConfigService: GameConfigService;
 
     beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
+        const moduleRef: TestingModule = await Test.createTestingModule({
             providers: [
                 TimerManagerService,
                 {
@@ -17,142 +21,230 @@ describe('TimerManagerService', () => {
                         emitTimeToRoom: jest.fn(),
                     },
                 },
+                {
+                    provide: GameConfigService,
+                    useValue: {
+                        getCountdownTime: jest.fn().mockReturnValue(30),
+                        getTimeGained: jest.fn().mockReturnValue(5),
+                        getPenaltyTime: jest.fn().mockReturnValue(5),
+                    },
+                },
             ],
         }).compile();
 
-        service = module.get<TimerManagerService>(TimerManagerService);
-        classicModeGateway = module.get<ClassicModeGateway>(ClassicModeGateway);
+        timerManagerService = moduleRef.get<TimerManagerService>(TimerManagerService);
+        classicModeGateway = moduleRef.get<ClassicModeGateway>(ClassicModeGateway);
+        gameConfigService = moduleRef.get<GameConfigService>(GameConfigService);
     });
 
     afterEach(() => {
         jest.clearAllMocks();
     });
 
-    it('start timer should start a timer with the correct delay', () => {
-        const roomId = 'test-room';
-        const gameMode = 'tl';
+    describe('startTimer', () => {
+        it('should start the timer for the given room', () => {
+            const roomId = '123';
+            const gameMode = 'tl';
+            const penaltyTime = -gameConfigService.getPenaltyTime();
+            const constants: GameConstants = {
+                startTime: gameConfigService.getCountdownTime(),
+                increment: gameConfigService.getTimeGained(),
+                penalty: penaltyTime,
+            };
 
-        jest.useFakeTimers();
+            timerManagerService.startTimer(roomId, gameMode);
 
-        service.startTimer(roomId, gameMode);
+            expect(timerManagerService.timers.has(roomId)).toBeTruthy();
+            expect(timerManagerService.intervals.has(roomId)).toBeTruthy();
+            expect(timerManagerService.constants.has(roomId)).toBeTruthy();
+            expect(timerManagerService.constants.get(roomId)).toEqual(constants);
+        });
 
-        jest.advanceTimersByTime(DELAY.SMALLTIMEOUT * 2);
+        it('should not start the timer if it has already been started for the given room', () => {
+            const roomId = '123';
+            const gameMode = 'tl';
 
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(2);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, expect.any(Number));
+            timerManagerService.startTimer(roomId, gameMode);
+            const previousTimer = timerManagerService.timers.get(roomId);
+            const previousInterval = timerManagerService.intervals.get(roomId);
+            const previousConstants = timerManagerService.constants.get(roomId);
+
+            timerManagerService.startTimer(roomId, gameMode);
+
+            expect(timerManagerService.timers.get(roomId)).toEqual(previousTimer);
+            expect(timerManagerService.intervals.get(roomId)).toEqual(previousInterval);
+            expect(timerManagerService.constants.get(roomId)).toEqual(previousConstants);
+        });
     });
 
-    it('should decrement the timer if game mode is tl', () => {
-        const roomId = 'test-room';
-        const gameMode = 'tl';
-        const initialTime = 60;
+    describe('updateTimer', () => {
+        it('should decrement the timer if gameMode is tl', () => {
+            const roomId = '123';
+            const gameMode = 'tl';
+            timerManagerService.timers.set(roomId, 30);
 
-        service.startTimer(roomId, gameMode);
-        service.updateTimer(roomId, gameMode);
+            timerManagerService.updateTimer(roomId, gameMode);
 
-        expect(service.getTimeFromRoom(roomId, gameMode)).toEqual(initialTime - 1);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, initialTime - 1);
+            expect(timerManagerService.timers.get(roomId)).toEqual(29);
+            expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 29);
+        });
+
+        it('should increment the timer if gameMode is not tl', () => {
+            const roomId = '123';
+            const gameMode = 'gm';
+            timerManagerService.timers.set(roomId, 30);
+
+            timerManagerService.updateTimer(roomId, gameMode);
+
+            expect(timerManagerService.timers.get(roomId)).toEqual(31);
+            expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 31);
+        });
     });
 
-    it('should not decrement the timer if game mode is not tl', () => {
-        const roomId = 'test-room';
-        const gameMode = '';
-        const initialTime = 60;
+    describe('addToTimer', () => {
+        it('should add the time increment to the timer', () => {
+            const roomId = 'room1';
+            const startTime = 60;
+            const increment = 10;
+            const penalty = 5;
+            const constants = { startTime, increment, penalty };
+            timerManagerService.constants.set(roomId, constants);
+            timerManagerService.timers.set(roomId, startTime);
 
-        service.startTimer(roomId, gameMode);
-        service.updateTimer(roomId, gameMode);
+            timerManagerService.addToTimer(roomId);
 
-        expect(service.getTimeFromRoom(roomId, gameMode)).not.toEqual(initialTime - 1);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
-        expect(classicModeGateway.emitTimeToRoom).not.toHaveBeenCalledWith(roomId, initialTime - 1);
+            expect(timerManagerService.timers.get(roomId)).toEqual(startTime + increment);
+        });
+
+        it('should cap the timer at 120 seconds', () => {
+            const roomId = 'room1';
+            const startTime = 110;
+            const increment = 15;
+            const penalty = 5;
+            const constants = { startTime, increment, penalty };
+            timerManagerService.constants.set(roomId, constants);
+            timerManagerService.timers.set(roomId, startTime);
+
+            timerManagerService.addToTimer(roomId);
+
+            expect(timerManagerService.timers.get(roomId)).toEqual(120);
+        });
+
+        it('should emit the updated timer value to the room', () => {
+            const roomId = 'room1';
+            const startTime = 60;
+            const increment = 10;
+            const penalty = 5;
+            const constants = { startTime, increment, penalty };
+            timerManagerService.constants.set(roomId, constants);
+            timerManagerService.timers.set(roomId, startTime);
+
+            timerManagerService.addToTimer(roomId);
+
+            expect(timerManagerService.classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, startTime + increment);
+        });
     });
 
-    it('addToTimer should add increment to the timer and emit the new timer value if it is less than 120', () => {
-        const roomId = 'test-room';
-        const increment = 10;
+    describe('removeToTimer', () => {
+        it('should remove the penalty time from the timer', () => {
+            const roomId = 'room1';
+            const startTime = 60;
+            const increment = 10;
+            const penalty = -5;
+            const constants = { startTime, increment, penalty };
+            timerManagerService.constants.set(roomId, constants);
+            timerManagerService.timers.set(roomId, startTime);
 
-        service.timers.set(roomId, 50);
-        service.addToTimer(roomId, increment);
+            timerManagerService.removeToTimer(roomId);
 
-        expect(service.timers.get(roomId)).toEqual(60);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 60);
+            expect(timerManagerService.timers.get(roomId)).toEqual(startTime + penalty);
+        });
+
+        it('should set the timer to 0 if the penalty time would make it negative', () => {
+            const roomId = 'room1';
+            const startTime = 2;
+            const increment = 10;
+            const penalty = -15;
+            const constants = { startTime, increment, penalty };
+            timerManagerService.constants.set(roomId, constants);
+            timerManagerService.timers.set(roomId, startTime);
+
+            timerManagerService.removeToTimer(roomId);
+
+            expect(timerManagerService.timers.get(roomId)).toEqual(0);
+        });
     });
 
-    it('addToTimer should set the timer to 120 and emit the new timer value if it exceeds 120', () => {
-        const roomId = 'test-room';
-        const increment = 100;
+    describe('getTimeFromRoom', () => {
+        it('should return the time for classic mode', () => {
+            timerManagerService.timers.set('room1', 30);
+            const time = timerManagerService.getTimeFromRoom('room1', 'cl');
+            expect(time).toEqual(30);
+        });
 
-        service.timers.set(roomId, 50);
-        service.addToTimer(roomId, increment);
+        it('should return the default time for classic mode if no time is set', () => {
+            const time = timerManagerService.getTimeFromRoom('room1', 'cl');
+            expect(time).toEqual(0);
+        });
 
-        expect(service.timers.get(roomId)).toEqual(120);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 120);
+        it('should return the time for time-limited mode', () => {
+            timerManagerService.timers.set('room1', 30);
+            const time = timerManagerService.getTimeFromRoom('room1', 'tl');
+            expect(time).toEqual(30);
+        });
     });
 
-    it('removeToTimer should subtract decrement from the timer and emit the new timer value if it is greater than 0', () => {
-        const roomId = 'test-room';
-        const decrement = 10;
-
-        service.timers.set(roomId, 50);
-        service.removeToTimer(roomId, decrement);
-
-        expect(service.timers.get(roomId)).toEqual(40);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 40);
+    describe('deleteTimerData', () => {
+        it('should delete timer data for the given room', () => {
+            timerManagerService.timers.set('room1', 30);
+            timerManagerService.intervals.set(
+                'room1',
+                setInterval(() => {}, 1000),
+            );
+            timerManagerService.constants.set('room1', {
+                startTime: 60,
+                increment: 10,
+                penalty: -5,
+            });
+            timerManagerService.deleteTimerData('room1');
+            expect(timerManagerService.timers.has('room1')).toBeFalsy();
+            expect(timerManagerService.intervals.has('room1')).toBeFalsy();
+            expect(timerManagerService.constants.has('room1')).toBeFalsy();
+        });
     });
 
-    it('removeToTimer should set the timer to 0 and emit the new timer value if it becomes negative', () => {
-        const roomId = 'test-room';
-        const decrement = 100;
+    describe('resetTimer', () => {
+        it('should set the timer for a given room to undefined and delete the associated data', () => {
+            const roomId = 'room1';
 
-        service.timers.set(roomId, 50);
-        service.removeToTimer(roomId, decrement);
+            timerManagerService.timers.set(roomId, 100);
+            timerManagerService.constants.set(roomId, { startTime: 30, increment: 5, penalty: -10 });
+            jest.spyOn(timerManagerService, 'deleteTimerData');
 
-        expect(service.timers.get(roomId)).toEqual(0);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledTimes(1);
-        expect(classicModeGateway.emitTimeToRoom).toHaveBeenCalledWith(roomId, 0);
+            timerManagerService.resetTimer(roomId);
+
+            expect(timerManagerService.timers.get(roomId)).toEqual(undefined);
+            expect(timerManagerService.deleteTimerData).toHaveBeenCalledWith(roomId);
+        });
     });
 
-    it('deleteTimerData should clear the timer interval and delete the timer data', () => {
-        const roomId = 'test-room';
-        const intervalId = setInterval(() => {}, 1000);
+    describe('isInitializedTimer', () => {
+        it('should return true if a timer exists for a given room', () => {
+            const roomId = 'room1';
 
-        service.intervals.set(roomId, intervalId);
-        service.timers.set(roomId, 60);
+            timerManagerService.timers.set(roomId, 100);
 
-        service.deleteTimerData(roomId);
+            const result = timerManagerService.isInitializedTimer(roomId);
 
-        expect(service.intervals.has(roomId)).toBe(false);
-        expect(service.timers.has(roomId)).toBe(false);
-    });
+            expect(result).toBe(true);
+        });
 
-    it('resetTimer should set the timer to 0 and delete the timer data', () => {
-        const roomId = 'test-room';
-        const initialTime = 60;
+        it('should return false if no timer exists for a given room', () => {
+            const roomId = 'room1';
 
-        service.timers.set(roomId, initialTime);
-        service.intervals.set(
-            roomId,
-            setInterval(() => {}, 1000),
-        );
+            const result = timerManagerService.isInitializedTimer(roomId);
 
-        service.resetTimer(roomId);
-        expect(service.intervals.has(roomId)).toBe(false);
-    });
-
-    it('isInitializedTimer should return true if the timer data is initialized', () => {
-        const roomId = 'test-room';
-
-        service.timers.set(roomId, 60);
-
-        expect(service.isInitializedTimer(roomId)).toBe(true);
-    });
-
-    it('isInitializedTimer should return false if the timer data is not initialized', () => {
-        const roomId = 'test-room';
-        expect(service.isInitializedTimer(roomId)).toBe(false);
+            expect(result).toBe(false);
+        });
     });
 });

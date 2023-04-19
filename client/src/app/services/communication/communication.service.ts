@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameDiffData, GameSelectionPageData, GameplayData, bestTimes, gameHistoryInfo, playerTime } from '@common/game-interfaces';
+import { bestTimes, GameDiffData, gameHistoryInfo, GameplayData, GameSelectionPageData, playerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -73,8 +73,8 @@ export class CommunicationService {
         return this.http.get<bestTimes[]>(`${this.baseUrl}/best-times/all`, { responseType: 'json' });
     }
 
-    getBestTimesForGame(gameTitle: string, gameMode: string): Observable<bestTimes[]> {
-        return this.http.get<bestTimes[]>(`${this.baseUrl}/best-times/${gameTitle}/${gameMode}`, { responseType: 'json' });
+    getBestTimesForGame(gameTitle: string, gameMode: string): Observable<number[]> {
+        return this.http.get<number[]>(`${this.baseUrl}/best-times/${gameTitle}/${gameMode}`, { responseType: 'json' });
     }
 
     updateBestTimes(name: string, time: playerTime) {

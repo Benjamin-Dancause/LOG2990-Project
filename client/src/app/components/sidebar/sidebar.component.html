@@ -4,6 +4,7 @@
     <p><strong>Mode {{ mode }}</strong></p>
     <p><strong>Différences Totales : {{ total }}</strong></p>
     <p><strong>Pénalité par erreur : {{ penalty }}s</strong></p>
+    <p *ngIf="!this.multiplayer"><strong>Pénalité par indice : {{ penalty }}s</strong></p>
     <div class="horizontal-bar"></div>
     <div id="message-board">
         <div id="chat-entry-bar"></div>

@@ -76,6 +76,7 @@ export class CounterService {
         this.socketService.socket.off('new-record-time');
         this.socketService.socket.on('new-record-time', (newTime) => {
             this.allTimesForGameSubscription = this.communicationService.getBestTimesForGame(gameTitle, this.gameMode).subscribe((bestTimes) => {
+                console.log(bestTimes);
                 if (newTime < bestTimes[0]) {
                     this.recordMessage.emit('1ère');
                 } else if (newTime < bestTimes[1]) {

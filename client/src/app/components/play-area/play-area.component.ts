@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { CanvasReplayService } from '@app/services/canvas-replay/canvas-replay.service';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CounterService } from '@app/services/counter/counter.service';
@@ -24,6 +24,9 @@ export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvasLeftTop', { static: false }) canvasLeftTop!: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvasRightTop', { static: false }) canvasRightTop!: ElementRef<HTMLCanvasElement>;
 
+    @Input() solo: boolean;
+    @Input() single: boolean;
+
     errorSound = new Audio('../../assets/erreur.mp3');
     successSound = new Audio('../../assets/success.mp3');
     isHintModeEnabled = false;
@@ -36,9 +39,12 @@ export class PlayAreaComponent implements AfterViewInit {
     ctxLeftTop: CanvasRenderingContext2D | null = null;
     ctxRightTop: CanvasRenderingContext2D | null = null;
     gameName: string = '';
-    public replay: boolean = false;
+    replay: boolean = false;
     player1: boolean = true;
     opponent: boolean = false;
+
+    multiplayer: boolean = false;
+    gameMode: string = '';
 
     private readonly serverURL: string = environment.serverUrl;
     private canvasSize = { x: CANVAS.WIDTH, y: CANVAS.HEIGHT };
@@ -57,6 +63,11 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gameName = sessionStorage.getItem('gameTitle') as string;
         this.replay = false;
         this.game.setGameName();
+        this.gameMode = sessionStorage.getItem('gameMode') as string;
+        const joiner = sessionStorage.getItem('joiningPlayer') as string;
+        if (this.gameMode !== 'solo' && joiner) {
+            this.multiplayer = true;
+        }
     }
 
     get width(): number {
@@ -113,6 +124,7 @@ export class PlayAreaComponent implements AfterViewInit {
             }
         }
     }
+    nbrIndices = 3;
 
     async initCanvases() {
         this.game.clearContexts();
