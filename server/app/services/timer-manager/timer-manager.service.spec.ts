@@ -2,14 +2,17 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ClassicModeGateway } from '@app/gateways/classic-mode/classic-mode.gateway';
 import { GameConfigService } from '@app/services/game-config/game-config.service';
+import { DELAY } from '@common/constants';
 import { GameConstants } from '@common/game-interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
+import { SinonFakeTimers, useFakeTimers } from 'sinon';
 import { TimerManagerService } from './timer-manager.service';
 
 describe('TimerManagerService', () => {
     let timerManagerService: TimerManagerService;
     let classicModeGateway: ClassicModeGateway;
     let gameConfigService: GameConfigService;
+    let clock: SinonFakeTimers;
 
     beforeEach(async () => {
         const moduleRef: TestingModule = await Test.createTestingModule({
@@ -58,6 +61,21 @@ describe('TimerManagerService', () => {
             expect(timerManagerService.intervals.has(roomId)).toBeTruthy();
             expect(timerManagerService.constants.has(roomId)).toBeTruthy();
             expect(timerManagerService.constants.get(roomId)).toEqual(constants);
+        });
+
+        it('should call updateTimer every time the interval is met', () => {
+            clock = useFakeTimers();
+            const updateTimerSpy = jest.spyOn(timerManagerService, 'updateTimer');
+            timerManagerService.startTimer('testRoom', 'solo');
+    
+            expect(updateTimerSpy).not.toHaveBeenCalled();
+    
+            clock.tick(DELAY.SMALLTIMEOUT);
+            expect(updateTimerSpy).toHaveBeenCalledTimes(1);
+    
+            clock.tick(DELAY.SMALLTIMEOUT);
+            expect(updateTimerSpy).toHaveBeenCalledTimes(2);
+            clock.restore();
         });
 
         it('should not start the timer if it has already been started for the given room', () => {

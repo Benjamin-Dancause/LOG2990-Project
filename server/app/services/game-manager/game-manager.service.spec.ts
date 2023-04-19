@@ -73,29 +73,30 @@ describe('GameManager', () => {
         );
 
         const newImages = await gameManager.loadGame(roomId, gameTitles);
-        expect(newImages).toEqual(expectedImages);
+        expect(newImages.images).toEqual(expectedImages);
     });
 
     describe('switchGame', () => {
         const roomId = 'room1';
+        const gameName = 'testGame';
         const expectedImages = ['image1.jpg', 'image2.jpg'];
 
         beforeEach(() => {
             jest.spyOn(gameManager, 'switchData').mockReturnValue(1);
-            jest.spyOn(gameManager, 'switchImages').mockReturnValue(expectedImages);
+            jest.spyOn(gameManager, 'switchImages').mockReturnValue({images: expectedImages, title: gameName});
         });
 
         it('should return the remaining number of games and the new images if there are more games to switch', () => {
             const result = gameManager.switchGame(roomId);
             expect(result.length).toBe(1);
-            expect(result.newImages).toEqual(expectedImages);
+            expect(result.images).toEqual(expectedImages);
         });
 
         it('should return the remaining number of games and an empty array of images if there are no more games to switch', () => {
             jest.spyOn(gameManager, 'switchData').mockReturnValue(0);
             const result = gameManager.switchGame(roomId);
             expect(result.length).toBe(0);
-            expect(result.newImages).toEqual([]);
+            expect(result.images).toEqual([]);
         });
     });
 
@@ -286,6 +287,6 @@ describe('GameManager', () => {
         ]); // set the game differences for the room
 
         await gameManager.loadGame(roomId, gameTitles);
-        expect(gameManager.switchImages(roomId)).toEqual(expectedImages);
+        expect(gameManager.switchImages(roomId).images).toEqual(expectedImages);
     });
 });
