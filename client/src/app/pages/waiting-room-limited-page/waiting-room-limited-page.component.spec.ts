@@ -82,7 +82,4 @@ describe('WaitingRoomLimitedPageComponent', () => {
         expect(mockSocketService.closeLobby).toHaveBeenCalledWith('testGame');
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/home']);
     });
-    /*
-
-    */
 });
