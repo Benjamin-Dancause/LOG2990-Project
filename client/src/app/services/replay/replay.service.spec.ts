@@ -1,4 +1,5 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ClickResponse } from '@app/classes/click-response';
 import { CanvasReplayService } from '../canvas-replay/canvas-replay.service';
 
 import { ReplayService } from './replay.service';
@@ -17,6 +18,7 @@ describe('ReplayService', () => {
             'flashOneDifference1',
             'flashOneDifference2',
             'flashAllDifferences',
+            'updateReplaySpeed',
         ]);
         TestBed.configureTestingModule({
             providers: [ReplayService, { provide: CanvasReplayService, useValue: canvasReplaySpy }],
@@ -100,7 +102,6 @@ describe('ReplayService', () => {
     it('should update the replay speed, update the replay canvas speed, and start the replay timer', () => {
         const index = 1;
         const speed = service.speedSettings[index];
-        spyOn(service.canvasReplay, 'updateReplaySpeed');
         spyOn(service, 'startReplayTimer');
         service.changeSpeed(index);
         expect(service.replaySpeed).toEqual(speed);
@@ -110,13 +111,50 @@ describe('ReplayService', () => {
 
     it('should pause the replay timer, set the replay interval, and call checkForAction() on each interval', () => {
         spyOn(service, 'pauseReplayTimer');
-        spyOn(window, 'setInterval').and.callThrough();
+        spyOn(window, 'setInterval').and.callFake;
         spyOn(service, 'checkForAction');
         service.startReplayTimer();
         expect(service.pauseReplayTimer).toHaveBeenCalled();
         expect(window.setInterval).toHaveBeenCalled();
         // expect(service.checkForAction).toHaveBeenCalled();
     });
+
+    it('should call checkForAction after 100 ms if gameActions length > replayIndex', fakeAsync(() => {
+        service.replaySpeed = 1;
+        service.gameActions = [
+            { time: 0, action: 'test' },
+            { time: 0, action: 'test' },
+            { time: 0, action: 'test' },
+            { time: 0, action: 'test' },
+        ];
+        service.replayIndex = 0;
+        spyOn(service, 'pauseReplayTimer');
+        spyOn(window, 'setInterval').and.callFake;
+        spyOn(service, 'checkForAction');
+        service.playAction();
+        tick(100);
+        expect(service.checkForAction).toHaveBeenCalled();
+    }));
+
+    it('should increment replayTimer and call checkForAction on startReplayTimer', fakeAsync(() => {
+        service.replaySpeed = 1;
+        service.gameActions = [
+            { time: 0, action: 'test' },
+            { time: 0, action: 'test' },
+            { time: 0, action: 'test' },
+            { time: 0, action: 'test' },
+        ];
+        service.replayIndex = 0;
+        service.replayTimer = 0;
+        spyOn(service, 'pauseReplayTimer');
+        spyOn(window, 'setInterval').and.callThrough();
+        spyOn(service, 'checkForAction');
+        service.startReplayTimer();
+        tick(1000);
+        expect(service.replayTimer).toEqual(1);
+        clearInterval(service.replayInterval);
+        expect(service.checkForAction).toHaveBeenCalled();
+    }));
 
     it('should clear the replay interval', () => {
         spyOn(window, 'clearInterval');
@@ -128,9 +166,31 @@ describe('ReplayService', () => {
 
     it('should reset the replay timer, replay index, action time, and pause the replay timer', () => {
         spyOn(service, 'pauseReplayTimer');
+        service.gameActions = [
+            { time: 0, action: 'test' },
+            { time: 0, action: 'test' },
+            { time: 0, action: 'test' },
+            { time: 0, action: 'test' },
+        ];
+        service.replaySpeed = 2;
         service.actionTime = 123;
         service.replayIndex = 456;
         service.replayTimer = 789;
+        service.resetReplayData();
+        expect(service.gameActions).toEqual([]);
+        expect(service.replaySpeed).toEqual(1);
+        expect(service.actionTime).toEqual(0);
+        expect(service.replayIndex).toEqual(0);
+        expect(service.replayTimer).toEqual(0);
+        expect(service.pauseReplayTimer).toHaveBeenCalled();
+    });
+
+    it('should reset all replayData and pause timer on resetReplayData', () => {
+        spyOn(service, 'pauseReplayTimer').and.callFake;
+        service.actionTime = 123;
+        service.replayIndex = 456;
+        service.replayTimer = 789;
+        service.differencesFound = [1, 2, 3];
         service.resetReplayTimer();
         expect(service.actionTime).toEqual(0);
         expect(service.replayIndex).toEqual(0);
@@ -216,17 +276,33 @@ describe('ReplayService', () => {
 
     describe('when difference-found action is received', () => {
         beforeEach(() => {
-            const gameAction = {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            const response: ClickResponse = {
+                isDifference: true,
+                differenceNumber: 2,
+                coords: [{ x: 20, y: 20 }],
+            };
+
+            const gameAction1 = {
                 time: 0,
                 action: 'difference-found',
-                payload: { mousePosition: { x: 10, y: 10 }, context: 'context', coords: { x: 20, y: 20 } },
+                payload: { mousePosition: { x: 10, y: 10 }, context: context },
             };
-            service.addAction(gameAction.time, gameAction.action, gameAction.payload);
+
+            const gameAction2 = {
+                time: 0,
+                action: 'update-difference',
+                payload: response,
+            };
+
+            service.gameActions = [gameAction1, gameAction2];
             service.playAction();
         });
 
-        it('should call goToNextAction', () => {
-            expect(service.replayIndex).toEqual(1);
+        it('should call goToNextAction twice', () => {
+            expect(service.replayIndex).toEqual(2);
         });
     });
 
@@ -272,15 +348,18 @@ describe('ReplayService', () => {
         service.playAction();
         expect(canvasReplaySpy.flashOneDifference2).toHaveBeenCalled();
     });
-    it('should call flashAllDifferences when action is cheat-mode-on', () => {
+    it('should call flashAllDifferences when action is cheat-mode-on', fakeAsync(() => {
+        service.replaySpeed = 1;
         spyOn(service, 'getAction').and.returnValue({
             action: 'cheat-mode-on',
             payload: {},
             time: 0,
         });
         service.playAction();
+        tick(1000);
+        clearInterval(service.cheatInterval);
         expect(canvasReplaySpy.flashAllDifferences).toHaveBeenCalled();
-    });
+    }));
 
     it('should call not call flashOneDifference2 when action is hint-three', () => {
         spyOn(service, 'getAction').and.returnValue({
