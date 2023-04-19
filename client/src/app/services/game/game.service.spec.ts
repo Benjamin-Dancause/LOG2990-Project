@@ -15,7 +15,7 @@ import { SocketService } from '../socket/socket.service';
 import { TimerService } from '../timer/timer.service';
 import { GameService } from './game.service';
 
-fdescribe('GameService', () => {
+describe('GameService', () => {
     let gameService: GameService;
     let mockSocketService: jasmine.SpyObj<SocketService>;
     let mockCounterService: jasmine.SpyObj<CounterService>;
@@ -371,6 +371,8 @@ fdescribe('GameService', () => {
         tick(1000)
         expect(mockcanvas.style.cursor).toEqual('auto');
     }));
+
+
 
 });
 
