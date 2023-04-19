@@ -20,7 +20,7 @@ interface PlayerSockets {
 
 @WebSocketGateway()
 export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconnect {
-    @WebSocketServer() public server: Server;
+    @WebSocketServer() server: Server;
     socketIdToRoomId: Record<string, string> = {};
     roomIdToPlayerSockets = new Map<string, PlayerSockets>();
     connectionCounter: number = 0;
@@ -198,7 +198,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     @SubscribeMessage('send-new-record')
     onNewRecordSet(client: Socket, recordInfo: { name: string; position: string; title: string; mode: string }) {
         const rooms = this.gameManager.getAllRooms();
-        for (let room of rooms) {
+        for (const room of rooms) {
             this.server.to(room).emit('new-record', recordInfo);
         }
     }
@@ -298,30 +298,6 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         }
     }
 
-    // eslint-disable-next-line no-unused-vars
-    handleConnection(client: Socket) {
-        this.connectionCounter++;
-        if (this.connectionCounter > 1) {
-            this.server.sockets.emit('connection-count', 'There is now more than 1 person online');
-        }
-    }
-
-    handleDisconnect(@ConnectedSocket() client: Socket) {
-        this.connectionCounter--;
-        const roomId = this.socketIdToRoomId[client.id];
-        if (roomId) {
-            client.leave(roomId);
-            //this.timerManager.deleteTimerData(roomId);
-            //this.counterManager.deleteCounterData(roomId);
-            this.waitingRoomManager.deleteLobbyInfo(roomId);
-            this.roomIdToPlayerSockets.delete(roomId);
-        }
-    }
-
-    emitTimeToRoom(roomId: string, time: number) {
-        this.server.to(roomId).emit('timer', time);
-    }
-
     @SubscribeMessage('initialize-game')
     async onInitializeGame(client: Socket, gameTitles: string[]) {
         const roomId = [...client.rooms][1];
@@ -355,5 +331,29 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         const roomId = [...client.rooms][1];
         const clickResponse: ClickResponse = this.gameManager.verifyPosition(roomId, clickCoords);
         this.server.to(client.id).emit('click-response', clickResponse);
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    handleConnection(client: Socket) {
+        this.connectionCounter++;
+        if (this.connectionCounter > 1) {
+            this.server.sockets.emit('connection-count', 'There is now more than 1 person online');
+        }
+    }
+
+    handleDisconnect(@ConnectedSocket() client: Socket) {
+        this.connectionCounter--;
+        const roomId = this.socketIdToRoomId[client.id];
+        if (roomId) {
+            client.leave(roomId);
+            // this.timerManager.deleteTimerData(roomId);
+            // this.counterManager.deleteCounterData(roomId);
+            this.waitingRoomManager.deleteLobbyInfo(roomId);
+            this.roomIdToPlayerSockets.delete(roomId);
+        }
+    }
+
+    emitTimeToRoom(roomId: string, time: number) {
+        this.server.to(roomId).emit('timer', time);
     }
 }

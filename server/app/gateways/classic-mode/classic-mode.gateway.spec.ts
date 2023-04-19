@@ -6,7 +6,7 @@ import { TimerManagerService } from '@app/services/timer-manager/timer-manager.s
 import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SinonStubbedInstance, createStubInstance, stub } from 'sinon';
+import { createStubInstance, SinonStubbedInstance, stub } from 'sinon';
 import { BroadcastOperator, Server, Socket } from 'socket.io';
 import { PRIVATE_ROOM_ID } from '../chat/chat.gateway.constants';
 import { ClassicModeGateway } from './classic-mode.gateway';
@@ -29,7 +29,7 @@ describe('ClassicModeGateway', () => {
     // let lobby: SinonStubbedInstance<Lobby>;
     let server: SinonStubbedInstance<Server>;
     // let waiting: WaitingRoomManagerService;
-    let sinon = require('sinon');
+    const sinon = require('sinon');
 
     beforeEach(async () => {
         logger = createStubInstance(Logger);
@@ -61,8 +61,8 @@ describe('ClassicModeGateway', () => {
                 },
                 { provide: CounterManagerService, useValue: counter },
                 WaitingRoomManagerService,
-                {provide: GameManager, useValue: game},
-                {provide: StoreService, useValue: store},
+                { provide: GameManager, useValue: game },
+                { provide: StoreService, useValue: store },
             ],
         }).compile();
 
@@ -218,7 +218,7 @@ describe('ClassicModeGateway', () => {
         stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID]));
         const action = 'player-left';
         server.to.returns({
-            emit: (command: String) => {
+            emit: (command: string) => {
                 expect(command).toEqual(action);
             },
         } as BroadcastOperator<unknown, unknown>);
@@ -229,13 +229,13 @@ describe('ClassicModeGateway', () => {
         stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID, '1234']));
         const player1 = true;
         const gameMode = '';
-        gateway.onInitOneVsOneComponents(socket, {player1: player1, gameMode: gameMode});
+        gateway.onInitOneVsOneComponents(socket, { player1, gameMode });
         expect(counter.startCounter).toBeCalledWith('1234_player1');
         expect(timer.startTimer).toBeCalledWith('1234', gameMode);
 
         const player2 = false;
 
-        gateway.onInitOneVsOneComponents(socket, {player1: player2, gameMode: gameMode});
+        gateway.onInitOneVsOneComponents(socket, { player1: player2, gameMode });
         expect(counter.startCounter).toBeCalledWith('1234_player2');
     });
     it('should reset the counter for player 1', () => {
@@ -243,7 +243,7 @@ describe('ClassicModeGateway', () => {
         const player1 = true;
         const action = 'counter-update';
         server.to.returns({
-            emit: (command: String, info: { counter: number; player: boolean }) => {
+            emit: (command: string, info: { counter: number; player: boolean }) => {
                 expect(command).toEqual(action);
                 expect(info.counter).toEqual(0);
             },
@@ -255,7 +255,7 @@ describe('ClassicModeGateway', () => {
         const player1 = false;
         const action = 'counter-update';
         server.to.returns({
-            emit: (command: String, info: { counter: number; player: boolean }) => {
+            emit: (command: string, info: { counter: number; player: boolean }) => {
                 expect(command).toEqual(action);
                 expect(info.counter).toEqual(0);
             },
@@ -278,7 +278,7 @@ describe('ClassicModeGateway', () => {
         const player1 = true;
         const action = 'counter-update';
         server.to.returns({
-            emit: (command: String, info: { counter: number; player: boolean }) => {
+            emit: (command: string, info: { counter: number; player: boolean }) => {
                 expect(command).toEqual(action);
                 expect(info.counter).toEqual(1);
             },
@@ -290,7 +290,7 @@ describe('ClassicModeGateway', () => {
         const player1 = false;
         const action = 'counter-update';
         server.to.returns({
-            emit: (command: String, info: { counter: number; player: boolean }) => {
+            emit: (command: string, info: { counter: number; player: boolean }) => {
                 expect(command).toEqual(action);
                 expect(info.counter).toEqual(1);
             },
@@ -304,10 +304,10 @@ describe('ClassicModeGateway', () => {
         const click = {
             isDifference: true,
             differenceNumber: 1,
-            coords: coords,
+            coords,
         };
         server.to.returns({
-            emit: (command: String, clickRes: ClickResponse) => {
+            emit: (command: string, clickRes: ClickResponse) => {
                 expect(command).toEqual(action);
                 expect(clickRes).toEqual(click);
             },

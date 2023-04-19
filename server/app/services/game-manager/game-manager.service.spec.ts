@@ -83,7 +83,7 @@ describe('GameManager', () => {
 
         beforeEach(() => {
             jest.spyOn(gameManager, 'switchData').mockReturnValue(1);
-            jest.spyOn(gameManager, 'switchImages').mockReturnValue({images: expectedImages, title: gameName});
+            jest.spyOn(gameManager, 'switchImages').mockReturnValue({ images: expectedImages, title: gameName });
         });
 
         it('should return the remaining number of games and the new images if there are more games to switch', () => {

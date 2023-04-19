@@ -4,9 +4,9 @@ import { promises as fs } from 'fs';
 import { StoreService } from '../store/store.service';
 
 export class GameManager {
-    constructor(private storeService: StoreService) {}
-
     roomIdToGameDifferences = new Map<string, RoomGameData[]>();
+
+    constructor(private storeService: StoreService) {}
 
     createGame(gameData: GameDiffData): number {
         if (gameData) {

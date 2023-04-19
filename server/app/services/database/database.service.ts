@@ -6,9 +6,9 @@ import { MongoClient } from 'mongodb';
 
 @Injectable()
 export class databaseService implements OnApplicationShutdown {
+    client: MongoClient;
     private readonly mongoUrl: string = 'mongodb+srv://equipe210:differences210@2990-210.po0vcim.mongodb.net/?retryWrites=true&w=majority';
     private readonly dbName: string = 'Projet2';
-    client: MongoClient;
     private readonly collectionBestTimes: any;
     private readonly collectionGameHistory: any;
 
@@ -57,7 +57,6 @@ export class databaseService implements OnApplicationShutdown {
                 this.bubbleTo(time.usersMulti, time.usersMulti.length - 1, index);
             }
             time.usersMulti.pop();
-
         }
         if (index !== -1) {
             await this.collectionBestTimes.findOneAndReplace({ name }, time);

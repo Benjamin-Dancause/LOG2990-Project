@@ -67,12 +67,12 @@ describe('TimerManagerService', () => {
             clock = useFakeTimers();
             const updateTimerSpy = jest.spyOn(timerManagerService, 'updateTimer');
             timerManagerService.startTimer('testRoom', 'solo');
-    
+
             expect(updateTimerSpy).not.toHaveBeenCalled();
-    
+
             clock.tick(DELAY.SMALLTIMEOUT);
             expect(updateTimerSpy).toHaveBeenCalledTimes(1);
-    
+
             clock.tick(DELAY.SMALLTIMEOUT);
             expect(updateTimerSpy).toHaveBeenCalledTimes(2);
             clock.restore();
