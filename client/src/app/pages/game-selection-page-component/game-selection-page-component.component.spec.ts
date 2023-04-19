@@ -1,5 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { Gamecard } from '@app/classes/gamecard';
 import { GameCardComponent } from '@app/components/game-card/game-card.component';
@@ -7,6 +7,7 @@ import { HomeButtonComponent } from '@app/components/home-button/home-button.com
 import { PreviousNextButtonComponent } from '@app/components/previous-next-button/previous-next-button.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
+import { bestTimes } from '@common/game-interfaces';
 import { of } from 'rxjs';
 import { GameSelectionPageComponent } from './game-selection-page-component.component';
 
@@ -29,15 +30,95 @@ describe('GameSelectionPageComponent', () => {
         { name: 'Game 11', image: 'image11', difficulty: false, configuration: true },
     ];
 
+    const bestTimes: bestTimes[] = [
+        {
+            name: 'Game 1',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+        {
+            name: 'Game 2',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+        {
+            name: 'Game 3',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+        {
+            name: 'Game 4',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+        {
+            name: 'Game 5',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+        {
+            name: 'Game 6',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+        {
+            name: 'Game 7',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+        {
+            name: 'Game 8',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+        {
+            name: 'Game 9',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+        {
+            name: 'Game 10',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+        {
+            name: 'Game 11',
+            usersSolo: ['player1', 'player2', 'player3'],
+            usersMulti: ['player4', 'player5', 'player6'],
+            timesSolo: [300, 400, 500],
+            timesMulti: [500, 600, 700],
+        },
+    ];
+
     let communicationService: jasmine.SpyObj<CommunicationService>;
     let socketService: jasmine.SpyObj<SocketService>;
 
     beforeEach(async () => {
         communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAllGames', 'getAllBestTimes']);
-        socketService = jasmine.createSpyObj('SocketService', ['disconnectSocket']);
+        socketService = jasmine.createSpyObj('SocketService', ['disconnectSocket', 'initializeSocket']);
 
         communicationService.getAllGames.and.returnValue(of(gamecards));
-        communicationService.getAllBestTimes.and.returnValue(of([]));
+        communicationService.getAllBestTimes.and.returnValue(of(bestTimes));
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         socketService.disconnectSocket.and.callFake(() => {});
 
@@ -76,7 +157,6 @@ describe('GameSelectionPageComponent', () => {
     });
 
     it('should disconnect socket when disconnectSocket is called', () => {
-        spyOn(component.socketService, 'disconnectSocket');
         component.disconnectSocket();
         expect(component.socketService.disconnectSocket).toHaveBeenCalled();
     });
@@ -84,5 +164,18 @@ describe('GameSelectionPageComponent', () => {
         component.onBack();
         fixture.detectChanges();
         expect(component.displayedGames).toEqual(gamecards.slice(0, PAGE_SIZE));
+    });
+
+    it('should fill bestTimes variable on creation for the right game', fakeAsync(() => {
+        tick();
+        fixture.detectChanges();
+        expect(component.bestTimes).toEqual(bestTimes);
+    }));
+
+    it('should decrement currentPages if onBack is called and value is over 0', () => {
+        component.currentPage = 1;
+        component.onBack();
+        fixture.detectChanges();
+        expect(component.currentPage).toEqual(0);
     });
 });
