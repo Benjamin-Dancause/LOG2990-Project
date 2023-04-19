@@ -1,9 +1,12 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CounterService } from '@app/services/counter/counter.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { of } from 'rxjs';
+import { Socket } from 'socket.io-client';
 import { LimitedTimePageComponent } from './limited-time-page.component';
 
 describe('LimitedTimePageComponent', () => {
@@ -14,14 +17,20 @@ describe('LimitedTimePageComponent', () => {
     let counterServiceSpy: jasmine.SpyObj<CounterService>;
     let communicationServiceSpy: jasmine.SpyObj<CommunicationService>;
 
+    let mockSocket: jasmine.SpyObj<Socket>;
+
     beforeEach(() => {
         gameCardServiceSpy = jasmine.createSpyObj('GameCardService', ['removePlayer']);
         socketServiceSpy = jasmine.createSpyObj('SocketService', ['initOneVsOneComponents', 'soloGame', 'initializeGame']);
         counterServiceSpy = jasmine.createSpyObj('CounterService', [], { count: 0 });
         communicationServiceSpy = jasmine.createSpyObj('CommunicationService', ['getGameNames']);
+        mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
+        mockSocket.on.and.returnValue(mockSocket);
+        mockSocket.emit.and.returnValue(mockSocket);
 
         TestBed.configureTestingModule({
             declarations: [LimitedTimePageComponent],
+            imports: [HttpClientModule, MatDialogModule],
             providers: [
                 { provide: GameCardService, useValue: gameCardServiceSpy },
                 { provide: SocketService, useValue: socketServiceSpy },
@@ -32,6 +41,7 @@ describe('LimitedTimePageComponent', () => {
 
         fixture = TestBed.createComponent(LimitedTimePageComponent);
         component = fixture.componentInstance;
+        socketServiceSpy.socket = mockSocket;
     });
 
     it('should create', () => {
@@ -84,4 +94,20 @@ describe('LimitedTimePageComponent', () => {
         expect(gameCardServiceSpy.removePlayer).toHaveBeenCalledWith('test-game-title', 'test-user-name');
         expect(component.showPopup).toBe(false);
     });
+
+    /*
+    it('should set isWinner and showPopup to false on send-victorious-player event', () => {
+        mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback();
+            return mockSocket;
+        });
+
+        component.ngAfterViewInit();
+        setTimeout(() => {
+            mockSocket.emit('send-victorious-player');
+
+            expect(component.showPopup).toBeTrue();
+        });
+    });
+    */
 });
