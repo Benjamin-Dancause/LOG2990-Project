@@ -25,7 +25,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit, OnDestr
         public gameCardService: GameCardService,
         public socketService: SocketService,
         public counterService: CounterService,
-        private replayService: ReplayService,
+        public replayService: ReplayService,
     ) {}
 
     returnToMainMenu() {

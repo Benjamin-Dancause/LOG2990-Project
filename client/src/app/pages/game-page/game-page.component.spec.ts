@@ -20,10 +20,6 @@ describe('GamePageComponent', () => {
         mockSocketService = jasmine.createSpyObj<SocketService>(['soloGame']);
         gameCardService = jasmine.createSpyObj<GameCardService>(['removePlayer']);
 
-        mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
-        mockSocket.on.and.returnValue(mockSocket);
-        mockSocket.emit.and.returnValue(mockSocket);
-
         await TestBed.configureTestingModule({
             declarations: [GamePageComponent],
             imports: [HttpClientModule, MatDialogModule],
