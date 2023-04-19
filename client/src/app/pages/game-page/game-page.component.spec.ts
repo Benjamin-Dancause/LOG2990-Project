@@ -106,12 +106,4 @@ describe('GamePageComponent', () => {
 
         expect(mockPlayArea.initCanvases).toHaveBeenCalled();
     });
-
-    it('should call replayService.playAction() when test() is called', () => {
-        spyOn(component.replayService, 'playAction');
-
-        component.test();
-
-        expect(component.replayService.playAction).toHaveBeenCalled();
-    });
 });

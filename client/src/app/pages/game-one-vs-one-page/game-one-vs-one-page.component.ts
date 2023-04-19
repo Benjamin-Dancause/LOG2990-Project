@@ -77,10 +77,6 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit, OnDestr
         this.playArea.initCanvases();
     }
 
-    test() {
-        this.replayService.playAction();
-    }
-
     ngOnDestroy(): void {
         if (this.player1) {
             this.socketService.deleteRoomGameInfo();

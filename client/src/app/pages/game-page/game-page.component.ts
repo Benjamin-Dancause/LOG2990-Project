@@ -51,10 +51,6 @@ export class GamePageComponent implements OnInit, OnDestroy {
         this.playArea.initCanvases();
     }
 
-    test() {
-        this.replayService.playAction();
-    }
-
     ngOnDestroy(): void {
         this.socketService.deleteRoomGameInfo();
     }

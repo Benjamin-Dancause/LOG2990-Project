@@ -40,9 +40,11 @@ export class TextBoxComponent implements OnDestroy, OnInit {
         this.gameMode = sessionStorage.getItem('gameMode') as string;
         this.gameTitle = sessionStorage.getItem('gameTitle') as string;
         this.chat.deleteMessages();
-        const storedUserName = sessionStorage.getItem('userName');
-        this.userName = storedUserName ? storedUserName : '';
+        this.userName = sessionStorage.getItem('userName') as string;
         this.addSystemMessage(`${this.getTimestamp()} - ${this.userName} a rejoint la partie.`);
+    }
+
+    ngOnInit() {
         const joiner = sessionStorage.getItem('joiningPlayer') as string;
         if (this.gameMode !== 'solo' && joiner) {
             this.multiplayer = true;
@@ -106,13 +108,9 @@ export class TextBoxComponent implements OnDestroy, OnInit {
         }
     }
 
-    ngOnInit() {
-        throw new Error('Method not implemented.');
-    }
-
     setOpponentName() {
         const gameMaster = sessionStorage.getItem('gameMaster') as string;
-        if (sessionStorage.getItem('joininPlayer') as string) {
+        if (sessionStorage.getItem('joiningPlayer') as string) {
             this.multiplayer = true;
         }
         if (gameMaster === this.userName) {
@@ -162,7 +160,7 @@ export class TextBoxComponent implements OnDestroy, OnInit {
     }
 
     writeQuitMessage() {
-        const systemMessage = `${this.getTimestamp()} - ${this.opponentName} à quitté la partie.`;
+        const systemMessage = `${this.getTimestamp()} - ${this.opponentName} a quitté la partie.`;
         this.addSystemMessage(systemMessage);
     }
 
