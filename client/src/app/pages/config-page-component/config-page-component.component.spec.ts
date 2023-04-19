@@ -1,13 +1,18 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogModule } from '@angular/material/dialog';
+import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameCardComponent } from '@app/components/game-card/game-card.component';
+import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
+import { HistoryDialogComponent } from '@app/components/history-dialog/history-dialog.component';
 import { HomeButtonComponent } from '@app/components/home-button/home-button.component';
 import { PreviousNextButtonComponent } from '@app/components/previous-next-button/previous-next-button.component';
 import { SettingsButtonComponent } from '@app/components/settings-button/settings-button.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
+import { SocketService } from '@app/services/socket/socket.service';
+import { bestTimes } from '@common/game-interfaces';
 import { of } from 'rxjs';
 import { ConfigPageComponent } from './config-page-component.component';
 
@@ -16,6 +21,9 @@ const PAGE_SIZE = 4;
 describe('ConfigPageComponent', () => {
     let component: ConfigPageComponent;
     let fixture: ComponentFixture<ConfigPageComponent>;
+    let socketService: SocketService;
+    let communicationService: CommunicationService;
+
     const gamecards: Gamecard[] = [
         { name: 'Game 1', image: 'image1', difficulty: false, configuration: true },
         { name: 'Game 2', image: 'image2', difficulty: false, configuration: true },
@@ -30,21 +38,51 @@ describe('ConfigPageComponent', () => {
         { name: 'Game 11', image: 'image11', difficulty: false, configuration: true },
     ];
 
-    const communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['getAllGames']);
+    const bestTime: bestTimes[] = [
+        {
+            name: 'Game 1',
+            usersSolo: ['User A', 'User B'],
+            usersMulti: ['User A', 'User B', 'User C'],
+            timesSolo: [100, 120],
+            timesMulti: [100, 120, 150],
+        },
+        {
+            name: 'Game 2',
+            usersSolo: ['User A', 'User B'],
+            usersMulti: ['User A', 'User B', 'User C'],
+            timesSolo: [200, 220],
+            timesMulti: [200, 220, 250],
+        },
+    ];
 
-    beforeEach(async () => {
-        communicationService.getAllGames.and.returnValue(of(gamecards));
-
-        await TestBed.configureTestingModule({
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, MatDialogModule, RouterTestingModule],
-            declarations: [ConfigPageComponent, GameCardComponent, PreviousNextButtonComponent, HomeButtonComponent, SettingsButtonComponent],
-            providers: [{ provide: CommunicationService, useValue: communicationService }],
+            declarations: [ConfigPageComponent, HomeButtonComponent, SettingsButtonComponent, PreviousNextButtonComponent],
+            providers: [
+                {
+                    provide: CommunicationService,
+                    useValue: {
+                        getAllGames: () => of(gamecards),
+                        getAllBestTimes: () => of([bestTime]),
+                        deleteAll: () => of([]),
+                        resetAllBestTimes: () => of([]),
+                        getGameAllHistory: () => of([]),
+                        deleteGameHistory: () => of([]),
+                    },
+                },
+                { provide: SocketService, useValue: { initializeSocket: () => {}, disconnectSocket: () => {} } },
+                { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of('yes') }) } },
+            ],
         }).compileComponents();
+    }));
 
+    beforeEach(() => {
         fixture = TestBed.createComponent(ConfigPageComponent);
         component = fixture.componentInstance;
-        component.games = gamecards;
-        fixture.detectChanges();
+        communicationService = TestBed.inject(CommunicationService);
+        socketService = TestBed.inject(SocketService);
+        // dialog = TestBed.inject(MatDialog);
     });
 
     it('should create', () => {
@@ -89,5 +127,101 @@ describe('ConfigPageComponent', () => {
         expect(component.displayedGames.length).toBe(3);
         expect(component.displayedGames[0].name).toBe('Game 9');
         expect(component.displayedGames[2].name).toBe('Game 11');
+    });
+
+    it('should initialize lastPage and socket', () => {
+        spyOn(socketService, 'initializeSocket');
+        component.ngOnInit();
+        expect(component.lastPage).toBe(2);
+        expect(socketService.initializeSocket).toHaveBeenCalled();
+    });
+
+    it('should delete all games and reload the page if user confirms', fakeAsync(() => {
+        const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of('yes') });
+        const dialogSpy = spyOn(TestBed.inject(MatDialog), 'open').and.returnValue(dialogRefSpyObj);
+        const communicationSpy = spyOn(TestBed.inject(CommunicationService), 'deleteAll').and.returnValue(of({}));
+        const reloadSpy = spyOn(component, 'reloadPage');
+        component.deleteAll();
+        expect(dialogSpy).toHaveBeenCalledWith(ConfirmationDialogComponent, {
+            data: {
+                title: 'Confirmation',
+                message: 'Êtes-vous sûr de vouloir supprimer toutes les parties ?',
+            },
+        });
+
+        dialogRefSpyObj.afterClosed.and.callFake(() => {
+            tick();
+            return of('yes');
+        });
+
+        expect(communicationSpy).toHaveBeenCalledWith();
+        expect(reloadSpy).toHaveBeenCalled();
+    }));
+
+    it('should reset best times and reload page if confirmed', () => {
+        const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of('yes') });
+        const dialogSpy = spyOn(TestBed.inject(MatDialog), 'open').and.returnValue(dialogRefSpyObj);
+        const communicationSpy = spyOn(TestBed.inject(CommunicationService), 'resetAllBestTimes').and.returnValue();
+        const reloadSpy = spyOn(component, 'reloadPage');
+        component.resetBestTimes();
+
+        expect(dialogSpy).toHaveBeenCalledWith(ConfirmationDialogComponent, {
+            data: {
+                title: 'Confirmation',
+                message: 'Êtes-vous sûr de vouloir réinitialiser les meilleurs temps ?',
+            },
+        });
+
+        dialogRefSpyObj.afterClosed.and.callFake(() => {
+            tick();
+            return of('yes');
+        });
+
+        expect(communicationSpy).toHaveBeenCalledWith();
+        expect(reloadSpy).toHaveBeenCalled();
+    });
+
+    it('should open a dialog displaying all games history and delete history when reset is clicked', () => {
+        const fakeHistory = [
+            {
+                gameTitle: 'Game 1',
+                winner: 'player 1',
+                loser: 'player 2',
+                surrender: false,
+                time: { startTime: '120', duration: 40 },
+                isSolo: true,
+                isLimitedTime: false,
+            },
+            {
+                gameTitle: 'Game 2',
+                winner: 'player 1',
+                loser: 'player 2',
+                surrender: false,
+                time: { startTime: '120', duration: 40 },
+                isSolo: true,
+                isLimitedTime: false,
+            },
+        ];
+        const getGameAllHistorySpy = spyOn(communicationService, 'getGameAllHistory').and.returnValue(of(fakeHistory));
+        const deleteGameHistorySpy = spyOn(communicationService, 'deleteGameHistory').and.returnValue();
+        const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of() });
+        const dialogSpy = spyOn(TestBed.inject(MatDialog), 'open').and.returnValue(dialogRefSpyObj);
+
+        component.allGamesHistory();
+
+        expect(getGameAllHistorySpy).toHaveBeenCalled();
+        expect(dialogSpy).toHaveBeenCalledWith(HistoryDialogComponent, {
+            data: {
+                title: 'Historique des parties',
+                history: fakeHistory,
+                global: true,
+            },
+        });
+        expect(dialogRefSpyObj.afterClosed).toHaveBeenCalled();
+
+        dialogRefSpyObj.afterClosed.and.returnValue(of('reset'));
+        component.allGamesHistory();
+
+        expect(deleteGameHistorySpy).toHaveBeenCalled();
     });
 });
