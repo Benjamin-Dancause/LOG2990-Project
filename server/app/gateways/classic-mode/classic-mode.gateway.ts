@@ -6,10 +6,10 @@ import { GameManager } from '@app/services/game-manager/game-manager.service';
 import { StoreService } from '@app/services/store/store.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
-import { CompleteGameInfo, GameInfo, Lobby, OneVsOneGameplayInfo } from '@common/game-interfaces';
+import { CompleteGameInfo, DifferenceInterface, GameInfo, Lobby, OneVsOneGameplayInfo } from '@common/game-interfaces';
 import { forwardRef } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators';
-import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
 
@@ -19,11 +19,10 @@ interface PlayerSockets {
 }
 
 @WebSocketGateway()
-export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ClassicModeGateway implements OnGatewayDisconnect {
     @WebSocketServer() server: Server;
     socketIdToRoomId: Record<string, string> = {};
     roomIdToPlayerSockets = new Map<string, PlayerSockets>();
-    connectionCounter: number = 0;
 
     constructor(
         @Inject(forwardRef(() => TimerManagerService)) private readonly timerManager: TimerManagerService,
@@ -164,7 +163,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @SubscribeMessage('send-difference-found')
-    onDIfferenceFound(client: Socket, response: ClickResponse) {
+    onDifferenceFound(client: Socket, response: ClickResponse) {
         const roomId = [...client.rooms][1];
         if (roomId) {
             this.server.to(roomId).emit('update-difference', response);
@@ -317,8 +316,7 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
         if (roomId) {
             const newGameInfo = this.gameManager.switchGame(roomId);
             if (newGameInfo.length > 0) {
-                const newImages = newGameInfo;
-                this.server.to(roomId).emit('switch-images', newImages);
+                this.server.to(roomId).emit('switch-images', newGameInfo);
             } else {
                 this.server.to(roomId).emit('send-victorious-player', true);
                 this.timerManager.deleteTimerData(roomId);
@@ -329,20 +327,11 @@ export class ClassicModeGateway implements OnGatewayConnection, OnGatewayDisconn
     @SubscribeMessage('verify-position')
     onVerifyPosition(client: Socket, clickCoords: Coords) {
         const roomId = [...client.rooms][1];
-        const clickResponse: ClickResponse = this.gameManager.verifyPosition(roomId, clickCoords);
+        const clickResponse: DifferenceInterface = this.gameManager.verifyPosition(roomId, clickCoords);
         this.server.to(client.id).emit('click-response', clickResponse);
     }
 
-    // eslint-disable-next-line no-unused-vars
-    handleConnection(client: Socket) {
-        this.connectionCounter++;
-        if (this.connectionCounter > 1) {
-            this.server.sockets.emit('connection-count', 'There is now more than 1 person online');
-        }
-    }
-
     handleDisconnect(@ConnectedSocket() client: Socket) {
-        this.connectionCounter--;
         const roomId = this.socketIdToRoomId[client.id];
         if (roomId) {
             client.leave(roomId);
