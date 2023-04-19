@@ -74,9 +74,9 @@ describe('CanvasReplayService', () => {
     });
 
     it('should update the images', () => {
-        let mockCanvas1 = CanvasTestHelper.createCanvas(2, 2);
+        const mockCanvas1 = CanvasTestHelper.createCanvas(2, 2);
         const ctx1 = mockCanvas1.getContext('2d') as CanvasRenderingContext2D;
-        let mockCanvas2 = CanvasTestHelper.createCanvas(2, 2);
+        const mockCanvas2 = CanvasTestHelper.createCanvas(2, 2);
         const ctx2 = mockCanvas2.getContext('2d') as CanvasRenderingContext2D;
         ctx1.fillStyle = 'white';
         ctx1.fillRect(0, 0, 2, 2);
@@ -86,9 +86,9 @@ describe('CanvasReplayService', () => {
     });
 
     it('should not update the images', () => {
-        let mockCanvas1 = CanvasTestHelper.createCanvas(2, 2);
+        const mockCanvas1 = CanvasTestHelper.createCanvas(2, 2);
         const ctx1 = mockCanvas1.getContext('2d') as CanvasRenderingContext2D;
-        let mockCanvas2 = CanvasTestHelper.createCanvas(2, 2);
+        const mockCanvas2 = CanvasTestHelper.createCanvas(2, 2);
         const ctx2 = mockCanvas2.getContext('2d') as CanvasRenderingContext2D;
         ctx1.fillStyle = 'white';
         ctx1.fillRect(0, 0, 2, 2);
@@ -98,9 +98,9 @@ describe('CanvasReplayService', () => {
     });
 
     it('should not update the images', () => {
-        let mockCanvas1 = CanvasTestHelper.createCanvas(2, 2);
+        const mockCanvas1 = CanvasTestHelper.createCanvas(2, 2);
         const ctx1 = mockCanvas1.getContext('2d') as CanvasRenderingContext2D;
-        let mockCanvas2 = CanvasTestHelper.createCanvas(2, 2);
+        const mockCanvas2 = CanvasTestHelper.createCanvas(2, 2);
         const ctx2 = mockCanvas2.getContext('2d') as CanvasRenderingContext2D;
         ctx1.fillStyle = 'white';
         ctx1.fillRect(0, 0, 2, 2);

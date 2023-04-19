@@ -212,9 +212,7 @@ describe('PlayAreaComponent', () => {
         expect(component.game.hintMode1).not.toHaveBeenCalled();
     });
     it('should clearTimeout if hintModeTimeoutId is not null', async () => {
-        const timerId = window.setTimeout(() => {
-            console.log('Timer fired!');
-        }, 1000); // fire after 1 second
+        const timerId = window.setTimeout(() => {}, 1000); // fire after 1 second
 
         // cancel the timer before it fires
         window.clearTimeout(timerId);

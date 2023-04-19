@@ -37,7 +37,13 @@ describe('GameService', () => {
         mockTimerService = jasmine.createSpyObj('TimerService', ['getTime']);
         mockSocketService.socket = jasmine.createSpyObj('Socket', ['on', 'off', 'emit']);
         mockCounterService = jasmine.createSpyObj('CounterService', ['incrementCounter', 'resetCounter', 'removeToTimer']);
-        mockCommunicationService = jasmine.createSpyObj('CommunicationService', ['getDifferences', 'sendPosition', 'getAllDiffs', 'updateBestTimes', 'getAllDiffs']);
+        mockCommunicationService = jasmine.createSpyObj('CommunicationService', [
+            'getDifferences',
+            'sendPosition',
+            'getAllDiffs',
+            'updateBestTimes',
+            'getAllDiffs',
+        ]);
         mockReplayService = jasmine.createSpyObj('ReplayService', ['addAction', 'resetReplayData']);
 
         TestBed.configureTestingModule({
@@ -273,20 +279,20 @@ describe('GameService', () => {
     it('should not call blinkDifference3 if there are no differences', fakeAsync(() => {
         const mockCtx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
         const mockCtxs = [mockCtx, mockCtx, mockCtx, mockCtx];
-        const mockDifferences = [[],[],[]];
+        const mockDifferences = [[], [], []];
         const spy = spyOn(gameService, 'blinkDifference3');
-        mockCommunicationService.getAllDiffs.and.returnValue(of({ id:1, differences: mockDifferences, count: 1}));
-  
+        mockCommunicationService.getAllDiffs.and.returnValue(of({ id: 1, differences: mockDifferences, count: 1 }));
+
         gameService.flashOneRandomDifference(mockCtxs, 2);
         tick();
-  
+
         expect(spy).toHaveBeenCalled();
     }));
 
-        it('checkClick should call playSuccessSound when the clicked on a difference', fakeAsync(() => {
+    it('checkClick should call playSuccessSound when the clicked on a difference', fakeAsync(() => {
         const mockCanvas = document.createElement('canvas') as HTMLCanvasElement;
         gameService['isClickDisabled'] = false;
-        let spy = spyOn(gameService, 'playErrorSound');
+        const spy = spyOn(gameService, 'playErrorSound');
         spyOn(gameService, 'updateDifferences');
         const response = { coords: [{ x: 0, y: 0 }], differenceNumber: 1, isDifference: true } as ClickResponse;
         mockCommunicationService.sendPosition.and.returnValue(of(response));
@@ -299,7 +305,7 @@ describe('GameService', () => {
     it('checkClick should call playErrorSound when the clicked on a difference', fakeAsync(() => {
         const mockCanvas = document.createElement('canvas') as HTMLCanvasElement;
         gameService['isClickDisabled'] = false;
-        let spy = spyOn(gameService, 'playErrorSound');
+        const spy = spyOn(gameService, 'playErrorSound');
         spyOn(gameService, 'updateDifferences');
         const response = { coords: [{ x: 0, y: 0 }], differenceNumber: 1, isDifference: false } as ClickResponse;
         mockCommunicationService.sendPosition.and.returnValue(of(response));
@@ -330,8 +336,8 @@ describe('GameService', () => {
         gameService['playAreaCtx'] = [mockCtx, mockCtx, mockCtx, mockCtx];
         gameService.getContexts(mockCtx);
         spyOn(sessionStorage, 'getItem');
-        mockCommunicationService.getAllDiffs.and.returnValue(of({ id:1, differences: [[{x:0,y:0}]], count: 1}));
-        gameService.flashOneDifference1(gameService['playAreaCtx'],3);
+        mockCommunicationService.getAllDiffs.and.returnValue(of({ id: 1, differences: [[{ x: 0, y: 0 }]], count: 1 }));
+        gameService.flashOneDifference1(gameService['playAreaCtx'], 3);
         expect(sessionStorage.getItem).toHaveBeenCalled();
     });
 
@@ -340,8 +346,8 @@ describe('GameService', () => {
         gameService['playAreaCtx'] = [mockCtx, mockCtx, mockCtx, mockCtx];
         gameService.getContexts(mockCtx);
         spyOn(sessionStorage, 'getItem');
-        mockCommunicationService.getAllDiffs.and.returnValue(of({ id:1, differences: [[{x:0,y:0}]], count: 1}));
-        gameService.flashOneDifference2(gameService['playAreaCtx'],3);
+        mockCommunicationService.getAllDiffs.and.returnValue(of({ id: 1, differences: [[{ x: 0, y: 0 }]], count: 1 }));
+        gameService.flashOneDifference2(gameService['playAreaCtx'], 3);
         expect(sessionStorage.getItem).toHaveBeenCalled();
     });
 
@@ -367,13 +373,8 @@ describe('GameService', () => {
         const mockCtx = mockcanvas.getContext('2d') as CanvasRenderingContext2D;
         gameService['playAreaCtx'] = [mockCtx, mockCtx, mockCtx, mockCtx];
         gameService.getContexts(mockCtx);
-        gameService.blinkDifference3(gameService['playAreaCtx'], [{x:0,y:0}]);
-        tick(1000)
+        gameService.blinkDifference3(gameService['playAreaCtx'], [{ x: 0, y: 0 }]);
+        tick(1000);
         expect(mockcanvas.style.cursor).toEqual('auto');
     }));
-
-
-
 });
-
-

@@ -172,7 +172,6 @@ describe('CounterService', () => {
 
         service.isNewBestTime(gameTitle);
         const newTime = 50;
-        console.log(newTime != bestTimes[0]);
         mockSocket.emit('new-record-time', newTime);
         const newRecordTimeCallback = mockSocket.on.calls.argsFor(0)[1];
         newRecordTimeCallback(newTime);
