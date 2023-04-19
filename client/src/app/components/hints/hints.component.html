@@ -1,6 +1,6 @@
 
-<button  (click)="onIndexClick()" (click)="decrementCounter()" [disabled]="nbrIndices === 0">Indice</button>
-<span>
+<button *ngIf="!this.multiplayer" (click)="onIndexClick()" (click)="decrementCounter()" [disabled]="nbrIndices === 0">Indice</button>
+<span *ngIf="!this.multiplayer">
     <img class="loupe" src="./assets/loupe.png" *ngIf="nbrIndices >= 1" />
     <img class="loupe" src="./assets/loupe.png" *ngIf="nbrIndices >= 2" />
     <img class="loupe" src="./assets/loupe.png" *ngIf="nbrIndices >= 3" />

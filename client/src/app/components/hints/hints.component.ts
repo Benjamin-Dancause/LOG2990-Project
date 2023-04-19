@@ -7,6 +7,16 @@ import { Component, HostListener } from '@angular/core';
 })
 export class HintsComponent {
     nbrIndices = 3;
+    multiplayer: boolean = false;
+    gameMode: string = '';
+
+    constructor() {
+        this.gameMode = sessionStorage.getItem('gameMode') as string;
+        const joiner = sessionStorage.getItem('joiningPlayer') as string;
+        if (this.gameMode !== 'solo' && joiner) {
+            this.multiplayer = true;
+        }
+    }
 
     @HostListener('window:keyup', ['$event'])
     keyEvent(event: KeyboardEvent): void {
