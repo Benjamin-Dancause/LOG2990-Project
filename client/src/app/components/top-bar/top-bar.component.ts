@@ -43,7 +43,6 @@ export class TopBarComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.socketService.socket.on('player-quit-game', () => {
-            console.log('top bar');
             this.isCoop = false;
         });
     }

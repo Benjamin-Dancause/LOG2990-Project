@@ -27,7 +27,6 @@ describe('SliderComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // nombres magiques... à changer
     it('should have steps array with default values', () => {
         expect(component.steps).toEqual([DEFAULT_1, DEFAULT_2, DEFAULT_3, DEFAULT_4]);
     });

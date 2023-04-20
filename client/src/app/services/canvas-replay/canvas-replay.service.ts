@@ -194,7 +194,6 @@ export class CanvasReplayService {
 
     getContexts(ctx: CanvasRenderingContext2D) {
         if (ctx) {
-            console.log(ctx);
             this.contexts.push(ctx);
         }
     }

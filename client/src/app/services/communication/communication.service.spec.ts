@@ -2,7 +2,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { ClickResponse } from '@app/classes/click-response';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameDiffData, gameHistoryInfo, GameplayData, GameSelectionPageData, playerTime } from '@common/game-interfaces';
+import { GameDiffData, GameSelectionPageData, GameplayData, gameHistoryInfo, playerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable } from 'rxjs';
 import { CommunicationService } from './communication.service';

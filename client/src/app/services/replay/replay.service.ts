@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// à corriger le disable
 import { EventEmitter, Injectable } from '@angular/core';
 import { GameAction } from '@app/interfaces/game-action';
 import { DELAY, TIME } from '@common/constants';
@@ -69,7 +68,6 @@ export class ReplayService {
         this.currentGameAction = this.getAction();
         switch (this.currentGameAction.action) {
             case 'update-difference':
-                console.log('update-difference');
                 this.opponentCounter++;
                 this.counterEvent.emit([this.ownCounter, this.opponentCounter]);
                 const coords: Coords[] = this.currentGameAction.payload.coords;
@@ -77,7 +75,6 @@ export class ReplayService {
                 break;
 
             case 'difference-found':
-                console.log('diff-found');
                 this.ownCounter++;
                 this.counterEvent.emit([this.ownCounter, this.opponentCounter]);
                 this.canvasReplay.foundPopup(this.currentGameAction.payload.mousePosition, this.currentGameAction.payload.context);

@@ -8,5 +8,4 @@ import { Component, Input } from '@angular/core';
 export class MainPageButtonComponent {
     @Input()
     text: string;
-    /** comment */
 }

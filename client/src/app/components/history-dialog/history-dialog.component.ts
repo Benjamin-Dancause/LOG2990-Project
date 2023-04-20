@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TIME } from '@common/constants';
 import { gameHistoryInfo } from '@common/game-interfaces';
 
 @Component({
-    selector: 'app-history-dialog', // ?
+    selector: 'app-history-dialog',
     templateUrl: './history-dialog.component.html',
     styleUrls: ['./history-dialog.component.scss'],
 })
