@@ -29,6 +29,7 @@ describe('GameCardComponent', () => {
             'deleteGame',
             'resetBestTimes',
             'getGameHistory',
+            'deleteGameHistory',
         ]);
         mockGameCardService = jasmine.createSpyObj('GameCardService', ['getPlayers', 'addPlayer']);
         mockGameCardService.addPlayer.and.returnValue(of(null));

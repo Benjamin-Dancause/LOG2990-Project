@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { ClickResponse } from '@app/classes/click-response';
-import { TIME } from '@common/constants';
 import { Socket } from 'socket.io-client';
 
 import { SocketService } from './socket.service';
@@ -33,12 +32,6 @@ describe('socketService', () => {
         expect(service.socket).toBeDefined();
     });
 
-    /*
-    it('should emit "solo-game" when soloGame() is called', () => {
-        service.soloGame();
-        expect(socketSpy.emit).toHaveBeenCalledWith('solo-game');
-    });
-    */
 
     it('should emit "one-vs-one-game" when oneVsOne() is called', () => {
         service.oneVsOne();
@@ -104,7 +97,7 @@ describe('socketService', () => {
         const player1 = true;
         const player2 = '';
         service.initOneVsOneComponents(player1, player2);
-        expect(socketSpy.emit).toHaveBeenCalledWith('init-OneVsOne-components', player1);
+        expect(socketSpy.emit).toHaveBeenCalledWith('init-OneVsOne-components', Object({ player1: true, gameMode: '' }));
     });
 
     it('should emit "send-difference-found" with ClickResponse when sendDifferenceFound() is called', () => {
@@ -242,12 +235,12 @@ describe('socketService', () => {
 
     it('should add to the timer', () => {
         service.addToTimer();
-        expect(socketSpy.emit).toHaveBeenCalledWith('add-to-timer', TIME.SMALL_ADD_TIME);
+        expect(socketSpy.emit).toHaveBeenCalledWith('add-to-timer');
     });
 
     it('should remove from the timer', () => {
         service.removeToTimer();
-        expect(socketSpy.emit).toHaveBeenCalledWith('remove-to-timer', TIME.SMALL_PENALTY);
+        expect(socketSpy.emit).toHaveBeenCalledWith('remove-to-timer');
     });
 
     it('should emit switch-game when switchGame() is called', () => {

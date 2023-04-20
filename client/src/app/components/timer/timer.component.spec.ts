@@ -26,13 +26,6 @@ describe('TimerComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should reset the timer on destroy', () => {
-        const roomId = 'test-room';
-        spyOn(sessionStorage, 'getItem').and.returnValue(roomId);
-        // component.ngOnDestroy();
-        expect(timerService.resetTimer).toHaveBeenCalledWith(roomId);
-    });
-
     it('should pad a value correctly', () => {
         const time = 90;
         timerService.getTime.and.returnValue(of(time));

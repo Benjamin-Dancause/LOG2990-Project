@@ -8,6 +8,7 @@ import { MouseButton } from '@app/classes/mouse-button';
 import { DELAY } from '@common/constants';
 import { Coords, GameDiffData } from '@common/game-interfaces';
 import { of, Subscription } from 'rxjs';
+import { Socket } from 'socket.io-client';
 import { CommunicationService } from '../communication/communication.service';
 import { CounterService } from '../counter/counter.service';
 import { ReplayService } from '../replay/replay.service';
@@ -22,6 +23,7 @@ describe('GameService', () => {
     let mockCommunicationService: jasmine.SpyObj<CommunicationService>;
     let mockTimerService: jasmine.SpyObj<TimerService>;
     let mockReplayService: jasmine.SpyObj<ReplayService>;
+    let mockSocket: jasmine.SpyObj<Socket>;
 
     beforeEach(() => {
         mockSocketService = jasmine.createSpyObj('SocketService', [
@@ -34,8 +36,9 @@ describe('GameService', () => {
             'switchGame',
             'sendPosition',
         ]);
+        mockSocket = jasmine.createSpyObj('Socket', ['on', 'emit', 'off']);
+        mockSocket.on.and.returnValue(mockSocket);
         mockTimerService = jasmine.createSpyObj('TimerService', ['getTime']);
-        mockSocketService.socket = jasmine.createSpyObj('Socket', ['on', 'off', 'emit']);
         mockCounterService = jasmine.createSpyObj('CounterService', ['incrementCounter', 'resetCounter', 'removeToTimer']);
         mockCommunicationService = jasmine.createSpyObj('CommunicationService', [
             'getDifferences',
@@ -45,12 +48,11 @@ describe('GameService', () => {
             'getAllDiffs',
         ]);
         mockReplayService = jasmine.createSpyObj('ReplayService', ['addAction', 'resetReplayData']);
-
+        mockSocketService.socket = mockSocket;
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
                 GameService,
-                { provide: CommunicationService },
                 { provide: SocketService, useValue: mockSocketService },
                 { provide: CounterService, useValue: mockCounterService },
                 { provide: CommunicationService, useValue: mockCommunicationService },
@@ -60,6 +62,7 @@ describe('GameService', () => {
         });
 
         gameService = TestBed.inject(GameService);
+        mockSocketService = TestBed.inject(SocketService) as jasmine.SpyObj<SocketService>;
     });
 
     it('should be created', () => {
@@ -377,4 +380,14 @@ describe('GameService', () => {
         tick(1000);
         expect(mockcanvas.style.cursor).toEqual('auto');
     }));
+
+    // it('socket update-difference should call addAction ', fakeAsync(() => {
+    //     const clickResponse = { coords: [{ x: 0, y: 0 }], differenceNumber: 1, isDifference: true } as ClickResponse;
+    //     mockSocket.on.withArgs('update-difference', jasmine.any(Function)).and.callFake((eventName, callback) => {
+    //         callback(clickResponse);
+    //         return mockSocket;
+    //     });
+    //     mockSocket.emit('update-difference', clickResponse);
+    //     expect(mockReplayService['addAction']).toHaveBeenCalled();
+    // }));
 });
