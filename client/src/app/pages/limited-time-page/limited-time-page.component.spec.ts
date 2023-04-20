@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CounterService } from '@app/services/counter/counter.service';
@@ -22,7 +22,7 @@ describe('LimitedTimePageComponent', () => {
 
     beforeEach(() => {
         gameCardServiceSpy = jasmine.createSpyObj('GameCardService', ['removePlayer']);
-        socketServiceSpy = jasmine.createSpyObj('SocketService', ['initOneVsOneComponents', 'soloGame', 'initializeGame']);
+        socketServiceSpy = jasmine.createSpyObj('SocketService', ['initOneVsOneComponents', 'soloGame', 'initializeGame', 'deleteRoomGameInfo']);
         counterServiceSpy = jasmine.createSpyObj('CounterService', [], { count: 0 });
         communicationServiceSpy = jasmine.createSpyObj('CommunicationService', ['getGameNames']);
         mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
@@ -87,12 +87,17 @@ describe('LimitedTimePageComponent', () => {
         expect(socketServiceSpy.initOneVsOneComponents).toHaveBeenCalled();
     });
 
-    it('should return an empty array if an empty array is passed as argument', fakeAsync(() => {
+    it('should set showPopup to true when socket emits "send-victorious-player"', () => {
+        const player1 = true;
+        mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback(player1);
+            return mockSocket;
+        });
+
         component.ngAfterViewInit();
-        tick(1000);
-        mockSocket.emit('send-victorious-player');
-        expect(component.showPopup).toBe(true);
-    }));
+        mockSocket.emit('send-victorious-player', player1);
+        expect(component.showPopup).toBeTrue();
+    });
 
     it('should return an empty array if an empty array is passed as argument', () => {
         const names: string[] = [];
@@ -117,20 +122,4 @@ describe('LimitedTimePageComponent', () => {
         expect(gameCardServiceSpy.removePlayer).toHaveBeenCalledWith('test-game-title', 'test-user-name');
         expect(component.showPopup).toBe(false);
     });
-
-    /*
-    it('should set isWinner and showPopup to false on send-victorious-player event', () => {
-        mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
-            callback();
-            return mockSocket;
-        });
-
-        component.ngAfterViewInit();
-        setTimeout(() => {
-            mockSocket.emit('send-victorious-player');
-
-            expect(component.showPopup).toBeTrue();
-        });
-    });
-    */
 });
