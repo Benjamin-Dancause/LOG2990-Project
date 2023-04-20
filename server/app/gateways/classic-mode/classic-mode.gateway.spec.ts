@@ -4,19 +4,18 @@ import { GameManager } from '@app/services/game-manager/game-manager.service';
 import { StoreService } from '@app/services/store/store.service';
 import { TimerManagerService } from '@app/services/timer-manager/timer-manager.service';
 import { WaitingRoomManagerService } from '@app/services/waiting-room-manager/waiting-room-manager.service';
-import { Coords, DifferenceInterface } from '@common/game-interfaces';
+import { CompleteGameInfo, Coords, DifferenceInterface, GameInfo, Lobby, OneVsOneGameplayInfo } from '@common/game-interfaces';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SinonStubbedInstance, createStubInstance, stub } from 'sinon';
 import { BroadcastOperator, Server, Socket } from 'socket.io';
 import { PRIVATE_ROOM_ID } from '../chat/chat.gateway.constants';
 import { ClassicModeGateway } from './classic-mode.gateway';
-/*
-import { match, stub } from 'sinon';
-import { BroadcastOperator } from 'socket.io';
-import { ChatEvents } from './chat.gateway.events';
-import { Lobby } from '@common/game-interfaces';
-*/
+
+interface PlayerSockets {
+    masterSocket: Socket;
+    joiningSocket?: Socket;
+}
 
 describe('ClassicModeGateway', () => {
     let gateway: ClassicModeGateway;
@@ -27,10 +26,11 @@ describe('ClassicModeGateway', () => {
     let store: StoreService;
     let logger: SinonStubbedInstance<Logger>;
     let socket: SinonStubbedInstance<Socket>;
-    // let lobby: SinonStubbedInstance<Lobby>;
     let server: SinonStubbedInstance<Server>;
     let waiting: WaitingRoomManagerService;
     const sinon = require('sinon');
+    const socketio = require('socket.io');
+    const io = socketio(server);
 
     beforeEach(async () => {
         logger = createStubInstance(Logger);
@@ -81,15 +81,6 @@ describe('ClassicModeGateway', () => {
     it('should be defined', () => {
         expect(gateway).toBeDefined();
     });
-
-    // TypeError: Cannot read properties of undefined (reading 'socketRooms')
-    /*
-    it('should send message', () => {
-        gateway.handleIncrementCounter(socket, true);
-        expect(server.emit.calledWith('counter', 1)).toBe(true);
-        expect(logger.log.calledWith('counter', 1)).toBe(true);
-    });
-    */
     it('should reset the counter for a given roomId', () => {
         const roomId = 'test-room';
         counter.incrementCounter(roomId);
@@ -154,18 +145,6 @@ describe('ClassicModeGateway', () => {
         } as BroadcastOperator<unknown, unknown>);
         gateway.onLeaveGame(socket);
     });
-    // it('should delete game', () => {
-    //     const gameTitle = 'Game Title';
-    //     const action = 'game-deleted';
-    //     gateway.server.sockets = {
-    //         emit: (command: string, title: string) => {
-    //             expect(command).toEqual(action);
-    //             expect(title).toEqual(gameTitle);
-    //         },
-    //     };
-
-    //     gateway.onDeleteGame(socket, gameTitle);
-    // });
     it('should send-victorious-player when handleVictorySequence is called', () => {
         stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID]));
         const player1 = true;
@@ -270,6 +249,7 @@ describe('ClassicModeGateway', () => {
         } as BroadcastOperator<unknown, unknown>);
         gateway.handleResetCounter(socket, player1);
     });
+
     it('should delete according data when handleDisconnect is called', () => {
         const roomId = 'room_id';
         gateway.socketIdToRoomId[socket.id] = roomId;
@@ -447,11 +427,10 @@ describe('ClassicModeGateway', () => {
         } as BroadcastOperator<unknown, unknown>);
         gateway.onLeftlimitedTime(socket);
     });
-
-    //this.server.sockets//
-    /*it('should make the player leave the game after a limited-time game', () => {
-        const action = 'game-deleted';
+    
+    it('should emit to all sockets that game card has been deleted', () => {
         const gameTitle = 'game1';
+        const action = 'player-quit-game';
         
         server.to.returns({
             emit: (command: String, data: any) => {
@@ -459,8 +438,9 @@ describe('ClassicModeGateway', () => {
                 expect(data).toEqual(gameTitle);
             },
         } as BroadcastOperator<unknown, unknown>);
-        gateway.onDeleteGame(socket, gameTitle);
-    });*/
+        gateway.onDeleteGame(socket, 'gameTitle');
+        
+    });
 
     it('should send message to the room', () => {
         stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID, '1234']));
@@ -505,9 +485,9 @@ describe('ClassicModeGateway', () => {
         gateway.onSendPlayerError(socket, userName);
     });
 
-    /*it('should get info for 1vs1 if player did not created the lobby', () => {
+    it('should get info for 1vs1 if player created the lobby', () => {
         stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID, '1234']));
-        stub(socket, 'id').value(PRIVATE_ROOM_ID);
+        gateway.socketIdToRoomId[socket.id] = '1234';
         const action = 'player-info';
         const gameTitle = 'game1';
         const gameInfo: GameInfo = {
@@ -520,7 +500,87 @@ describe('ClassicModeGateway', () => {
         
         const gameplayInfo: OneVsOneGameplayInfo = {
             gameTitle: gameInfo.gameTitle,
-            roomId: PRIVATE_ROOM_ID,
+            roomId: '1234',
+            player1: true,
+        };
+        server.to.returns({
+            emit: (command: String, data: any) => {
+                expect(command).toEqual(action);
+                expect(data).toEqual(gameplayInfo);
+            },
+        } as BroadcastOperator<unknown, unknown>);
+        gateway.onHandleOneVsOneInfo(socket, gameTitle);
+    });
+    it('should reset lobby state', () => {
+        stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID, '1234']));
+        const action = 'awaiting-lobby';
+        const lobby: Lobby = {
+            gameMaster: 'user1',
+            gameTitle: 'game1'
+        }
+
+        const socketsReplace: PlayerSockets = {
+            masterSocket: socket
+        }
+
+        const createSpy = jest.spyOn(waiting, 'createLobby');
+        const initSpy = jest.spyOn(waiting, 'initializeGameInfo');
+
+        server.to.returns({
+            emit: (command: String, data: any) => {
+                expect(command).toEqual(action);
+                expect(data).toEqual(socketsReplace);
+            },
+        } as BroadcastOperator<unknown, unknown>);
+        gateway.onResetLobby(socket, lobby);
+        expect(createSpy).toHaveBeenCalled();
+        expect(initSpy).toHaveBeenCalled();
+    });
+    it('should emit to joining player that he has been rejected', () => {
+        stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID, '1234']));
+        const action = 'rejection';
+        const lobby: Lobby = {
+            gameMaster: 'user1',
+            gameTitle: 'game1'
+        }
+        gateway.socketIdToRoomId[socket.id] = '1234';
+        const mockPlayerSockets: PlayerSockets = {
+            masterSocket: socket,
+            joiningSocket: { leave: sinon.stub() } as Socket
+        };
+
+        gateway.roomIdToPlayerSockets.set('1234', mockPlayerSockets);
+
+        const createSpy = jest.spyOn(waiting, 'createLobby');
+        const initSpy = jest.spyOn(waiting, 'initializeGameInfo');
+
+        server.to.returns({
+            emit: (command: String, data: any) => {
+                expect(command).toEqual(action);
+                expect(data).toEqual('/game-selection');
+            },
+        } as BroadcastOperator<unknown, unknown>);
+        gateway.onRejectPlayer(socket, lobby);
+        expect(createSpy).toHaveBeenCalled();
+        expect(initSpy).toHaveBeenCalled();
+    });
+
+    it('should get info for 1vs1 if player did not create the lobby', () => {
+        stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID, '1234']));
+        gateway.socketIdToRoomId[socket.id] = '1111';
+        const action = 'player-info';
+        const gameTitle = 'game1';
+        const gameInfo: GameInfo = {
+            gameMaster: 'master',
+            joiningPlayer: 'player',
+            gameTitle: gameTitle,
+
+        };
+        jest.spyOn(waiting, 'getGameplayInfo').mockReturnValue(gameInfo);
+        
+        const gameplayInfo: OneVsOneGameplayInfo = {
+            gameTitle: gameInfo.gameTitle,
+            roomId: '1234',
             player1: false,
         };
         server.to.returns({
@@ -530,11 +590,10 @@ describe('ClassicModeGateway', () => {
             },
         } as BroadcastOperator<unknown, unknown>);
         gateway.onHandleOneVsOneInfo(socket, gameTitle);
-    });*/
+    });
 
 
-    //IterableIterator thing
-    /*it('should send message of success when called', () => {
+    it('should send message of success when called', () => {
         stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID, '1234']));
         const action = 'new-record';
         const recordInfo = {
@@ -543,8 +602,15 @@ describe('ClassicModeGateway', () => {
             title: 'game1',
             mode: 'solo'
         };
+
+        function* generateRooms() {
+            yield 'room1';
+            yield 'room2';
+        }
+        
+        const rooms: IterableIterator<string> = generateRooms();
     
-        jest.spyOn(game, 'getAllRooms');
+        jest.spyOn(game, 'getAllRooms').mockReturnValue(rooms);
         
         server.to.returns({
             emit: (command: String, data: any) => {
@@ -553,10 +619,9 @@ describe('ClassicModeGateway', () => {
             },
         } as BroadcastOperator<unknown, unknown>);
         gateway.onNewRecordSet(socket, recordInfo);
-    });*/
+    });
 
-    //Two emits in one function
-    /*it('should handle victory sequence ', () => {
+    it('should handle victory sequence ', () => {
         stub(socket, 'rooms').value(new Set([PRIVATE_ROOM_ID, '1234']));
         const action1 = 'new-record-time';
         const action2 = 'send-victorious-player';
@@ -566,22 +631,111 @@ describe('ClassicModeGateway', () => {
         const deleteTimerDataSpy = jest.spyOn(timer, 'deleteTimerData');
 
         server.to.returns({
-            emit: (command: String, time: number) => {
-                expect(command).toEqual(action1);
-                expect(time).toEqual(newTime);
+            emit: (command: String, data: any) => {
+                if(command === action1){
+                    expect(command).toEqual(action1);
+                    expect(data).toEqual(newTime);
+                }
+                else if(command === action2){
+                    expect(command).toEqual(action2);
+                    expect(data).toEqual(true);
+                }
             },
         } as BroadcastOperator<unknown, unknown>);
 
-        server.to.returns({
-            emit: (command: String, player1: boolean) => {
-                expect(command).toEqual(action2);
-                expect(player1).toEqual(true);;
-            },
-        } as BroadcastOperator<unknown, unknown>);
 
         gateway.handleVictorySequence(socket, true);
         expect(deleteTimerDataSpy).toHaveBeenCalled();
-    });*/
+        expect(getTimeFromRoomSpy).toHaveBeenCalled();
+    });
 
+    it('should handle connections to lobby if it is new lobby', () => {
+        jest.spyOn(waiting, 'isOtherLobby').mockReturnValue(false);
+        const action = 'awaiting-lobby';
+        const lobby: Lobby = {
+            gameMaster: 'user1',
+            gameTitle: 'game1'
+        }
+
+        socket.join.restore();
+        const joinStub = sinon.stub(socket, 'join');
+
+        const createSpy = jest.spyOn(waiting, 'createLobby');
+        const initSpy = jest.spyOn(waiting, 'initializeGameInfo');
+
+        server.to.returns({
+            emit: (command: String, data: any) => {
+                expect(command).toEqual(action);
+                expect(data).toEqual(lobby.gameTitle);
+            },
+        } as BroadcastOperator<unknown, unknown>);
+        gateway.onHandleLobby(socket, lobby);
+        const roomId = gateway.socketIdToRoomId[socket.id];
+        expect(joinStub.calledWith(roomId)).toBeTruthy();
+        expect(createSpy).toHaveBeenCalled();
+        expect(initSpy).toHaveBeenCalled();
+
+    });
+
+    it('should handle connections to lobby if it is not new lobby', () => {
+        const roomId = 'open-lobby';
+        jest.spyOn(waiting, 'isOtherLobby').mockReturnValue(true);
+        jest.spyOn(waiting, 'joinLobby').mockReturnValue(roomId);
+        const action1 = 'lobby-created';
+        const action2 = 'completed-lobby';
+        const action3 = 'redirectToGame';
+        const lobby: Lobby = {
+            gameMaster: 'user1',
+            gameTitle: 'Temps Limité'
+        }
+
+        socket.join.restore();
+        const joinStub = sinon.stub(socket, 'join');
+
+        const mockGameInfo: GameInfo = {
+            gameMaster: lobby.gameMaster,
+            joiningPlayer: 'user2',
+            gameTitle: lobby.gameTitle
+        };
+
+        const completeSpy = jest.spyOn(waiting, 'completeGameInfo').mockReturnValue(mockGameInfo);
+
+        const mockCompleteGameInfo: CompleteGameInfo = {
+            gameMaster: mockGameInfo.gameMaster,
+            joiningPlayer: mockGameInfo.joiningPlayer,
+            gameTitle:mockGameInfo.gameTitle,
+            roomId: roomId,
+        };
+
+        const mockRoomIdToPlayerSockets = new Map<string, PlayerSockets>();
+        const mockPlayerSockets: PlayerSockets = {
+            masterSocket: socket,
+            joiningSocket: socket
+        };
+        
+        gateway.roomIdToPlayerSockets.set(roomId, mockPlayerSockets);
+        const socketInfo: PlayerSockets = gateway.roomIdToPlayerSockets.get(roomId);
+
+        server.to.returns({
+            emit: (command: String, data: any) => {
+                if(command === action1) {
+                    expect(command).toEqual(action1);
+                    expect(data).toEqual(mockCompleteGameInfo);
+                }
+                else if(command === action2) {
+                    expect(command).toEqual(action2);
+                    expect(data).toEqual(lobby.gameTitle);
+                }
+                else if(command === action3) {
+                    expect(command).toEqual(action3);
+                    expect(data).toEqual('/limited-time');
+                }
+            },
+        } as BroadcastOperator<unknown, unknown>);
+        
+        gateway.onHandleLobby(socket, lobby);
+        expect(joinStub.calledWith(roomId)).toBeTruthy();
+        expect(completeSpy).toHaveBeenCalled();
+    });
 });
 

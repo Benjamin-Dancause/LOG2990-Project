@@ -101,14 +101,13 @@ export class ClassicModeGateway implements OnGatewayDisconnect {
     onLeftlimitedTime(client: Socket) {
         const roomId = [...client.rooms][1];
         if (roomId) {
-            console.log('player-quit-game');
             this.server.to(roomId).emit('player-quit-game');
         }
     }
 
     @SubscribeMessage('delete-game')
     onDeleteGame(client: Socket, gameTitle: string) {
-        this.server.sockets.emit('game-deleted', gameTitle);
+        this.server.emit('game-deleted', gameTitle);
     }
 
     @SubscribeMessage('handle-lobby')
@@ -124,7 +123,7 @@ export class ClassicModeGateway implements OnGatewayDisconnect {
                 this.waitingRoomManager.initializeGameInfo(lobby.gameTitle, lobby.gameMaster);
                 const incompleteSocketIds: PlayerSockets = { masterSocket: client };
                 this.roomIdToPlayerSockets.set(roomId, incompleteSocketIds);
-                this.server.sockets.emit('awaiting-lobby', lobby.gameTitle);
+                this.server.emit('awaiting-lobby', lobby.gameTitle);
             }
         } else {
             const roomToJoin = this.waitingRoomManager.joinLobby(lobby.gameTitle);
@@ -141,7 +140,7 @@ export class ClassicModeGateway implements OnGatewayDisconnect {
                 const socketInfo: PlayerSockets = { masterSocket: initialSockets.masterSocket, joiningSocket: client };
                 this.roomIdToPlayerSockets.set(roomToJoin, socketInfo);
                 this.server.to(roomToJoin).emit('lobby-created', completeGameInfo);
-                this.server.sockets.emit('completed-lobby', lobby.gameTitle);
+                this.server.emit('completed-lobby', lobby.gameTitle);
                 if (lobby.gameTitle === 'Temps Limité') {
                     this.server.to(roomToJoin).emit('redirectToGame', '/limited-time');
                 }
@@ -215,7 +214,7 @@ export class ClassicModeGateway implements OnGatewayDisconnect {
             const socketsReplace: PlayerSockets = { masterSocket: client };
             this.roomIdToPlayerSockets.set(roomId, socketsReplace);
             socketToReject.leave(roomId);
-            this.server.sockets.emit('awaiting-lobby', lobby.gameTitle);
+            this.server.emit('awaiting-lobby', lobby.gameTitle);
         }
     }
 
@@ -254,7 +253,7 @@ export class ClassicModeGateway implements OnGatewayDisconnect {
         if (roomId) {
             this.waitingRoomManager.createLobby(lobby.gameTitle, roomId);
             this.waitingRoomManager.initializeGameInfo(lobby.gameTitle, lobby.gameMaster);
-            this.server.sockets.emit('awaiting-lobby', lobby.gameTitle);
+            this.server.emit('awaiting-lobby', lobby.gameTitle);
             const socketsReplace: PlayerSockets = { masterSocket: client };
             this.roomIdToPlayerSockets.set(roomId, socketsReplace);
         }
