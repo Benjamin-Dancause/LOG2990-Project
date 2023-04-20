@@ -43,7 +43,6 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit, OnDestr
 
     ngAfterViewInit() {
         this.socketService.socket.on('send-victorious-player', () => {
-            this.playArea.stopCheatMode();
             if (this.counterService.counter > this.counterService.counter2) {
                 this.isWinner = true;
                 sessionStorage.setItem('winner', 'true');
@@ -59,6 +58,7 @@ export class GameOneVsOnePageComponent implements AfterViewInit, OnInit, OnDestr
                 }
                 this.showPopup = true;
             }
+            this.playArea.stopCheatMode();
         });
 
         this.socketService.socket.on('player-quit-game', () => {
