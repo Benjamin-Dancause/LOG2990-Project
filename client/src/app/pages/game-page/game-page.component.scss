@@ -75,6 +75,14 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
     margin: 0 auto;
 }
 
+#returnBtn {
+    left: 70px; 
+}
+
+#replayBtn {
+    right: 70px;   
+}
+
 .popup button {
     background-color: $background-color;
     position: absolute;
@@ -91,7 +99,6 @@ $orange-border-left: rgba(255, 153, 0, 0.774);
     box-shadow: 0 0 30px 4px $orange-glow;
     border-left: 10px solid $orange-border-left;
     bottom: 5%;
-    left: 21%;
 
     &:hover {
         background-color: $background-color-hover;
