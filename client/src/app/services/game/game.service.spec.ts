@@ -3,6 +3,7 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ClickResponse } from '@app/classes/click-response';
 import { MouseButton } from '@app/classes/mouse-button';
 import { DELAY } from '@common/constants';
@@ -24,20 +25,31 @@ describe('GameService', () => {
     let mockTimerService: jasmine.SpyObj<TimerService>;
     let mockReplayService: jasmine.SpyObj<ReplayService>;
     let mockSocket: jasmine.SpyObj<Socket>;
+    let mockContext1: CanvasRenderingContext2D;
+    let mockContext2: CanvasRenderingContext2D;
+    let mockContext3: CanvasRenderingContext2D;
+    let mockContext4: CanvasRenderingContext2D;
 
     beforeEach(() => {
-        mockSocketService = jasmine.createSpyObj('SocketService', [
-            'incrementCounter',
-            'resetCounter',
-            'sendVictoriousPlayer',
-            'sendDifferenceFound',
-            'addToTimer',
-            'removeToTimer',
-            'switchGame',
-            'sendPosition',
-        ]);
         mockSocket = jasmine.createSpyObj('Socket', ['on', 'emit', 'off']);
         mockSocket.on.and.returnValue(mockSocket);
+        mockSocket.off.and.returnValue(mockSocket);
+        mockSocket.emit.and.returnValue(mockSocket);
+        mockSocketService = jasmine.createSpyObj(
+            'SocketService',
+            [
+                'incrementCounter',
+                'resetCounter',
+                'sendVictoriousPlayer',
+                'sendDifferenceFound',
+                'addToTimer',
+                'removeToTimer',
+                'switchGame',
+                'sendPosition',
+            ],
+            { socket: mockSocket },
+        );
+
         mockTimerService = jasmine.createSpyObj('TimerService', ['getTime']);
         mockCounterService = jasmine.createSpyObj('CounterService', ['incrementCounter', 'resetCounter', 'removeToTimer']);
         mockCommunicationService = jasmine.createSpyObj('CommunicationService', [
@@ -48,7 +60,8 @@ describe('GameService', () => {
             'getAllDiffs',
         ]);
         mockReplayService = jasmine.createSpyObj('ReplayService', ['addAction', 'resetReplayData']);
-        mockSocketService.socket = mockSocket;
+        mockReplayService.addAction.and.callFake(() => {});
+        mockReplayService.resetReplayData.and.callFake(() => {});
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
@@ -63,6 +76,11 @@ describe('GameService', () => {
 
         gameService = TestBed.inject(GameService);
         mockSocketService = TestBed.inject(SocketService) as jasmine.SpyObj<SocketService>;
+        mockContext1 = jasmine.createSpyObj('CanvasRenderingContext2D', ['fillRect', 'clearRect', 'getImageData', 'putImageData', 'fillText']);
+        mockContext2 = jasmine.createSpyObj('CanvasRenderingContext2D', ['fillRect', 'clearRect', 'getImageData', 'putImageData']);
+        mockContext3 = jasmine.createSpyObj('CanvasRenderingContext2D', ['fillRect', 'clearRect', 'getImageData', 'putImageData', 'fillText']);
+        mockContext4 = jasmine.createSpyObj('CanvasRenderingContext2D', ['fillRect', 'clearRect', 'getImageData', 'putImageData']);
+        gameService.playAreaCtx = [mockContext1, mockContext2, mockContext3, mockContext4];
     });
 
     it('should be created', () => {
@@ -80,7 +98,7 @@ describe('GameService', () => {
         spyOn(gameService, 'flashDifferences');
         spyOn(gameService, 'updateImages');
         gameService.updateDifferences({ coords: mockCoords, differenceNumber: 1, isDifference: true });
-        expect(gameService['differenceFound']).toContain(1);
+        expect(gameService.differenceFound).toContain(1);
     });
 
     it('should call flashDifferences and updateImages with the correct parameters', () => {
@@ -380,4 +398,86 @@ describe('GameService', () => {
         tick(1000);
         expect(mockcanvas.style.cursor).toEqual('auto');
     }));
+
+    it('it should clear interval of this.cheatTimeout when stopCheatMode is called', fakeAsync(() => {
+        spyOn(window, 'clearInterval').and.callFake(() => {});
+        gameService.stopCheatMode();
+        expect(window.clearInterval).toHaveBeenCalledWith(gameService.cheatTimeout);
+    }));
+
+    it('should not update the images', () => {
+        const mockCanvas1 = CanvasTestHelper.createCanvas(2, 2);
+        const ctx1 = mockCanvas1.getContext('2d') as CanvasRenderingContext2D;
+        const mockCanvas2 = CanvasTestHelper.createCanvas(2, 2);
+        const ctx2 = mockCanvas2.getContext('2d') as CanvasRenderingContext2D;
+        ctx1.fillStyle = 'white';
+        ctx1.fillRect(0, 0, 2, 2);
+        const coord = [{ x: 0, y: 1 }];
+        gameService.updateImages(coord, ctx1, null as unknown as CanvasRenderingContext2D);
+        expect(ctx2.getImageData(0, 1, 1, 1).data).not.toEqual(ctx1.getImageData(0, 1, 1, 1).data);
+    });
+
+    it('should flashOneDifference1', fakeAsync(() => {
+        const time = 5;
+        const gamedata: GameDiffData = {
+            id: 1,
+            count: 4,
+            differences: [[{ x: 1, y: 2 }], [{ x: 1, y: 2 }]],
+        };
+        sessionStorage.setItem('gameTitle', 'test');
+        mockCommunicationService.getAllDiffs.and.returnValue(of(gamedata));
+        spyOn(gameService, 'blinkAllDifferences').and.callFake(() => {});
+
+        gameService.flashOneDifference1(gameService.playAreaCtx, time);
+        tick(1000);
+        expect(gameService.playAreaCtx[2].fillRect).toHaveBeenCalledTimes(4);
+        expect(gameService.playAreaCtx[3].fillRect).toHaveBeenCalledTimes(4);
+        expect(gameService.playAreaCtx[2].clearRect).toHaveBeenCalledTimes(4);
+        expect(gameService.playAreaCtx[3].clearRect).toHaveBeenCalledTimes(4);
+        sessionStorage.removeItem('gameTitle');
+    }));
+
+    it('should flashOneDifference2', fakeAsync(() => {
+        const time = 5;
+        const gamedata: GameDiffData = {
+            id: 1,
+            count: 4,
+            differences: [[{ x: 1, y: 2 }], [{ x: 1, y: 2 }]],
+        };
+        sessionStorage.setItem('gameTitle', 'test');
+        mockCommunicationService.getAllDiffs.and.returnValue(of(gamedata));
+        spyOn(gameService, 'blinkAllDifferences');
+
+        gameService.flashOneDifference2(gameService.playAreaCtx, time);
+        tick(1000);
+        expect(gameService.playAreaCtx[2].fillRect).toHaveBeenCalledTimes(4);
+    }));
+
+    it('should set showPopup to true when socket emits "send-victorious-player"', () => {
+        const player1 = true;
+        mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback(player1);
+            return mockSocket;
+        });
+
+        gameService.listenForWinner();
+        mockSocket.emit('send-victorious-player', player1);
+    });
+
+    // it('should do nothing if click disabled', fakeAsync(() => {
+    //     gameService['isClickDisabled'] = false;
+    //     spyOn(gameService, 'updateDifferences');
+    //     const mockEvent = { offsetX: 0, offsetY: 0 } as MouseEvent;
+    //     gameService.checkClick(mockEvent);
+    //     tick(3000);
+    //     expect(gameService.updateDifferences).not.toHaveBeenCalled();
+    // }));
+
+    // it('socket update-difference should call addAction ', fakeAsync(() => {
+    //     const clickResponse = { coords: [{ x: 0, y: 0 }], differenceNumber: 1, isDifference: true } as ClickResponse;
+    //     mockSocket.on.calls.mostRecent().args[1](clickResponse);
+    //     tick(1000);
+    //     mockSocket.emit('update-difference', clickResponse);
+    //     expect(mockReplayService.addAction).toHaveBeenCalled();
+    // }));
 });

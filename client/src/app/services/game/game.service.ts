@@ -8,7 +8,7 @@ import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
-import { GameDiffData, playerTime as PlayerTimeInterface, gameHistoryInfo } from '@common/game-interfaces';
+import { GameDiffData, gameHistoryInfo, playerTime as PlayerTimeInterface } from '@common/game-interfaces';
 import { Subscription } from 'rxjs';
 import { CounterService } from '../counter/counter.service';
 import { ReplayService } from '../replay/replay.service';
