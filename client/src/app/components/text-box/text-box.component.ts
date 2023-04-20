@@ -58,12 +58,15 @@ export class TextBoxComponent implements OnDestroy, OnInit {
                     this.addOpponentMessage(messageInfo.message);
                 }
             });
+            this.socketService.socket.off('player-quit-game');
             this.socketService.socket.on('player-quit-game', () => {
                 this.writeQuitMessage();
             });
+            this.socketService.socket.off('player-error');
             this.socketService.socket.on('player-error', (name: string) => {
                 this.writeErrorMessage(name);
             });
+            this.socketService.socket.off('player-success');
             this.socketService.socket.on('player-success', (name: string) => {
                 this.writeSuccessMessage(name);
             });

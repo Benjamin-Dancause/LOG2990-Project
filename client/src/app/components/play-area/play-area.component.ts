@@ -166,6 +166,7 @@ export class PlayAreaComponent implements AfterViewInit {
             this.imageLeftStr = this.serverURL + '/' + newImages.images[0];
             this.imageRightStr = this.serverURL + '/' + newImages.images[1];
             sessionStorage.setItem('gameTitle', newImages.title);
+            console.log('calls init canvases');
             this.initCanvases();
         });
 

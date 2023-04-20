@@ -101,6 +101,7 @@ export class ClassicModeGateway implements OnGatewayDisconnect {
     onLeftlimitedTime(client: Socket) {
         const roomId = [...client.rooms][1];
         if (roomId) {
+            console.log('player-quit-game');
             this.server.to(roomId).emit('player-quit-game');
         }
     }

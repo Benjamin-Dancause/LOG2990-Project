@@ -3,6 +3,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { GameAction } from '@app/interfaces/game-action';
 import { DELAY, TIME } from '@common/constants';
+import { Coords } from '@common/game-interfaces';
 import { CanvasReplayService } from '../canvas-replay/canvas-replay.service';
 import { ChatService } from '../chat/chat.service';
 
@@ -71,7 +72,8 @@ export class ReplayService {
                 console.log('update-difference');
                 this.opponentCounter++;
                 this.counterEvent.emit([this.ownCounter, this.opponentCounter]);
-                this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
+                const coords: Coords[] = this.currentGameAction.payload.coords;
+                this.canvasReplay.updateDifferences(coords);
                 break;
 
             case 'difference-found':
@@ -79,9 +81,6 @@ export class ReplayService {
                 this.ownCounter++;
                 this.counterEvent.emit([this.ownCounter, this.opponentCounter]);
                 this.canvasReplay.foundPopup(this.currentGameAction.payload.mousePosition, this.currentGameAction.payload.context);
-                this.goToNextAction();
-                console.log(this.currentGameAction.action);
-                //this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
                 break;
 
             case 'difference-error':

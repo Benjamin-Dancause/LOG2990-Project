@@ -2,6 +2,8 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SocketService } from '@app/services/socket/socket.service';
+import { Socket } from 'socket.io-client';
 import { TopBarComponent } from './top-bar.component';
 @Component({})
 class MockTimerComponent {
@@ -20,13 +22,20 @@ class MockCounterComponent {
 describe('TopBarComponent', () => {
     let component: TopBarComponent;
     let fixture: ComponentFixture<TopBarComponent>;
+    let mockSocketService: jasmine.SpyObj<SocketService>;
+    let mockSocket: jasmine.SpyObj<Socket>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockSessionStorage: any = {};
+    let mockSessionStorage: any = {};
 
     beforeEach(async () => {
+        mockSocketService = jasmine.createSpyObj('SocketService', ['connect']);
+        mockSocket = jasmine.createSpyObj('Socket', ['on', 'emit']);
+        mockSocket.on.and.returnValue(mockSocket);
+        mockSocket.emit.and.returnValue(mockSocket);
         await TestBed.configureTestingModule({
             declarations: [TopBarComponent, MockTimerComponent, MockCounterComponent],
             imports: [HttpClientTestingModule],
+            providers: [{ provide: SocketService, useValue: mockSocketService }],
         }).compileComponents();
 
         spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => {
@@ -38,6 +47,8 @@ describe('TopBarComponent', () => {
         });
 
         fixture = TestBed.createComponent(TopBarComponent);
+        mockSocketService = TestBed.inject(SocketService) as jasmine.SpyObj<SocketService>;
+        mockSocketService.socket = mockSocket;
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
@@ -62,6 +73,14 @@ describe('TopBarComponent', () => {
         component.ngOnInit();
         expect(sessionStorage.getItem).toHaveBeenCalled();
         expect(component.userName).toEqual('');
+    });
+
+    it('should set userName to empty string if storedUserName is undefined or null', () => {
+        mockSessionStorage['userName'] = 'player1';
+        component.isCoop = true;
+        component.ngOnInit();
+        mockSocket.emit('player-quit-game');
+        expect(component.isCoop).toEqual(false);
     });
 
     it('should set userName to empty string if storedUserName is undefined or null', () => {
