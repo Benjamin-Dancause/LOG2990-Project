@@ -2,7 +2,7 @@
     {{ text }}
 </button>
 <ng-template #giveUpPromptTemplate>
-    <h3>Voulez-vous abandonner la partie ?</h3>
+    <h3>Voulez-vous {{text.toLowerCase()}} la partie ?</h3>
     <mat-dialog-actions>
         <button mat-button class="prompt-button" routerLink="/home" mat-dialog-close (click)="removeUser()">Quitter</button>
         <button mat-button class="prompt-button" mat-dialog-close>Continuer</button>

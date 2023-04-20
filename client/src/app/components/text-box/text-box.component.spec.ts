@@ -106,6 +106,7 @@ describe('TextBoxComponent', () => {
 
     it('should call addSelfMessage if name emitted by "incoming-player-message" is same as userName', () => {
         mockSessionStorage['userName'] = 'player1';
+        mockSessionStorage['joiningPlayer'] = 'player2';
         component.userName = 'player1';
         component.gameMode = '1v1';
         const messageInfo = { name: 'player1', message: 'Hello World' };
@@ -122,6 +123,7 @@ describe('TextBoxComponent', () => {
 
     it('should call addOpponentMessage if name emitted by "incoming-player-message" is different than userName', () => {
         mockSessionStorage['userName'] = 'player2';
+        mockSessionStorage['joiningPlayer'] = 'player1';
         component.userName = 'player2';
         component.gameMode = '1v1';
         const messageInfo = { name: 'player1', message: 'Hello World' };
