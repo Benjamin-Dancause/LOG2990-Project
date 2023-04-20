@@ -176,6 +176,10 @@ export class PlayAreaComponent implements AfterViewInit {
         this.game.timeUpdater();
     }
 
+    stopCheatMode(): void {
+        this.game.stopCheatMode();
+    }
+
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy(): void {
         this.game.clearContexts();

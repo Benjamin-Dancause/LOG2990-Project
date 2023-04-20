@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // à corriger le disable
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { GameAction } from '@app/interfaces/game-action';
 import { DELAY, TIME } from '@common/constants';
 import { CanvasReplayService } from '../canvas-replay/canvas-replay.service';
@@ -18,9 +18,15 @@ export class ReplayService {
     differencesFound: number[] = [];
     cheatInterval: ReturnType<typeof setInterval>;
     checkActionInterval: any;
+    usingCheatMode: boolean = false;
+    endOfReplay: boolean = false;
     actionTime: number = 0;
+    ownCounter: number = 0;
+    opponentCounter: number = 0;
     speedSettings: number[] = [1, 2, TIME.FOUR_X_SPEED];
     private currentGameAction: GameAction;
+    timerEvent = new EventEmitter<number>();
+    counterEvent = new EventEmitter<number[]>();
 
     constructor(public chat: ChatService, public canvasReplay: CanvasReplayService) {}
 
@@ -62,13 +68,20 @@ export class ReplayService {
         this.currentGameAction = this.getAction();
         switch (this.currentGameAction.action) {
             case 'update-difference':
+                console.log('update-difference');
+                this.opponentCounter++;
+                this.counterEvent.emit([this.ownCounter, this.opponentCounter]);
                 this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
                 break;
 
             case 'difference-found':
+                console.log('diff-found');
+                this.ownCounter++;
+                this.counterEvent.emit([this.ownCounter, this.opponentCounter]);
                 this.canvasReplay.foundPopup(this.currentGameAction.payload.mousePosition, this.currentGameAction.payload.context);
                 this.goToNextAction();
-                this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
+                console.log(this.currentGameAction.action);
+                //this.canvasReplay.updateDifferences(this.currentGameAction.payload.coords);
                 break;
 
             case 'difference-error':
@@ -79,6 +92,7 @@ export class ReplayService {
                 this.chat.messages.push(this.currentGameAction.payload);
                 break;
             case 'cheat-mode-on':
+                this.usingCheatMode = true;
                 this.differencesFound = this.currentGameAction.payload;
                 this.canvasReplay.flashAllDifferences(this.differencesFound);
                 this.cheatInterval = setInterval(() => {
@@ -86,6 +100,7 @@ export class ReplayService {
                 }, DELAY.SMALLTIMEOUT / this.replaySpeed);
                 break;
             case 'cheat-mode-off':
+                this.usingCheatMode = false;
                 clearInterval(this.cheatInterval);
                 break;
             case 'hint-one':
@@ -108,6 +123,7 @@ export class ReplayService {
                 this.checkForAction();
             }, 100 / this.replaySpeed);
         } else {
+            this.endOfReplay = true;
             this.pauseReplayTimer();
         }
     }
@@ -119,19 +135,30 @@ export class ReplayService {
     }
 
     startReplayTimer(): void {
+        if (this.endOfReplay) {
+            return;
+        }
+        this.counterEvent.emit([this.ownCounter, this.opponentCounter]);
         this.pauseReplayTimer();
         const interval = DELAY.SMALLTIMEOUT / this.replaySpeed;
         this.replayInterval = setInterval(() => {
             this.replayTimer++;
-            console.log(this.replayTimer);
+            this.timerEvent.emit(this.replayTimer);
             if (this.gameActions.length - this.replayIndex > 0) {
                 this.checkForAction();
             }
         }, interval);
+        if (this.usingCheatMode) {
+            this.canvasReplay.flashAllDifferences(this.differencesFound);
+            this.cheatInterval = setInterval(() => {
+                this.canvasReplay.flashAllDifferences(this.differencesFound);
+            }, DELAY.SMALLTIMEOUT / this.replaySpeed);
+        }
     }
 
     pauseReplayTimer(): void {
         clearInterval(this.replayInterval);
+        clearInterval(this.cheatInterval);
     }
 
     resetReplayTimer(): void {
@@ -140,6 +167,11 @@ export class ReplayService {
         this.pauseReplayTimer();
         this.differencesFound = [];
         this.replayTimer = 0;
+        this.usingCheatMode = false;
+        this.endOfReplay = false;
+        this.ownCounter = 0;
+        this.opponentCounter = 0;
+        clearInterval(this.cheatInterval);
     }
 
     resetReplayData(): void {
@@ -150,5 +182,10 @@ export class ReplayService {
         this.replayTimer = 0;
         this.gameActions = [];
         this.replaySpeed = 1;
+        this.usingCheatMode = false;
+        this.ownCounter = 0;
+        this.opponentCounter = 0;
+        this.endOfReplay = false;
+        clearInterval(this.cheatInterval);
     }
 }
