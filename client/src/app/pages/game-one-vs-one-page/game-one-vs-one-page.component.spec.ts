@@ -76,6 +76,19 @@ describe('GamePageOneVsOneComponent', () => {
         expect(component.showPopup).toBeFalse();
     });
 
+    it('should set showPopup to true when socket emits "send-victorious-player" and counter is bigger than counter2', () => {
+        component.counterService.counter = 3;
+        component.counterService.counter2 = 0;
+        mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback();
+            return mockSocket;
+        });
+
+        component.ngAfterViewInit();
+        mockSocket.emit('send-victorious-player');
+        expect(component.showPopup).toBeTrue();
+    });
+
     it('should set showPopup to true when socket emits "send-victorious-player"', () => {
         mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
             callback();
