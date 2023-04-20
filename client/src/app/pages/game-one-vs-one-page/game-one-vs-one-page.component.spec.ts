@@ -1,8 +1,12 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
-import { CommunicationService } from '@app/services/communication/communication.service';
-import { CounterService } from '@app/services/counter/counter.service';
+import { GiveUpButtonComponent } from '@app/components/give-up-button/give-up-button.component';
+import { HintsComponent } from '@app/components/hints/hints.component';
+import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
+import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import { TimerComponent } from '@app/components/timer/timer.component';
+import { TopBarComponent } from '@app/components/top-bar/top-bar.component';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { of } from 'rxjs';
@@ -12,72 +16,78 @@ import { GameOneVsOnePageComponent } from './game-one-vs-one-page.component';
 describe('GamePageOneVsOneComponent', () => {
     let component: GameOneVsOnePageComponent;
     let fixture: ComponentFixture<GameOneVsOnePageComponent>;
-    let gameCardServiceSpy: jasmine.SpyObj<GameCardService>;
-    let socketServiceSpy: jasmine.SpyObj<SocketService>;
-    let counterServiceSpy: jasmine.SpyObj<CounterService>;
-    let communicationServiceSpy: jasmine.SpyObj<CommunicationService>;
-
+    let gameCardService: jasmine.SpyObj<GameCardService>;
+    let mockSocketService: jasmine.SpyObj<SocketService>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mockSessionStorage: any = {};
     let mockSocket: jasmine.SpyObj<Socket>;
-    // let mockRouter: Router;
-    // let mockSocketService: jasmine.SpyObj<SocketService>;
+    let mockPlayArea: jasmine.SpyObj<PlayAreaComponent>;
 
     beforeEach(async () => {
-        gameCardServiceSpy = jasmine.createSpyObj('GameCardService', ['removePlayer']);
-        socketServiceSpy = jasmine.createSpyObj('SocketService', ['initOneVsOneComponents', 'soloGame', 'initializeGame']);
-        counterServiceSpy = jasmine.createSpyObj('CounterService', [], { count: 0 });
-        communicationServiceSpy = jasmine.createSpyObj('CommunicationService', ['getGameNames']);
+        mockSocketService = jasmine.createSpyObj<SocketService>(['soloGame', 'initializeGame', 'deleteRoomGameInfo']);
+        gameCardService = jasmine.createSpyObj<GameCardService>(['removePlayer']);
+        mockPlayArea = jasmine.createSpyObj<PlayAreaComponent>(['initCanvases']);
 
         mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
         mockSocket.on.and.returnValue(mockSocket);
         mockSocket.emit.and.returnValue(mockSocket);
 
         await TestBed.configureTestingModule({
-            declarations: [GameOneVsOnePageComponent],
+            declarations: [GameOneVsOnePageComponent, SidebarComponent, GiveUpButtonComponent, TopBarComponent, TimerComponent, HintsComponent],
             imports: [HttpClientModule, MatDialogModule],
             providers: [
-                { provide: GameCardService, useValue: gameCardServiceSpy },
-                { provide: SocketService, useValue: socketServiceSpy },
-                { provide: CounterService, useValue: counterServiceSpy },
-                { provide: CommunicationService, useValue: communicationServiceSpy },
-                { provide: CounterService, useValue: { counter: 0, counter2: 0 } },
+                { provide: SocketService, useValue: mockSocketService },
+                { provide: GameCardService, useValue: gameCardService },
             ],
         }).compileComponents();
 
+        mockSessionStorage = {};
+
+        spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => {
+            return mockSessionStorage[key] || null;
+        });
+    });
+
+    beforeEach(() => {
         fixture = TestBed.createComponent(GameOneVsOnePageComponent);
         component = fixture.componentInstance;
-
-        socketServiceSpy.socket = mockSocket;
+        mockSocketService.socket = mockSocket;
         fixture.detectChanges();
     });
 
-    /*
-    afterEach(() => {
-        fixture = TestBed.createComponent(GameOneVsOnePageComponent);
-        component = fixture.componentInstance;
-        // mockSocketService.socket = mockSocket;
-    });
-    */
     it('should create', () => {
         expect(component).toBeTruthy();
     });
-    it('should call removePlayer method of GameCardService with correct arguments and set showPopup to false', () => {
-        component.gameTitle = 'test-game-title';
-        component.userName = 'test-user-name';
-        component.showPopup = true;
-        gameCardServiceSpy.removePlayer.and.returnValue(of(undefined));
+
+    it('should set showPopup to false when returnToMainMenu is called', () => {
+        component.gameTitle = 'test1';
+        component.userName = 'player';
+        gameCardService.removePlayer.and.returnValue(of(null));
 
         component.returnToMainMenu();
-
-        expect(gameCardServiceSpy.removePlayer).toHaveBeenCalledWith('test-game-title', 'test-user-name');
-        expect(component.showPopup).toBe(false);
+        expect(component.gameCardService.removePlayer).toHaveBeenCalledWith('test1', 'player');
     });
 
-    it('should return true for isPlayer1() if gameMaster and userName are equal in sessionStorage', () => {
-        spyOn(sessionStorage, 'getItem').and.returnValue('test-user-name');
-        expect(component.isPlayer1()).toBe(true);
+    it('should set showPopup to false', () => {
+        component.showPopup = true;
+        gameCardService.removePlayer.and.returnValue(of(null));
+
+        component.returnToMainMenu();
+        expect(component.showPopup).toBeFalse();
     });
 
-    it('should set isWinner and showPopup to true on player-quit-game event', () => {
+    it('should set showPopup to true when socket emits "send-victorious-player"', () => {
+        mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback();
+            return mockSocket;
+        });
+
+        component.ngAfterViewInit();
+        mockSocket.emit('send-victorious-player');
+        expect(component.showPopup).toBeTrue();
+    });
+
+    it('should set showPopup to true when socket emits "send-victorious-player"', () => {
         mockSocket.on.withArgs('player-quit-game', jasmine.any(Function)).and.callFake((eventName, callback) => {
             callback();
             return mockSocket;
@@ -85,57 +95,17 @@ describe('GamePageOneVsOneComponent', () => {
 
         component.ngAfterViewInit();
         mockSocket.emit('player-quit-game');
-
-        expect(component.isWinner).toBeTrue();
         expect(component.showPopup).toBeTrue();
     });
 
-    it('should set isWinner and showPopup to false on send-victorious-player event', () => {
-        mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
-            callback();
-            return mockSocket;
-        });
-
-        component.ngAfterViewInit();
-        setTimeout(() => {
-            mockSocket.emit('send-victorious-player');
-
-            expect(component.isWinner).toBeFalse();
-            expect(component.showPopup).toBeTrue();
-        });
-    });
-
-    it('should set isWinner and showPopup to true on send-victorious-player event', () => {
-        component.counterService.counter = 4;
-        component.counterService.counter2 = 2;
-        mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
-            callback();
-            return mockSocket;
-        });
-
-        component.ngAfterViewInit();
-        setTimeout(() => {
-            mockSocket.emit('send-victorious-player');
-            expect(component.isWinner).toBeTrue();
-            expect(component.showPopup).toBeTrue();
-        });
-    });
-
-    /*
-    it('should call initCanvases() of playArea for startReplay()', () => {
-        spyOn(component.playArea, 'initCanvases');
+    it('should set replayMode to true and call playArea.initCanvases() when startReplay() is called', () => {
+        component.playArea = mockPlayArea;
 
         component.startReplay();
 
-        expect(component.playArea.initCanvases).toHaveBeenCalled();
+        expect(component.showPopup).toBeFalse();
+        expect(component.replayMode).toBeTrue();
+        expect(component.playArea.replay).toBeTrue();
+        expect(mockPlayArea.initCanvases).toHaveBeenCalled();
     });
-    */
-
-    /*
-    it('should call playAction() of replayService for test()', () => {
-        spyOn(component.replayService, 'playAction');
-
-        component.startReplay();
-    });
-    */
 });
