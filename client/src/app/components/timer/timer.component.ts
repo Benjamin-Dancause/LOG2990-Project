@@ -25,7 +25,6 @@ export class TimerComponent implements OnInit, OnDestroy {
             sessionStorage.setItem('newTimeMinutes', this.minutes);
             sessionStorage.setItem('newTimeSeconds', this.seconds);
         });
-
         this.replay.timerEvent.subscribe((time) => {
             this.min = Math.floor(time / 60);
             this.sec = time % 60;

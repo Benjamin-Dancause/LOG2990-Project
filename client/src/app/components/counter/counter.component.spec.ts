@@ -10,11 +10,8 @@ describe('CounterComponent', () => {
     let mockSessionStorage: any = {};
     let fixture: ComponentFixture<CounterComponent>;
 
-    beforeEach(() => {
-        counterServiceSpy = jasmine.createSpyObj('CounterService', ['initializeCounter', 'resetCounter']);
-    });
-
     beforeEach(async () => {
+        counterServiceSpy = jasmine.createSpyObj('CounterService', ['initializeCounter', 'resetCounter', 'unsubscribeFrom']);
         await TestBed.configureTestingModule({
             declarations: [CounterComponent],
             providers: [{ provide: CounterService, useValue: counterServiceSpy }],
