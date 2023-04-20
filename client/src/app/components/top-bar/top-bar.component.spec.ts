@@ -29,7 +29,7 @@ describe('TopBarComponent', () => {
 
     beforeEach(async () => {
         mockSocketService = jasmine.createSpyObj('SocketService', ['connect']);
-        mockSocket = jasmine.createSpyObj('Socket', ['on', 'emit']);
+        mockSocket = jasmine.createSpyObj('Socket', ['on', 'emit', 'off']);
         mockSocket.on.and.returnValue(mockSocket);
         mockSocket.emit.and.returnValue(mockSocket);
         await TestBed.configureTestingModule({
@@ -78,15 +78,39 @@ describe('TopBarComponent', () => {
     it('should set userName to empty string if storedUserName is undefined or null', () => {
         mockSessionStorage['userName'] = 'player1';
         component.isCoop = true;
-        component.ngOnInit();
-        mockSocket.emit('player-quit-game');
-        expect(component.isCoop).toEqual(false);
+        component.ngAfterViewInit();
+
+        // Manually emit the event
+        mockSocket.on.calls.argsFor(0)[1]();
+        fixture.detectChanges();
+
+        expect(component.isCoop).toBeFalse();
     });
 
     it('should set userName to empty string if storedUserName is undefined or null', () => {
         mockSessionStorage['userName'] = undefined;
         component.ngOnInit();
         expect(component.userName).toEqual('');
+    });
+
+    it('should set opponent to joiningPlayer if player is gameMaster', () => {
+        component.single = true;
+        mockSessionStorage['userName'] = 'player1';
+        mockSessionStorage['gameMode'] = 'tl';
+        mockSessionStorage['gameMaster'] = 'player1';
+        mockSessionStorage['joiningPlayer'] = 'player2';
+        component.ngOnInit();
+        expect(component.opponent).toEqual('player2');
+    });
+
+    it('should set opponent to gameMaster if player is joiningPlayer', () => {
+        component.single = true;
+        mockSessionStorage['userName'] = 'player1';
+        mockSessionStorage['gameMode'] = 'tl';
+        mockSessionStorage['gameMaster'] = 'player2';
+        mockSessionStorage['joiningPlayer'] = 'player1';
+        component.ngOnInit();
+        expect(component.opponent).toEqual('player2');
     });
 
     it('should set opponent to empty joiningPlayer if userName is same as gameMaster', () => {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { SocketService } from '@app/services/socket/socket.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { SocketService } from '@app/services/socket/socket.service';
     templateUrl: './top-bar.component.html',
     styleUrls: ['./top-bar.component.scss'],
 })
-export class TopBarComponent implements OnInit {
+export class TopBarComponent implements OnInit, AfterViewInit {
     @Input() name: string;
     @Input() single: boolean;
     userName: string;
@@ -21,12 +21,6 @@ export class TopBarComponent implements OnInit {
         this.userName = storedUserName ? storedUserName : '';
         this.name = (sessionStorage.getItem('gameTitle') as string) || '';
         this.gameMode = sessionStorage.getItem('gameMode') as string;
-
-        this.socketService.socket.off('player-quit-game');
-        this.socketService.socket.on('player-quit-game', () => {
-            console.log('top bar');
-            this.isCoop = false;
-        });
 
         if (!this.single) {
             if (this.userName === (sessionStorage.getItem('gameMaster') as string)) {
@@ -45,5 +39,12 @@ export class TopBarComponent implements OnInit {
                 this.isCoop = true;
             }
         }
+    }
+
+    ngAfterViewInit(): void {
+        this.socketService.socket.on('player-quit-game', () => {
+            console.log('top bar');
+            this.isCoop = false;
+        });
     }
 }
