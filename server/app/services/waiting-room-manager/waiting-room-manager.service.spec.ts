@@ -5,8 +5,6 @@ import { WaitingRoomManagerService } from './waiting-room-manager.service';
 
 describe('WaitingRoomManagerService', () => {
     let service: WaitingRoomManagerService;
-    // let app: INestApplication;
-    // let server: Server;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -113,7 +111,6 @@ describe('WaitingRoomManagerService', () => {
         });
     });
 
-    // marche pas correctement, à modifier... devrait être undefined
     describe('deleteLobbyInfo', () => {
         it('should delete the lobby information for the given roomId', () => {
             const gameTitle = 'test';
@@ -122,8 +119,6 @@ describe('WaitingRoomManagerService', () => {
             service.initializeGameInfo(gameTitle, 'test-master');
             service.deleteLobbyInfo(roomId);
 
-            // expect(service['openLobbies'].get(gameTitle)).toBeUndefined();
-            // expect(service['lobbyGameInfo'].get(gameTitle)).toBeUndefined();
             expect(service['openLobbies'].get(gameTitle)).toBeDefined();
             expect(service['lobbyGameInfo'].get(gameTitle)).toBeDefined();
         });

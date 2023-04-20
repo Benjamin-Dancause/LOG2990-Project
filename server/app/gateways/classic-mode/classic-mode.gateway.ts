@@ -335,8 +335,6 @@ export class ClassicModeGateway implements OnGatewayDisconnect {
         const roomId = this.socketIdToRoomId[client.id];
         if (roomId) {
             client.leave(roomId);
-            // this.timerManager.deleteTimerData(roomId);
-            // this.counterManager.deleteCounterData(roomId);
             this.waitingRoomManager.deleteLobbyInfo(roomId);
             this.roomIdToPlayerSockets.delete(roomId);
         }

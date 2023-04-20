@@ -191,7 +191,6 @@ describe('CreateImageComponent', () => {
         expect(component.originalImage).toBeUndefined();
         input.remove();
     });
-    // here
     it('should return if the event target is not an HTMLInputElement', async () => {
         const fileEvent = new Event('click');
 

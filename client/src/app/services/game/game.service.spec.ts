@@ -380,14 +380,4 @@ describe('GameService', () => {
         tick(1000);
         expect(mockcanvas.style.cursor).toEqual('auto');
     }));
-
-    // it('socket update-difference should call addAction ', fakeAsync(() => {
-    //     const clickResponse = { coords: [{ x: 0, y: 0 }], differenceNumber: 1, isDifference: true } as ClickResponse;
-    //     mockSocket.on.withArgs('update-difference', jasmine.any(Function)).and.callFake((eventName, callback) => {
-    //         callback(clickResponse);
-    //         return mockSocket;
-    //     });
-    //     mockSocket.emit('update-difference', clickResponse);
-    //     expect(mockReplayService['addAction']).toHaveBeenCalled();
-    // }));
 });

@@ -82,7 +82,6 @@ describe('ConfigPageComponent', () => {
         component = fixture.componentInstance;
         communicationService = TestBed.inject(CommunicationService);
         socketService = TestBed.inject(SocketService);
-        // dialog = TestBed.inject(MatDialog);
     });
 
     it('should create', () => {

@@ -25,9 +25,6 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
 
     constructor(protected communication: CommunicationService, public socketService: SocketService, public dialog: MatDialog) {
         communication.getAllGames().subscribe((gamecards: GameSelectionPageData[]) => {
-            /* for (const gamecard of gamecards) {
-                gamecard.configuration = true;
-            }*/
             this.games = gamecards;
             this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
         });

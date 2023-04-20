@@ -10,7 +10,6 @@ import { CanvasReplayService } from './canvas-replay.service';
 describe('CanvasReplayService', () => {
     let service: CanvasReplayService;
     let mockCommunicationService: jasmine.SpyObj<CommunicationService>;
-    // let mockCoords: Coords[];
     let mockContext1: CanvasRenderingContext2D;
     let mockContext2: CanvasRenderingContext2D;
 

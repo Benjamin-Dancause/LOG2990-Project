@@ -27,7 +27,6 @@ describe('HintsComponent', () => {
         window.dispatchEvent(event);
 
         expect(component.decrementCounter).toHaveBeenCalled();
-        // expect(component.nbrIndices).toEqual(1);
         expect(component.nbrIndices).toEqual(2);
     });
 

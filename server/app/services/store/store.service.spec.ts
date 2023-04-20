@@ -11,9 +11,6 @@ describe('StoreService', () => {
     let service2: StoreService;
     let deleteMock: jest.Mock;
     let extractDataMock: jest.Mock;
-    // let tempImagePath: string;
-    // let consoleErrorMock: jest.Mock;
-    // let readFileMock: jest.Mock;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({

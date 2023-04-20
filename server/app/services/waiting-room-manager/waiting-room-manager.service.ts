@@ -45,7 +45,6 @@ export class WaitingRoomManagerService {
             return completeGameInfo;
         }
     }
-    // Todo switch roomId for gameTitle
     deleteLobbyInfo(roomId: string) {
         this.openLobbies.delete(roomId);
         this.lobbyGameInfo.delete(roomId);

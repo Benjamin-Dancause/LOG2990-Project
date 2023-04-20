@@ -1,9 +1,10 @@
 .canvas {
     position: absolute;
-    top: 25%
+    top: 25%;
 }
 
-#canvas-1, #canvas-3 {
+#canvas-1,
+#canvas-3 {
     margin-left: 70px;
 
     border: 1px solid rgb(126, 222, 235);
@@ -12,13 +13,14 @@
     left: 35%;
 }
 
-#canvas-2, #canvas-4 {
+#canvas-2,
+#canvas-4 {
     margin-right: 70px;
 
     border: 1px solid rgb(126, 222, 235);
     border-left: 3px solid rgba(109, 188, 199, 0.774);
     box-shadow: 0 0 30px 4px rgb(123, 226, 252);
-    left : 3%
+    left: 3%;
 }
 
 #grid-container {
@@ -44,11 +46,10 @@
 }
 
 .canvasContainer {
-    position:relative;
-    width:650px;
-    height:500px;
+    position: relative;
+    width: 650px;
+    height: 500px;
 }
-
 
 #grid-container .cheat-message {
     position: absolute;
@@ -75,24 +76,17 @@ button {
     margin-left: 60px;
     margin-top: 15px;
     height: 8%;
-  }
+}
 
-  button:hover:not([disabled]) {
+button:hover:not([disabled]) {
     background-color: #ff9900ff;
     cursor: pointer;
-  }
-  
-  button:disabled {
+}
+
+button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-  }
-  
-  /*
-  span {
-    font-size: 1.2rem;
-    color: #fff;
-  }
-  */
+}
 
 .loupe {
     width: 2rem;

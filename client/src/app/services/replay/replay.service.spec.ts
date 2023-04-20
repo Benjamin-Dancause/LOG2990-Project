@@ -6,8 +6,6 @@ import { ReplayService } from './replay.service';
 
 describe('ReplayService', () => {
     let service: ReplayService;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // let canvasReplayMock: any;
     let canvasReplaySpy: jasmine.SpyObj<CanvasReplayService>;
 
     beforeEach(() => {
@@ -123,7 +121,6 @@ describe('ReplayService', () => {
         service.startReplayTimer();
         expect(service.pauseReplayTimer).toHaveBeenCalled();
         expect(window.setInterval).toHaveBeenCalled();
-        // expect(service.checkForAction).toHaveBeenCalled();
     });
 
     it('should call checkForAction after 100 ms if gameActions length > replayIndex', fakeAsync(() => {
@@ -183,7 +180,6 @@ describe('ReplayService', () => {
         service.replayInterval = 123;
         service.pauseReplayTimer();
         expect(window.clearInterval).toHaveBeenCalledWith(service.replayInterval);
-        // expect(service.replayInterval).toBeNull();
     });
 
     it('should reset the replay timer, replay index, action time, and pause the replay timer', () => {
@@ -243,7 +239,6 @@ describe('ReplayService', () => {
         expect(canvasReplaySpy.updateDifferences).not.toHaveBeenCalled();
         expect(canvasReplaySpy.foundPopup).not.toHaveBeenCalled();
         expect(canvasReplaySpy.errorPopup).not.toHaveBeenCalled();
-        // expect(service.chat.messages.length).toBe(0);
     });
 
     it('should push a message to chat messages when action is message', () => {
@@ -348,7 +343,6 @@ describe('ReplayService', () => {
         });
         service.playAction();
         expect(canvasReplaySpy.updateDifferences).not.toHaveBeenCalled();
-        // expect(clearInterval).toHaveBeenCalled();
     });
 
     it('should call flashOneDifference1 when action is hint-one', () => {

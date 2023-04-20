@@ -80,7 +80,6 @@ export class SocketService {
     }
 
     leaveLimitedTime() {
-        console.log('leave-limited-time');
         this.socket.emit('leave-limited-time');
     }
 
