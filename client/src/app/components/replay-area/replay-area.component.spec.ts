@@ -9,16 +9,18 @@ describe('ReplayAreaComponent', () => {
     let fixture: ComponentFixture<ReplayAreaComponent>;
     let replayServiceSpy: jasmine.SpyObj<ReplayService>;
     let chatServiceSpy: jasmine.SpyObj<ChatService>;
+    let replaySpy: jasmine.SpyObj<ReplayService>;
+    let chatSpy: jasmine.SpyObj<ChatService>;
 
     beforeEach(async () => {
-        const replaySpy = jasmine.createSpyObj('ReplayService', [
+        replaySpy = jasmine.createSpyObj('ReplayService', [
             'startReplayTimer',
             'pauseReplayTimer',
             'resetReplayTimer',
             'changeSpeed',
             'resetReplayData',
         ]);
-        const chatSpy = jasmine.createSpyObj('ChatService', ['deleteMessages']);
+        chatSpy = jasmine.createSpyObj('ChatService', ['deleteMessages']);
 
         await TestBed.configureTestingModule({
             declarations: [ReplayAreaComponent, PlayAreaComponent],
@@ -60,19 +62,12 @@ describe('ReplayAreaComponent', () => {
     });
 
     it('should change replay speed', () => {
-        // component.replaySpeedIndex = 0;
-        // component.replaySpeed = 1;
-        // component.changeReplaySpeed();
-        // expect(component.replaySpeedIndex).not.toBe(1);
-        // expect(replayServiceSpy.changeSpeed).toHaveBeenCalledWith(component.replaySpeedIndex);
-        // // expect(component.replaySpeed).toBe(2);
-        // component.replaySpeedIndex = 2;
-        // component.replaySpeed = 4;
-        // component.changeReplaySpeed();
-        // expect(component.replaySpeedIndex).toBe(0);
-        // expect(replayServiceSpy.changeSpeed).toHaveBeenCalledWith(component.replaySpeedIndex);
-        // expect(component.replaySpeed).toEqual(1);
-        expect(false).toBeTruthy();
+        component.replaySpeedIndex = 0;
+        component.replaySpeed = 1;
+        replayServiceSpy.replaySpeed = 2;
+        component.changeReplaySpeed();
+        expect(component.replaySpeed).not.toBe(1);
+        expect(replayServiceSpy.changeSpeed).toHaveBeenCalledWith(component.replaySpeedIndex);
     });
 
     it('should reset the replay timer', () => {
