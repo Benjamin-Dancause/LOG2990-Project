@@ -11,7 +11,13 @@ describe('ReplayAreaComponent', () => {
     let chatServiceSpy: jasmine.SpyObj<ChatService>;
 
     beforeEach(async () => {
-        const replaySpy = jasmine.createSpyObj('ReplayService', ['startReplayTimer', 'pauseReplayTimer', 'resetReplayTimer', 'changeSpeed']);
+        const replaySpy = jasmine.createSpyObj('ReplayService', [
+            'startReplayTimer',
+            'pauseReplayTimer',
+            'resetReplayTimer',
+            'changeSpeed',
+            'resetReplayData',
+        ]);
         const chatSpy = jasmine.createSpyObj('ChatService', ['deleteMessages']);
 
         await TestBed.configureTestingModule({
@@ -54,19 +60,19 @@ describe('ReplayAreaComponent', () => {
     });
 
     it('should change replay speed', () => {
-        component.replaySpeedIndex = 0;
-        component.replaySpeed = 1;
-        component.changeReplaySpeed();
-        expect(component.replaySpeedIndex).not.toBe(1);
-        expect(replayServiceSpy.changeSpeed).toHaveBeenCalledWith(component.replaySpeedIndex);
-        // expect(component.replaySpeed).toBe(2);
-
-        component.replaySpeedIndex = 2;
-        component.replaySpeed = 4;
-        component.changeReplaySpeed();
-        expect(component.replaySpeedIndex).toBe(0);
-        expect(replayServiceSpy.changeSpeed).toHaveBeenCalledWith(component.replaySpeedIndex);
-        expect(component.replaySpeed).not.toBe(1);
+        // component.replaySpeedIndex = 0;
+        // component.replaySpeed = 1;
+        // component.changeReplaySpeed();
+        // expect(component.replaySpeedIndex).not.toBe(1);
+        // expect(replayServiceSpy.changeSpeed).toHaveBeenCalledWith(component.replaySpeedIndex);
+        // // expect(component.replaySpeed).toBe(2);
+        // component.replaySpeedIndex = 2;
+        // component.replaySpeed = 4;
+        // component.changeReplaySpeed();
+        // expect(component.replaySpeedIndex).toBe(0);
+        // expect(replayServiceSpy.changeSpeed).toHaveBeenCalledWith(component.replaySpeedIndex);
+        // expect(component.replaySpeed).toEqual(1);
+        expect(false).toBeTruthy();
     });
 
     it('should reset the replay timer', () => {
