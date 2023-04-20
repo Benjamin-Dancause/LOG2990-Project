@@ -1,6 +1,12 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
+import { GiveUpButtonComponent } from '@app/components/give-up-button/give-up-button.component';
+import { HintsComponent } from '@app/components/hints/hints.component';
+import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
+import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import { TimerComponent } from '@app/components/timer/timer.component';
+import { TopBarComponent } from '@app/components/top-bar/top-bar.component';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { of } from 'rxjs';
@@ -15,13 +21,19 @@ describe('GamePageComponent', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockSessionStorage: any = {};
     let mockSocket: jasmine.SpyObj<Socket>;
+    let mockPlayArea: jasmine.SpyObj<PlayAreaComponent>;
 
     beforeEach(async () => {
-        mockSocketService = jasmine.createSpyObj<SocketService>(['soloGame']);
+        mockSocketService = jasmine.createSpyObj<SocketService>(['soloGame', 'initializeGame', 'deleteRoomGameInfo']);
         gameCardService = jasmine.createSpyObj<GameCardService>(['removePlayer']);
+        mockPlayArea = jasmine.createSpyObj<PlayAreaComponent>(['initCanvases']);
+
+        mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
+        mockSocket.on.and.returnValue(mockSocket);
+        mockSocket.emit.and.returnValue(mockSocket);
 
         await TestBed.configureTestingModule({
-            declarations: [GamePageComponent],
+            declarations: [GamePageComponent, SidebarComponent, GiveUpButtonComponent, TopBarComponent, TimerComponent, HintsComponent],
             imports: [HttpClientModule, MatDialogModule],
             providers: [
                 { provide: SocketService, useValue: mockSocketService },
@@ -74,5 +86,24 @@ describe('GamePageComponent', () => {
         component.ngAfterViewInit();
         mockSocket.emit('send-victorious-player', player1);
         expect(component.showPopup).toBeTrue();
+    });
+
+    it('should set replayMode to true and call playArea.initCanvases() when startReplay() is called', () => {
+        component.playArea = mockPlayArea;
+
+        component.startReplay();
+
+        expect(component.showPopup).toBeFalse();
+        expect(component.replayMode).toBeTrue();
+        expect(component.playArea.replay).toBeTrue();
+        expect(mockPlayArea.initCanvases).toHaveBeenCalled();
+    });
+
+    it('should call playArea.initCanvases() when receiveReplayEvent() is called', () => {
+        component.playArea = mockPlayArea;
+
+        component.receiveReplayEvent();
+
+        expect(mockPlayArea.initCanvases).toHaveBeenCalled();
     });
 });

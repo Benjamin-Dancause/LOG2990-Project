@@ -77,14 +77,6 @@ describe('GamePageOneVsOneComponent', () => {
         expect(component.isPlayer1()).toBe(true);
     });
 
-    it('should call playAction() of replayService for test()', () => {
-        spyOn(component.replayService, 'playAction');
-
-        component.test();
-
-        expect(component.replayService.playAction).toHaveBeenCalled();
-    });
-
     it('should set isWinner and showPopup to true on player-quit-game event', () => {
         mockSocket.on.withArgs('player-quit-game', jasmine.any(Function)).and.callFake((eventName, callback) => {
             callback();

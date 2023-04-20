@@ -2,6 +2,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CommunicationService } from '../communication/communication.service';
+import { ReplayService } from '../replay/replay.service';
 import { SocketService } from '../socket/socket.service';
 
 @Injectable({
@@ -18,7 +19,7 @@ export class CounterService {
     victorySent: boolean = false;
     recordMessage = new EventEmitter<string>();
 
-    constructor(public socketService: SocketService, public communicationService: CommunicationService) {}
+    constructor(public socketService: SocketService, public communicationService: CommunicationService, private replay: ReplayService) {}
 
     initializeCounter(): void {
         const gameTitle: string = sessionStorage.getItem('gameTitle') as string;
@@ -40,6 +41,11 @@ export class CounterService {
                 this.socketService.sendVictoriousPlayer(counterInfo.player1);
                 this.victorySent = true;
             }
+        });
+
+        this.replay.counterEvent.subscribe((counters) => {
+            this.counter = counters[0];
+            this.counter2 = counters[1];
         });
     }
 

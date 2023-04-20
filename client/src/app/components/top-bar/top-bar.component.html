@@ -8,6 +8,7 @@
     <div class="vertical-bar"></div>
     <div class="outline name">
         <div>Vous : {{ userName }}</div>
+        <div *ngIf="this.isCoop">Coéquipier : {{ opponent }}</div>
         <app-counter [playerSide]="true"></app-counter>
     </div>
     <div *ngIf="!single" class="outline name">

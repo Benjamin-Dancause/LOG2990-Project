@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CounterService } from '@app/services/counter/counter.service';
@@ -16,7 +16,8 @@ describe('LimitedTimePageComponent', () => {
     let socketServiceSpy: jasmine.SpyObj<SocketService>;
     let counterServiceSpy: jasmine.SpyObj<CounterService>;
     let communicationServiceSpy: jasmine.SpyObj<CommunicationService>;
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mockSessionStorage: any = {};
     let mockSocket: jasmine.SpyObj<Socket>;
 
     beforeEach(() => {
@@ -39,6 +40,14 @@ describe('LimitedTimePageComponent', () => {
             ],
         });
 
+        spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => {
+            return mockSessionStorage[key] || null;
+        });
+
+        spyOn(sessionStorage, 'setItem').and.callFake((key: string, value: string): void => {
+            mockSessionStorage[key] = value;
+        });
+
         fixture = TestBed.createComponent(LimitedTimePageComponent);
         component = fixture.componentInstance;
         socketServiceSpy.socket = mockSocket;
@@ -50,7 +59,6 @@ describe('LimitedTimePageComponent', () => {
 
     describe('ngOnInit', () => {
         it('should call communicationService.getGameNames and shuffle the games before calling socketService.initializeGame', () => {
-            spyOn(sessionStorage, 'getItem').and.returnValues('gameTitle', 'userName', 'gameMode');
             communicationServiceSpy.getGameNames.and.returnValue(of(['game1', 'game2', 'game3']));
             spyOn(component, 'shuffleGames').and.returnValue(['game2', 'game1', 'game3']);
             component.ngOnInit();
@@ -70,6 +78,21 @@ describe('LimitedTimePageComponent', () => {
         expect(shuffled).toContain('game4');
         expect(shuffled).toEqual(names);
     });
+
+    it('should call initOneVsOneComponents on onInit if there is a joiningPlayer', () => {
+        mockSessionStorage['joiningPlayer'] = 'player2';
+        socketServiceSpy.initOneVsOneComponents.and.callFake((player1: boolean, gameMode: string) => {});
+        communicationServiceSpy.getGameNames.and.returnValue(of(['game1', 'game2', 'game3']));
+        component.ngOnInit();
+        expect(socketServiceSpy.initOneVsOneComponents).toHaveBeenCalled();
+    });
+
+    it('should return an empty array if an empty array is passed as argument', fakeAsync(() => {
+        component.ngAfterViewInit();
+        tick(1000);
+        mockSocket.emit('send-victorious-player');
+        expect(component.showPopup).toBe(true);
+    }));
 
     it('should return an empty array if an empty array is passed as argument', () => {
         const names: string[] = [];

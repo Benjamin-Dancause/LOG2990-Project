@@ -166,6 +166,7 @@ export class PlayAreaComponent implements AfterViewInit {
             this.imageLeftStr = this.serverURL + '/' + newImages.images[0];
             this.imageRightStr = this.serverURL + '/' + newImages.images[1];
             sessionStorage.setItem('gameTitle', newImages.title);
+            console.log('calls init canvases');
             this.initCanvases();
         });
 
@@ -174,6 +175,10 @@ export class PlayAreaComponent implements AfterViewInit {
         }
         this.opponent = (sessionStorage.getItem('joiningPlayer') as string) ? true : false;
         this.game.timeUpdater();
+    }
+
+    stopCheatMode(): void {
+        this.game.stopCheatMode();
     }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface

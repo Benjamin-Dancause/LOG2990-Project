@@ -12,7 +12,6 @@ export class CanvasReplayService {
     successSound = new Audio('./assets/success.mp3');
     contexts: CanvasRenderingContext2D[] = [];
     replaySpeed: number = 1;
-
     constructor(private communicationService: CommunicationService) {}
 
     updateReplaySpeed(speed: number): void {
@@ -20,9 +19,15 @@ export class CanvasReplayService {
     }
 
     updateDifferences(coords: Coords[]): void {
+        const gameMode = sessionStorage.getItem('gameMode') as string;
         this.flashDifferences(coords);
+
         setTimeout(() => {
-            this.updateImages(coords, this.contexts[2], this.contexts[3]);
+            if (gameMode === 'solo') {
+                this.updateImages(coords, this.contexts[2], this.contexts[3]);
+            } else {
+                this.updateImages(coords, this.contexts[6], this.contexts[7]);
+            }
         }, DELAY.BIGTIMEOUT / this.replaySpeed);
     }
 
@@ -154,6 +159,7 @@ export class CanvasReplayService {
             if (dataLeft) {
                 const pixel = dataLeft.data;
                 const imageData = new ImageData(pixel, 1, 1);
+
                 ctxRight?.putImageData(imageData, coords[i].x, coords[i].y);
             }
         }
@@ -188,6 +194,7 @@ export class CanvasReplayService {
 
     getContexts(ctx: CanvasRenderingContext2D) {
         if (ctx) {
+            console.log(ctx);
             this.contexts.push(ctx);
         }
     }
