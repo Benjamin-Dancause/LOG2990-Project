@@ -37,6 +37,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
     ngAfterViewInit() {
         this.socketService.socket.on('send-victorious-player', () => {
             this.showPopup = true;
+            this.playArea.stopCheatMode();
             sessionStorage.setItem('winner', 'true');
         });
     }

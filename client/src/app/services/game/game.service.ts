@@ -484,6 +484,10 @@ export class GameService {
         }
     }
 
+    stopCheatMode(): void {
+        clearInterval(this.cheatTimeout);
+    }
+
     clearContexts(): void {
         this.playAreaCtx.length = 0;
     }
