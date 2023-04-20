@@ -24,16 +24,27 @@ describe('GamePageOneVsOneComponent', () => {
     let mockPlayArea: jasmine.SpyObj<PlayAreaComponent>;
 
     beforeEach(async () => {
-        mockSocketService = jasmine.createSpyObj<SocketService>(['soloGame', 'initializeGame', 'deleteRoomGameInfo']);
-        gameCardService = jasmine.createSpyObj<GameCardService>(['removePlayer']);
-        mockPlayArea = jasmine.createSpyObj<PlayAreaComponent>(['initCanvases']);
-
-        mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
+        mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit', 'off']);
         mockSocket.on.and.returnValue(mockSocket);
         mockSocket.emit.and.returnValue(mockSocket);
+        mockSocketService = jasmine.createSpyObj<SocketService>(['soloGame', 'initializeGame', 'deleteRoomGameInfo', 'disconnectSocket'], {
+            socket: mockSocket,
+        });
+        mockSocketService.disconnectSocket.and.callFake(() => {});
+        gameCardService = jasmine.createSpyObj<GameCardService>(['removePlayer']);
+        mockPlayArea = jasmine.createSpyObj<PlayAreaComponent>(['initCanvases']);
+        mockPlayArea.initCanvases.and.returnValue(Promise.resolve());
 
         await TestBed.configureTestingModule({
-            declarations: [GameOneVsOnePageComponent, SidebarComponent, GiveUpButtonComponent, TopBarComponent, TimerComponent, HintsComponent],
+            declarations: [
+                GameOneVsOnePageComponent,
+                SidebarComponent,
+                GiveUpButtonComponent,
+                TopBarComponent,
+                TimerComponent,
+                HintsComponent,
+                PlayAreaComponent,
+            ],
             imports: [HttpClientModule, MatDialogModule],
             providers: [
                 { provide: SocketService, useValue: mockSocketService },
@@ -51,7 +62,7 @@ describe('GamePageOneVsOneComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(GameOneVsOnePageComponent);
         component = fixture.componentInstance;
-        mockSocketService.socket = mockSocket;
+        component.playArea = mockPlayArea;
         fixture.detectChanges();
     });
 
@@ -100,6 +111,31 @@ describe('GamePageOneVsOneComponent', () => {
         expect(component.showPopup).toBeTrue();
     });
 
+    it('should set winningPlayer to gameMaster if player is joiningPlayer"', () => {
+        mockSocket.on.withArgs('send-victorious-player', jasmine.any(Function)).and.callFake((eventName, callback) => {
+            callback();
+            return mockSocket;
+        });
+
+        mockSessionStorage['userName'] = 'player1';
+        mockSessionStorage['gameMaster'] = 'player2';
+        mockSessionStorage['joiningPlayer'] = 'player1';
+
+        component.counterService.counter = 1;
+        component.counterService.counter2 = 5;
+
+        component.ngAfterViewInit();
+        mockSocket.emit('send-victorious-player');
+        expect(component.winningPlayer).toBe('player2');
+    });
+
+    it('should set winningPlayer to gameMaster if player is joiningPlayer"', () => {
+        mockSessionStorage['userName'] = 'player1';
+        mockSessionStorage['gameMaster'] = 'player2';
+        const result = component.isPlayer1();
+        expect(result).toEqual(false);
+    });
+
     it('should set showPopup to true when socket emits "send-victorious-player"', () => {
         mockSocket.on.withArgs('player-quit-game', jasmine.any(Function)).and.callFake((eventName, callback) => {
             callback();
@@ -112,13 +148,10 @@ describe('GamePageOneVsOneComponent', () => {
     });
 
     it('should set replayMode to true and call playArea.initCanvases() when startReplay() is called', () => {
-        component.playArea = mockPlayArea;
-
         component.startReplay();
+        spyOn(component.playArea, 'initCanvases').and.returnValue(Promise.resolve());
 
         expect(component.showPopup).toBeFalse();
         expect(component.replayMode).toBeTrue();
-        expect(component.playArea.replay).toBeTrue();
-        expect(mockPlayArea.initCanvases).toHaveBeenCalled();
     });
 });

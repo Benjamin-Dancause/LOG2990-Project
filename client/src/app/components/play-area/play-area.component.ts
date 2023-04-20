@@ -39,7 +39,7 @@ export class PlayAreaComponent implements AfterViewInit {
     ctxLeftTop: CanvasRenderingContext2D | null = null;
     ctxRightTop: CanvasRenderingContext2D | null = null;
     gameName: string = '';
-    replay: boolean = false;
+    public replay: boolean = false;
     player1: boolean = true;
     opponent: boolean = false;
 

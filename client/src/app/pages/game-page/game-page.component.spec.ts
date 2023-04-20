@@ -24,16 +24,26 @@ describe('GamePageComponent', () => {
     let mockPlayArea: jasmine.SpyObj<PlayAreaComponent>;
 
     beforeEach(async () => {
-        mockSocketService = jasmine.createSpyObj<SocketService>(['soloGame', 'initializeGame', 'deleteRoomGameInfo']);
+        mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit', 'off']);
+        mockSocket.on.and.returnValue(mockSocket);
+        mockSocket.emit.and.returnValue(mockSocket);
+        mockSocketService = jasmine.createSpyObj<SocketService>(['soloGame', 'initializeGame', 'deleteRoomGameInfo', 'disconnectSocket'], {
+            socket: mockSocket,
+        });
+        mockSocketService.disconnectSocket.and.callFake(() => {});
         gameCardService = jasmine.createSpyObj<GameCardService>(['removePlayer']);
         mockPlayArea = jasmine.createSpyObj<PlayAreaComponent>(['initCanvases']);
 
-        mockSocket = jasmine.createSpyObj<Socket>(['on', 'emit']);
-        mockSocket.on.and.returnValue(mockSocket);
-        mockSocket.emit.and.returnValue(mockSocket);
-
         await TestBed.configureTestingModule({
-            declarations: [GamePageComponent, SidebarComponent, GiveUpButtonComponent, TopBarComponent, TimerComponent, HintsComponent],
+            declarations: [
+                GamePageComponent,
+                SidebarComponent,
+                GiveUpButtonComponent,
+                TopBarComponent,
+                TimerComponent,
+                HintsComponent,
+                PlayAreaComponent,
+            ],
             imports: [HttpClientModule, MatDialogModule],
             providers: [
                 { provide: SocketService, useValue: mockSocketService },
@@ -51,7 +61,7 @@ describe('GamePageComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(GamePageComponent);
         component = fixture.componentInstance;
-        mockSocketService.socket = mockSocket;
+        component.playArea = mockPlayArea;
         fixture.detectChanges();
     });
 
