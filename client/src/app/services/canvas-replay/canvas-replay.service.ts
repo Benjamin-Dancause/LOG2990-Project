@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Injectable } from '@angular/core';
 import { Coords } from '@app/classes/coords';
+import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
 import { GameDiffData } from '@common/game-interfaces';
-import { CommunicationService } from '../communication/communication.service';
 
 @Injectable({
     providedIn: 'root',

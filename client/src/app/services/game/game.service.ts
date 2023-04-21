@@ -46,7 +46,11 @@ export class GameService {
     ) {
         this.socketService.socket.on('update-difference', (response: ClickResponse) => {
             this.updateDifferences(response);
-            this.replayService.addAction(this.time, 'update-difference', {response: response, counter1: counterService.counter, counter2: counterService.counter2 });
+            this.replayService.addAction(this.time, 'update-difference', {
+                response,
+                counter1: counterService.counter,
+                counter2: counterService.counter2,
+            });
         });
         this.listenForGiveUp();
         this.listenForWinner();
@@ -279,7 +283,7 @@ export class GameService {
             );
             const randomIndex = Math.floor(Math.random() * remainingDiffs.length);
             this.replayService.addAction(time, 'hint-two', {
-                randomIndex: randomIndex,
+                randomIndex,
                 differencesFound: this.differenceFound.slice(),
                 newTime: this.time,
             });

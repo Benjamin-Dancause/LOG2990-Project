@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -17,7 +18,7 @@ describe('LimitedTimePageComponent', () => {
     let counterServiceSpy: jasmine.SpyObj<CounterService>;
     let communicationServiceSpy: jasmine.SpyObj<CommunicationService>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockSessionStorage: any = {};
+    const mockSessionStorage: any = {};
     let mockSocket: jasmine.SpyObj<Socket>;
 
     beforeEach(() => {
@@ -81,6 +82,7 @@ describe('LimitedTimePageComponent', () => {
 
     it('should call initOneVsOneComponents on onInit if there is a joiningPlayer', () => {
         mockSessionStorage['joiningPlayer'] = 'player2';
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         socketServiceSpy.initOneVsOneComponents.and.callFake((player1: boolean, gameMode: string) => {});
         communicationServiceSpy.getGameNames.and.returnValue(of(['game1', 'game2', 'game3']));
         component.ngOnInit();

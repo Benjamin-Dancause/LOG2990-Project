@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { EventEmitter, Injectable } from '@angular/core';
 import { GameAction } from '@app/interfaces/game-action';
+import { CanvasReplayService } from '@app/services/canvas-replay/canvas-replay.service';
+import { ChatService } from '@app/services/chat/chat.service';
 import { DELAY, TIME } from '@common/constants';
 import { Coords } from '@common/game-interfaces';
-import { CanvasReplayService } from '../canvas-replay/canvas-replay.service';
-import { ChatService } from '../chat/chat.service';
 
 @Injectable({
     providedIn: 'root',
@@ -24,9 +25,9 @@ export class ReplayService {
     ownCounter: number = 0;
     opponentCounter: number = 0;
     speedSettings: number[] = [1, 2, TIME.FOUR_X_SPEED];
-    private currentGameAction: GameAction;
     timerEvent = new EventEmitter<number>();
     counterEvent = new EventEmitter<number[]>();
+    private currentGameAction: GameAction;
 
     constructor(public chat: ChatService, public canvasReplay: CanvasReplayService) {}
 
@@ -71,6 +72,7 @@ export class ReplayService {
                 this.ownCounter = this.currentGameAction.payload.counter1;
                 this.opponentCounter = this.currentGameAction.payload.counter2;
                 this.counterEvent.emit([this.ownCounter, this.opponentCounter]);
+                // eslint-disable-next-line no-case-declarations
                 const coords: Coords[] = this.currentGameAction.payload.response.coords;
                 this.canvasReplay.updateDifferences(coords);
                 break;

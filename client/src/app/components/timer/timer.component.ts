@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ReplayService } from '@app/services/replay/replay.service';
 import { TimerService } from '@app/services/timer/timer.service';
 
@@ -8,9 +8,9 @@ import { TimerService } from '@app/services/timer/timer.service';
     templateUrl: './timer.component.html',
     styleUrls: ['./timer.component.scss'],
 })
-export class TimerComponent implements OnInit, OnDestroy {
-    public min = 0;
-    public sec = 0;
+export class TimerComponent implements OnInit {
+    min = 0;
+    sec = 0;
     minutes = '00';
     seconds = '00';
 
@@ -36,6 +36,4 @@ export class TimerComponent implements OnInit, OnDestroy {
     pad(value: number) {
         return value.toString().padStart(2, '0');
     }
-
-    ngOnDestroy(): void {}
 }

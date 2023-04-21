@@ -1,6 +1,10 @@
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ClickResponse } from '@app/classes/click-response';
-import { CanvasReplayService } from '../canvas-replay/canvas-replay.service';
+import { CanvasReplayService } from '@app/services/canvas-replay/canvas-replay.service';
 
 import { ReplayService } from './replay.service';
 
@@ -221,11 +225,11 @@ describe('ReplayService', () => {
             isDifference: true,
             differenceNumber: 2,
             coords: [{ x: 20, y: 20 }],
-        }
+        };
 
         spyOn(service, 'getAction').and.returnValue({
             action: 'update-difference',
-            payload: { response: response, counter1: 0, counter2: 0 },
+            payload: { response, counter1: 0, counter2: 0 },
             time: 0,
         });
         spyOn(service, 'pauseReplayTimer');
@@ -311,13 +315,13 @@ describe('ReplayService', () => {
             const gameAction1 = {
                 time: 0,
                 action: 'difference-found',
-                payload: { mousePosition: { x: 10, y: 10 }, context: context },
+                payload: { mousePosition: { x: 10, y: 10 }, context },
             };
-            
+
             const gameAction2 = {
                 time: 0,
                 action: 'update-difference',
-                payload:  {response: response, counter1: 0, counter2: 0},
+                payload: { response, counter1: 0, counter2: 0 },
             };
 
             service.gameActions = [gameAction1, gameAction2];
