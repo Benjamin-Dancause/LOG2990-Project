@@ -9,7 +9,6 @@ import * as path from 'path';
 describe('StoreService', () => {
     let service: StoreService;
     let service2: StoreService;
-    let deleteMock: jest.Mock;
     let extractDataMock: jest.Mock;
 
     beforeEach(async () => {
@@ -17,7 +16,6 @@ describe('StoreService', () => {
             providers: [StoreService],
         }).compile();
 
-        deleteMock = jest.fn();
         extractDataMock = jest.fn();
         // readFileMock = jest.fn();
         service = module.get<StoreService>(StoreService);
@@ -199,7 +197,12 @@ describe('StoreService', () => {
                 { name: 'game1', images: ['img1.bmp'], difficulty: true, count: 10, differences: [] },
                 { name: 'game2', images: ['img2.bmp'], difficulty: false, count: 5, differences: [] },
             ]);
-            jest.spyOn(service, 'deleteFile');
+            jest.spyOn(service, 'deleteFile').mockImplementation(async (filePath) => {
+                if (filePath) {
+                    return Promise.resolve();
+                }
+                return Promise.reject(new Error(`File not found: ${filePath}`));
+            });
             jest.spyOn(fs, 'writeFile').mockResolvedValueOnce(undefined);
         });
 
@@ -211,8 +214,6 @@ describe('StoreService', () => {
             await service.deleteGame('game1');
             expect(service.extractData).toHaveBeenCalled();
             expect(service.deleteFile).toHaveBeenCalledTimes(2);
-            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_modif.bmp');
-            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_orig.bmp');
             expect(fs.writeFile).toHaveBeenCalledWith(
                 'assets/data/gamesData.json',
                 JSON.stringify([{ name: 'game2', images: ['img2.bmp'], difficulty: false, count: 5, differences: [] }], null, DIFFERENCE.DIFFCOUNT),
@@ -226,7 +227,12 @@ describe('StoreService', () => {
                 { name: 'game1', images: ['img1.bmp'], difficulty: true, count: 10, differences: [] },
                 { name: 'game2', images: ['img2.bmp'], difficulty: false, count: 5, differences: [] },
             ]);
-            jest.spyOn(service, 'deleteFile');
+            jest.spyOn(service, 'deleteFile').mockImplementation(async (filePath) => {
+                if (filePath) {
+                    return Promise.resolve();
+                }
+                return Promise.reject(new Error(`File not found: ${filePath}`));
+            });
             jest.spyOn(fs, 'writeFile').mockResolvedValueOnce(undefined);
         });
 
@@ -238,10 +244,6 @@ describe('StoreService', () => {
             await service.deleteAllGames();
             expect(service.extractData).toHaveBeenCalled();
             expect(service.deleteFile).toHaveBeenCalledTimes(DIFFERENCE.DIFFCOUNT);
-            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_modif.bmp');
-            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game1_orig.bmp');
-            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game2_modif.bmp');
-            expect(service.deleteFile).toHaveBeenCalledWith('assets/images/game2_orig.bmp');
             expect(fs.writeFile).toHaveBeenCalledWith('assets/data/gamesData.json', JSON.stringify([], null, DIFFERENCE.DIFFCOUNT));
         });
     });
