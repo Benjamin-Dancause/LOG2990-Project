@@ -155,13 +155,13 @@ export class GameService {
 
         setTimeout(() => {
             clearInterval(flash);
-            if (
-                (sessionStorage.getItem('gameMode') as string) === 'tl' &&
-                (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string)
-            ) {
-                this.socketService.switchGame();
-            }
         }, 1000);
+        if (
+            (sessionStorage.getItem('gameMode') as string) === 'tl' &&
+            (sessionStorage.getItem('userName') as string) === (sessionStorage.getItem('gameMaster') as string)
+        ) {
+            this.socketService.switchGame();
+        }
     }
 
     cheatMode(ctxs: CanvasRenderingContext2D[]) {
