@@ -217,9 +217,15 @@ describe('ReplayService', () => {
     });
 
     it('should call pauseReplayTimer when there are no more game actions', () => {
+        const response: ClickResponse = {
+            isDifference: true,
+            differenceNumber: 2,
+            coords: [{ x: 20, y: 20 }],
+        }
+
         spyOn(service, 'getAction').and.returnValue({
             action: 'update-difference',
-            payload: {},
+            payload: { response: response, counter1: 0, counter2: 0 },
             time: 0,
         });
         spyOn(service, 'pauseReplayTimer');
@@ -307,11 +313,11 @@ describe('ReplayService', () => {
                 action: 'difference-found',
                 payload: { mousePosition: { x: 10, y: 10 }, context: context },
             };
-
+            
             const gameAction2 = {
                 time: 0,
                 action: 'update-difference',
-                payload: response,
+                payload:  {response: response, counter1: 0, counter2: 0},
             };
 
             service.gameActions = [gameAction1, gameAction2];

@@ -12,7 +12,7 @@ import { PreviousNextButtonComponent } from '@app/components/previous-next-butto
 import { SettingsButtonComponent } from '@app/components/settings-button/settings-button.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
-import { bestTimes } from '@common/game-interfaces';
+import { BestTimes } from '@common/game-interfaces';
 import { of } from 'rxjs';
 import { ConfigPageComponent } from './config-page-component.component';
 
@@ -38,7 +38,7 @@ describe('ConfigPageComponent', () => {
         { name: 'Game 11', image: 'image11', difficulty: false, configuration: true },
     ];
 
-    const bestTime: bestTimes[] = [
+    const bestTime: BestTimes[] = [
         {
             name: 'Game 1',
             usersSolo: ['User A', 'User B'],

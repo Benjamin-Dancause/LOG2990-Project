@@ -1,4 +1,4 @@
-import { databaseService } from '@app/services/database/database.service';
+import { DatabaseService } from '@app/services/database/database.service';
 import { StoreService } from '@app/services/store/store.service';
 import { GameSelectionPageData } from '@common/game-interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -7,7 +7,7 @@ import { StoreController } from './store.controller';
 describe('StoreController', () => {
     let controller: StoreController;
     let storeService: StoreService;
-    let databaseServ: databaseService;
+    let databaseServ: DatabaseService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -27,7 +27,7 @@ describe('StoreController', () => {
                     },
                 },
                 {
-                    provide: databaseService,
+                    provide: DatabaseService,
                     useValue: {
                         deleteBestTimes: jest.fn(),
                     },
@@ -37,7 +37,7 @@ describe('StoreController', () => {
 
         controller = module.get<StoreController>(StoreController);
         storeService = module.get<StoreService>(StoreService);
-        databaseServ = module.get<databaseService>(databaseService);
+        databaseServ = module.get<DatabaseService>(DatabaseService);
     });
 
     it('should store data', async () => {
@@ -58,6 +58,7 @@ describe('StoreController', () => {
         expect(storeService.storeImage).toHaveBeenCalledTimes(2);
         expect(storeService.storeImage).toHaveBeenCalledWith('test-game_orig', 'original-image-data');
         expect(storeService.storeImage).toHaveBeenCalledWith('test-game_modif', 'modifiable-image-data');
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         expect(storeService.storeInfo).toHaveBeenCalledWith('test-game', ['relative-path', 'relative-path'], true, 5, [
             [{ x: 1, y: 2 }],
             [{ x: 3, y: 4 }],

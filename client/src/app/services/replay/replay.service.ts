@@ -68,15 +68,14 @@ export class ReplayService {
         this.currentGameAction = this.getAction();
         switch (this.currentGameAction.action) {
             case 'update-difference':
-                this.opponentCounter++;
+                this.ownCounter = this.currentGameAction.payload.counter1;
+                this.opponentCounter = this.currentGameAction.payload.counter2;
                 this.counterEvent.emit([this.ownCounter, this.opponentCounter]);
-                const coords: Coords[] = this.currentGameAction.payload.coords;
+                const coords: Coords[] = this.currentGameAction.payload.response.coords;
                 this.canvasReplay.updateDifferences(coords);
                 break;
 
             case 'difference-found':
-                this.ownCounter++;
-                this.counterEvent.emit([this.ownCounter, this.opponentCounter]);
                 this.canvasReplay.foundPopup(this.currentGameAction.payload.mousePosition, this.currentGameAction.payload.context);
                 break;
 

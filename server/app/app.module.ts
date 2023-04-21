@@ -12,7 +12,7 @@ import { GamecardsController } from './controllers/gamecards/gamecards.controlle
 import { StoreController } from './controllers/store/store.controller';
 import { ClassicModeGateway } from './gateways/classic-mode/classic-mode.gateway';
 import { CounterManagerService } from './services/counter-manager/counter-manager.service';
-import { databaseService } from './services/database/database.service';
+import { DatabaseService } from './services/database/database.service';
 import { GameConfigService } from './services/game-config/game-config.service';
 import { GameManager } from './services/game-manager/game-manager.service';
 import { StoreService } from './services/store/store.service';
@@ -45,7 +45,7 @@ import { WaitingRoomManagerService } from './services/waiting-room-manager/waiti
         Logger,
         StoreService,
         GameManager,
-        databaseService,
+        DatabaseService,
         http.Server,
         ClassicModeGateway,
         TimerManagerService,

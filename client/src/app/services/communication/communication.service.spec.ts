@@ -2,7 +2,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { ClickResponse } from '@app/classes/click-response';
 import { Gamecard } from '@app/classes/gamecard';
-import { GameDiffData, GameSelectionPageData, GameplayData, gameHistoryInfo, playerTime } from '@common/game-interfaces';
+import { GameDiffData, GameHistoryInfo, GameSelectionPageData, GameplayData, PlayerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable } from 'rxjs';
 import { CommunicationService } from './communication.service';
@@ -273,8 +273,8 @@ describe('CommunicationService', () => {
         expect(request.request.method).toEqual('POST');
     });
 
-    it('should make a POST request to the expected URL when update best time whit playerTime', () => {
-        const time: playerTime = {
+    it('should make a POST request to the expected URL when update best time with PlayerTime', () => {
+        const time: PlayerTime = {
             user: 'test',
             time: 10,
             isSolo: true,
@@ -316,7 +316,7 @@ describe('CommunicationService', () => {
     });
 
     it('should make a PUT request to the expected URL when update game history with newGameHistory', () => {
-        const newgameHistoryInfo: gameHistoryInfo = {
+        const newgameHistoryInfo: GameHistoryInfo = {
             gameTitle: 'test',
             winner: 'joueur 1',
             loser: 'joueur 2',

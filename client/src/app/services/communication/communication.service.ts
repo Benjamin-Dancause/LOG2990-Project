@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { ClickResponse } from '@app/classes/click-response';
 import { Coords } from '@app/classes/coords';
 import { Gamecard } from '@app/classes/gamecard';
-import { bestTimes, GameDiffData, gameHistoryInfo, GameplayData, GameSelectionPageData, playerTime } from '@common/game-interfaces';
+import { BestTimes, GameDiffData, GameHistoryInfo, GameSelectionPageData, GameplayData, PlayerTime } from '@common/game-interfaces';
 import { Message } from '@common/message';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -69,15 +69,15 @@ export class CommunicationService {
         return this.http.get<boolean>(url);
     }
 
-    getAllBestTimes(): Observable<bestTimes[]> {
-        return this.http.get<bestTimes[]>(`${this.baseUrl}/best-times/all`, { responseType: 'json' });
+    getAllBestTimes(): Observable<BestTimes[]> {
+        return this.http.get<BestTimes[]>(`${this.baseUrl}/best-times/all`, { responseType: 'json' });
     }
 
     getBestTimesForGame(gameTitle: string, gameMode: string): Observable<number[]> {
         return this.http.get<number[]>(`${this.baseUrl}/best-times/${gameTitle}/${gameMode}`, { responseType: 'json' });
     }
 
-    updateBestTimes(name: string, time: playerTime) {
+    updateBestTimes(name: string, time: PlayerTime) {
         this.http.request('POST', `${this.baseUrl}/best-times/${name}`, { body: time }).subscribe();
     }
 
@@ -89,19 +89,19 @@ export class CommunicationService {
         this.http.request('POST', `${this.baseUrl}/best-times/reset`).subscribe();
     }
 
-    getGameHistory(name: string): Observable<gameHistoryInfo[]> {
-        return this.http.get<gameHistoryInfo[]>(`${this.baseUrl}/history/${name}`, { responseType: 'json' });
+    getGameHistory(name: string): Observable<GameHistoryInfo[]> {
+        return this.http.get<GameHistoryInfo[]>(`${this.baseUrl}/history/${name}`, { responseType: 'json' });
     }
 
-    getGameAllHistory(): Observable<gameHistoryInfo[]> {
-        return this.http.get<gameHistoryInfo[]>(`${this.baseUrl}/history/all`, { responseType: 'json' });
+    getGameAllHistory(): Observable<GameHistoryInfo[]> {
+        return this.http.get<GameHistoryInfo[]>(`${this.baseUrl}/history/all`, { responseType: 'json' });
     }
 
     deleteGameHistory() {
         this.http.request('DELETE', `${this.baseUrl}/history`).subscribe();
     }
 
-    updateGameHistory(newGameHistoryInfo: gameHistoryInfo) {
+    updateGameHistory(newGameHistoryInfo: GameHistoryInfo) {
         this.http.request('PUT', `${this.baseUrl}/history`, { body: newGameHistoryInfo }).subscribe();
     }
 

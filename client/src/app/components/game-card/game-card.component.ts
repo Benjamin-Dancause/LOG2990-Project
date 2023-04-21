@@ -7,7 +7,7 @@ import { CommunicationService } from '@app/services/communication/communication.
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { TIME } from '@common/constants';
-import { bestTimes } from '@common/game-interfaces';
+import { BestTimes } from '@common/game-interfaces';
 import { range } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -23,7 +23,7 @@ export class GameCardComponent implements OnInit, AfterViewInit {
     @Input() imageLink: string;
     @Input() difficulty: boolean;
     @Input() configuration: boolean;
-    @Input() bestTimes: bestTimes;
+    @Input() bestTimes: BestTimes;
 
     @ViewChild('namePopupTemplate', { static: true })
     namePopupTemplate: TemplateRef<any>;

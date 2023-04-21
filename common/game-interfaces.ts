@@ -67,7 +67,7 @@ export interface RoomGameData {
     images: string[];
 }
 
-export interface bestTimes {
+export interface BestTimes {
     name: string;
     usersSolo: string[];
     usersMulti: string[];
@@ -75,13 +75,13 @@ export interface bestTimes {
     timesMulti: number[];
 }
 
-export interface playerTime {
+export interface PlayerTime {
     user: string;
     time: number;
     isSolo: boolean;
 }
 
-export interface gameHistoryInfo {
+export interface GameHistoryInfo {
     gameTitle: string;
     winner: string;
     loser: string;
