@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
 import { GameDiffData } from '@common/game-interfaces';
 import { of } from 'rxjs';
-import { CanvasTestHelper } from '../../classes/canvas-test-helper';
-import { CommunicationService } from '../communication/communication.service';
 import { CanvasReplayService } from './canvas-replay.service';
 
 describe('CanvasReplayService', () => {

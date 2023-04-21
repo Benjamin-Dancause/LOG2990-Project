@@ -1,14 +1,14 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '@app/components/confirmation-dialog/confirmation-dialog.component';
+import { HistoryDialogComponent } from '@app/components/history-dialog/history-dialog.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { GameCardService } from '@app/services/game-card/game-card.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { of } from 'rxjs';
 import { Socket } from 'socket.io-client';
-// eslint-disable-next-line no-restricted-imports
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-import { HistoryDialogComponent } from '../history-dialog/history-dialog.component';
 import { GameCardComponent } from './game-card.component';
 
 describe('GameCardComponent', () => {

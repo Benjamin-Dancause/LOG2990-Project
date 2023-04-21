@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-unused-vars */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { EventEmitter } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -19,15 +23,16 @@ describe('TextBoxComponent', () => {
     let mockSocket: jasmine.SpyObj<Socket>;
     let mockCounterService: jasmine.SpyObj<CounterService>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockSessionStorage: any = {};
+    const mockSessionStorage: any = {};
 
     beforeEach(async () => {
         mockGameService = jasmine.createSpyObj<GameService>(['errorMessage', 'successMessage', 'hintMessage']);
         mockCounterService = jasmine.createSpyObj<CounterService>(['recordMessage']);
         mockSocketService = jasmine.createSpyObj<SocketService>(['sendPlayerMessage', 'sendPlayerError', 'sendPlayerSuccess', 'sendNewRecord']);
         mockReplayService = jasmine.createSpyObj<ReplayService>(['addAction']);
-        mockReplayService.addAction.and.callFake((time: number, action: string, payload?: any) => {});
+        mockReplayService.addAction.and.callFake((time: number, action: string, payload?: unknown) => {});
         mockChatService = jasmine.createSpyObj<ChatService>(['deleteMessages']);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions, no-unused-expressions
         mockChatService.deleteMessages.and.callFake;
         mockChatService.messages = [];
         mockGameService.errorMessage = new EventEmitter();
@@ -361,7 +366,7 @@ describe('TextBoxComponent', () => {
         mockGameService.time = 3;
         spyOn(component, 'getTimestamp').and.returnValue('123');
 
-        const systemMessage = `123 - player2 a quitté la partie.`;
+        const systemMessage = '123 - player2 a quitté la partie.';
         const addSystemMessageSpy = spyOn(component, 'addSystemMessage').and.callFake((systemMessage: string) => {});
 
         component.writeQuitMessage();
@@ -375,7 +380,7 @@ describe('TextBoxComponent', () => {
         mockGameService.time = 3;
         spyOn(component, 'getTimestamp').and.returnValue('123');
 
-        const systemMessage = `123 - Erreur par player2`;
+        const systemMessage = '123 - Erreur par player2';
         const addSystemMessageSpy = spyOn(component, 'addSystemMessage').and.callFake((systemMessage: string) => {});
 
         component.writeErrorMessage(name);
@@ -388,7 +393,7 @@ describe('TextBoxComponent', () => {
         const name = 'player2';
         spyOn(component, 'getTimestamp').and.returnValue('123');
 
-        const systemMessage = `123 - Erreur`;
+        const systemMessage = '123 - Erreur';
         const addSystemMessageSpy = spyOn(component, 'addSystemMessage').and.callFake((systemMessage: string) => {});
 
         component.writeErrorMessage(name);
@@ -401,7 +406,7 @@ describe('TextBoxComponent', () => {
         const name = 'player2';
         spyOn(component, 'getTimestamp').and.returnValue('123');
 
-        const systemMessage = `123 - Différence trouvée par player2`;
+        const systemMessage = '123 - Différence trouvée par player2';
         const addSystemMessageSpy = spyOn(component, 'addSystemMessage').and.callFake((systemMessage: string) => {});
 
         component.writeSuccessMessage(name);
@@ -414,7 +419,7 @@ describe('TextBoxComponent', () => {
         const name = 'player2';
         spyOn(component, 'getTimestamp').and.returnValue('123');
 
-        const systemMessage = `123 - Différence trouvée`;
+        const systemMessage = '123 - Différence trouvée';
         const addSystemMessageSpy = spyOn(component, 'addSystemMessage').and.callFake((systemMessage: string) => {});
 
         component.writeSuccessMessage(name);
@@ -426,7 +431,7 @@ describe('TextBoxComponent', () => {
         component.gameMode = 'solo';
         spyOn(component, 'getTimestamp').and.returnValue('123');
 
-        const systemMessage = `123 -  Indice utilisé`;
+        const systemMessage = '123 -  Indice utilisé';
         const addSystemMessageSpy = spyOn(component, 'addSystemMessage').and.callFake((systemMessage: string) => {});
 
         component.writeHintMessage();
@@ -442,7 +447,7 @@ describe('TextBoxComponent', () => {
         component.gameMode = 'solo';
         spyOn(component, 'getTimestamp').and.returnValue('123');
 
-        const systemMessage = `123 - player1 obtient la 1ère place dans les meilleurs temps du jeu Game1 en solo`;
+        const systemMessage = '123 - player1 obtient la 1ère place dans les meilleurs temps du jeu Game1 en solo';
         const addSystemMessageSpy = spyOn(component, 'addSystemMessage').and.callFake((systemMessage: string) => {});
 
         component.writeNewRecordMessage(name, position, title, mode);

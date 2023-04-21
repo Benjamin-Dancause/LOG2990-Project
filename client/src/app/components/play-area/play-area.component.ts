@@ -39,18 +39,19 @@ export class PlayAreaComponent implements AfterViewInit {
     ctxLeftTop: CanvasRenderingContext2D | null = null;
     ctxRightTop: CanvasRenderingContext2D | null = null;
     gameName: string = '';
-    public replay: boolean = false;
+    replay: boolean = false;
     player1: boolean = true;
     opponent: boolean = false;
 
     multiplayer: boolean = false;
     gameMode: string = '';
 
-    private readonly serverURL: string = environment.serverUrl;
-    private canvasSize = { x: CANVAS.WIDTH, y: CANVAS.HEIGHT };
-
     hintModeCount = 0;
     hintModeTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    nbrIndices = 3;
+
+    private readonly serverURL: string = environment.serverUrl;
+    private canvasSize = { x: CANVAS.WIDTH, y: CANVAS.HEIGHT };
 
     // eslint-disable-next-line max-params
     constructor(
@@ -124,7 +125,6 @@ export class PlayAreaComponent implements AfterViewInit {
             }
         }
     }
-    nbrIndices = 3;
 
     async initCanvases() {
         this.game.clearContexts();
