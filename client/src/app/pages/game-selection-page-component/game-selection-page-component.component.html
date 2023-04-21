@@ -9,7 +9,7 @@
             [gameTitle]="game.name"
             [imageLink]="game.image"
             [difficulty]="game.difficulty"
-            [bestTimes]="this.bestTimes[i]"
+            [bestTimes]="this.bestTimes[i + currentPage*4]"
         ></app-game-card>
     </div>
     <app-previous-next-button

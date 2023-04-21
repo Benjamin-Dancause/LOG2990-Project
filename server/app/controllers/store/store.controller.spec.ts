@@ -30,6 +30,7 @@ describe('StoreController', () => {
                     provide: DatabaseService,
                     useValue: {
                         deleteBestTimes: jest.fn(),
+                        createBestTimes: jest.fn(),
                     },
                 },
             ],

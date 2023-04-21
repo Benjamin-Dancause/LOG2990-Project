@@ -1,5 +1,6 @@
 import { DatabaseService } from '@app/services/database/database.service';
 import { StoreService } from '@app/services/store/store.service';
+import { TIME } from '@common/constants';
 import { Coords } from '@common/game-interfaces';
 import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
@@ -27,6 +28,14 @@ export class StoreController {
         relativePaths.push(modifPath);
 
         await this.storeService.storeInfo(name, relativePaths, difficulty, count, differences);
+
+        this.databaseService.createBestTimes({
+            name: data.name,
+            timesSolo: [TIME.DEFAULT_BEST_TIME_NO_1, TIME.DEFAULT_BEST_TIME_NO_2, TIME.DEFAULT_BEST_TIME_NO_3],
+            timesMulti: [TIME.DEFAULT_BEST_TIME_NO_1, TIME.DEFAULT_BEST_TIME_NO_2, TIME.DEFAULT_BEST_TIME_NO_3],
+            usersSolo: ['User1', 'User2', 'User3'],
+            usersMulti: ['User4', 'User5', 'User6'],
+        });
     }
 
     @Get('/names')
