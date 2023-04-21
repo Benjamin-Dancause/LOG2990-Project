@@ -1,4 +1,4 @@
-import { databaseService } from '@app/services/database/database.service';
+import { DatabaseService } from '@app/services/database/database.service';
 import { StoreService } from '@app/services/store/store.service';
 import { Coords } from '@common/game-interfaces';
 import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post } from '@nestjs/common';
@@ -7,7 +7,7 @@ import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 
 @Controller('games')
 export class StoreController {
-    constructor(private readonly storeService: StoreService, private databaseService: databaseService) {}
+    constructor(private readonly storeService: StoreService, private databaseService: DatabaseService) {}
 
     @Post('/images')
     @Header('Content-Type', 'image/png')

@@ -8,7 +8,7 @@ import { PreviousNextButtonComponent } from '@app/components/previous-next-butto
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { BEST_TIME } from '@common/constants';
-import { bestTimes } from '@common/game-interfaces';
+import { BestTimes } from '@common/game-interfaces';
 import { of } from 'rxjs';
 import { GameSelectionPageComponent } from './game-selection-page-component.component';
 
@@ -31,7 +31,7 @@ describe('GameSelectionPageComponent', () => {
         { name: 'Game 11', image: 'image11', difficulty: false, configuration: true },
     ];
 
-    const bestTimes: bestTimes[] = [
+    const bestTimes: BestTimes[] = [
         {
             name: 'Game 1',
             usersSolo: ['player1', 'player2', 'player3'],

@@ -63,6 +63,10 @@ export enum TIME {
     TEN_SECONDS = 10,
     TEN_MINUTES = 10,
     FOUR_X_SPEED = 4,
+    MAX_LIMITED_TIMER = 120,
+    DEFAULT_BEST_TIME_NO_1 = 600,
+    DEFAULT_BEST_TIME_NO_2 = 610,
+    DEFAULT_BEST_TIME_NO_3 = 620,
 }
 
 export enum BEST_TIME {
@@ -72,4 +76,8 @@ export enum BEST_TIME {
     WORST_MULTI_TIME = 500,
     MULTI_TIME = 600,
     BEST_MULTI_TIME = 700,
+}
+
+export enum INDEX {
+    NEGATIVE_INDEX = -1,
 }

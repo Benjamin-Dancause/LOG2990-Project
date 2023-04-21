@@ -1,8 +1,8 @@
 import { ClassicModeGateway } from '@app/gateways/classic-mode/classic-mode.gateway';
 import { GameConfigService } from '@app/services/game-config/game-config.service';
-import { DELAY } from '@common/constants';
+import { DELAY, TIME } from '@common/constants';
 import { GameConstants } from '@common/game-interfaces';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 
 @Injectable()
 export class TimerManagerService {
@@ -44,8 +44,8 @@ export class TimerManagerService {
 
     addToTimer(roomId: string) {
         this.timers.set(roomId, this.timers.get(roomId) + this.constants.get(roomId).increment);
-        if (this.timers.get(roomId) >= 120) {
-            this.timers.set(roomId, 120);
+        if (this.timers.get(roomId) >= TIME.MAX_LIMITED_TIMER) {
+            this.timers.set(roomId, TIME.MAX_LIMITED_TIMER);
         }
         this.classicModeGateway.emitTimeToRoom(roomId, this.timers.get(roomId));
     }

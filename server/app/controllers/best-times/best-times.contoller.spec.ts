@@ -1,10 +1,10 @@
-import { databaseService } from '@app/services/database/database.service';
+import { DatabaseService } from '@app/services/database/database.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BestTimesController } from './best-times.controller';
 
 describe('BestTimesController', () => {
     let controller: BestTimesController;
-    let databaseServiceMock: Partial<databaseService>;
+    let databaseServiceMock: Partial<DatabaseService>;
 
     beforeEach(async () => {
         databaseServiceMock = {
@@ -18,7 +18,7 @@ describe('BestTimesController', () => {
 
         const module: TestingModule = await Test.createTestingModule({
             controllers: [BestTimesController],
-            providers: [{ provide: databaseService, useValue: databaseServiceMock }],
+            providers: [{ provide: DatabaseService, useValue: databaseServiceMock }],
         }).compile();
 
         controller = module.get<BestTimesController>(BestTimesController);
@@ -43,7 +43,7 @@ describe('BestTimesController', () => {
     });
 
     describe('resetAllBestTimes', () => {
-        it('should call setup method of databaseService', () => {
+        it('should call setup method of DatabaseService', () => {
             controller.resetAllBestTimes();
 
             expect(databaseServiceMock.setup).toHaveBeenCalled();
@@ -51,17 +51,18 @@ describe('BestTimesController', () => {
     });
 
     describe('updateTimes', () => {
-        it('should call updateBestTimes method of databaseService', () => {
-            const playerTime = { isSolo: true, user: 'John', time: 60 };
+        it('should call updateBestTimes method of DatabaseService', () => {
+            const time = 60;
+            const playerTime = { isSolo: true, user: 'John', time };
 
             controller.updateTimes('game1', playerTime);
 
-            expect(databaseServiceMock.updateBestTimes).toHaveBeenCalledWith('game1', true, 'John', 60);
+            expect(databaseServiceMock.updateBestTimes).toHaveBeenCalledWith('game1', true, 'John', time);
         });
     });
 
     describe('deleteTimes', () => {
-        it('should call deleteBestTimes method of databaseService', () => {
+        it('should call deleteBestTimes method of DatabaseService', () => {
             controller.deleteTimes('game1');
 
             expect(databaseServiceMock.deleteBestTimes).toHaveBeenCalledWith('game1');
@@ -69,7 +70,7 @@ describe('BestTimesController', () => {
     });
 
     describe('resetBestTimes', () => {
-        it('should call resetBestTimes method of databaseService', () => {
+        it('should call resetBestTimes method of DatabaseService', () => {
             controller.resetBestTimes('game1');
 
             expect(databaseServiceMock.resetBestTimes).toHaveBeenCalledWith('game1');

@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
-import { GameSelectionPageData, bestTimes } from '@common/game-interfaces';
+import { BestTimes, GameSelectionPageData } from '@common/game-interfaces';
 
 const PAGE_SIZE = 4;
 
@@ -13,7 +13,7 @@ const PAGE_SIZE = 4;
 })
 export class GameSelectionPageComponent implements OnInit {
     games: GameSelectionPageData[] = [];
-    bestTimes: bestTimes[] = [];
+    bestTimes: BestTimes[] = [];
 
     currentPage = 0;
     pageSize = PAGE_SIZE;

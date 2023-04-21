@@ -1,11 +1,12 @@
-import { databaseService } from '@app/services/database/database.service';
-import { gameHistoryInfo } from '@common/game-interfaces';
+// eslint-disable @typescript-eslint/no-shadow
+import { DatabaseService } from '@app/services/database/database.service';
+import { GameHistoryInfo } from '@common/game-interfaces';
 import { Test } from '@nestjs/testing';
 import { GameHistoryController } from './game-history.controller';
 
 describe('GameHistoryController', () => {
     let gameController: GameHistoryController;
-    let databaseServiceMock: Partial<databaseService>;
+    let databaseServiceMock: Partial<DatabaseService>;
 
     beforeEach(async () => {
         databaseServiceMock = {
@@ -17,15 +18,15 @@ describe('GameHistoryController', () => {
 
         const app = await Test.createTestingModule({
             controllers: [GameHistoryController],
-            providers: [{ provide: databaseService, useValue: databaseServiceMock }],
+            providers: [{ provide: DatabaseService, useValue: databaseServiceMock }],
         }).compile();
 
         gameController = app.get<GameHistoryController>(GameHistoryController);
     });
 
     describe('getAllHistory', () => {
-        it('should call databaseService.getAllGameHistory', async () => {
-            const expectedGameHistory: gameHistoryInfo[] = [
+        it('should call DatabaseService.getAllGameHistory', async () => {
+            const expectedGameHistory: GameHistoryInfo[] = [
                 {
                     gameTitle: 'game1',
                     winner: 'joueur 1',
@@ -47,9 +48,9 @@ describe('GameHistoryController', () => {
     });
 
     describe('getHistory', () => {
-        it('should call databaseService.getGameHistory with the provided gameTitle', async () => {
+        it('should call DatabaseService.getGameHistory with the provided gameTitle', async () => {
             const gameTitle = 'game1';
-            const expectedGameHistory: gameHistoryInfo[] = [
+            const expectedGameHistory: GameHistoryInfo[] = [
                 {
                     gameTitle: 'game1',
                     winner: 'joueur 1',
@@ -71,8 +72,8 @@ describe('GameHistoryController', () => {
     });
 
     describe('createGameHistory', () => {
-        it('should call databaseService.createGameHistory with the provided gameHistoryInfo', () => {
-            const gameHistoryInfo: gameHistoryInfo = {
+        it('should call DatabaseService.createGameHistory with the provided gameHistoryInfo', () => {
+            const gameHistoryInfo: GameHistoryInfo = {
                 gameTitle: 'game1',
                 winner: 'joueur 1',
                 loser: 'joueur 2',
@@ -89,7 +90,7 @@ describe('GameHistoryController', () => {
     });
 
     describe('deleteHistory', () => {
-        it('should call databaseService.deleteAllGameHistory', () => {
+        it('should call DatabaseService.deleteAllGameHistory', () => {
             gameController.deleteHistory();
 
             expect(databaseServiceMock.deleteAllGameHistory).toHaveBeenCalled();

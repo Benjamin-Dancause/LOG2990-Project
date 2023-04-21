@@ -1,20 +1,22 @@
-import { gameHistoryInfo } from '@common/game-interfaces';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+import { GameHistoryInfo } from '@common/game-interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoClient } from 'mongodb';
-import { databaseService } from './database.service';
+import { DatabaseService } from './database.service';
 
-describe('databaseService', () => {
-    let service: databaseService;
+describe('DatabaseService', () => {
+    let service: DatabaseService;
     let client: MongoClient;
     const mongoUrl = 'mongodb+srv://equipe210:differences210@2990-210.po0vcim.mongodb.net/?retryWrites=true&w=majority';
     let module: TestingModule;
 
     beforeAll(async () => {
         module = await Test.createTestingModule({
-            providers: [databaseService],
+            providers: [DatabaseService],
         }).compile();
 
-        service = module.get<databaseService>(databaseService);
+        service = module.get<DatabaseService>(DatabaseService);
     });
 
     beforeEach(async () => {
@@ -86,7 +88,7 @@ describe('databaseService', () => {
     });
 
     it('should create a new game history', async () => {
-        const gameHistory: gameHistoryInfo = {
+        const gameHistory: GameHistoryInfo = {
             gameTitle: 'game1',
             winner: 'joueur 1',
             loser: 'joueur 2',
@@ -101,7 +103,7 @@ describe('databaseService', () => {
     });
 
     it('getAllGameHistory should get all game history', async () => {
-        const gameHistory1: gameHistoryInfo = {
+        const gameHistory1: GameHistoryInfo = {
             gameTitle: 'game1',
             winner: 'joueur 1',
             loser: 'joueur 2',
@@ -110,7 +112,7 @@ describe('databaseService', () => {
             isSolo: false,
             isLimitedTime: false,
         };
-        const gameHistory2: gameHistoryInfo = {
+        const gameHistory2: GameHistoryInfo = {
             gameTitle: 'game2',
             winner: 'joueur 3',
             loser: 'joueur 4',
@@ -142,7 +144,7 @@ describe('databaseService', () => {
     });
 
     it('deleteAllGameHistory should delete all game history', async () => {
-        const gameHistory: gameHistoryInfo = {
+        const gameHistory: GameHistoryInfo = {
             gameTitle: 'game1',
             winner: 'joueur 1',
             loser: 'joueur 2',

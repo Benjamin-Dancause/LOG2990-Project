@@ -1,3 +1,8 @@
+/* eslint-disable no-restricted-imports */
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-shadow */
 import { ClickResponse } from '@app/classes/click-response';
 import { CounterManagerService } from '@app/services/counter-manager/counter-manager.service';
 import { GameManager } from '@app/services/game-manager/game-manager.service';
@@ -29,8 +34,6 @@ describe('ClassicModeGateway', () => {
     let server: SinonStubbedInstance<Server>;
     let waiting: WaitingRoomManagerService;
     const sinon = require('sinon');
-    const socketio = require('socket.io');
-    const io = socketio(server);
 
     beforeEach(async () => {
         logger = createStubInstance(Logger);
@@ -308,11 +311,11 @@ describe('ClassicModeGateway', () => {
         const click: DifferenceInterface = {
             isDifference: true,
             differenceNumber: 1,
-            coords: coords,
+            coords,
         };
         jest.spyOn(game, 'verifyPosition').mockReturnValue(click);
         server.to.returns({
-            emit: (command: String, clickRes: ClickResponse) => {
+            emit: (command: string, clickRes: ClickResponse) => {
                 expect(command).toEqual(action);
                 expect(clickRes).toEqual(click);
             },
@@ -390,7 +393,7 @@ describe('ClassicModeGateway', () => {
         const gameTitles = [];
         jest.spyOn(game, 'loadGame').mockResolvedValueOnce(images);
         server.to.returns({
-            emit: (command: String, imagesRes) => {
+            emit: (command: string, imagesRes) => {
                 expect(command).toEqual(action);
                 expect(imagesRes).toEqual(images);
             },
@@ -404,7 +407,7 @@ describe('ClassicModeGateway', () => {
 
         jest.spyOn(timer, 'deleteTimerData');
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toBeFalsy();
             },
@@ -417,7 +420,7 @@ describe('ClassicModeGateway', () => {
         const action = 'player-quit-game';
 
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toBeFalsy();
             },
@@ -430,7 +433,7 @@ describe('ClassicModeGateway', () => {
         const action = 'player-quit-game';
 
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toEqual(gameTitle);
             },
@@ -447,7 +450,7 @@ describe('ClassicModeGateway', () => {
         };
 
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toEqual(messageInfo);
             },
@@ -460,7 +463,7 @@ describe('ClassicModeGateway', () => {
         const userName = 'user1';
 
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toEqual(userName);
             },
@@ -473,7 +476,7 @@ describe('ClassicModeGateway', () => {
         const userName = 'user1';
 
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toEqual(userName);
             },
@@ -489,7 +492,7 @@ describe('ClassicModeGateway', () => {
         const gameInfo: GameInfo = {
             gameMaster: 'master',
             joiningPlayer: 'player',
-            gameTitle: gameTitle,
+            gameTitle,
         };
         jest.spyOn(waiting, 'getGameplayInfo').mockReturnValue(gameInfo);
 
@@ -499,7 +502,7 @@ describe('ClassicModeGateway', () => {
             player1: true,
         };
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toEqual(gameplayInfo);
             },
@@ -522,7 +525,7 @@ describe('ClassicModeGateway', () => {
         const initSpy = jest.spyOn(waiting, 'initializeGameInfo');
 
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toEqual(socketsReplace);
             },
@@ -550,7 +553,7 @@ describe('ClassicModeGateway', () => {
         const initSpy = jest.spyOn(waiting, 'initializeGameInfo');
 
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toEqual('/game-selection');
             },
@@ -568,7 +571,7 @@ describe('ClassicModeGateway', () => {
         const gameInfo: GameInfo = {
             gameMaster: 'master',
             joiningPlayer: 'player',
-            gameTitle: gameTitle,
+            gameTitle,
         };
         jest.spyOn(waiting, 'getGameplayInfo').mockReturnValue(gameInfo);
 
@@ -578,7 +581,7 @@ describe('ClassicModeGateway', () => {
             player1: false,
         };
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toEqual(gameplayInfo);
             },
@@ -606,7 +609,7 @@ describe('ClassicModeGateway', () => {
         jest.spyOn(game, 'getAllRooms').mockReturnValue(rooms);
 
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toEqual(recordInfo);
             },
@@ -624,7 +627,7 @@ describe('ClassicModeGateway', () => {
         const deleteTimerDataSpy = jest.spyOn(timer, 'deleteTimerData');
 
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 if (command === action1) {
                     expect(command).toEqual(action1);
                     expect(data).toEqual(newTime);
@@ -655,7 +658,7 @@ describe('ClassicModeGateway', () => {
         const initSpy = jest.spyOn(waiting, 'initializeGameInfo');
 
         server.to.returns({
-            emit: (command: String, data: any) => {
+            emit: (command: string, data: unknown) => {
                 expect(command).toEqual(action);
                 expect(data).toEqual(lobby.gameTitle);
             },
@@ -694,29 +697,37 @@ describe('ClassicModeGateway', () => {
             gameMaster: mockGameInfo.gameMaster,
             joiningPlayer: mockGameInfo.joiningPlayer,
             gameTitle: mockGameInfo.gameTitle,
-            roomId: roomId,
+            roomId,
         };
 
-        const mockRoomIdToPlayerSockets = new Map<string, PlayerSockets>();
         const mockPlayerSockets: PlayerSockets = {
             masterSocket: socket,
             joiningSocket: socket,
         };
 
         gateway.roomIdToPlayerSockets.set(roomId, mockPlayerSockets);
-        const socketInfo: PlayerSockets = gateway.roomIdToPlayerSockets.get(roomId);
 
         server.to.returns({
-            emit: (command: String, data: any) => {
-                if (command === action1) {
-                    expect(command).toEqual(action1);
-                    expect(data).toEqual(mockCompleteGameInfo);
-                } else if (command === action2) {
-                    expect(command).toEqual(action2);
-                    expect(data).toEqual(lobby.gameTitle);
-                } else if (command === action3) {
-                    expect(command).toEqual(action3);
-                    expect(data).toEqual('/limited-time');
+            emit: (command: string, data: unknown) => {
+                switch (command) {
+                    case action1: {
+                        expect(command).toEqual(action1);
+                        expect(data).toEqual(mockCompleteGameInfo);
+
+                        break;
+                    }
+                    case action2: {
+                        expect(command).toEqual(action2);
+                        expect(data).toEqual(lobby.gameTitle);
+
+                        break;
+                    }
+                    case action3: {
+                        expect(command).toEqual(action3);
+                        expect(data).toEqual('/limited-time');
+
+                        break;
+                    }
                 }
             },
         } as BroadcastOperator<unknown, unknown>);

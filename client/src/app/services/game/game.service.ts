@@ -8,7 +8,7 @@ import { Coords } from '@app/classes/coords';
 import { MouseButton } from '@app/classes/mouse-button';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { CANVAS, DELAY } from '@common/constants';
-import { GameDiffData, gameHistoryInfo, playerTime as PlayerTimeInterface } from '@common/game-interfaces';
+import { GameDiffData, GameHistoryInfo, PlayerTime } from '@common/game-interfaces';
 import { Subscription } from 'rxjs';
 import { CounterService } from '../counter/counter.service';
 import { ReplayService } from '../replay/replay.service';
@@ -45,8 +45,8 @@ export class GameService {
         private replayService: ReplayService,
     ) {
         this.socketService.socket.on('update-difference', (response: ClickResponse) => {
-            this.replayService.addAction(this.time, 'update-difference', response);
             this.updateDifferences(response);
+            this.replayService.addAction(this.time, 'update-difference', {response: response, counter1: counterService.counter, counter2: counterService.counter2 });
         });
         this.listenForGiveUp();
         this.listenForWinner();
@@ -65,7 +65,7 @@ export class GameService {
             setTimeout(() => {
                 if (sessionStorage.getItem('winner') === 'true' && this.differenceFound.length !== 0) {
                     this.setTime();
-                    let playerTime: PlayerTimeInterface = {
+                    let playerTime: PlayerTime = {
                         user: sessionStorage.getItem('userName') as string,
                         time: this.time,
                         isSolo: sessionStorage.getItem('gameMode') === 'solo',
@@ -102,7 +102,7 @@ export class GameService {
                     ? (sessionStorage.getItem('gameMaster') as string)
                     : (sessionStorage.getItem('joiningPlayer') as string);
         }
-        let gameHistoryInfo: gameHistoryInfo = {
+        let gameHistoryInfo: GameHistoryInfo = {
             gameTitle: this.gameName,
             winner: sessionStorage.getItem('userName') as string,
             loser,

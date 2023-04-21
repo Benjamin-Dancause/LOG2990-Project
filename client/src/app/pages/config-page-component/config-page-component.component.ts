@@ -5,7 +5,7 @@ import { HistoryDialogComponent } from '@app/components/history-dialog/history-d
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { SocketService } from '@app/services/socket/socket.service';
 import { TIME } from '@common/constants';
-import { GameSelectionPageData, bestTimes } from '@common/game-interfaces';
+import { BestTimes, GameSelectionPageData } from '@common/game-interfaces';
 import { delay } from 'rxjs';
 
 const PAGE_SIZE = 4;
@@ -17,7 +17,7 @@ const PAGE_SIZE = 4;
 })
 export class ConfigPageComponent implements OnInit, OnDestroy {
     games: GameSelectionPageData[] = [];
-    bestTimes: bestTimes[] = [];
+    bestTimes: BestTimes[] = [];
 
     currentPage = 0;
     pageSize = PAGE_SIZE;
@@ -28,7 +28,7 @@ export class ConfigPageComponent implements OnInit, OnDestroy {
             this.games = gamecards;
             this.lastPage = Math.ceil(this.games.length / this.pageSize) - 1;
         });
-        communication.getAllBestTimes().subscribe((times: bestTimes[]) => {
+        communication.getAllBestTimes().subscribe((times: BestTimes[]) => {
             for (const game of this.games) {
                 for (const bestTime of times) {
                     if (game.name === bestTime.name) {

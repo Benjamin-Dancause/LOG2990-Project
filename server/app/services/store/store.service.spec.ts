@@ -9,7 +9,6 @@ import * as path from 'path';
 describe('StoreService', () => {
     let service: StoreService;
     let service2: StoreService;
-    let deleteMock: jest.Mock;
     let extractDataMock: jest.Mock;
 
     beforeEach(async () => {
@@ -17,7 +16,6 @@ describe('StoreService', () => {
             providers: [StoreService],
         }).compile();
 
-        deleteMock = jest.fn();
         extractDataMock = jest.fn();
         // readFileMock = jest.fn();
         service = module.get<StoreService>(StoreService);

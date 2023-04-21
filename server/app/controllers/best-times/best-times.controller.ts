@@ -1,17 +1,17 @@
-import { databaseService } from '@app/services/database/database.service';
-import { bestTimes, playerTime } from '@common/game-interfaces';
+import { DatabaseService } from '@app/services/database/database.service';
+import { BestTimes, PlayerTime } from '@common/game-interfaces';
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 
 @Controller('best-times')
 export class BestTimesController {
-    constructor(private readonly databaseService: databaseService) {}
+    constructor(private readonly databaseService: DatabaseService) {}
 
     @Get('/all')
     @ApiOkResponse({
         description: 'Get the best times for all games',
     })
-    async getAllTimes(): Promise<bestTimes[]> {
+    async getAllTimes(): Promise<BestTimes[]> {
         return this.databaseService.getBestTimes();
     }
 
@@ -33,7 +33,7 @@ export class BestTimesController {
     @ApiOkResponse({
         description: 'Update the best times for a game',
     })
-    updateTimes(@Param('gameTitle') gameTitle: string, @Body() playerTime: playerTime): void {
+    updateTimes(@Param('gameTitle') gameTitle: string, @Body() playerTime: PlayerTime): void {
         this.databaseService.updateBestTimes(gameTitle, playerTime.isSolo, playerTime.user, playerTime.time);
     }
     @Delete('/:gameTitle')

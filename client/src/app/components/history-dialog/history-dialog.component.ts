@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TIME } from '@common/constants';
-import { gameHistoryInfo } from '@common/game-interfaces';
+import { GameHistoryInfo } from '@common/game-interfaces';
 
 @Component({
     selector: 'app-history-dialog',
@@ -24,7 +24,7 @@ export class HistoryDialogComponent {
         return `${minutesString}:${secondsString}`;
     }
 
-    displayMode(gameHistory: gameHistoryInfo) {
+    displayMode(gameHistory: GameHistoryInfo) {
         if (gameHistory.isLimitedTime) {
             if (gameHistory.isSolo) {
                 return 'Temps limité Solo';
