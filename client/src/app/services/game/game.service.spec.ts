@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable no-restricted-imports */
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';

@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-unused-vars */
 import { TestBed } from '@angular/core/testing';
+import { ReplayService } from '@app/services/replay/replay.service';
+import { SocketService } from '@app/services/socket/socket.service';
 import { Socket } from 'socket.io-client';
-import { ReplayService } from '../replay/replay.service';
-// eslint-disable-next-line no-restricted-imports
-import { SocketService } from '../socket/socket.service';
 import { TimerService } from './timer.service';
 
 describe('TimerService', () => {

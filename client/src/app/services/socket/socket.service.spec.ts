@@ -32,7 +32,6 @@ describe('socketService', () => {
         expect(service.socket).toBeDefined();
     });
 
-
     it('should emit "one-vs-one-game" when oneVsOne() is called', () => {
         service.oneVsOne();
         expect(socketSpy.emit).toHaveBeenCalledWith('one-vs-one-game');

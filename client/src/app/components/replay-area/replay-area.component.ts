@@ -1,8 +1,8 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { ChatService } from '@app/services/chat/chat.service';
 import { ReplayService } from '@app/services/replay/replay.service';
 import { TIME } from '@common/constants';
-import { PlayAreaComponent } from '../play-area/play-area.component';
 
 @Component({
     selector: 'app-replay-area',

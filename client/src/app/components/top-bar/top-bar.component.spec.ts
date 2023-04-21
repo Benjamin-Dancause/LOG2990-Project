@@ -25,7 +25,7 @@ describe('TopBarComponent', () => {
     let mockSocketService: jasmine.SpyObj<SocketService>;
     let mockSocket: jasmine.SpyObj<Socket>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockSessionStorage: any = {};
+    const mockSessionStorage: any = {};
 
     beforeEach(async () => {
         mockSocketService = jasmine.createSpyObj('SocketService', ['connect']);

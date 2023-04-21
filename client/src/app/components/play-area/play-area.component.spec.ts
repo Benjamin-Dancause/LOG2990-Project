@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -211,6 +212,7 @@ describe('PlayAreaComponent', () => {
         expect(component.game.hintMode1).not.toHaveBeenCalled();
     });
     it('should clearTimeout if hintModeTimeoutId is not null', async () => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         const timerId = window.setTimeout(() => {}, 1000); // fire after 1 second
 
         // cancel the timer before it fires

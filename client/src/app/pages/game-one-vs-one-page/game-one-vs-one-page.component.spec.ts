@@ -30,6 +30,7 @@ describe('GamePageOneVsOneComponent', () => {
         mockSocketService = jasmine.createSpyObj<SocketService>(['soloGame', 'initializeGame', 'deleteRoomGameInfo', 'disconnectSocket'], {
             socket: mockSocket,
         });
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         mockSocketService.disconnectSocket.and.callFake(() => {});
         gameCardService = jasmine.createSpyObj<GameCardService>(['removePlayer']);
         mockPlayArea = jasmine.createSpyObj<PlayAreaComponent>(['initCanvases']);

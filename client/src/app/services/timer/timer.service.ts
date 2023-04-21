@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
+import { ReplayService } from '@app/services/replay/replay.service';
+import { SocketService } from '@app/services/socket/socket.service';
 import { Observable } from 'rxjs';
-// eslint-disable-next-line no-restricted-imports
-import { ReplayService } from '../replay/replay.service';
-import { SocketService } from '../socket/socket.service';
 
 @Injectable({
     providedIn: 'root',

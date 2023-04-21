@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { ChatService } from '@app/services/chat/chat.service';
 import { ReplayService } from '@app/services/replay/replay.service';
-import { PlayAreaComponent } from '../play-area/play-area.component';
 import { ReplayAreaComponent } from './replay-area.component';
 
 describe('ReplayAreaComponent', () => {

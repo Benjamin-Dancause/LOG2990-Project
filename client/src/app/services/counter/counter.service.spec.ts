@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-restricted-imports */
 import { HttpClientModule } from '@angular/common/http';
